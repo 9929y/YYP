@@ -1,0 +1,12 @@
+/* =========================================================================
+   scroll-roll.css — 「球面/滚筒」滚动弯曲（scroll-velocity page bend）
+   滚动时页面块随视口位置弯成一条弧，停下回平。自包含，可整体删除。
+   ========================================================================= */
+.bend-el{
+  will-change:transform;
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+@media (prefers-reduced-motion: reduce){
+  .bend-el{ transform:none !important; }
+}
