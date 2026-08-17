@@ -1,0 +1,171 @@
+/* ==========================================================================
+   ds-retrofit.css — applies the yanice-design-system to the existing Webflow
+   site without touching a line of its HTML.
+
+   Load AFTER the Webflow stylesheet.
+
+   ┌─ SCOPE (Yanice, 2026-08-17) ────────────────────────────────────────────┐
+   │  Typography and shape only.                                            │
+   │                                                                        │
+   │  **No colour. No backgrounds.** The case studies carry their clients'   │
+   │  brand colours — Lark blue, McKinsey orange, MiFinance grey — and two   │
+   │  pages are deliberately dark (`body.blk`, `body.al`). Those are content │
+   │  decisions, not legacy drift, and they stay exactly as they are.        │
+   │                                                                        │
+   │  An earlier revision did retone text and backgrounds. It flattened      │
+   │  every client brand colour to near-black and, on the two dark pages,    │
+   │  dropped the logo and headings to 1.20:1 — invisible. Removed.          │
+   └────────────────────────────────────────────────────────────────────────┘
+
+   Source of truth:
+     AI_materials_library/01_projects/portfolio_ux/05_design_system.md
+     AI_materials_library/04_active_repos/github/yanice-design-system/src/tokens.css
+
+   Zero `!important`. Nothing here can make content invisible.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens actually used below
+   -------------------------------------------------------------------------- */
+:root {
+  --ds-fg: #1a1917;      /* focus ring only — never applied to content text */
+  --ds-r-card: 12px;
+  --ds-r-pill: 999px;
+  --ds-lh-body: 1.44;
+  --ds-lh-tight: 1.2;
+}
+
+/* --------------------------------------------------------------------------
+   2. Type — one family, by renaming rather than by force
+
+   The site sets `font-family: Montserrat` (and six others) across ~50 class
+   selectors. Overriding those by specificity would need `!important` almost
+   everywhere. These @font-face blocks re-point the *names* at Inter's glyphs,
+   so every existing declaration renders Inter untouched — and the site's own
+   decisions about WHERE each face is used survive intact.
+
+   Inter is variable: one file covers weights 300–700.
+
+   ⚠️ This only works because the runtime Google WebFont Loader was removed from
+   the page heads. It fetched these same families and injected its own
+   @font-face rules AFTER the static sheets, overriding every alias below.
+   If a page ever renders in Montserrat again, check that its head no longer
+   calls `WebFont.load`.
+
+   Note on the logo: the original `@font-face` for Caveat pointed at a `.zip`,
+   which no browser can load — the script logo only ever rendered for visitors
+   who happened to have Caveat installed locally. Everyone else already saw a
+   fallback sans. Aliasing it makes that consistent. To bring a script logo
+   back, delete the Caveat and Pacifico lines and ship a real woff2.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/inter-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Aliases — every legacy family name now resolves to Inter's glyphs. */
+@font-face { font-family: 'Montserrat';        font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Lato';              font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Merriweather';      font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Varela Round';      font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Varela';            font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Caveat';            font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Pacifico';          font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Inconsolata';       font-weight: 300 700; font-display: swap; src: url('../fonts/inter-latin.woff2') format('woff2'); }
+
+/* Georgia is a system serif, not a webfont — it cannot be aliased this way and
+   is left alone. It appears on ~4 selectors as an editorial serif. If full
+   single-family consistency matters more than that distinction, the fix is a
+   `font-family` override on those specific classes, not an alias. */
+
+/* --------------------------------------------------------------------------
+   3. Typographic detail
+
+   Inter runs wider than the faces it replaces and has a taller x-height, so
+   display sizes need the tracking pulled in and body copy needs slightly less
+   leading. These are the two corrections the Apple design-system analysis names
+   for an Inter substitution.
+   -------------------------------------------------------------------------- */
+h1, h2, .heading, .heading-2, .heading-3,
+[class*='heading-xl'], [class*='heading-medium'] { letter-spacing: -0.02em; }
+
+/* The legacy nav and button labels sit at 3px tracking — a much older idiom
+   than this system, which uses 0 for small text. 0.06em keeps uppercase
+   legible without the 3px gap. */
+.menu-items a,
+.nav-link,
+.button,
+.text-block-3 { letter-spacing: 0.06em; }
+
+/* Leading. Safe on every page — it cannot make anything invisible. */
+body, p, li, td, [class*='paragraph'] { line-height: var(--ds-lh-body); }
+h1, h2, h3, h4, h5, h6, [class*='heading'] { line-height: var(--ds-lh-tight); }
+
+/* --------------------------------------------------------------------------
+   4. Shape — two radius grammars, as in the system
+
+   Radius and shadow only. No fills, no borders added: `[class*='card']` also
+   matches Webflow wrappers like `cards-grid`, and giving those a rule draws
+   boxes around things that were never meant to be boxed.
+   -------------------------------------------------------------------------- */
+img,
+[class*='image'],
+[class*='card'],
+[class*='thumb'] { border-radius: var(--ds-r-card); }
+
+[class*='pill'], [class*='tag'], [class*='badge'] { border-radius: var(--ds-r-pill); }
+
+/* The system has no elevation shadow. */
+[class*='card'], [class*='panel'], [class*='shadow'] { box-shadow: none; }
+
+/* --------------------------------------------------------------------------
+   5. Accessibility — additive only
+
+   A focus ring is added where there was none. It uses `--ds-fg` rather than an
+   accent because the accent is spent once per site by rule; and it is an
+   outline, so it never repaints content.
+   -------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--ds-fg);
+  outline-offset: 2px;
+}
+
+/* Reduced motion, WITHOUT breaking Webflow.
+
+   ⚠️ The usual `*, *::before, *::after { animation-duration: 0.01ms }` recipe is
+   actively dangerous here. Webflow's IX2 engine animates elements marked with
+   `data-w-id`, and 6 pages ship an inline `opacity: 0` guard keeping those
+   elements hidden until IX2 runs. Neutralising IX2's animations would leave
+   that content **permanently invisible** rather than merely still.
+
+   So: kill our own transitions, and leave anything IX2 owns alone. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *:not([data-w-id]):not([data-w-id] *),
+  *:not([data-w-id]):not([data-w-id] *)::before,
+  *:not([data-w-id]):not([data-w-id] *)::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}

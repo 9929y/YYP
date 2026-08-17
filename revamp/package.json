@@ -1,0 +1,22 @@
+{
+  "name": "yaniceyang-revamp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4320",
+    "build": "astro build",
+    "preview": "astro preview --port 4320",
+    "sync-ds": "cd ../../yanice-design-system && npm run build && cd - && cp ../../yanice-design-system/dist/yanice-ds.js ../../yanice-design-system/dist/yanice-ds.css vendor/yanice-ds/",
+    "deploy": "astro build && cp dist/index.html ../index.html && rm -rf ../_astro && cp -R dist/_astro ../_astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "astro": "^5.1.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
+  }
+}

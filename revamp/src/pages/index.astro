@@ -1,0 +1,26 @@
+---
+import Shell from '../components/Shell';
+import '../../vendor/yanice-ds/yanice-ds.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yanice Yang — UX Designer</title>
+    <meta
+      name="description"
+      content="Yanice Yang — UX designer. Five years in fashion, a six-figure business, then product design."
+    />
+    <link rel="canonical" href="https://www.yaniceyang.com/" />
+  </head>
+  <body>
+    <!--
+      client:load rather than client:visible — the nav and the view switch are
+      the first thing a visitor touches, so hydration must not wait on an
+      intersection observer.
+    -->
+    <Shell client:load />
+  </body>
+</html>

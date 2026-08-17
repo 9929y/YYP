@@ -1,2 +1,7 @@
 .DS_Store
 .claude/
+
+# revamp/ — the Astro landing page source
+revamp/node_modules/
+revamp/dist/
+revamp/.astro/
