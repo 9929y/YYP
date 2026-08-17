@@ -16,6 +16,25 @@ animation stays pixel-for-pixel the same.
   Brush, Space Mono); 8 used families kept.
 - **Dropped 3 unused font `.zip` archives** (leftover downloads, never referenced).
 
+## Image pass — WebP + resolution cap (2026-08-17)
+
+**321 MB -> 96 MB of images (-70%).** Every reference rewritten in place; still no
+build step.
+
+- **981 of 1041** PNG/JPEG converted to WebP at `cwebp -q 82`. The other **60**
+  are kept as-is because WebP came out *larger* — small flat-colour icons where
+  PNG already wins.
+- **54 images were above 3200px wide** and got capped there first. The worst was
+  10822x8369 (90 megapixels) for a slot the page renders at 1143px. 3200 matches
+  Webflow's own largest generated variant (`-p-3200`).
+- **1275 references** rewritten across 11 HTML pages and the shared CSS, plus
+  **18 `srcset` width descriptors** corrected for the images that shrank.
+
+Verified after: 1160 references resolve, zero broken, zero orphans, and the
+heaviest page (`larkdesign.html`) went 83.2 MB -> 24.7 MB of images.
+
+Originals are recoverable from git history — they were committed before this pass.
+
 ## What was deliberately kept
 
 - Webflow runtime JS + jQuery + the webfont loader (these drive every animation;
