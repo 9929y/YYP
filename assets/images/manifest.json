@@ -1,8 +1,8 @@
 {
  "generated": "2026-08-18",
  "site": "yaniceyang.com",
- "count": 261,
- "note": "file/variants 为相对 assets/images/ 的路径；legacy 是重命名前的旧文件名，可反查 git 历史",
+ "count": 222,
+ "note": "file/variants 为相对 assets/images/ 的路径；legacy 是重命名前的旧文件名，可反查 git 历史；2026-08-18 移除 39 张站上从不渲染的死图（CSS 规则一并清理），可从 git 历史取回",
  "assets": [
   {
    "file": "about/bg-aurora-light-accent.png",
@@ -926,29 +926,6 @@
    "unused": false
   },
   {
-   "file": "bg/bg-avatar-placeholder.svg",
-   "legacy": "background-image.svg",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "未看图，据文件名推断：Webflow 默认的 background-image.svg 占位图，挂在 .author / .avatar-image 上，应为作者头像的灰色占位底图。",
-   "where_used": "装饰 —— 作为作者头像位（.avatar-image）的占位背景",
-   "reuse": "明显是模板占位图，无内容价值；上线前应替换为真实头像或直接删除。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".author",
-    ".avatar-image"
-   ],
-   "w": null,
-   "h": null,
-   "bytes": 11068,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "bg/bg-blue-string-art-fan.webp",
    "legacy": "67c8af476208d9939722b49e_Partnership_Mark.webp",
    "bucket": "bg",
@@ -970,94 +947,6 @@
    "bytes": 994832,
    "variants": [],
    "unused": false
-  },
-  {
-   "file": "bg/bg-brown-wave-layers-dark.webp",
-   "legacy": "63c8bbb8d0216175cdc67fc0_3.webp",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "深棕偏黑的层叠波浪状表面，像堆叠的曲面薄片，右下角有一小块彩色反光。",
-   "where_used": "背景 —— 作为 .wrap-s-4 的 CSS 背景，给暗色区块铺抽象质感",
-   "reuse": "可复用为暗色页面的抽象背景；纯装饰。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".wrap-s-4"
-   ],
-   "w": 1920,
-   "h": 1080,
-   "bytes": 114606,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/bg-dark-tropical-foliage.webp",
-   "legacy": "63c8bbb8d0216164e9c67fb4_3.webp",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "光线很暗的热带植物丛，龟背竹、蔓绿绒等大叶片重叠，仅少数叶面受光。",
-   "where_used": "背景 —— 作为 .bg-4 的 CSS 背景，给区块铺自然质感底图",
-   "reuse": "可复用为「自然 / 户外」类内容的背景（与 about 页的自然爱好叙事契合）；来源为图库风格照片，外用需确认授权。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".bg-4"
-   ],
-   "w": 1920,
-   "h": 1080,
-   "bytes": 49188,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/bg-diagonal-ridge-texture-dark.webp",
-   "legacy": "63c8bbb8d021616310c67fba_1.webp",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "近黑色斜向排列的连续棱纹立体表面，只有边缘高光，无任何内容元素。",
-   "where_used": "背景 —— 作为 .bg-2 的 CSS 背景，给暗色区块提供纹理",
-   "reuse": "可复用为暗色主题的纹理底图；纯装饰，无版权敏感内容。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".bg-2"
-   ],
-   "w": 1920,
-   "h": 1080,
-   "bytes": 88846,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/bg-film-grain-noise.gif",
-   "legacy": "67cceefda38cbd1a3a04df98_noise.gif",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "黑白随机噪点动图，用于叠加颗粒质感，无任何图形内容。",
-   "where_used": "背景 —— 作为 .grain 图层全屏叠加，给页面加胶片颗粒感",
-   "reuse": "可复用为任意页面的颗粒叠加层；1.4 MB 的 GIF 偏重，建议换成更小的 PNG 平铺或 CSS 噪点。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".grain"
-   ],
-   "w": null,
-   "h": null,
-   "bytes": 1429005,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "bg/bg-gradient-blob-cluster.webp",
@@ -1105,29 +994,6 @@
    "unused": false
   },
   {
-   "file": "bg/bg-monolith-panel-on-dusk-sea.webp",
-   "legacy": "63c8bbb8d021612b06c67fae_2.webp",
-   "bucket": "bg",
-   "role": "bg",
-   "desc": "暮色海面上斜插着一块发光的浅色矩形板，整体蓝紫色调、雾感很重，纯氛围图。",
-   "where_used": "背景 —— 作为 .bg-3 / .wrap-s-3 的 CSS 背景铺满区块，营造暗色氛围",
-   "reuse": "可复用为暗色页面的氛围背景或封面底图；1920×1080，做超大屏满幅时分辨率偏紧。",
-   "alt": "",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".bg-3",
-    ".wrap-s-3"
-   ],
-   "w": 1920,
-   "h": 1080,
-   "bytes": 19814,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "bg/photo-beijing-skyline-sunset-through-window.webp",
    "legacy": "62dcca3db127ce42f2d2fd3a_IMG_2024.webp",
    "bucket": "bg",
@@ -1148,273 +1014,6 @@
    "bytes": 46020,
    "variants": [],
    "unused": false
-  },
-  {
-   "file": "bg/photo-hand-holding-minimal-magazine.webp",
-   "legacy": "62dc97a29e2173d6c60412c1_002.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：一只手拿起摊在木质矮凳上的极简风杂志（内页标题 minimal project），旁边两只白色陶瓷瓶与干芦苇，米色调静物。",
-   "where_used": "英雄图 —— Journal 页首屏 .journal-hero-background 的 CSS 背景",
-   "reuse": "Webflow 模板自带图库静物照，占位性质；可作「作品册 / 出版物」通用配图，但非本人作品",
-   "alt": "A hand lifting a minimal design magazine from a wooden bench beside two white ceramic vases",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.journal-hero-background"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 37944,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-man-headshot-grey-sweater.webp",
-   "legacy": "62dc97a29e21736bca0412f0_Portrait013.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库人像：深色头发男性正面微笑证件式头像，灰色针织衫内搭浅蓝点纹衬衫，灰蓝纯色背景。",
-   "where_used": "人物或场景 —— 默认 .avatar 头像位的 CSS 背景",
-   "reuse": "Webflow 模板自带图库头像，占位性质；含可识别真人面孔但非本人，不宜外用，建议替换成真实推荐人照片",
-   "alt": "Headshot of a smiling man in a grey sweater against a plain blue-grey backdrop",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".avatar"
-   ],
-   "w": 640,
-   "h": 960,
-   "bytes": 64206,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-man-portrait-beanie-leather-jacket.webp",
-   "legacy": "62dc97a29e217365340412e1_Portrait004.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库人像：戴黑色短针织帽、穿黑皮夹克与白衬衫的年轻男性侧望，冷蓝光打在脸侧，浅色背景。",
-   "where_used": "人物或场景 —— .avatar-005 头像位的 CSS 背景",
-   "reuse": "Webflow 模板自带图库人像，被当成假头像用；作品集应换真人照，此图可删",
-   "alt": "Portrait of a young man in a black beanie and leather jacket lit with blue light",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".avatar.avatar-005"
-   ],
-   "w": 513,
-   "h": 768,
-   "bytes": 25976,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-models-black-studio-low-angle-dup.webp",
-   "legacy": "62dc97a29e2173fd860412c0_012.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库时装照：与 id=013 完全相同的低机位棚拍三人黑衣构图，此处为 1280×1600 版本。",
-   "where_used": "背景 —— Instagram 图墙第一格与 .team-image-003 的 CSS 背景",
-   "reuse": "与 id=013 重复的 Webflow 模板图库照，可与 013 一并删除",
-   "alt": "Low-angle studio shot of three women in black, one seated on a wire chair, a heeled leg crossing the foreground",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.instagram-one",
-    ".background.team-image-003"
-   ],
-   "w": 1280,
-   "h": 1600,
-   "bytes": 51918,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-models-black-studio-low-angle.webp",
-   "legacy": "62dc97a29e217383a80412eb_034.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库时装照：低机位仰拍，前景一只穿细带高跟鞋的腿横入画面，中景女性坐在细钢管椅上，右后方另一名女性站立，米白圆形光斑背景。",
-   "where_used": "英雄图 —— Contact 页首屏 .contact-hero-background 的 CSS 背景",
-   "reuse": "Webflow 模板自带时装图库照，占位性质；与 id=017 为同一张图的大尺寸版，建议一并删除",
-   "alt": "Low-angle studio shot of three women in black, one seated on a wire chair, a heeled leg crossing the foreground",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.contact-hero-background"
-   ],
-   "w": 1920,
-   "h": 2400,
-   "bytes": 88422,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-models-studio-circle-backdrop.webp",
-   "legacy": "62dc97a29e2173f1920412e9_032.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库时装照：一名女性坐在细钢管椅上，另一名穿黑皮西装的女性从右侧走过，灰色棚拍空间中一枚米白圆形光斑与硬光投影。",
-   "where_used": "背景 —— 推荐语区块 .testimonial-background 的 CSS 背景",
-   "reuse": "Webflow 模板自带时装图库照，占位性质；建议删除",
-   "alt": "One woman seated on a wire chair while another in a black leather suit walks past a pale circular studio backdrop",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.testimonial-background"
-   ],
-   "w": 1920,
-   "h": 1280,
-   "bytes": 53712,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-team-discussion-laptop-table.webp",
-   "legacy": "62dc97a29e217347780412e4_029.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：四人隔着白色长桌交谈，前景是贴着贴纸的银色笔记本电脑背面与两只保温杯，背景绿植与玻璃门。",
-   "where_used": "背景 —— .team-image-004 团队区块的 CSS 背景图",
-   "reuse": "Webflow 模板自带图库照片，占位性质；通用协作配图，作品集无保留必要",
-   "alt": "Four colleagues talking across a white table behind an open laptop",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.team-image-004"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 46954,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-team-meeting-conference-table.webp",
-   "legacy": "62dc97a29e21731a280412ca_017.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：六人围坐白色长条会议桌开会，深灰墙面、圆镜与石膏头像装饰，一人在用贴满贴纸的笔记本电脑。",
-   "where_used": "英雄图 —— About 页首屏背景，同时用作首页轮播第三张背景",
-   "reuse": "Webflow 模板自带图库照片，占位性质；可用于任何「团队协作」通用配图，但对作品集无信息价值",
-   "alt": "Six people meeting around a long white table in a dark-walled office",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.about-hero-background",
-    ".slide-hero-background.slider-003"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 63218,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-team-meeting-pizza-boxes.webp",
-   "legacy": "62dc97a29e217302340412e3_030.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：四名年轻同事围坐深色木质会议桌，一人站着打开叠放的披萨外卖盒，背景是玻璃隔断办公室。",
-   "where_used": "背景 —— 作为 .team-image-002 团队区块的 CSS 背景图铺底",
-   "reuse": "Webflow 模板自带的图库照片，与 Yanice 的实际项目无关，属于占位素材；不建议留在作品集里，可直接删除",
-   "alt": "Colleagues around an office meeting table, one opening stacked takeaway pizza boxes",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.team-image-002"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 73278,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-team-sharing-pizza-meeting.webp",
-   "legacy": "62dc97a29e2173d3e60412d1_018.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：五名同事同时伸手去拿会议桌上敞开的披萨外卖盒，背景显示器上显示一张设计稿，玻璃隔断办公室。",
-   "where_used": "背景 —— About 页区块背景，同时用于 Instagram 图墙第四格",
-   "reuse": "Webflow 模板自带图库照片，占位性质；通用团队氛围图，作品集无保留必要",
-   "alt": "Five colleagues reaching for slices from open pizza boxes on a meeting table",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.about-background",
-    ".background.instagram-four"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 61008,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-three-men-seated-cropped.webp",
-   "legacy": "62dc97a29e217359ec0412f1_072.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：三名男性坐在灰色背景前的裁切构图，只见躯干与手部——绿色外套、米色长裤、浅蓝衬衫，无人露全脸。",
-   "where_used": "背景 —— 首页轮播 .slide-hero-background.three 的 CSS 背景",
-   "reuse": "Webflow 模板自带图库照片，占位性质；构图裁切人脸，可作低干扰气氛底图，但对作品集无信息价值",
-   "alt": "Three seated men shown from the torso down in a grey studio",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-hero-background.three"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 55208,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-three-models-black-outfits-studio-crop.webp",
-   "legacy": "62dc97a29e2173664a0412f2_006.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库时装照：与 id=005 同一张三名黑衣女性棚拍照，此处为略小的裁切版本。",
-   "where_used": "背景 —— Instagram 图墙第三格 .instagram-three 的 CSS 背景",
-   "reuse": "与 id=005 内容重复的 Webflow 模板图库照，可与 005 一并删除",
-   "alt": "Three women in all-black tailoring posing in a grey studio in front of a pale circular backdrop",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.instagram-three"
-   ],
-   "w": 1280,
-   "h": 914,
-   "bytes": 27432,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "bg/photo-three-models-black-outfits-studio.webp",
@@ -1439,117 +1038,6 @@
    "bytes": 46708,
    "variants": [],
    "unused": false
-  },
-  {
-   "file": "bg/photo-two-models-black-minimal-studio.webp",
-   "legacy": "62dc97a29e21737ee50412d5_021.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库时装照：前景女性穿黑色吊带长裙立于强光斜影中，背景另一名女性穿黑皮西装套装虚焦站立，灰白极简空间。",
-   "where_used": "背景 —— .team-image-001 团队区块的 CSS 背景图",
-   "reuse": "Webflow 模板自带时装图库照，占位性质；与 UX 作品集内容无关，建议删除",
-   "alt": "Two women in black outfits in a bare grey studio, one in focus in a slip dress",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.team-image-001"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 23356,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-two-people-talking-lounge-sofa.webp",
-   "legacy": "62dc97a29e217344850412c9_016.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库照片：戴黑色礼帽的男子与短发女子坐在绿色沙发上交谈，水泥毛坯墙上投着二人剪影，圆桌上放两杯水。",
-   "where_used": "背景 —— Instagram 图墙第二格与首页轮播第二张的 CSS 背景",
-   "reuse": "Webflow 模板自带图库照片，占位性质；可作通用「访谈 / 对谈」气氛图，但不宜当作真实用户研究现场",
-   "alt": "A man in a black hat and a woman in a white shirt talking on a green sofa",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".background.instagram-two",
-    ".slide-hero-background.slider-002"
-   ],
-   "w": 1280,
-   "h": 853,
-   "bytes": 104776,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-woman-headshot-sunglasses-smiling.webp",
-   "legacy": "62dc97a29e21736cc40412de_Portrait015.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库人像：戴圆框墨镜与大圈耳环、盘发的女性开怀大笑，穿格纹背带裙，背景为条纹墙面。",
-   "where_used": "人物或场景 —— .avatar-003 头像位的 CSS 背景",
-   "reuse": "Webflow 模板自带图库头像，占位性质；含可识别真人面孔但非本人，不宜外用，建议替换",
-   "alt": "Headshot of a laughing woman in round sunglasses, hoop earrings and a checked pinafore",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".avatar.avatar-003"
-   ],
-   "w": 640,
-   "h": 960,
-   "bytes": 44394,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-woman-portrait-black-hat-agave.webp",
-   "legacy": "62dc97a29e2173468a0412df_Portrait019.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库人像：戴宽檐黑帽、红唇短发的年轻女性站在龙舌兰叶片前，灰色针织上衣，半身竖构图。",
-   "where_used": "人物或场景 —— .avatar-004 头像位的 CSS 背景",
-   "reuse": "Webflow 模板自带图库人像，被当成假头像用；作品集若要放推荐语/团队，应换成真人照片，此图可删",
-   "alt": "Portrait of a woman in a wide-brimmed black hat standing in front of large agave leaves",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".avatar.avatar-004"
-   ],
-   "w": 640,
-   "h": 960,
-   "bytes": 60142,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "bg/photo-woman-profile-braids-teal-backdrop.webp",
-   "legacy": "62dc97a29e21737e240412dd_Portrait003.webp",
-   "bucket": "bg",
-   "role": "photo",
-   "desc": "图库人像：长辫发女性侧脸特写，戴金色几何耳饰、穿彩色几何印花衬衫，青绿色纯色背景。",
-   "where_used": "人物或场景 —— .avatar-002 头像位的 CSS 背景",
-   "reuse": "Webflow 模板自带图库头像，占位性质；含可识别真人面孔但非本人，不宜外用，建议替换",
-   "alt": "Profile portrait of a woman with long braids and gold earrings against a teal backdrop",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".avatar.avatar-002"
-   ],
-   "w": 513,
-   "h": 768,
-   "bytes": 46906,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "cummins/bg-red-string-art-fan-dark.webp",
@@ -1963,50 +1451,6 @@
    "unused": false
   },
   {
-   "file": "cummins/persona-marketing-manager-persona-card-on-journey-map.webp",
-   "legacy": "66d2c32b3d23d8421dcebbaa_Frame_7.webp",
-   "bucket": "cummins",
-   "role": "persona",
-   "desc": "与前一张同一份 Craig Fordham 用户画像卡，构图更贴近，背后清晰露出 Develop→Launch→Mature→License 的时间轴 journey map 与访谈引语墙；字幕「Learn from 1on1 interview to form User Persona」。",
-   "where_used": "人物或场景 —— 作为 .slide-6 的幻灯片图，把画像与其背后的旅程图/访谈证据并置",
-   "reuse": "可复用为「访谈证据 → 画像」链路展示；含具名人物与客户访谈原话，外用需脱敏。",
-   "alt": "The marketing manager persona card layered over a product lifecycle journey map and a wall of interview quotes",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-6"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 196866,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "cummins/persona-marketing-manager-persona-card.webp",
-   "legacy": "66cbf3c139afd755cc282233_5.webp",
-   "bucket": "cummins",
-   "role": "persona",
-   "desc": "B2B 用户画像卡：Craig Fordham，Tier 1 制造商的 Integrated Marketing Manager，左列头像与四条特征滑杆（数据依赖、直觉依赖、变革意愿），中列 Key Responsibilities / Pain Points / Needs，右蓝列标出他在 CEO→CMO→VP→Marketing Manager→Marketing Lead 组织链中的位置；底部字幕「Learn from 1on1 interview to form User Persona」，背后是同系列 journey map。",
-   "where_used": "人物或场景 —— 作为 .slide-6 的幻灯片图，说明研究阶段如何由 1on1 访谈产出画像",
-   "reuse": "可复用为「研究到画像」方法论示例；含具名人物与真实访谈引语（客户侧研究产出），外用前应脱敏或替换姓名与照片。",
-   "alt": "B2B persona card for an integrated marketing manager, listing responsibilities, pain points, needs, and his position in the marketing org chart",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-6"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 175982,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "cummins/system-calibration-recovery-screen-spec-j6f.webp",
    "legacy": "67ce3a42b8c67a13adedd1f2_slider16.webp",
    "bucket": "cummins",
@@ -2065,50 +1509,6 @@
     "cummins/system-calibration-recovery-screen-spec-j6j-p-800.webp"
    ],
    "unused": false
-  },
-  {
-   "file": "cummins/system-controls-library-design-system.webp",
-   "legacy": "66cbf9ee5ebb4c3a59c4aa7f_6.webp",
-   "bucket": "cummins",
-   "role": "system",
-   "desc": "Figma 中的 Controls Library 页面：checkbox、radio、toggle 的全状态矩阵，controls 组合、visual graph control（涨跌箭头）、tooltips，左侧是 Assets 面板里的按钮与控件组件，右侧是文字/颜色/效果/网格样式列表；字幕「Create Design System to build Minimum Viable Product」。",
-   "where_used": "界面展示 —— 作为 .slide-7 的幻灯片图，证明为 MVP 搭建了组件与样式体系",
-   "reuse": "可复用为设计系统 / 组件状态治理的证据图；含客户项目组件命名（Sales&Markt、Sustainability 等库名），外用需注意客户可识别。",
-   "alt": "Figma design system page showing checkbox, radio, toggle and tooltip states alongside component assets and text, color and effect styles",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-7"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 74036,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "cummins/system-controls-library-with-figma-styles-panel.webp",
-   "legacy": "66d2c32aad2723840546c4de_Frame_11.webp",
-   "bucket": "cummins",
-   "role": "system",
-   "desc": "与 Controls Library 同一张设计系统截图的另一版构图，控件状态矩阵居中，左侧 Assets 组件面板、右侧 Local styles（Primary/Font/Neutral/Secondary/Feedback 颜色与各类阴影效果）更完整可见；字幕「Create Design System to build Minimum Viable Product」。",
-   "where_used": "界面展示 —— 作为 .slide-7 的幻灯片图，强调样式令牌与效果层的定义",
-   "reuse": "可复用为设计令牌 / 样式命名规范的展示；含客户项目库名，外用需注意客户可识别。",
-   "alt": "Figma control states beside a styles panel listing primary, font, neutral, secondary and feedback colors plus named shadow effects",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-7"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 67584,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "cummins/system-ecm-install-message-matrix-part1.webp",
@@ -4278,28 +3678,6 @@
    "unused": false
   },
   {
-   "file": "mckinsey/chart-concept-testing-scope-summary.webp",
-   "legacy": "66d2c32b750c0d5bd09aaee3_Frame_3.webp",
-   "bucket": "mckinsey",
-   "role": "chart",
-   "desc": "Preliminary concept testing 概览页：左列列出五项测试目标（验证直播/播后一键购买、聊天、字幕交互，理解购物袋与收藏行为，日历与排期需求，滑动交互，发现新机会），右列三个大数字 8 场快速用户测试、4 条关键流程、30 分钟/场 ethno research；字幕「Understand user needs through advanced user testings」。",
-   "where_used": "数据支撑 —— 作为 .slide-4 的幻灯片图，用量化的测试规模支撑研究结论的可信度",
-   "reuse": "可复用为研究计划/研究规模的说明图；内容为内部测试安排，无个人信息，外用较安全。",
-   "alt": "Concept testing overview: five testing goals beside three figures, 8 rapid user tests, 4 key user flows, 30 minutes per ethnographic session",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-4"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 183248,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "mckinsey/chart-discover-flow-findings.webp",
    "legacy": "67c8a7a7ca6415e6fa459b26__Qlive__User_Testing_Research____2.webp",
    "bucket": "mckinsey",
@@ -4704,50 +4082,6 @@
    "unused": false
   },
   {
-   "file": "mckinsey/flow-live-shopping-user-flow-map-plate.webp",
-   "legacy": "66d2c8843d23d8421dd33e3f_Frame5.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "与前述九条流程总览同一张白板的另一份底图（Flow 1 直播+边看边买+反馈 到 Flow 9 搜索与商品页，含各流程的 highlighted features），整图去饱和、无前景说明层。",
-   "where_used": "流程说明 —— 作为 .slide-3 的幻灯片底层图，被前景卡片叠压时提供流程全貌",
-   "reuse": "与另一份同内容大图重复，二者只需保留分辨率更高的一份；文字在缩略尺寸下不可读。",
-   "alt": "Full user-flow map for a live shopping product, nine numbered flows each with highlighted feature cards",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-3"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 77246,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "mckinsey/flow-live-shopping-user-flow-map.webp",
-   "legacy": "63c8c250886de8d404edbe32_Frame_1.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "直播电商项目的九条用户流程总览白板（Flow 1 直播+边看边买+反馈、Flow 2 购物袋与购买、Flow 3 注册与 onboarding、Flow 4 回访用户、Flow 5 收藏库、Flow 6 店铺页、Flow 7 外链新用户、Flow 9 搜索与商品页），每条流程下附 highlighted features，整图去饱和作底。",
-   "where_used": "流程说明 —— 作为 .image-2 的 CSS 背景，铺在流程章节底层撑起「已完成整套流程梳理」的观感",
-   "reuse": "可用于展示流程梳理规模与信息架构能力；文字在缩略尺寸下不可读，只适合当氛围/底图，需要细节时应换清晰单图。",
-   "alt": "Nine linked user-flow diagrams for a live shopping product, covering live shop, checkout, onboarding, returning users, saved library, shop and product pages",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".image-2"
-   ],
-   "w": 3098,
-   "h": 1958,
-   "bytes": 89804,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "mckinsey/flow-liveshop-mvp-flow-buyer-seller-combined.webp",
    "legacy": "67c91925da404952e6642098__Qlive__Design_and_Research__1__1.webp",
    "bucket": "mckinsey",
@@ -4884,94 +4218,6 @@
    "unused": false
   },
   {
-   "file": "mckinsey/flow-research-findings-wall.webp",
-   "legacy": "66d2c88353107543f32be28f_Frame_3.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "按流程组织的研究发现墙：Discover flow / Purchase flow / Sign up 与日历 flow / 收藏 flow 各自列出 validated hypothesis、potential opportunities 和用户原话，另有 Competitive UX/UI research（列出可借鉴的四点：信息架构、端到端流程、交互模式、功能集）、Interaction pattern 与 End-to-end user flow 的截图证据，右下角 Other insights 列后续待验证项。",
-   "where_used": "流程说明 —— 作为 .slide-2 的幻灯片图，铺陈每条流程上的验证结论与机会点",
-   "reuse": "可复用为研究综合 / 机会点提炼的方法展示；含用户原话与竞品应用截图，外用需脱敏并注意截图版权。",
-   "alt": "Research findings wall organized by flow, pairing validated hypotheses and opportunities with user quotes and competitor screenshots",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-2"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 241206,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "mckinsey/flow-seller-mvp-flow-consolidated-board.webp",
-   "legacy": "63c70a1c6823308923dc5fa3_M1.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "白板/Figma 全景截图：前景为「Consolidated Alpha MVP Flow – Seller」大表——顶部两条蓝色泳道（Entry and onboarding、Set up and manage shop）串起节点，左侧标注卖家人物 Julia，下方按 MVP Alpha features / MVP Beta features / Post MVP features / MVP Alpha ops 四行罗列对应功能与运营动作；背景可见 Flow 3/5/8/9（直播+说话+反馈、购物袋+购买+售后、注册与上线、内容搜索）等多张流程图。",
-   "where_used": "流程说明 —— Spark 案例深色首屏 .spark-dark-hero-background-image 的背景大图",
-   "reuse": "可用于展示复杂端到端流程梳理与 MVP 分期规划的能力；含具体功能与运营流程细节，属未公开产品规划，外用前需确认脱敏",
-   "alt": "A consolidated seller MVP flow board mapping onboarding and shop setup steps against Alpha, Beta and post-MVP feature rows",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".spark-section.spark-dark-hero-background-image"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 64644,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "mckinsey/flow-seller-mvp-flow-feature-priority.webp",
-   "legacy": "66d2c32a6e08b9f19926a197_Frame5.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "Consolidated Alpha MVP Flow（卖家侧）：顶部四段流程泳道（入驻与 onboarding、建店与管店、直播、支付与发货），下方按 MVP Alpha / MVP Beta / Post MVP / MVP Alpha ops 四行铺开功能卡做优先级分层；字幕「Create user flow and define feature priority within our client」。",
-   "where_used": "流程说明 —— 作为 .slide-5 的幻灯片图，说明如何把流程转成分期功能优先级",
-   "reuse": "可复用为「流程 → 功能优先级分层」的方法示例；含客户内部功能规划与运营分工，外用需脱敏。",
-   "alt": "Seller MVP flow board: four journey stages across the top with feature cards sorted into Alpha, Beta, post-MVP and ops rows",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-5"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 85490,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "mckinsey/flow-seller-mvp-flow-priority-board.webp",
-   "legacy": "66d2c905d3f02abd92f833bb_Group_542.webp",
-   "bucket": "mckinsey",
-   "role": "flow",
-   "desc": "Consolidated Alpha MVP Flow（卖家侧）的清晰完整版：顶部蓝色四段泳道（Entry and onboarding、Set up and manage shop、Studio、Payment and shipment）配卖家画像头像，下方 MVP Alpha / MVP Beta / Post MVP features 与 MVP Alpha ops 四行功能与运营卡。",
-   "where_used": "流程说明 —— 作为 .image48.slidei 的图，完整呈现卖家侧流程与分期功能矩阵",
-   "reuse": "同内容中最清晰的一版，优先用它做流程/优先级展示；含客户内部功能与运营安排，外用需脱敏。",
-   "alt": "Seller MVP flow with four onboarding-to-shipment stages above rows of Alpha, Beta, post-MVP and operations feature cards",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".image48.slidei"
-   ],
-   "w": 1814,
-   "h": 806,
-   "bytes": 51980,
-   "variants": [],
-   "unused": true
-  },
-  {
    "file": "mckinsey/flow-signup-to-one-click-purchase-flow.webp",
    "legacy": "67dda4aa2c2928ed01e6f23a_Group_334.webp",
    "bucket": "mckinsey",
@@ -5032,28 +4278,6 @@
     "mckinsey/hifi-liveshop-buyer-app-hifi-8up-p-800.webp"
    ],
    "unused": false
-  },
-  {
-   "file": "mckinsey/hifi-liveshop-landing-and-mobile-final-design.webp",
-   "legacy": "66cbf3c17b98d2387390afe4_3.webp",
-   "bucket": "mckinsey",
-   "role": "hifi",
-   "desc": "直播电商产品 LiveShop 的最终高保真设计：中间是 Web 落地页（标题 Meet LiveShop、beta waitlist 表单、直播购物插画），右侧两张移动端界面（商品详情加购、Discover 首页含分类/精选合集/推荐主播），背后铺着线框与迭代稿；字幕「Build final product through building wireframe, iterations, and prototype」。",
-   "where_used": "界面展示 —— 作为 .slide-5 的幻灯片图，呈现从线框迭代到最终产品的结果",
-   "reuse": "可复用为高保真视觉与响应式设计能力展示；界面为项目原创设计，含图库人物照片，外用需确认照片授权。",
-   "alt": "Final LiveShop design: a web landing page with a beta waitlist form beside mobile product-detail and discover screens",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-5"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 139500,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "mckinsey/hifi-liveshop-landing-concept-blob-collage.webp",
@@ -5621,28 +4845,6 @@
     "mckinsey/wireframe-liveshop-seller-manager-lowfi-wireframes-p-800.webp"
    ],
    "unused": false
-  },
-  {
-   "file": "mckinsey/wireframe-mobile-wireframe-and-login-flow-boards.webp",
-   "legacy": "66d2c8833d23d8421dd33d7b_Frame_6-1.webp",
-   "bucket": "mckinsey",
-   "role": "wireframe",
-   "desc": "线框与迭代过程白板：左侧三组红色标注的移动端线框流水线，右侧是落地页与直播页的高保真缩略图、以及一整片 Landing / Sign up / Login 逐屏状态的线框演进（含弹窗与错误态）。",
-   "where_used": "界面展示 —— 作为 .slide-4 的幻灯片图，展示线框到成稿的迭代过程量",
-   "reuse": "可复用为迭代过程 / 设计工作量的证据图；缩略尺寸下文字不可读，只宜当过程感底图；含图库人物照片。",
-   "alt": "Wireframe boards for a shopping app alongside step-by-step landing, sign-up and login screen iterations",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-4"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 87904,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "mckinsey/wireframe-single-hand-key-zone-callouts.webp",
@@ -7296,73 +6498,6 @@
     "tiktok/chart-unsafe-content-types-female-vs-all-p-800.webp"
    ],
    "unused": false
-  },
-  {
-   "file": "tiktok/competitive-account-and-profile-benchmark-board.webp",
-   "legacy": "66d2c8837d46b9947e2f3f46_Frame_4-_.webp",
-   "bucket": "tiktok",
-   "role": "competitive",
-   "desc": "账号与个人主页的对标白板：左半是各家 App 的账号/设置/直播页截图矩阵，中间 My account page 的社媒与电商对标加 MVP 设置功能清单与 wizard 流程，右侧 Profile Main Page（含 saved 功能）的对标与 IA 决策（bio 字数、订单是否对外可见、收藏私密性、onboarding wizard 信息落点），底部按 TikTok/抖音、Instagram、Livescale、淘宝、Shein、Amazon、Nordstrom、Shopify 逐家排流程截图。",
-   "where_used": "竞品对比 —— 作为 .slide-2 的幻灯片图，用逐家对标支撑账号与个人页的信息架构决策",
-   "reuse": "可复用为对标驱动 IA 决策的示例；大量第三方 App 真实截图，外用有版权与品牌风险。",
-   "alt": "Benchmark board comparing account and profile pages across social and e-commerce apps, with information-architecture decisions noted beside each",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".image-47.slidei",
-    ".slide-2"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 131182,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "tiktok/competitive-live-commerce-competitor-matrix.webp",
-   "legacy": "66d2c3ad53107543f327ea45_Frame_4-_.webp",
-   "bucket": "tiktok",
-   "role": "competitive",
-   "desc": "直播电商竞品对比大表：横向 TikTok/抖音、Instagram、Livescale、YouTube、淘宝、Shein、Amazon、Nordstrom 八家，纵向 Description / Target User / Main Feature / Pros / Cons 五行逐格填写并高亮关键结论；字幕「Conduct competitive analysis to find business&design potential」。",
-   "where_used": "竞品对比 —— 作为 .slide-3 的幻灯片图，支撑对业务与设计机会的判断",
-   "reuse": "可复用为竞品分析方法与结论密度的展示；含各平台品牌 logo，外用需注意商标使用，且数据为 2022 年前后口径已过时。",
-   "alt": "Competitive matrix comparing eight live-commerce platforms across description, target user, main features, pros and cons",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".slide-3"
-   ],
-   "w": 2065,
-   "h": 1305,
-   "bytes": 212810,
-   "variants": [],
-   "unused": true
-  },
-  {
-   "file": "tiktok/competitive-ux-research-findings-board.webp",
-   "legacy": "63c87cfc70feea27da373f6c_Frame_3.webp",
-   "bucket": "tiktok",
-   "role": "competitive",
-   "desc": "研究看板全景截图：前景白卡「Competitive UX/UI research – what we can learn from social retail and other industries」列出四条结论（信息架构：全屏视频落地页做中枢；端到端用户流：清晰指引与熟悉手势；交互模式：优先动效营造沉浸；功能与能力集：贯穿旅程的用户参与工具箱），右侧竖排 TikTok、Instagram、Lives、Uber、Amazon、Etsy 竞品图标；左侧另一张卡为「Preliminary concept testing」测试目标清单与 8 / 4 / 30 三个数字（同事内测、关键流程、每人 30 分钟民族志），背景是 Discover / Purchase / End-to-end user flow 三段带用户原话的机会点梳理。",
-   "where_used": "竞品对比 —— Spark 案例深色首屏第二块 .spark-dark-hero-background-image._2 的背景大图",
-   "reuse": "可用于展示竞品拆解与概念测试计划的方法论；含竞品品牌标识与内部研究结论、用户原话，外用需脱敏并确认客户授权",
-   "alt": "Competitive UX research board with findings on information architecture, user flow, interaction pattern and feature set, beside social commerce app logos",
-   "pages": [],
-   "primary_page": "(css-only)",
-   "section": {},
-   "order": {},
-   "css_selectors": [
-    ".spark-section.spark-dark-hero-background-image._2"
-   ],
-   "w": 3098,
-   "h": 1958,
-   "bytes": 290194,
-   "variants": [],
-   "unused": true
   },
   {
    "file": "tiktok/hero-egypt-female-safety-perception-title.webp",

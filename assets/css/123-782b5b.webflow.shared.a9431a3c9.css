@@ -2426,17 +2426,8 @@ blockquote {
   inset: 0%;
 }
 
-.background.instagram-one {
-  background-image: url(../images/bg/photo-models-black-studio-low-angle-dup.webp);
-}
-
 .background.testimonial-background {
-  background-image: url(../images/bg/photo-models-studio-circle-backdrop.webp);
   background-position: 50% 0;
-}
-
-.background.about-background {
-  background-image: url(../images/bg/photo-team-sharing-pizza-meeting.webp);
 }
 
 .background.services-hero-background {
@@ -2448,45 +2439,8 @@ blockquote {
   top: 0%;
 }
 
-.background.journal-hero-background {
-  background-image: url(../images/bg/photo-hand-holding-minimal-magazine.webp);
-}
-
-.background.about-hero-background {
-  background-image: url(../images/bg/photo-team-meeting-conference-table.webp);
-}
-
 .background.contact-hero-background {
-  background-image: url(../images/bg/photo-models-black-studio-low-angle.webp);
   background-position: 50% 30%;
-}
-
-.background.team-image-001 {
-  background-image: url(../images/bg/photo-two-models-black-minimal-studio.webp);
-}
-
-.background.team-image-002 {
-  background-image: url(../images/bg/photo-team-meeting-pizza-boxes.webp);
-}
-
-.background.team-image-003 {
-  background-image: url(../images/bg/photo-models-black-studio-low-angle-dup.webp);
-}
-
-.background.team-image-004 {
-  background-image: url(../images/bg/photo-team-discussion-laptop-table.webp);
-}
-
-.background.instagram-two {
-  background-image: url(../images/bg/photo-two-people-talking-lounge-sofa.webp);
-}
-
-.background.instagram-three {
-  background-image: url(../images/bg/photo-three-models-black-outfits-studio-crop.webp);
-}
-
-.background.instagram-four {
-  background-image: url(../images/bg/photo-team-sharing-pizza-meeting.webp);
 }
 
 .background.action-background {
@@ -3429,7 +3383,6 @@ blockquote {
 }
 
 .avatar {
-  background-image: url(../images/bg/photo-man-headshot-grey-sweater.webp);
   background-position: 50% 0;
   background-repeat: no-repeat;
   background-size: cover;
@@ -3439,22 +3392,15 @@ blockquote {
 }
 
 .avatar.avatar-002 {
-  background-image: url(../images/bg/photo-woman-profile-braids-teal-backdrop.webp);
   background-position: 50% 30%;
 }
 
 .avatar.avatar-003 {
-  background-image: url(../images/bg/photo-woman-headshot-sunglasses-smiling.webp);
   background-position: 50% 30%;
 }
 
 .avatar.avatar-004 {
-  background-image: url(../images/bg/photo-woman-portrait-black-hat-agave.webp);
   background-position: 50% 10%;
-}
-
-.avatar.avatar-005 {
-  background-image: url(../images/bg/photo-man-portrait-beanie-leather-jacket.webp);
 }
 
 .testimonial-name {
@@ -3715,7 +3661,6 @@ blockquote {
 
 .author {
   border: 4px solid var(--grey);
-  background-image: url(../images/bg/bg-avatar-placeholder.svg);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4202,7 +4147,6 @@ blockquote {
 }
 
 .avatar-image {
-  background-image: url(../images/bg/bg-avatar-placeholder.svg);
   background-position: 50% 30%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4549,21 +4493,9 @@ blockquote {
   inset: 0%;
 }
 
-.slide-hero-background.three {
-  background-image: url(../images/bg/photo-three-men-seated-cropped.webp);
-}
-
 .slide-hero-background.slider-001 {
   background-image: url(../images/bg/photo-three-models-black-outfits-studio.webp);
   background-position: 50% 25%;
-}
-
-.slide-hero-background.slider-002 {
-  background-image: url(../images/bg/photo-two-people-talking-lounge-sofa.webp);
-}
-
-.slide-hero-background.slider-003 {
-  background-image: url(../images/bg/photo-team-meeting-conference-table.webp);
 }
 
 .slider-background {
@@ -8342,7 +8274,7 @@ blockquote {
 .spark-section.spark-dark-hero-background-image {
   min-height: 100vh;
   color: var(--spark-library-white);
-  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
+  background-image: linear-gradient(74.2deg, #45454575, #0000 0%);
   background-position: 0 0, 50% 0;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -8353,7 +8285,7 @@ blockquote {
 }
 
 .spark-section.spark-dark-hero-background-image._2 {
-  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/tiktok/competitive-ux-research-findings-board.webp);
+  background-image: linear-gradient(74.2deg, #45454575, #0000 0%);
   padding-left: 0;
   left: 0;
 }
@@ -8567,7 +8499,7 @@ blockquote {
 .wrap-s-3 {
   z-index: 2;
   background-color: #000;
-  background-image: linear-gradient(#00000080, #00000080), url(../images/bg/bg-monolith-panel-on-dusk-sea.webp);
+  background-image: linear-gradient(#00000080, #00000080);
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -8581,7 +8513,6 @@ blockquote {
 
 .bg-4 {
   z-index: 1;
-  background-image: url(../images/bg/bg-dark-tropical-foliage.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8630,7 +8561,6 @@ blockquote {
 
 .bg-3 {
   z-index: 1;
-  background-image: url(../images/bg/bg-monolith-panel-on-dusk-sea.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8653,7 +8583,6 @@ blockquote {
 
 .bg-2 {
   z-index: 1;
-  background-image: url(../images/bg/bg-diagonal-ridge-texture-dark.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8667,7 +8596,6 @@ blockquote {
 .wrap-s-4 {
   z-index: 1;
   background-color: #000;
-  background-image: url(../images/bg/bg-brown-wave-layers-dark.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8791,7 +8719,6 @@ blockquote {
 }
 
 .image-2 {
-  background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map.webp);
   background-position: 0 0;
   background-size: 125px;
   width: auto;
@@ -9086,7 +9013,6 @@ blockquote {
 
 .slide-2 {
   mix-blend-mode: normal;
-  background-image: url(../images/mckinsey/flow-research-findings-wall.webp);
   background-position: 50%;
   background-size: cover;
   margin-bottom: 15%;
@@ -9106,13 +9032,11 @@ blockquote {
 }
 
 .slide-3 {
-  background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map-plate.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-4 {
-  background-image: url(../images/mckinsey/wireframe-mobile-wireframe-and-login-flow-boards.webp);
   background-position: 0 0;
   background-size: 1032px;
 }
@@ -9124,19 +9048,16 @@ blockquote {
 }
 
 .slide-5 {
-  background-image: url(../images/mckinsey/hifi-liveshop-landing-and-mobile-final-design.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-7 {
-  background-image: url(../images/cummins/system-controls-library-design-system.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-6 {
-  background-image: url(../images/cummins/persona-marketing-manager-persona-card.webp);
   background-position: 0 0;
   background-size: cover;
 }
@@ -9164,7 +9085,6 @@ blockquote {
 }
 
 .image48.slidei {
-  background-image: url(../images/mckinsey/flow-seller-mvp-flow-priority-board.webp);
   background-position: 0 0;
   background-size: auto;
   margin-top: 15%;
@@ -9717,7 +9637,6 @@ blockquote {
 .grain {
   z-index: 1;
   opacity: .02;
-  background-image: url(../images/bg/bg-film-grain-noise.gif);
   background-position: 50%;
   background-size: auto;
   position: fixed;
@@ -11746,9 +11665,8 @@ blockquote {
   }
 
   .slide-2 {
-    background-image: url(../images/tiktok/competitive-account-and-profile-benchmark-board.webp);
     position: fixed;
-  }
+}
 
   .slider-4 {
     height: 80vh;
@@ -11757,26 +11675,9 @@ blockquote {
   
 
   .slide-3 {
-    background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map-plate.webp), url(../images/tiktok/competitive-live-commerce-competitor-matrix.webp);
     background-position: 0 0, 0 0;
     background-size: auto, cover;
-  }
-
-  .slide-4 {
-    background-image: url(../images/mckinsey/chart-concept-testing-scope-summary.webp);
-  }
-
-  .slide-5 {
-    background-image: url(../images/mckinsey/flow-seller-mvp-flow-feature-priority.webp);
-  }
-
-  .slide-7 {
-    background-image: url(../images/cummins/system-controls-library-with-figma-styles-panel.webp);
-  }
-
-  .slide-6 {
-    background-image: url(../images/cummins/persona-marketing-manager-persona-card-on-journey-map.webp);
-  }
+}
 
   .containerslide {
     grid-column-gap: 16px;
@@ -11801,10 +11702,9 @@ blockquote {
   }
 
   .image-47.slidei {
-    background-image: url(../images/tiktok/competitive-account-and-profile-benchmark-board.webp);
     background-position: 0 0;
     background-size: auto;
-  }
+}
 
   .right-arrow-2 {
     margin-left: 10vh;
@@ -13554,13 +13454,13 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: linear-gradient(74.2deg, #404040cf, #0000), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
+    background-image: linear-gradient(74.2deg, #404040cf, #0000);
     background-position: 0 0, 0 0;
     background-repeat: repeat, no-repeat;
     background-size: auto, cover;
     min-height: 60vh;
     padding-bottom: 161px;
-  }
+}
 
   .spark-section h1 {
     font-family: Plus Jakarta Sans, sans-serif;
@@ -14935,12 +14835,12 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: linear-gradient(113deg, #9c9c9c, var(--spark-library-border-default)), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
+    background-image: linear-gradient(113deg, #9c9c9c, var(--spark-library-border-default));
     background-position: 0 0, 50% 0;
     background-repeat: repeat, no-repeat;
     background-size: auto, cover;
     min-height: 50vh;
-  }
+}
 
   .spark-section h1 {
     font-family: Plus Jakarta Sans, sans-serif;
@@ -16628,7 +16528,6 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
     background-position: 50% 0;
     background-repeat: no-repeat;
     background-size: cover;
@@ -16636,7 +16535,7 @@ blockquote {
     padding-top: 40px;
     padding-bottom: 40px;
     position: relative;
-  }
+}
 
   .spark-section h1 {
     color: var(--grey);

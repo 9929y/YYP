@@ -81,7 +81,6 @@
 | `bg-navy-wireframe-curve-lines.webp` | 纯装饰图形：深墨蓝底上由密集细蓝线交织成的曲面网格（弦线扫掠形成的曲线），无文字与具体内容。旧文件名标为 mckinse | 背景 —— McKinsey 案例网格区块 .grid-wrapper-5.mck.ne |  |
 | `chart-additional-insights-to-validate.webp` | Other insights 页：列出五条待进一步验证的问题，包括区分 drop 商品与店铺常规商品、日历等物流类内容归 | 数据支撑 —— User Testing 章节收尾，列出尚待验证的开放问题 | ⚠️ |
 | `chart-concept-testing-goals-and-scope.webp` | Preliminary concept testing 研究计划页：左侧列出五条测试目标（验证直播内互动、购物袋与收藏、 | 数据支撑 —— User Testing 章节交代 8 场测试的目标与规模 | ⚠️ |
-| `chart-concept-testing-scope-summary.webp` | Preliminary concept testing 概览页：左列列出五项测试目标（验证直播/播后一键购买、聊天、字幕 | 数据支撑 —— 作为 .slide-4 的幻灯片图，用量化的测试规模支撑研究结论的可信度 | 💤 |
 | `chart-discover-flow-findings.webp` | Discover flow 测试结论三栏页：已验证上下滑动浏览最符合直觉、图标与 CTA 清晰、聊天功能受欢迎；机会点包 | 数据支撑 —— User Testing 章节呈现内容发现流程的验证结论 | ⚠️ |
 | `chart-events-calendar-flow-findings.webp` | Sign up for events and calendar flow 测试结论三栏页：已验证用户期待与周直播一致的滑 | 数据支撑 —— User Testing 章节呈现活动预约与日历流程的验证结论 | ⚠️ |
 | `chart-purchase-flow-findings.webp` | Purchase flow 测试结论三栏页：已验证结论（用户信任直播卡片中的商品、认可一键购买）、潜在机会（可编辑收货地 | 数据支撑 —— User Testing 章节呈现购买流程的验证结论与改进机会 | ⚠️ |
@@ -95,19 +94,12 @@
 | `competitive-interaction-pattern-gestures.webp` | 竞品拆解第 3 页「Interaction pattern / User-centric gestures」：左侧标注同 | 竞品对比 —— 支撑 Competitive Analysis 章节中手势与可达性的结论 | ⚠️ |
 | `competitive-userflow-onboarding-instructions.webp` | 竞品拆解第 2 页「Helpful instructions across multiple touchpoints」： | 竞品对比 —— 支撑 Competitive Analysis 章节对引导与学习成本的分 | ⚠️ |
 | `competitive-userflow-payment-and-scroll-gestures.webp` | 竞品拆解第 2 页「End-to-end user flow」：左侧对比预填信息与逐步填写两种支付流程步骤图，右侧用四张 | 竞品对比 —— 支撑 Competitive Analysis 章节里精简支付与滑动浏览 | ⚠️ |
-| `flow-live-shopping-user-flow-map-plate.webp` | 与前述九条流程总览同一张白板的另一份底图（Flow 1 直播+边看边买+反馈 到 Flow 9 搜索与商品页，含各流程的 | 流程说明 —— 作为 .slide-3 的幻灯片底层图，被前景卡片叠压时提供流程全貌 | 💤 |
-| `flow-live-shopping-user-flow-map.webp` | 直播电商项目的九条用户流程总览白板（Flow 1 直播+边看边买+反馈、Flow 2 购物袋与购买、Flow 3 注册与 | 流程说明 —— 作为 .image-2 的 CSS 背景，铺在流程章节底层撑起「已完成整 | 💤 |
 | `flow-liveshop-mvp-flow-buyer-seller-combined.webp` | Consolidated Alpha MVP flow - Buyer 合并视图：上半为买家四段路径，下半为卖家四段路径 | 流程说明 —— Product Ideation 章节展示买卖双方流程的交叉触点与运营衔 | ⚠️ |
 | `flow-liveshop-mvp-flow-buyer.webp` | Consolidated Alpha MVP Flow - Buyer 泳道图：顶部按 Sign up and onbo | 流程说明 —— Product Ideation 章节展示买家路径与分期功能优先级的对应 | ⚠️ |
 | `flow-liveshop-mvp-flow-seller.webp` | Consolidated Alpha MVP Flow - Seller 泳道图：顶部按 Entry and onboa | 流程说明 —— Product Ideation 章节展示卖家路径与分期功能优先级的对应 | ⚠️ |
 | `flow-livestream-shopping-three-flow-feature-map.webp` | LifeShop 三条端到端流程的白板总图：Flow 1 直播+一键购买+反馈、Flow 2 购物袋/结账/售后、Flo | 流程说明 —— Product Ideation 章节的总体流程与功能拆解底图 | ⚠️ |
-| `flow-research-findings-wall.webp` | 按流程组织的研究发现墙：Discover flow / Purchase flow / Sign up 与日历 flow | 流程说明 —— 作为 .slide-2 的幻灯片图，铺陈每条流程上的验证结论与机会点 | ⚠️💤 |
-| `flow-seller-mvp-flow-consolidated-board.webp` | 白板/Figma 全景截图：前景为「Consolidated Alpha MVP Flow – Seller」大表——顶 | 流程说明 —— Spark 案例深色首屏 .spark-dark-hero-backgr | ⚠️💤 |
-| `flow-seller-mvp-flow-feature-priority.webp` | Consolidated Alpha MVP Flow（卖家侧）：顶部四段流程泳道（入驻与 onboarding、建店与 | 流程说明 —— 作为 .slide-5 的幻灯片图，说明如何把流程转成分期功能优先级 | ⚠️💤 |
-| `flow-seller-mvp-flow-priority-board.webp` | Consolidated Alpha MVP Flow（卖家侧）的清晰完整版：顶部蓝色四段泳道（Entry and on | 流程说明 —— 作为 .image48.slidei 的图，完整呈现卖家侧流程与分期功能 | ⚠️💤 |
 | `flow-signup-to-one-click-purchase-flow.webp` | 精简后的横向主流程：注册开始探索 → 可选的偏好收集向导 → 可选新手引导 → 进入首页 → 观看直播或回放 → 选购商 | 流程说明 —— Streamlined userflow 章节展示改造后的主路径 | ⚠️ |
 | `hifi-liveshop-buyer-app-hifi-8up.webp` | LiveShop 买家端高保真界面 8 屏拼图：兴趣选择引导、直播购物页带商品卡与 Buy、另一场直播的收藏与分享操作、 | 界面展示 —— 案例页开篇 Duration/Role 区块用作方案总览 | ⚠️ |
-| `hifi-liveshop-landing-and-mobile-final-design.webp` | 直播电商产品 LiveShop 的最终高保真设计：中间是 Web 落地页（标题 Meet LiveShop、beta w | 界面展示 —— 作为 .slide-5 的幻灯片图，呈现从线框迭代到最终产品的结果 | ⚠️💤 |
 | `hifi-liveshop-landing-concept-blob-collage.webp` | LiveShop 落地页概念稿：居中标题与 beta waitlist 表单配黑色 Submit，四周用有机色块裁切嵌入 | 界面展示 —— Design Process 章节展示营销落地页的视觉方案候选之一 | ⚠️ |
 | `hifi-liveshop-landing-concept-green-wave.webp` | LiveShop 落地页概念稿：左侧黑色大标题与 beta waitlist 表单配橙色 Submit，右侧手作直播画面 | 界面展示 —— Design Process 章节展示营销落地页的视觉方案候选之一 | ⚠️ |
 | `hifi-liveshop-landing-concept-multicolor-headline.webp` | LiveShop 落地页概念稿：左侧彩色分词标题 Meet LiveShop 与 beta waitlist 表单，右侧 | 界面展示 —— Design Process 章节展示营销落地页的视觉方案候选之一 | ⚠️ |
@@ -127,7 +119,6 @@
 | `wireframe-liveshop-beta-lowfi-wireframe-map.webp` | LiveShop Beta 阶段低保真线框全景图，按 Marketing、Sign up and Onboarding、 | 界面展示 —— Design Process 章节展示 Beta 增量功能的线框规划 | ⚠️ |
 | `wireframe-liveshop-buyer-lowfi-wireframe-map.webp` | LiveShop 买家端低保真线框全景图，按 Marketing、Sign up and Onboarding、Live | 界面展示 —— Design Process 章节展示低保真阶段的买家端核心流程与页面结 | ⚠️ |
 | `wireframe-liveshop-seller-manager-lowfi-wireframes.webp` | LiveShop 卖家管理后台低保真线框图：Onboarding 与开店注册、Setting 商家与账单资料、Dashb | 界面展示 —— Design Process 章节展示卖家侧管理后台的线框结构 | ⚠️ |
-| `wireframe-mobile-wireframe-and-login-flow-boards.webp` | 线框与迭代过程白板：左侧三组红色标注的移动端线框流水线，右侧是落地页与直播页的高保真缩略图、以及一整片 Landing  | 界面展示 —— 作为 .slide-4 的幻灯片图，展示线框到成稿的迭代过程量 | 💤 |
 | `wireframe-single-hand-key-zone-callouts.webp` | LifeShop 直播页灰度线框，用橙框圈出关键区域：左屏标出底部主导航栏，右屏标出顶部 Live/For you/Up | 数据支撑 —— Single-hand mode 章节标注难以单手触达的区域 | ⚠️ |
 | `wireframe-single-hand-reach-heatmap-action-menu.webp` | LifeShop 直播页单手可达性热区图对照：左屏为收起的橙色加号浮动按钮，右屏为展开后的评论、收藏、点赞、分享、关闭竖 | 数据支撑 —— Single-hand mode 章节论证操作条落在拇指易达区 | ⚠️ |
 
@@ -187,12 +178,8 @@
 | `journey-marketplace-service-blueprint-four-stages.webp` | 四块服务蓝图看板并排：License Activation、Onboarding、Purchasing、Subscrip | 流程说明 —— Market&User Research for MarketPlace | ⚠️ |
 | `journey-marketplace-service-blueprint-overview.webp` | 「Service Blueprint — Mapping the Current Customer and Employ | 流程说明 —— Market&User Research for MarketPlace |  |
 | `logo-cummins-brand-logo.webp` | Cummins 品牌标志：深红色方形内嵌白色 C 形图案，弧线上排白色斜置字样「Cummins」 | 图标 —— 标识 Cummins 案例所属客户品牌 | ⚠️ |
-| `persona-marketing-manager-persona-card-on-journey-map.webp` | 与前一张同一份 Craig Fordham 用户画像卡，构图更贴近，背后清晰露出 Develop→Launch→Matu | 人物或场景 —— 作为 .slide-6 的幻灯片图，把画像与其背后的旅程图/访谈证据并 | ⚠️💤 |
-| `persona-marketing-manager-persona-card.webp` | B2B 用户画像卡：Craig Fordham，Tier 1 制造商的 Integrated Marketing Man | 人物或场景 —— 作为 .slide-6 的幻灯片图，说明研究阶段如何由 1on1 访谈 | ⚠️💤 |
 | `system-calibration-recovery-screen-spec-j6f.webp` | 标定安装异常处理的逐屏规格表（Screen J6f–J6i）：每行给出屏幕编号、警告/成功图标、状态标题、标定信息、问题 | 流程说明 —— Scenario Exploration 章节，说明异常分支的文案与动作 |  |
 | `system-calibration-recovery-screen-spec-j6j.webp` | 标定安装异常处理逐屏规格表的续页（Screen J6j–J6m）：列出参数未写入、模块进入 ROM Booted 无可用 | 流程说明 —— Scenario Exploration 章节，与 J6f–J6i 规格 | ⚠️ |
-| `system-controls-library-design-system.webp` | Figma 中的 Controls Library 页面：checkbox、radio、toggle 的全状态矩阵，co | 界面展示 —— 作为 .slide-7 的幻灯片图，证明为 MVP 搭建了组件与样式体系 | 💤 |
-| `system-controls-library-with-figma-styles-panel.webp` | 与 Controls Library 同一张设计系统截图的另一版构图，控件状态矩阵居中，左侧 Assets 组件面板、右 | 界面展示 —— 作为 .slide-7 的幻灯片图，强调样式令牌与效果层的定义 | 💤 |
 | `system-ecm-install-message-matrix-part1.webp` | Guidanz ECM 标定安装状态的消息规格表（第 1 段，Display Order 1–5）：左侧列出显示顺序、M | 流程说明 —— Scenario Exploration 章节，用来说明设计师如何穷举机 | ⚠️ |
 | `system-ecm-install-message-matrix-part2.webp` | Guidanz ECM 消息规格表第 2 段（Display Order 6–11）：覆盖版本兼容校验失败、Up to  | 流程说明 —— Scenario Exploration 章节，与前一段共同构成完整的状 | ⚠️ |
 | `system-ecm-install-message-matrix-part3.webp` | Guidanz ECM 消息规格表第 3 段（Display Order 13–17）：覆盖删除已下载标定码、无网络连接 | 流程说明 —— Scenario Exploration 章节，补齐网络与服务端异常分支 | ⚠️ |
@@ -266,9 +253,6 @@
 |---|---|---|---|
 | `chart-reasons-for-not-sharing-videos-female-vs-all.webp` | 分组条形图（黄色 Female / 灰色 All）：用户不愿分享视频的原因排序，前四位为「觉得不值得分享」「担心收到不友 | 数据支撑 —— 用调研数据证明女性用户的顾虑显著高于整体 |  |
 | `chart-unsafe-content-types-female-vs-all.webp` | 分组条形图（黄色 Female / 灰色 All）：用户遇到的不安全内容类型分布，依次为网络霸凌、色情低俗、仇恨言论、自 | 数据支撑 —— 说明女性用户实际遭遇的有害内容类型，指向安全策略优先级 |  |
-| `competitive-account-and-profile-benchmark-board.webp` | 账号与个人主页的对标白板：左半是各家 App 的账号/设置/直播页截图矩阵，中间 My account page 的社媒 | 竞品对比 —— 作为 .slide-2 的幻灯片图，用逐家对标支撑账号与个人页的信息架构 | 💤 |
-| `competitive-live-commerce-competitor-matrix.webp` | 直播电商竞品对比大表：横向 TikTok/抖音、Instagram、Livescale、YouTube、淘宝、Shein | 竞品对比 —— 作为 .slide-3 的幻灯片图，支撑对业务与设计机会的判断 | 💤 |
-| `competitive-ux-research-findings-board.webp` | 研究看板全景截图：前景白卡「Competitive UX/UI research – what we can learn | 竞品对比 —— Spark 案例深色首屏第二块 .spark-dark-hero-bac | ⚠️💤 |
 | `hero-egypt-female-safety-perception-title.webp` | TikTok 埃及市场调研的标题图：左侧为线描风格的戴头巾女性侧脸轮廓，配灰调与暖沙色渐变流线背景，右侧大字标题 Egy | 英雄图 —— 作为埃及女性用户安全感知调研章节的开篇视觉 |  |
 | `hero-tiktok-safety-strategy-cover.webp` | 案例封面图：右侧标题「TikTok Safety Strategy Exploration」，左侧扁平插画为一名低头双手 | 英雄图 —— TikTok 安全策略案例的封面图（.background-2.tikto |  |
 
@@ -331,31 +315,8 @@
 
 | 文件 | 是什么 | 在页面里做什么 | |
 |---|---|---|---|
-| `bg-avatar-placeholder.svg` | 未看图，据文件名推断：Webflow 默认的 background-image.svg 占位图，挂在 .author / | 装饰 —— 作为作者头像位（.avatar-image）的占位背景 | 💤 |
 | `bg-blue-string-art-fan.webp` | 白底上由密集细线构成的蓝色弦线艺术图形，两个三角形扇面在中心收束成一点。 | 背景 —— 作为 .background-2.contact-background 的联 |  |
-| `bg-brown-wave-layers-dark.webp` | 深棕偏黑的层叠波浪状表面，像堆叠的曲面薄片，右下角有一小块彩色反光。 | 背景 —— 作为 .wrap-s-4 的 CSS 背景，给暗色区块铺抽象质感 | 💤 |
-| `bg-dark-tropical-foliage.webp` | 光线很暗的热带植物丛，龟背竹、蔓绿绒等大叶片重叠，仅少数叶面受光。 | 背景 —— 作为 .bg-4 的 CSS 背景，给区块铺自然质感底图 | ⚠️💤 |
-| `bg-diagonal-ridge-texture-dark.webp` | 近黑色斜向排列的连续棱纹立体表面，只有边缘高光，无任何内容元素。 | 背景 —— 作为 .bg-2 的 CSS 背景，给暗色区块提供纹理 | 💤 |
-| `bg-film-grain-noise.gif` | 黑白随机噪点动图，用于叠加颗粒质感，无任何图形内容。 | 背景 —— 作为 .grain 图层全屏叠加，给页面加胶片颗粒感 | 💤 |
 | `bg-gradient-blob-cluster.webp` | 纯黑底上沿对角线排布的八个渐变几何色块，圆形与水滴/方形圆角混合，配色为洋红、紫、蓝紫与白。 | 装饰 —— 作为 .div-block-41 / .div-block-42 的图形装饰 |  |
 | `bg-horizontal-gradient-stripe-band.webp` | 纯装饰图形：五条水平色带（浅蓝、红、灰、蓝紫、粉）自左向右淡出为白色，超宽比例（3200×442），无任何内容或文字。 | 装饰 —— .div-block-7 的横向分隔/渐变色带背景 |  |
-| `bg-monolith-panel-on-dusk-sea.webp` | 暮色海面上斜插着一块发光的浅色矩形板，整体蓝紫色调、雾感很重，纯氛围图。 | 背景 —— 作为 .bg-3 / .wrap-s-3 的 CSS 背景铺满区块，营造暗色 | 💤 |
 | `photo-beijing-skyline-sunset-through-window.webp` | 实拍照片：透过办公楼十字格窗框俯瞰城市天际线，落日贴着远山落下，暖橙天空与逆光楼群剪影，街道纵深向画面深处延伸。 | 英雄图 —— Services 页首屏 .services-hero-backgroun | ⚠️ |
-| `photo-hand-holding-minimal-magazine.webp` | 图库照片：一只手拿起摊在木质矮凳上的极简风杂志（内页标题 minimal project），旁边两只白色陶瓷瓶与干芦苇， | 英雄图 —— Journal 页首屏 .journal-hero-background  | 💤 |
-| `photo-man-headshot-grey-sweater.webp` | 图库人像：深色头发男性正面微笑证件式头像，灰色针织衫内搭浅蓝点纹衬衫，灰蓝纯色背景。 | 人物或场景 —— 默认 .avatar 头像位的 CSS 背景 | ⚠️💤 |
-| `photo-man-portrait-beanie-leather-jacket.webp` | 图库人像：戴黑色短针织帽、穿黑皮夹克与白衬衫的年轻男性侧望，冷蓝光打在脸侧，浅色背景。 | 人物或场景 —— .avatar-005 头像位的 CSS 背景 | 💤 |
-| `photo-models-black-studio-low-angle-dup.webp` | 图库时装照：与 id=013 完全相同的低机位棚拍三人黑衣构图，此处为 1280×1600 版本。 | 背景 —— Instagram 图墙第一格与 .team-image-003 的 CSS | 💤 |
-| `photo-models-black-studio-low-angle.webp` | 图库时装照：低机位仰拍，前景一只穿细带高跟鞋的腿横入画面，中景女性坐在细钢管椅上，右后方另一名女性站立，米白圆形光斑背景 | 英雄图 —— Contact 页首屏 .contact-hero-background  | 💤 |
-| `photo-models-studio-circle-backdrop.webp` | 图库时装照：一名女性坐在细钢管椅上，另一名穿黑皮西装的女性从右侧走过，灰色棚拍空间中一枚米白圆形光斑与硬光投影。 | 背景 —— 推荐语区块 .testimonial-background 的 CSS 背景 | 💤 |
-| `photo-team-discussion-laptop-table.webp` | 图库照片：四人隔着白色长桌交谈，前景是贴着贴纸的银色笔记本电脑背面与两只保温杯，背景绿植与玻璃门。 | 背景 —— .team-image-004 团队区块的 CSS 背景图 | 💤 |
-| `photo-team-meeting-conference-table.webp` | 图库照片：六人围坐白色长条会议桌开会，深灰墙面、圆镜与石膏头像装饰，一人在用贴满贴纸的笔记本电脑。 | 英雄图 —— About 页首屏背景，同时用作首页轮播第三张背景 | 💤 |
-| `photo-team-meeting-pizza-boxes.webp` | 图库照片：四名年轻同事围坐深色木质会议桌，一人站着打开叠放的披萨外卖盒，背景是玻璃隔断办公室。 | 背景 —— 作为 .team-image-002 团队区块的 CSS 背景图铺底 | 💤 |
-| `photo-team-sharing-pizza-meeting.webp` | 图库照片：五名同事同时伸手去拿会议桌上敞开的披萨外卖盒，背景显示器上显示一张设计稿，玻璃隔断办公室。 | 背景 —— About 页区块背景，同时用于 Instagram 图墙第四格 | 💤 |
-| `photo-three-men-seated-cropped.webp` | 图库照片：三名男性坐在灰色背景前的裁切构图，只见躯干与手部——绿色外套、米色长裤、浅蓝衬衫，无人露全脸。 | 背景 —— 首页轮播 .slide-hero-background.three 的 CS | 💤 |
-| `photo-three-models-black-outfits-studio-crop.webp` | 图库时装照：与 id=005 同一张三名黑衣女性棚拍照，此处为略小的裁切版本。 | 背景 —— Instagram 图墙第三格 .instagram-three 的 CSS | 💤 |
 | `photo-three-models-black-outfits-studio.webp` | 图库时装照：三名穿全黑皮质西装与吊带长裙的女性在灰色棚拍背景前，身后一枚米白圆形光斑。 | 背景 —— 通用 .background 与首页轮播第一张的 CSS 背景 |  |
-| `photo-two-models-black-minimal-studio.webp` | 图库时装照：前景女性穿黑色吊带长裙立于强光斜影中，背景另一名女性穿黑皮西装套装虚焦站立，灰白极简空间。 | 背景 —— .team-image-001 团队区块的 CSS 背景图 | 💤 |
-| `photo-two-people-talking-lounge-sofa.webp` | 图库照片：戴黑色礼帽的男子与短发女子坐在绿色沙发上交谈，水泥毛坯墙上投着二人剪影，圆桌上放两杯水。 | 背景 —— Instagram 图墙第二格与首页轮播第二张的 CSS 背景 | ⚠️💤 |
-| `photo-woman-headshot-sunglasses-smiling.webp` | 图库人像：戴圆框墨镜与大圈耳环、盘发的女性开怀大笑，穿格纹背带裙，背景为条纹墙面。 | 人物或场景 —— .avatar-003 头像位的 CSS 背景 | ⚠️💤 |
-| `photo-woman-portrait-black-hat-agave.webp` | 图库人像：戴宽檐黑帽、红唇短发的年轻女性站在龙舌兰叶片前，灰色针织上衣，半身竖构图。 | 人物或场景 —— .avatar-004 头像位的 CSS 背景 | 💤 |
-| `photo-woman-profile-braids-teal-backdrop.webp` | 图库人像：长辫发女性侧脸特写，戴金色几何耳饰、穿彩色几何印花衬衫，青绿色纯色背景。 | 人物或场景 —— .avatar-002 头像位的 CSS 背景 | ⚠️💤 |
