@@ -7413,7 +7413,7 @@ blockquote {
 }
 
 .heading-medium-4.new {
-  font-family: Georgia, Times, Times New Roman, serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
 }
@@ -8093,6 +8093,7 @@ blockquote {
   border-style: none;
   border-width: 1px;
   margin: 1px;
+  font-family: Georgia, Times, Times New Roman, serif;
 }
 
 .grid-18 {
@@ -11662,7 +11663,6 @@ blockquote {
     color: #2b2b2b;
     text-align: left;
     margin: 1% 0 0;
-    font-family: Palatino Linotype, Book Antiqua, Palatino, serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 1.1em;
@@ -11725,9 +11725,7 @@ blockquote {
     height: 80vh;
   }
 
-  .italic-text {
-    font-family: Plus Jakarta Sans, sans-serif;
-  }
+  
 
   .slide-3 {
     background-image: url(../images/66d2c8843d23d8421dd33e3f_Frame5.webp), url(../images/66d2c3ad53107543f327ea45_Frame_4-_.webp);
