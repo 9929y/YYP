@@ -14,7 +14,10 @@ animation stays pixel-for-pixel the same.
   (e.g. `index.html` went from 2 minified lines to ~284 readable ones).
 - **Trimmed fonts** — removed 3 webfonts with zero references (Cairo, Caveat
   Brush, Space Mono); 8 used families kept.
-- **Dropped 3 unused font `.zip` archives** (leftover downloads, never referenced).
+- **Dropped 3 unused font `.zip` archives.** Correction (2026-08-17): they were
+  *not* unreferenced — three `@font-face` rules pointed at them with
+  `format("undefined")`. No rule ever used those family names, so nothing 404'd,
+  but the dangling rules survived this pass. They were removed later; see below.
 
 ## Image pass — WebP + resolution cap (2026-08-17)
 
@@ -68,3 +71,24 @@ placeholder project card since 2026-07-06 — six weeks of `[New Project Title �
 removed (`new-project.html` deleted, card dropped from `index.html`), which is
 what brings this tree back in line with production. If you push, push the deploy
 too, and diff against live afterwards.
+
+## Font pass (2026-08-17)
+
+Every page loaded **8 Google families / 52 weight variants**; four of them —
+Merriweather, Lato, Inconsolata, Pacifico — were used **nowhere on the site**.
+Removed from the `WebFont.load` call on all 11 pages, leaving 4 families / 29
+variants. The Google request no longer mentions them; rendering is unchanged
+(verified via computed styles: Montserrat 87 nodes, Georgia 4, Caveat 1 on
+mckinseyecommerce.html, identical before and after).
+
+Also deleted the **3 dangling `@font-face` rules** — Pacifico, "Caveat Pacifico",
+"Caveat Pacifico Varela Round" — each pointing at a `.zip` that no longer exists,
+with `format("undefined")` and unquoted multi-word family names. No rule used
+those names, so they never produced a request; they were dead weight.
+
+Weights were left alone: `<em>` appears 14 times and `.italic-text*` classes 14
+times, so Montserrat's italics are genuinely in use and trimming them would not
+have been the zero-risk change it looks like.
+
+Full typography audit and the proposed 8-step type scale:
+`AI_materials_library/01_projects/portfolio_ux/05_type_audit_and_scale.md`

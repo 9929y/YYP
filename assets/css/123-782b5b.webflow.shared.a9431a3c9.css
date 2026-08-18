@@ -2169,30 +2169,6 @@ textarea.w-select {
   display: grid;
 }
 
-@font-face {
-  font-family: Pacifico;
-  src: url(25704a24_67ec936ffd496c916624509e_Pacifico.zip) format("undefined");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Caveat Pacifico;
-  src: url(a27e4e3c_67ec93e0d52fd02665cc0193_Caveat_Pacifico.zip) format("undefined");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Caveat Pacifico Varela Round;
-  src: url(5bd5ae58_67ec93ecfd496c9166249e6a_Caveat_Pacifico_Varela_Round.zip) format("undefined");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --body-display: #626d86;
   --pinstripe: #889ea833;
