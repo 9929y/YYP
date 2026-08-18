@@ -447,6 +447,7 @@ h3 {
   line-height: 30px;
 }
 
+
 h4 {
   margin-top: 10px;
   font-size: 1.25rem;
@@ -2262,6 +2263,10 @@ h3 {
   font-weight: 500;
   line-height: 1.3em;
 }
+
+
+
+
 
 h4 {
   margin-top: 0;
@@ -7162,7 +7167,7 @@ blockquote {
   padding-left: 0%;
   padding-right: 0%;
   font-size: .8125rem;
-  line-height: 110%;
+  line-height: 1.45;
   text-decoration: none;
   display: flex;
 }
@@ -7171,7 +7176,7 @@ blockquote {
   padding-left: 10%;
   padding-right: 10%;
   font-size: .8125rem;
-  line-height: 120%;
+  line-height: 1.45;
 }
 
 .paragraph-annotation._70 {
@@ -7180,6 +7185,7 @@ blockquote {
   padding-right: 0%;
   text-decoration: none;
   display: flex;
+  line-height: 1.45;
 }
 
 .paragraph-annotation.mck {
@@ -7192,6 +7198,7 @@ blockquote {
   font-size: 1.25rem;
   font-weight: 400;
   display: block;
+  line-height: 1.45;
 }
 
 .rotate-grid-container {
@@ -7243,14 +7250,14 @@ blockquote {
 }
 
 .paragraph {
-  max-width: Infinity%;
+  max-width: 36em;
   color: var(--spark-library-black);
   text-align: left;
   padding-left: 0%;
   font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.4em;
+  line-height: 1.55;
 }
 
 .paragraph.addpad {
@@ -7263,12 +7270,13 @@ blockquote {
   font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.55;
 }
 
 .paragraph.white._1 {
   padding-left: 5%;
   padding-right: 5%;
+  line-height: 1.55;
 }
 
 .grid-img-center-shadow {
@@ -7733,7 +7741,8 @@ blockquote {
   text-align: left;
   padding-left: 0%;
   font-size: 1rem;
-  line-height: 1.4em;
+  line-height: 1.55;
+  max-width: 36em;
 }
 
 .textblockp1.wt {
@@ -11463,7 +11472,7 @@ blockquote {
 
   .paragraph-annotation {
     font-size: .8125rem;
-    line-height: 120%;
+    line-height: 1.45;
     text-decoration: none;
   }
 
@@ -11494,7 +11503,7 @@ blockquote {
   .paragraph {
     font-family: Plus Jakarta Sans, sans-serif;
     font-size: 1rem;
-    line-height: 1.4em;
+    line-height: 1.55;
   }
 
   .paragraph.white {
@@ -11505,7 +11514,7 @@ blockquote {
     font-family: Plus Jakarta Sans, sans-serif;
     font-size: 1rem;
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.55;
     text-decoration-style: solid;
   }
 
@@ -11596,7 +11605,7 @@ blockquote {
 
   .textblockp1 {
     font-size: 1rem;
-    line-height: 1.2;
+    line-height: 1.55;
   }
 
   .grid-13 {
@@ -13448,7 +13457,7 @@ blockquote {
 
   .textblockp1 {
     font-size: 1rem;
-    line-height: 1.4;
+    line-height: 1.55;
   }
 
   .textblockp1.wt {
@@ -16291,7 +16300,7 @@ blockquote {
 
   .paragraph {
     font-size: .6875rem;
-    line-height: 1.2em;
+    line-height: 1.55;
   }
 
   .paragraph.white {
