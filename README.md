@@ -92,3 +92,36 @@ have been the zero-risk change it looks like.
 
 Full typography audit and the proposed 8-step type scale:
 `AI_materials_library/01_projects/portfolio_ux/05_type_audit_and_scale.md`
+
+## Mobile legibility fix (2026-08-17)
+
+Below 992px the site rendered real content text at sizes no one can read: an
+`<h1>` at **6.4px** (larkdesign's counter labels), body paragraphs at **7px**
+(ai-driven-product-design), card headings at **8px**. At 479px, 92 elements sat
+under 10px. On desktop, none did — which is why this had gone unnoticed.
+
+Twenty rules were retuned, all of them inside `≤991px` / `≤767px` / `≤479px`
+media queries. **Desktop is untouched**: measured across all 11 pages at 1440px,
+the font-size distribution is identical before and after — same 26 sizes, same
+450 elements, same count for every size.
+
+| | before | after |
+|---|---|---|
+| smallest size at 479px | 6.4px | **10px** |
+| elements under 11px at 479px | 110 | **6** |
+
+Targets come from the agreed scale: 11px for captions and labels, 13px for body
+copy and headings. Checked at 375px on all 11 pages: no page overflows
+horizontally and no text is clipped, including the counter labels that grew 72%.
+
+Two `em`-based rules (`.paragraph.white`, `.paragraph.white._1`) became `rem` on
+the way — `em` multiplies against the parent and was the least predictable size
+source in the file.
+
+Still 10px and deliberately left alone: the "Scroll" button label
+(`.circle-button-2` / `-3`) and the footer credit (`.footer-credit-wrapper`,
+8px). Both are base rules, so changing them would alter desktop too — a
+different decision from this one.
+
+Method and full mapping:
+`AI_materials_library/01_projects/portfolio_ux/05_type_audit_and_scale.md`
