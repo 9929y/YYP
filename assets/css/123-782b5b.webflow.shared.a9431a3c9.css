@@ -2174,6 +2174,7 @@ textarea.w-select {
   --pinstripe: #889ea833;
   --grey: #eef0f6;
   --coral: #ff6f44;
+  --coral-text: #e03400;
   --shaddow: #292b4e12;
   --spark-library-border-default: #00000029;
   --cmi: #980000;
@@ -2185,7 +2186,7 @@ textarea.w-select {
   --grey-layer: #434342;
   --gainsboro: #e3e3e3;
   --dark-slate-blue: #173c96;
-  --orange-red: #ff4b27;
+  --orange-red: #e62600;
   --spark-library-foreground-secondary: #000000c2;
   --zi: #debbfd;
   --silver: #bcbcbc;
@@ -5417,7 +5418,7 @@ blockquote {
 }
 
 .heading-medium.style.xiaomi {
-  color: var(--coral);
+  color: var(--coral-text);
   text-align: left;
   font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.25rem;
@@ -6330,7 +6331,7 @@ blockquote {
 }
 
 .xxl-heading-2.larkblue {
-  color: #84b6ff;
+  color: #4b94ff;
   font-weight: 500;
   line-height: 1.15em;
 }
@@ -6566,7 +6567,7 @@ blockquote {
 }
 
 .heading-xl.larkblue {
-  color: #5791e8;
+  color: #2a73e2;
   max-height: 100%;
   font-size: 2.5rem;
   font-weight: 700;
@@ -6594,7 +6595,7 @@ blockquote {
 }
 
 .heading-xl.larkblue.count4 {
-  color: #84b6ff;
+  color: #4b94ff;
   font-size: 3rem;
   line-height: 1em;
 }
@@ -6961,7 +6962,7 @@ blockquote {
 }
 
 .heading-medium-3 {
-  color: #5791e8;
+  color: #2a73e2;
   text-align: left;
   margin-right: 0%;
   padding: 2% 0%;
@@ -6973,7 +6974,7 @@ blockquote {
 }
 
 .heading-medium-3.larkblue {
-  color: #5791e8;
+  color: #2a73e2;
   margin-right: 0%;
   font-size: 1rem;
   font-weight: 600;
@@ -7006,7 +7007,7 @@ blockquote {
 }
 
 .heading-medium-3.orange.new {
-  color: var(--coral);
+  color: var(--coral-text);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -7026,7 +7027,7 @@ blockquote {
 }
 
 .heading-medium-3.mck {
-  color: var(--coral);
+  color: var(--coral-text);
   padding-left: 0%;
   padding-right: 0%;
   font-family: Plus Jakarta Sans, sans-serif;
@@ -7397,12 +7398,12 @@ blockquote {
 }
 
 .heading-medium-4.larkblue.inside10.imagetext {
-  color: #84b6ff;
+  color: #4b94ff;
   font-size: 1.5625rem;
 }
 
 .heading-medium-4.larkblue.inside10.imagetext.inside-10 {
-  color: #4e96ff;
+  color: #096dff;
   padding-bottom: 1%;
   padding-left: 0%;
   font-size: 1rem;
@@ -7806,7 +7807,7 @@ blockquote {
 }
 
 .heading-xl-2.larkblue {
-  color: #5791e8;
+  color: #2a73e2;
   max-height: 100%;
   font-size: 2.5rem;
   font-weight: 700;
@@ -7814,7 +7815,7 @@ blockquote {
 }
 
 .heading-xl-2.larkblue.count4 {
-  color: #84b6ff;
+  color: #4b94ff;
   font-size: 3rem;
   line-height: 1em;
 }
@@ -7830,7 +7831,7 @@ blockquote {
 }
 
 .heading-medium-5 {
-  color: #5791e8;
+  color: #2a73e2;
   margin-right: 0%;
   padding: 2% 0%;
   font-size: 1.5625rem;
@@ -9072,7 +9073,7 @@ blockquote {
 }
 
 .italic-text {
-  color: #ff923e;
+  color: #f56b00;
   margin-left: 14px;
   font-weight: 400;
 }
@@ -11387,7 +11388,7 @@ blockquote {
   }
 
   .heading-medium-3.mck {
-    color: var(--coral);
+    color: var(--coral-text);
     font-size: 1.25rem;
     font-weight: 500;
     line-height: 1.3;
@@ -11621,7 +11622,7 @@ blockquote {
   }
 
   .heading-xl-2.change.orange {
-    color: var(--coral);
+    color: var(--coral-text);
   }
 
   .image-24 {
@@ -13302,7 +13303,7 @@ blockquote {
   }
 
   .heading-medium-3.mck {
-    color: var(--coral);
+    color: var(--coral-text);
   }
 
   .heading-medium-3.live {
