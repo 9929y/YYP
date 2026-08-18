@@ -56,6 +56,18 @@ Homepage, the AI case study (7 videos), and the Lark case study were checked
 after cleanup: CSS applies, all images/videos load, Lottie + Webflow animations
 run, and no broken references remain.
 
+## Image catalog
+
+`assets/images/CATALOG.md` describes all 261 distinct images — what each one
+shows, the job it does on the page, and whether it can be reused elsewhere.
+`assets/images/manifest.json` is the same data one record per image, with the
+pre-rename filename kept in `legacy` so anything can be traced back through git.
+
+Files live in per-case-study folders under names that say what they are:
+`lark/flow-lark-mobile-add-external-contact-5up.webp` rather than
+`62f86a4a9fb1b00887d462c0_Group_538.webp`. Responsive variants keep the Webflow
+`-p-NNN` suffix and sit beside their original.
+
 ## Deploy state (verified 2026-08-17)
 
 **All 11 pages in this working tree are byte-identical to yaniceyang.com.**
