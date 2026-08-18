@@ -2419,7 +2419,7 @@ blockquote {
 }
 
 .background {
-  background-image: url(../images/62dc97a29e217355dc0412ea_033.webp);
+  background-image: url(../images/bg/photo-three-models-black-outfits-studio.webp);
   background-position: 50% 35%;
   background-size: cover;
   position: absolute;
@@ -2427,66 +2427,66 @@ blockquote {
 }
 
 .background.instagram-one {
-  background-image: url(../images/62dc97a29e2173fd860412c0_012.webp);
+  background-image: url(../images/bg/photo-models-black-studio-low-angle-dup.webp);
 }
 
 .background.testimonial-background {
-  background-image: url(../images/62dc97a29e2173f1920412e9_032.webp);
+  background-image: url(../images/bg/photo-models-studio-circle-backdrop.webp);
   background-position: 50% 0;
 }
 
 .background.about-background {
-  background-image: url(../images/62dc97a29e2173d3e60412d1_018.webp);
+  background-image: url(../images/bg/photo-team-sharing-pizza-meeting.webp);
 }
 
 .background.services-hero-background {
   -webkit-text-fill-color: inherit;
   object-fit: fill;
-  background-image: url(../images/62dcca3db127ce42f2d2fd3a_IMG_2024.webp);
+  background-image: url(../images/bg/photo-beijing-skyline-sunset-through-window.webp);
   background-clip: border-box;
   position: absolute;
   top: 0%;
 }
 
 .background.journal-hero-background {
-  background-image: url(../images/62dc97a29e2173d6c60412c1_002.webp);
+  background-image: url(../images/bg/photo-hand-holding-minimal-magazine.webp);
 }
 
 .background.about-hero-background {
-  background-image: url(../images/62dc97a29e21731a280412ca_017.webp);
+  background-image: url(../images/bg/photo-team-meeting-conference-table.webp);
 }
 
 .background.contact-hero-background {
-  background-image: url(../images/62dc97a29e217383a80412eb_034.webp);
+  background-image: url(../images/bg/photo-models-black-studio-low-angle.webp);
   background-position: 50% 30%;
 }
 
 .background.team-image-001 {
-  background-image: url(../images/62dc97a29e21737ee50412d5_021.webp);
+  background-image: url(../images/bg/photo-two-models-black-minimal-studio.webp);
 }
 
 .background.team-image-002 {
-  background-image: url(../images/62dc97a29e217302340412e3_030.webp);
+  background-image: url(../images/bg/photo-team-meeting-pizza-boxes.webp);
 }
 
 .background.team-image-003 {
-  background-image: url(../images/62dc97a29e2173fd860412c0_012.webp);
+  background-image: url(../images/bg/photo-models-black-studio-low-angle-dup.webp);
 }
 
 .background.team-image-004 {
-  background-image: url(../images/62dc97a29e217347780412e4_029.webp);
+  background-image: url(../images/bg/photo-team-discussion-laptop-table.webp);
 }
 
 .background.instagram-two {
-  background-image: url(../images/62dc97a29e217344850412c9_016.webp);
+  background-image: url(../images/bg/photo-two-people-talking-lounge-sofa.webp);
 }
 
 .background.instagram-three {
-  background-image: url(../images/62dc97a29e2173664a0412f2_006.webp);
+  background-image: url(../images/bg/photo-three-models-black-outfits-studio-crop.webp);
 }
 
 .background.instagram-four {
-  background-image: url(../images/62dc97a29e2173d3e60412d1_018.webp);
+  background-image: url(../images/bg/photo-team-sharing-pizza-meeting.webp);
 }
 
 .background.action-background {
@@ -2496,13 +2496,13 @@ blockquote {
 }
 
 .background.action-background.al2 {
-  background-image: url(../images/62fb20255deb236280851c15_Group_547-min.webp);
+  background-image: url(../images/alzheimer/photo-hospital-ward-observation-contact-sheet.webp);
   background-position: 0 0;
   background-size: contain;
 }
 
 .background.al3 {
-  background-image: url(../images/62fc58647fe9adf65c2c90fc_UX_Deliverables_edited_edited.webp);
+  background-image: url(../images/alzheimer/wireframe-hand-drawn-ux-deliverable-sketches.webp);
   height: 70%;
   bottom: 15%;
 }
@@ -3429,7 +3429,7 @@ blockquote {
 }
 
 .avatar {
-  background-image: url(../images/62dc97a29e21736bca0412f0_Portrait013.webp);
+  background-image: url(../images/bg/photo-man-headshot-grey-sweater.webp);
   background-position: 50% 0;
   background-repeat: no-repeat;
   background-size: cover;
@@ -3439,22 +3439,22 @@ blockquote {
 }
 
 .avatar.avatar-002 {
-  background-image: url(../images/62dc97a29e21737e240412dd_Portrait003.webp);
+  background-image: url(../images/bg/photo-woman-profile-braids-teal-backdrop.webp);
   background-position: 50% 30%;
 }
 
 .avatar.avatar-003 {
-  background-image: url(../images/62dc97a29e21736cc40412de_Portrait015.webp);
+  background-image: url(../images/bg/photo-woman-headshot-sunglasses-smiling.webp);
   background-position: 50% 30%;
 }
 
 .avatar.avatar-004 {
-  background-image: url(../images/62dc97a29e2173468a0412df_Portrait019.webp);
+  background-image: url(../images/bg/photo-woman-portrait-black-hat-agave.webp);
   background-position: 50% 10%;
 }
 
 .avatar.avatar-005 {
-  background-image: url(../images/62dc97a29e217365340412e1_Portrait004.webp);
+  background-image: url(../images/bg/photo-man-portrait-beanie-leather-jacket.webp);
 }
 
 .testimonial-name {
@@ -3715,7 +3715,7 @@ blockquote {
 
 .author {
   border: 4px solid var(--grey);
-  background-image: url(../images/background-image.svg);
+  background-image: url(../images/bg/bg-avatar-placeholder.svg);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4202,7 +4202,7 @@ blockquote {
 }
 
 .avatar-image {
-  background-image: url(../images/background-image.svg);
+  background-image: url(../images/bg/bg-avatar-placeholder.svg);
   background-position: 50% 30%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4541,7 +4541,7 @@ blockquote {
 }
 
 .slide-hero-background {
-  background-image: url(../images/62dc97a29e217355dc0412ea_033.webp);
+  background-image: url(../images/bg/photo-three-models-black-outfits-studio.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -4550,20 +4550,20 @@ blockquote {
 }
 
 .slide-hero-background.three {
-  background-image: url(../images/62dc97a29e217359ec0412f1_072.webp);
+  background-image: url(../images/bg/photo-three-men-seated-cropped.webp);
 }
 
 .slide-hero-background.slider-001 {
-  background-image: url(../images/62dc97a29e217355dc0412ea_033.webp);
+  background-image: url(../images/bg/photo-three-models-black-outfits-studio.webp);
   background-position: 50% 25%;
 }
 
 .slide-hero-background.slider-002 {
-  background-image: url(../images/62dc97a29e217344850412c9_016.webp);
+  background-image: url(../images/bg/photo-two-people-talking-lounge-sofa.webp);
 }
 
 .slide-hero-background.slider-003 {
-  background-image: url(../images/62dc97a29e21731a280412ca_017.webp);
+  background-image: url(../images/bg/photo-team-meeting-conference-table.webp);
 }
 
 .slider-background {
@@ -6395,7 +6395,7 @@ blockquote {
 }
 
 .background-2.contact-background {
-  background-image: url(../images/67c8af476208d9939722b49e_Partnership_Mark.webp);
+  background-image: url(../images/bg/bg-blue-string-art-fan.webp);
   background-position: 50%;
   background-attachment: scroll;
   margin-top: 58%;
@@ -6409,7 +6409,7 @@ blockquote {
 }
 
 .background-2.tiktok {
-  background-image: url(../images/630a9fb01df18339ea20d32c_Desktop_-_1.webp);
+  background-image: url(../images/tiktok/hero-tiktok-safety-strategy-cover.webp);
   background-position: 50%;
   background-size: 100%;
   min-width: 70%;
@@ -6430,7 +6430,7 @@ blockquote {
 }
 
 .grid-wrapper-5.mck.new._1 {
-  background-image: url(../images/632a7ac76830f78e9457a9ae_mckinsey_cs_image_lead.webp);
+  background-image: url(../images/mckinsey/bg-navy-wireframe-curve-lines.webp);
   background-position: 0 0;
   background-size: auto;
 }
@@ -6449,7 +6449,7 @@ blockquote {
 }
 
 .grid-wrapper-5.cmi {
-  background-image: url(../images/67cdec1517a019a3c5e309d9_MacBook_Pro_16__-_2.webp);
+  background-image: url(../images/cummins/bg-red-string-art-fan-dark.webp);
   background-position: 50%;
   background-size: auto;
   padding-bottom: 0;
@@ -8034,7 +8034,7 @@ blockquote {
 
 .div-block-7 {
   -webkit-text-fill-color: inherit;
-  background-image: url(../images/62f946e194bc0a83ea7a7690_1231.webp);
+  background-image: url(../images/bg/bg-horizontal-gradient-stripe-band.webp);
   background-position: 0 0;
   background-size: cover;
   background-clip: border-box;
@@ -8153,7 +8153,7 @@ blockquote {
 
 .div-block-8 {
   z-index: 1;
-  background-image: url(../images/62fc58647fe9adf65c2c90fc_UX_Deliverables_edited_edited.webp);
+  background-image: url(../images/alzheimer/wireframe-hand-drawn-ux-deliverable-sketches.webp);
   background-position: 0 0;
   background-size: cover;
   height: 33rem;
@@ -8342,7 +8342,7 @@ blockquote {
 .spark-section.spark-dark-hero-background-image {
   min-height: 100vh;
   color: var(--spark-library-white);
-  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/63c70a1c6823308923dc5fa3_M1.webp);
+  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
   background-position: 0 0, 50% 0;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -8353,7 +8353,7 @@ blockquote {
 }
 
 .spark-section.spark-dark-hero-background-image._2 {
-  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/63c87cfc70feea27da373f6c_Frame_3.webp);
+  background-image: linear-gradient(74.2deg, #45454575, #0000 0%), url(../images/tiktok/competitive-ux-research-findings-board.webp);
   padding-left: 0;
   left: 0;
 }
@@ -8567,7 +8567,7 @@ blockquote {
 .wrap-s-3 {
   z-index: 2;
   background-color: #000;
-  background-image: linear-gradient(#00000080, #00000080), url(../images/63c8bbb8d021612b06c67fae_2.webp);
+  background-image: linear-gradient(#00000080, #00000080), url(../images/bg/bg-monolith-panel-on-dusk-sea.webp);
   background-position: 0 0, 50%;
   background-repeat: repeat, no-repeat;
   background-size: auto, cover;
@@ -8581,7 +8581,7 @@ blockquote {
 
 .bg-4 {
   z-index: 1;
-  background-image: url(../images/63c8bbb8d0216164e9c67fb4_3.webp);
+  background-image: url(../images/bg/bg-dark-tropical-foliage.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8630,7 +8630,7 @@ blockquote {
 
 .bg-3 {
   z-index: 1;
-  background-image: url(../images/63c8bbb8d021612b06c67fae_2.webp);
+  background-image: url(../images/bg/bg-monolith-panel-on-dusk-sea.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8653,7 +8653,7 @@ blockquote {
 
 .bg-2 {
   z-index: 1;
-  background-image: url(../images/63c8bbb8d021616310c67fba_1.webp);
+  background-image: url(../images/bg/bg-diagonal-ridge-texture-dark.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8667,7 +8667,7 @@ blockquote {
 .wrap-s-4 {
   z-index: 1;
   background-color: #000;
-  background-image: url(../images/63c8bbb8d0216175cdc67fc0_3.webp);
+  background-image: url(../images/bg/bg-brown-wave-layers-dark.webp);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -8791,7 +8791,7 @@ blockquote {
 }
 
 .image-2 {
-  background-image: url(../images/63c8c250886de8d404edbe32_Frame_1.webp);
+  background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map.webp);
   background-position: 0 0;
   background-size: 125px;
   width: auto;
@@ -9086,7 +9086,7 @@ blockquote {
 
 .slide-2 {
   mix-blend-mode: normal;
-  background-image: url(../images/66d2c88353107543f32be28f_Frame_3.webp);
+  background-image: url(../images/mckinsey/flow-research-findings-wall.webp);
   background-position: 50%;
   background-size: cover;
   margin-bottom: 15%;
@@ -9106,13 +9106,13 @@ blockquote {
 }
 
 .slide-3 {
-  background-image: url(../images/66d2c8843d23d8421dd33e3f_Frame5.webp);
+  background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map-plate.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-4 {
-  background-image: url(../images/66d2c8833d23d8421dd33d7b_Frame_6-1.webp);
+  background-image: url(../images/mckinsey/wireframe-mobile-wireframe-and-login-flow-boards.webp);
   background-position: 0 0;
   background-size: 1032px;
 }
@@ -9124,19 +9124,19 @@ blockquote {
 }
 
 .slide-5 {
-  background-image: url(../images/66cbf3c17b98d2387390afe4_3.webp);
+  background-image: url(../images/mckinsey/hifi-liveshop-landing-and-mobile-final-design.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-7 {
-  background-image: url(../images/66cbf9ee5ebb4c3a59c4aa7f_6.webp);
+  background-image: url(../images/cummins/system-controls-library-design-system.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .slide-6 {
-  background-image: url(../images/66cbf3c139afd755cc282233_5.webp);
+  background-image: url(../images/cummins/persona-marketing-manager-persona-card.webp);
   background-position: 0 0;
   background-size: cover;
 }
@@ -9164,7 +9164,7 @@ blockquote {
 }
 
 .image48.slidei {
-  background-image: url(../images/66d2c905d3f02abd92f833bb_Group_542.webp);
+  background-image: url(../images/mckinsey/flow-seller-mvp-flow-priority-board.webp);
   background-position: 0 0;
   background-size: auto;
   margin-top: 15%;
@@ -9329,7 +9329,7 @@ blockquote {
 }
 
 .div-block-24 {
-  background-image: url(../images/67c8af476208d9939722b49e_Partnership_Mark.webp);
+  background-image: url(../images/bg/bg-blue-string-art-fan.webp);
   background-position: 0 0;
   background-size: cover;
 }
@@ -9717,7 +9717,7 @@ blockquote {
 .grain {
   z-index: 1;
   opacity: .02;
-  background-image: url(../images/67cceefda38cbd1a3a04df98_noise.gif);
+  background-image: url(../images/bg/bg-film-grain-noise.gif);
   background-position: 50%;
   background-size: auto;
   position: fixed;
@@ -10209,7 +10209,7 @@ blockquote {
 }
 
 .gradient-night-fade {
-  background-image: url(../images/62dcb7cdd0fe368c8e9cc8a2_lark.webp);
+  background-image: url(../images/lark/illustration-bytedance-workspace-modules-ring.webp);
   background-position: 50%;
   background-size: cover;
 }
@@ -10224,7 +10224,7 @@ blockquote {
 }
 
 .gradient-rainy-ashville {
-  background-image: url(../images/62dcb7cdd0fe36baa89cc895_larkschool.webp);
+  background-image: url(../images/lark/illustration-lark-education-class-collaboration-cover.webp);
   background-position: 50%;
   background-size: cover;
 }
@@ -10317,18 +10317,18 @@ blockquote {
 }
 
 .gradient-warm-flame {
-  background-image: url(../images/62dcb7cdd0fe36639d9cc89d_mckp.webp);
+  background-image: url(../images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp);
   background-position: 0 0;
   background-size: cover;
 }
 
 .gradient-warm-flame._1 {
-  background-image: url(../images/67e5a2a5ca294a5737e56603_Frame_2.webp);
+  background-image: url(../images/opusclip/hero-opusclip-ai-video-editing-cover.webp);
   background-position: 50%;
 }
 
 .gradient-spring-warmth {
-  background-image: url(../images/67c3da4b70acacede43f6130_1.webp);
+  background-image: url(../images/cummins/hero-cummins-diagnostic-session-screens.webp);
   background-position: 50% 100%;
   background-size: cover;
 }
@@ -10338,7 +10338,7 @@ blockquote {
 }
 
 .div-block-31 {
-  background-image: url(../images/62dcb7cdd0fe3647659cc898_xiaomi.webp);
+  background-image: url(../images/mifinance/screen-mi-finance-e-account-screens-stack.webp);
   background-position: 50%;
   background-size: cover;
 }
@@ -10350,7 +10350,7 @@ blockquote {
 }
 
 .div-block-33 {
-  background-image: url(../images/630a9fb01df18339ea20d32c_Desktop_-_1.webp);
+  background-image: url(../images/tiktok/hero-tiktok-safety-strategy-cover.webp);
   background-position: 0%;
   background-size: cover;
 }
@@ -10362,7 +10362,7 @@ blockquote {
 }
 
 .picture {
-  background-image: url(../images/67d9f1cbcaace01ba9a46006_color_palette.webp);
+  background-image: url(../images/mckinsey/illustration-man-picking-color-swatches-spot.webp);
   background-position: 50%;
   background-size: cover;
   width: 35vw;
@@ -10645,7 +10645,7 @@ blockquote {
 .div-block-42 {
   grid-column-gap: 4vh;
   grid-row-gap: 4vh;
-  background-image: linear-gradient(#000c, #000c), url(../images/67e59d4fcf17558e5d687fc7_Frame_1597881201.webp);
+  background-image: linear-gradient(#000c, #000c), url(../images/bg/bg-gradient-blob-cluster.webp);
   background-position: 0 0, 50% 100%;
   background-repeat: repeat, repeat;
   background-size: auto, auto;
@@ -10840,7 +10840,7 @@ blockquote {
   }
 
   .background.al3 {
-    background-image: url(../images/62fc58647fe9adf65c2c90fc_UX_Deliverables_edited_edited.webp);
+    background-image: url(../images/alzheimer/wireframe-hand-drawn-ux-deliverable-sketches.webp);
     margin-bottom: 15%;
   }
 
@@ -11197,7 +11197,7 @@ blockquote {
   }
 
   .grid-wrapper-5.mck.new._1 {
-    background-image: url(../images/632a7ac76830f78e9457a9ae_mckinsey_cs_image_lead.webp);
+    background-image: url(../images/mckinsey/bg-navy-wireframe-curve-lines.webp);
     background-size: cover;
   }
 
@@ -11746,7 +11746,7 @@ blockquote {
   }
 
   .slide-2 {
-    background-image: url(../images/66d2c8837d46b9947e2f3f46_Frame_4-_.webp);
+    background-image: url(../images/tiktok/competitive-account-and-profile-benchmark-board.webp);
     position: fixed;
   }
 
@@ -11757,25 +11757,25 @@ blockquote {
   
 
   .slide-3 {
-    background-image: url(../images/66d2c8843d23d8421dd33e3f_Frame5.webp), url(../images/66d2c3ad53107543f327ea45_Frame_4-_.webp);
+    background-image: url(../images/mckinsey/flow-live-shopping-user-flow-map-plate.webp), url(../images/tiktok/competitive-live-commerce-competitor-matrix.webp);
     background-position: 0 0, 0 0;
     background-size: auto, cover;
   }
 
   .slide-4 {
-    background-image: url(../images/66d2c32b750c0d5bd09aaee3_Frame_3.webp);
+    background-image: url(../images/mckinsey/chart-concept-testing-scope-summary.webp);
   }
 
   .slide-5 {
-    background-image: url(../images/66d2c32a6e08b9f19926a197_Frame5.webp);
+    background-image: url(../images/mckinsey/flow-seller-mvp-flow-feature-priority.webp);
   }
 
   .slide-7 {
-    background-image: url(../images/66d2c32aad2723840546c4de_Frame_11.webp);
+    background-image: url(../images/cummins/system-controls-library-with-figma-styles-panel.webp);
   }
 
   .slide-6 {
-    background-image: url(../images/66d2c32b3d23d8421dcebbaa_Frame_7.webp);
+    background-image: url(../images/cummins/persona-marketing-manager-persona-card-on-journey-map.webp);
   }
 
   .containerslide {
@@ -11801,7 +11801,7 @@ blockquote {
   }
 
   .image-47.slidei {
-    background-image: url(../images/66d2c8837d46b9947e2f3f46_Frame_4-_.webp);
+    background-image: url(../images/tiktok/competitive-account-and-profile-benchmark-board.webp);
     background-position: 0 0;
     background-size: auto;
   }
@@ -11980,7 +11980,7 @@ blockquote {
   }
 
   .gradient-night-fade {
-    background-image: url(../images/62dcb7cdd0fe368c8e9cc8a2_lark.webp);
+    background-image: url(../images/lark/illustration-bytedance-workspace-modules-ring.webp);
     background-position: 50% 60%;
     background-size: cover;
     background-attachment: scroll;
@@ -11991,7 +11991,7 @@ blockquote {
   }
 
   .gradient-rainy-ashville {
-    background-image: url(../images/62dcb7cdd0fe36baa89cc895_larkschool.webp);
+    background-image: url(../images/lark/illustration-lark-education-class-collaboration-cover.webp);
     background-position: 50%;
     background-size: cover;
   }
@@ -12042,13 +12042,13 @@ blockquote {
   }
 
   .gradient-warm-flame {
-    background-image: url(../images/62dcb7cdd0fe36639d9cc89d_mckp.webp);
+    background-image: url(../images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp);
     background-position: 50%;
     background-size: cover;
   }
 
   .gradient-spring-warmth {
-    background-image: url(../images/67c3da4b70acacede43f6130_1.webp);
+    background-image: url(../images/cummins/hero-cummins-diagnostic-session-screens.webp);
     background-position: 50% 100%;
     background-size: cover;
   }
@@ -12058,7 +12058,7 @@ blockquote {
   }
 
   .div-block-31 {
-    background-image: url(../images/62dcb7cdd0fe3647659cc898_xiaomi.webp);
+    background-image: url(../images/mifinance/screen-mi-finance-e-account-screens-stack.webp);
     background-position: 50%;
     background-size: cover;
   }
@@ -12070,7 +12070,7 @@ blockquote {
   }
 
   .div-block-33 {
-    background-image: url(../images/630a9fb01df18339ea20d32c_Desktop_-_1.webp);
+    background-image: url(../images/tiktok/hero-tiktok-safety-strategy-cover.webp);
     background-position: 0%;
     background-size: cover;
   }
@@ -12215,7 +12215,7 @@ blockquote {
   }
 
   .div-block-41._1._2 {
-    background-image: linear-gradient(#000000b5, #000000b5), url(../images/67e59d4fcf17558e5d687fc7_Frame_1597881201.webp);
+    background-image: linear-gradient(#000000b5, #000000b5), url(../images/bg/bg-gradient-blob-cluster.webp);
     background-position: 0 0, 0%;
     background-size: auto, auto;
     background-attachment: scroll, fixed;
@@ -12269,7 +12269,7 @@ blockquote {
   .div-block-42 {
     grid-column-gap: 5em;
     grid-row-gap: 5em;
-    background-image: linear-gradient(#000000de, #000000de), url(../images/67e59d4fcf17558e5d687fc7_Frame_1597881201.webp);
+    background-image: linear-gradient(#000000de, #000000de), url(../images/bg/bg-gradient-blob-cluster.webp);
     background-position: 0 0, 50% 100%;
     background-repeat: repeat, repeat;
     background-size: auto, auto;
@@ -13554,7 +13554,7 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: linear-gradient(74.2deg, #404040cf, #0000), url(../images/63c70a1c6823308923dc5fa3_M1.webp);
+    background-image: linear-gradient(74.2deg, #404040cf, #0000), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
     background-position: 0 0, 0 0;
     background-repeat: repeat, no-repeat;
     background-size: auto, cover;
@@ -14935,7 +14935,7 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: linear-gradient(113deg, #9c9c9c, var(--spark-library-border-default)), url(../images/63c70a1c6823308923dc5fa3_M1.webp);
+    background-image: linear-gradient(113deg, #9c9c9c, var(--spark-library-border-default)), url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
     background-position: 0 0, 50% 0;
     background-repeat: repeat, no-repeat;
     background-size: auto, cover;
@@ -16628,7 +16628,7 @@ blockquote {
   }
 
   .spark-section.spark-dark-hero-background-image {
-    background-image: url(../images/63c70a1c6823308923dc5fa3_M1.webp);
+    background-image: url(../images/mckinsey/flow-seller-mvp-flow-consolidated-board.webp);
     background-position: 50% 0;
     background-repeat: no-repeat;
     background-size: cover;
