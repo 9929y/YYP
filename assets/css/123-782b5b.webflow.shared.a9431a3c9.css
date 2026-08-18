@@ -11584,7 +11584,8 @@ blockquote {
     margin: 1% 0 0;
     font-size: 1rem;
     font-weight: 400;
-    line-height: 1.1em;
+    line-height: 1.55em;
+  max-width: 36em;
   }
 
   .grid-18 {
@@ -15590,7 +15591,7 @@ blockquote {
     margin-top: 5px;
     font-size: .6875rem;
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.45;
   }
 
   .service-item {
