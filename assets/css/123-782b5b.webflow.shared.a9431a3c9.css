@@ -2311,7 +2311,7 @@ blockquote {
 .body {
   color: #fff;
   background-color: #fff;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-weight: 400;
 }
 
@@ -5381,7 +5381,7 @@ blockquote {
 }
 
 .heading-medium {
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 2rem;
   font-weight: 500;
   line-height: 1.35;
@@ -5394,7 +5394,7 @@ blockquote {
 
 .heading-medium.style {
   color: #676767;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.6rem;
   font-weight: 600;
 }
@@ -5419,7 +5419,7 @@ blockquote {
 .heading-medium.style.xiaomi {
   color: var(--coral);
   text-align: left;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -5432,7 +5432,7 @@ blockquote {
 .heading-medium.title {
   color: #000;
   margin-bottom: 10px;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -5803,7 +5803,7 @@ blockquote {
   margin-top: 40px;
   margin-right: 0;
   padding: 6px 4px;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   position: relative;
 }
 
@@ -6543,7 +6543,7 @@ blockquote {
   color: #767676;
   text-align: center;
   max-width: 100%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   line-height: 1em;
 }
 
@@ -6560,7 +6560,7 @@ blockquote {
   margin-top: 0;
   margin-bottom: 0;
   padding: 0 15%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 38px;
 }
 
@@ -6878,7 +6878,7 @@ blockquote {
 .headingpt {
   text-align: left;
   padding-bottom: 2%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.8rem;
   font-weight: 600;
 }
@@ -6996,7 +6996,7 @@ blockquote {
   color: var(--live);
   text-align: left;
   -webkit-text-stroke-color: var(--live);
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.5rem;
 }
 
@@ -7028,7 +7028,7 @@ blockquote {
   color: var(--coral);
   padding-left: 0%;
   padding-right: 0%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-weight: 500;
 }
 
@@ -7052,7 +7052,7 @@ blockquote {
 .heading-medium-3.live {
   color: var(--spark-library-foreground-secondary);
   -webkit-text-stroke-color: var(--spark-library-foreground-secondary);
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1;
@@ -7064,7 +7064,7 @@ blockquote {
 
 .heading-medium-3.ai {
   color: var(--spark-library-foreground-interactive);
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-weight: 600;
 }
 
@@ -7186,7 +7186,7 @@ blockquote {
   margin-bottom: 5%;
   padding-left: 5%;
   padding-right: 5%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 18px;
   font-weight: 400;
   display: block;
@@ -7245,7 +7245,7 @@ blockquote {
   color: var(--spark-library-black);
   text-align: left;
   padding-left: 0%;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: .9rem;
   font-weight: 400;
   line-height: 1.4em;
@@ -7258,7 +7258,7 @@ blockquote {
 .paragraph.white {
   color: var(--gainsboro);
   text-align: left;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1em;
   font-weight: 400;
   line-height: 1.4;
@@ -7800,7 +7800,7 @@ blockquote {
   text-align: center;
   margin-top: 0;
   padding-top: 0;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 38px;
 }
 
@@ -7849,7 +7849,7 @@ blockquote {
 
 .heading-medium-5.mck {
   color: #4b4b4b;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.2rem;
   font-weight: 500;
 }
@@ -8346,7 +8346,7 @@ blockquote {
 
 .spark-section h1 {
   margin-bottom: .25rem;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 3.4rem;
   font-weight: 600;
   line-height: 1.1;
@@ -8378,7 +8378,7 @@ blockquote {
 
 .spark-section p {
   color: var(--spark-library-white);
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 22px;
   line-height: 1.2em;
 }
@@ -9866,7 +9866,7 @@ blockquote {
 
 .cmi {
   text-align: left;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 2rem;
   line-height: 100%;
 }
@@ -10059,7 +10059,7 @@ blockquote {
 
 .text-xl.header-text {
   margin-bottom: 64px;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
 }
 
 .hero-img {
@@ -10077,7 +10077,7 @@ blockquote {
 
 .display-2xl.mb-0 {
   margin-bottom: 0;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 3rem;
 }
 
@@ -10111,7 +10111,7 @@ blockquote {
 }
 
 .text-weight-semibold {
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-weight: 600;
 }
 
@@ -10135,7 +10135,7 @@ blockquote {
 }
 
 .text-block-18 {
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
 }
 
 .container-5 {
@@ -10153,7 +10153,7 @@ blockquote {
   letter-spacing: -.01em;
   margin-top: 0;
   margin-bottom: .5em;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 1.875rem;
   line-height: 1.25;
 }
@@ -10646,7 +10646,7 @@ blockquote {
   background-clip: border-box;
   border: 1px solid #fff;
   border-radius: 8px;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 18px;
 }
 
@@ -10656,14 +10656,14 @@ blockquote {
 }
 
 .field-label {
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
   font-size: 14px;
   font-weight: 500;
 }
 
 .text-field-2 {
   border-radius: 8px;
-  font-family: Montserrat, sans-serif;
+  font-family: Plus Jakarta Sans, sans-serif;
 }
 
 .text-span-5 {
@@ -10969,7 +10969,7 @@ blockquote {
 
   .heading-medium.title {
     color: #000;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 2.1rem;
     font-weight: 700;
   }
@@ -11407,7 +11407,7 @@ blockquote {
     color: var(--spark-library-foreground-interactive);
     margin-top: 0;
     padding-left: 0%;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-weight: 600;
     position: relative;
     top: 0;
@@ -11485,11 +11485,11 @@ blockquote {
 
   .page-padding-3.mck {
     padding-top: 0%;
-    font-family: Varela, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
   }
 
   .paragraph {
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 1rem;
     line-height: 1.4em;
   }
@@ -11499,7 +11499,7 @@ blockquote {
     text-align: left;
     padding-left: 0%;
     padding-right: 5%;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.4;
@@ -13536,12 +13536,12 @@ blockquote {
   }
 
   .spark-section h1 {
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 2.4rem;
   }
 
   .spark-section p {
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 18px;
     font-weight: 400;
   }
@@ -14916,12 +14916,12 @@ blockquote {
   }
 
   .spark-section h1 {
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 2.5rem;
   }
 
   .spark-section p {
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 14px;
     line-height: 1.2em;
   }
@@ -15536,7 +15536,7 @@ blockquote {
   .subtitle-2 {
     color: var(--grey);
     letter-spacing: 2px;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 10px;
     font-style: normal;
     font-weight: 400;
@@ -16045,7 +16045,7 @@ blockquote {
     color: var(--gainsboro);
     text-align: left;
     padding-top: 10px;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: .6875rem;
     font-weight: 300;
     line-height: 110%;
@@ -16613,7 +16613,7 @@ blockquote {
 
   .spark-section h1 {
     color: var(--grey);
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: 1rem;
   }
 
@@ -16624,7 +16624,7 @@ blockquote {
   .spark-section p {
     color: var(--spark-library-background--interactive);
     margin-bottom: 0;
-    font-family: Montserrat, sans-serif;
+    font-family: Plus Jakarta Sans, sans-serif;
     font-size: .6em;
     font-weight: 400;
     line-height: 1;
