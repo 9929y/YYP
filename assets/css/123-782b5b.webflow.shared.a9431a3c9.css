@@ -2264,8 +2264,26 @@ h3 {
   line-height: 1.3em;
 }
 
+/* 语义修正：以下元素原本用标题标签，但内容是元数据标签 / 计数器数值 / 预加载文字，
+   不该进入标题大纲（WCAG 1.3.1）。标签已改为 div；此处按原层级补回排版，
+   插入位置紧随 h1/h2/h3 之后，因此后面的 class 规则依旧可以覆盖。 */
+[data-was="h1"] { letter-spacing: -.03em; margin-top: 0; margin-bottom: 0; font-size: 2.5rem; font-weight: 600; line-height: 1.25em; }
+[data-was="h2"] { letter-spacing: -.03em; margin-top: 0; margin-bottom: 0; font-size: 2rem; font-weight: 500; line-height: 1.3em; }
+[data-was="h3"] { letter-spacing: -.03em; margin-top: 0; margin-bottom: 0; font-size: 1.5625rem; font-weight: 500; line-height: 1.3em; }
 
+/* 视觉隐藏但屏幕阅读器可读。用于给缺少可见页面标题的页面补一个 h1（WCAG 1.3.1 / 2.4.6）*/
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
+/* 标签层级修正后的排版还原：以下元素换了标题层级（语义修正），
+   这里把它们原本的字距/行高钉住，确保视觉与修正前逐项一致。 */
+.heading-medium.heading-1 { letter-spacing: normal; }   /* 首页 hero，原本是 div 无字距 */
+.headingpt, .headingpt.lark, .headingpt.al, .headingpt.al.white,
+.headingpt.al.new, .heading-medium-4.new, .heading-4,
+.heading-medium-3.al, .heading-medium-3.al.dark,
+.heading-medium-3.mck, .heading-medium-3.lark, .heading-medium-3.ai,
+.heading-medium-3.mck.blk, .heading-medium.title, .xxl-heading-2.mid,
+.heading-medium-4.white._1, .heading-medium-3.ai.mid { line-height: 1.25em; }
 
 
 h4 {
