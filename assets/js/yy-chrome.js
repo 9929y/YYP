@@ -129,14 +129,24 @@
     ':host(yy-footer){ display: block; }',
 
     /* ---- skip link: first tab stop, parked off-screen until focused ---- */
+    /* ⚠️ 不能用 `position: fixed` + 负 top 把它藏到视口外。
+       宿主带 `transform: translateX(-50%)`，而 **transform 会为 fixed 后代
+       建立包含块** —— 于是 `top: -100px` 是相对宿主算的，宿主在视口底部，
+       结果这个链接直接显示在页面正中。实测截图抓到，属性级断言没抓到。
+       改用不依赖定位上下文的裁剪法；聚焦时浮到胶囊正上方。 */
     '.skip{',
-    '  position: fixed; left: 8px; top: -100px;',
-    '  padding: 10px 16px; border-radius: 999px;',
-    '  background: #1a1917; color: #fff;',
+    '  position: absolute; left: 0; bottom: calc(100% + 8px);',
+    '  width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;',
+    '  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);',
+    '  white-space: nowrap;',
+    '  background: #1a1917; color: #fff; border-radius: 999px;',
     '  font-size: 13px; font-weight: 600; text-decoration: none;',
-    '  transition: top .18s var(--yy-ease);',
     '}',
-    '.skip:focus{ top: 8px; outline: 2px solid #fff; outline-offset: 2px; }',
+    '.skip:focus{',
+    '  width: auto; height: auto; margin: 0; padding: 10px 16px;',
+    '  overflow: visible; clip: auto; clip-path: none;',
+    '  outline: 2px solid #1a1917; outline-offset: 2px;',
+    '}',
 
     /* ---- the glass capsule ----------------------------------------------
        Legibility on flat white needs four layers, three of which already have
@@ -227,7 +237,9 @@
   }
 
   function link(item, here) {
-    var attrs = 'href="' + esc(item.ext ? item.href : ROOT + item.href) + '"';
+    /* 页面链接用相对路径 —— 与站上 11 个页面既有的写法一致。
+       ROOT 只用于资源（css / 图片），那里相对路径才真的可能解析到别处。 */
+    var attrs = 'href="' + esc(item.href) + '"';
     if (item.ext) attrs += ' target="_blank" rel="noopener"';
     if (!item.ext && item.href === here) attrs += ' aria-current="page"';
     return '<a ' + attrs + (item.ext ? ' class="ext"' : '') + '>' + esc(item.label) + '</a>';
@@ -289,7 +301,7 @@
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
       '<nav class="cap" aria-label="Main">' +
-        '<a class="brand" href="' + esc(ROOT + 'index.html') + '"' +
+        '<a class="brand" href="index.html"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(function (i) { return link(i, here); }).join('') +
