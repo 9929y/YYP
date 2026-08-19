@@ -61,21 +61,3 @@ button:focus-visible,
     transition-duration: 0.01ms;
   }
 }
-
-/* ---------------------------------------------------------------------------
-   4. Preloader fallback — fixes a real availability bug on three pages
-
-   tiktok-research, cummins-digitalization and alzheimerdisease each carry
-   `.preloader-lark` with an INLINE `display:flex`, at z-index 10000, covering
-   the whole viewport. The stylesheet says `display: none`, but inline wins.
-   Only IX2 running to completion clears it — and the div has no `data-w-id`,
-   so nothing else can. With JS off or IX2 failing, those pages are a permanent
-   white screen.
-
-   `html:not(.w-mod-js)` matches only when Webflow's own inline head script did
-   not run, i.e. exactly the JS-off case. `!important` is required to beat the
-   inline style, and is scoped so tightly it cannot affect the normal path.
-   --------------------------------------------------------------------------- */
-html:not(.w-mod-js) .preloader-lark {
-  display: none !important;
-}

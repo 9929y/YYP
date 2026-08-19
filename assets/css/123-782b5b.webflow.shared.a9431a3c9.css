@@ -4418,6 +4418,24 @@ blockquote {
   inset: 0%;
 }
 
+/* D2 — three pages are a permanent white screen without JS.
+   tiktok-research, cummins-digitalization and alzheimerdisease each carry an
+   INLINE display:flex on .preloader-lark, which beats the `display: none`
+   above. Only IX2 running to completion clears it, and the div has no
+   data-w-id, so nothing else can.
+
+   This rule must live in THIS file, not in yy-chrome.css: that stylesheet is
+   injected by JavaScript, so with JS off it never loads and the fix could
+   never apply in the one case it exists for. This file is a plain <link>.
+
+   `html:not(.w-mod-js)` matches only when Webflow's own inline head script did
+   not run — exactly the JS-off case. `!important` is required to beat the
+   inline style, and the selector is scoped tightly enough that it cannot
+   affect the normal path. */
+html:not(.w-mod-js) .preloader-lark {
+  display: none !important;
+}
+
 .preloader-content {
   grid-column-gap: 16px;
   grid-row-gap: 36px;
