@@ -45,6 +45,10 @@
       display: none !important
     }
   </style>
+  <!-- shared chrome: nav + footer for every page. Synchronous on purpose —
+       it hides the legacy chrome from CSS parsed before <body> exists, so the
+       old nav never flashes. Delete this line to fall back to the page's own. -->
+  <script src="assets/js/yy-chrome.js"></script>
 </head>
 
 <body class="body blk">
