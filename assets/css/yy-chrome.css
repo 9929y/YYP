@@ -61,3 +61,51 @@ button:focus-visible,
     transition-duration: 0.01ms;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   5. Entrance reveal for what IX2 does not own  (see assets/js/yy-reveal.js)
+
+   Entrance motion on the case pages comes from Webflow IX2, which only animates
+   elements carrying `data-w-id`. Measured coverage of images plus text blocks:
+   McKinsey 94%, Opus Clip 93%, Cummins 89% — but larkdesign 7%, mifinance 11%,
+   alzheimerdisease 14%. So some content animates in and some simply appears.
+   That is the original per-page authoring, not a regression.
+
+   Both values below are MEASURED off IX2 so the two systems read as one:
+     500ms                         — the dominant duration in McKinsey's IX2
+                                     action list, 39 of 308 items
+     cubic-bezier(.25,.46,.45,.94) — outQuad, the easing IX2 names for entrances
+     translateY(100px)             — IX2's own travel distance for these blocks
+
+   ⚠️ Gated on html.yy-reveal, a class only a working script sets, and only ever
+   applied to .yy-rv, which the script only adds to elements IX2 does not own.
+   Without the class every element renders normally, so JS off / no
+   IntersectionObserver / any throw all end with visible content.
+   --------------------------------------------------------------------------- */
+html.yy-reveal .yy-rv {
+  opacity: 0;
+  transform: translateY(100px);
+  transition: opacity .5s cubic-bezier(.25, .46, .45, .94),
+              transform .5s cubic-bezier(.25, .46, .45, .94);
+  will-change: opacity, transform;
+}
+
+html.yy-reveal .yy-rv.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Once settled, stop advertising a composite layer we no longer need. */
+html.yy-reveal .yy-rv.in {
+  will-change: auto;
+}
+
+/* Reduced motion: the script bails before setting the class, so this is only a
+   belt-and-braces guard in case the class is ever set another way. */
+@media (prefers-reduced-motion: reduce) {
+  html.yy-reveal .yy-rv {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

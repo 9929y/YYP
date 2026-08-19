@@ -38,6 +38,10 @@
        it hides the legacy chrome from CSS parsed before <body> exists, so the
        old nav never flashes. Delete this line to fall back to the page's own. -->
   <script src="assets/js/yy-chrome.js"></script>
+  <!-- entrance reveal for content Webflow IX2 does not own. IX2 coverage was
+       authored per page and is uneven (7%-94%); this fills the gaps with IX2's
+       own measured timing. Delete this line to fall back to IX2 alone. -->
+  <script src="assets/js/yy-reveal.js"></script>
 </head>
 
 <body class="body">
