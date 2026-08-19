@@ -227,8 +227,26 @@
     border-radius: 2px;
   }
 
+  /* ---------- the ASCII diffusion field ----------
+     Behind all content, full viewport, never interactive. The reference puts its
+     equivalent (#hero-cursor-flow, a WebGL ChromaFlow + Ascii shader) in the
+     hero; a fixed full-viewport field keeps the effect wherever the pointer
+     goes, which is what the effect is actually about. */
+  #yy-flow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+  }
+  @media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    #yy-flow { display: none !important; }
+  }
+
   /* ---------- shell ---------- */
   .wrap {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: calc(var(--frame) + var(--edge) * 2);
     margin: 0 auto;
@@ -821,8 +839,11 @@
 
   </main>
 
+  <canvas id="yy-flow" aria-hidden="true"></canvas>
+
   <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
 
+  <script src="assets/js/yy-flow.js"></script>
   <script src="assets/js/lenis.min.js"></script>
   <script>
   /* ---------- inertial smooth scroll ----------

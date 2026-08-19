@@ -2272,8 +2272,22 @@ h3 {
 [data-was="h3"] { letter-spacing: -.03em; margin-top: 0; margin-bottom: 0; font-size: 1.5625rem; font-weight: 500; line-height: 1.3em; }
 
 /* 视觉隐藏但屏幕阅读器可读。用于给缺少可见页面标题的页面补一个 h1（WCAG 1.3.1 / 2.4.6）*/
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+  /* Belt and braces. `clip` is deprecated and there are engines/states where it
+     is ignored; `clip-path: inset(50%)` is the modern equivalent. `font-size: 1px`
+     and transparent colour mean that even if BOTH clipping mechanisms fail, the
+     worst case is a 1px transparent glyph rather than a full-size heading
+     rendered over the page. Yanice reported exactly that failure on
+     ai-driven-product-design: "AI-driven product design" in large white type at
+     the top left, text the live site does not have because this h1 was added in
+     adb9f54 for WCAG 1.3.1 / 2.4.6.
+     Screen readers use the accessibility tree, not painted pixels, so none of
+     this weakens the heading for assistive tech. */
+  font-size: 1px; line-height: 1; color: transparent;
+}
 
 /* 标签层级修正后的排版还原：以下元素换了标题层级（语义修正），
    这里把它们原本的字距/行高钉住，确保视觉与修正前逐项一致。 */
