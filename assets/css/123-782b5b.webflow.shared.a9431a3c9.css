@@ -1006,6 +1006,12 @@ textarea.w-select {
   }
 }
 
+/* 手机上正文散文用字阶的 small 档(13px)，不是 caption 档(11px)。
+   实测 390px 宽下 .paragraph 有 42 处长散文渲染在 11px —— 11px 是 caption 的档位，
+   正文借用它就读不了。这和 Phase 1 那条「行高是角色系统不是尺寸系统」是同一条原理，
+   只是作用在字号上。行高是无单位的 1.55，会自动跟着放大到 20.15px，不需要另改。
+   ⚠ 刻意不动 .paragraph-annotation（它本来就是 caption）与 .heading-medium-*
+   （Phase 1 已实测它们是单行区块标签，不是散文）。 */
 @media screen and (max-width: 479px) {
   .w-container {
     max-width: none;
@@ -11155,6 +11161,14 @@ html:not(.w-mod-js) .preloader-lark {
 
   .stacked-title-2._1 {
     width: 140%;
+    /* 这个标题**故意**溢出自己的栅格列（display 级排版打破栏宽），但它不能跑出视口。
+       实测：1280px 下它 752px 宽、左边缘在 572，右边缘 1323 → 43px 的字被切在屏幕外。
+       可用宽度 = vw - left - 24 边距，而 left ≈ (vw-905)/2 + 384，
+       代入化简得 50vw + 44px：
+         1280 → 684px，把 752 收到 684，右边缘 1256 < 1280 ✓
+         1440 → 764px，大于 752，不生效，构图保持原样 ✓
+       所以只在真会切字的那一段收，其余断点零视觉变化。 */
+    max-width: calc(50vw + 44px);
   }
 
   .body-display-2.light.mi {
@@ -16220,7 +16234,7 @@ html:not(.w-mod-js) .preloader-lark {
   }
 
   .paragraph {
-    font-size: .6875rem;
+    font-size: .8125rem;
     line-height: 1.55;
   }
 
@@ -16240,7 +16254,7 @@ html:not(.w-mod-js) .preloader-lark {
 
   .paragraph-2 {
     color: var(--gainsboro);
-    font-size: .6875rem;
+    font-size: .8125rem;
     line-height: 110%;
   }
 
@@ -19518,4 +19532,46 @@ html:not(.w-mod-js) .preloader-lark {
     grid-area: span 2 / span 1 / span 2 / span 1;
     justify-self: end;
   }
+}
+
+/* ============================================================================
+   收尾覆盖层 · 必须留在本文件最末
+
+   ⚠️ 媒体查询**不增加特异性**。下面这条与 .stacked-title-2._1 的基础规则（:6487）
+   同为 (0,2,0)，所以唯一能让它生效的是源码顺序。我第一次把它写在 4420 行附近，
+   基础规则在 6487 行，于是基础规则赢，改动完全没生效 —— 实测 992/1024 仍溢出 20px。
+   往这里加规则时，**不要**为了"归类整齐"把它挪回上面去。
+   ============================================================================ */
+
+/* alzheimerdisease 的 h1 溢出视口，导致标题末尾的字被切在屏幕外。
+   实测（未强制显形）：1280px 切 43px，1024px 切 20px，1100px 切 13px。
+
+   成因两条，都在 .stacked-title-2._1 上：
+     · `right: -3%`（:6487）把它往右推 3% 容器宽 —— 而它本来就正好填满第二列。
+       它与 .stacked-title-2.al 的 `right: 6%` 同特异性，靠源码顺序胜出。
+     · `width: 140%`（≥1280，:11142）让它宽过自己的栅格列。
+
+   这个标题**故意**overhang 自己的列（display 级排版打破栏宽），那是设计，保留。
+   但它不能跑出视口 —— 所以只把偏移归零、并在 ≥1280 用 max-width 收住宽度，
+   两者都只在真会切字的位置生效，其余断点零视觉变化。 */
+@media screen and (min-width: 992px) {
+  .stacked-title-2._1 { right: 0; }
+}
+
+/* 入场动画进行中的瞬时横向溢出。
+   实测 alzheimerdisease：IX2 的入场 transform 会把 h1 短暂推出视口
+   （1440 下 right=1475、390 下 right=464），动画落定后回到界内 —— 所以它表现为
+   滚动条闪一下，而不是内容真的读不到。等 650ms 量是 0，等 1100ms 量到溢出，
+   差别就是动画时机。
+
+   用 `clip` 而不是 `hidden`：`hidden` 会创建滚动容器并因此**破坏 position: sticky**
+   （index 页有 14 个 sticky 元素），`clip` 不会。规范也允许一轴 clip、另一轴保持
+   visible，所以纵向滚动不受影响。
+
+   前提是「落定后没有任何内容越界」—— 已实测：11 页 × 5 断点，落定状态横向溢出全为 0，
+   行宽超 80 字符全为 0。若将来有宽表格之类真需要横向滚动的内容，
+   给那个容器自己加 `overflow-x: auto`，不要摘掉这一条。 */
+html,
+body {
+  overflow-x: clip;
 }
