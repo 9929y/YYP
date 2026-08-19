@@ -85,9 +85,7 @@
        against 6 for margin), which is why it never drops frames. */
     --m-dur: .32s;
     --m-dur-sm: .24s;
-    --m-dur-lg: .48s;
     --m-overshoot: cubic-bezier(.34, 2.56, .64, 1);
-    --m-expo: cubic-bezier(.19, 1, .22, 1);
     --m-stagger: .06s;
   }
 
@@ -183,13 +181,22 @@
        BEHAVIOUR, which is what was asked for, means .12s here: measured 13px
        against the reference's 11px. The declared number and the observed one
        disagree, and the observed one is the spec that matters. */
-    transition-duration: .08s, .24s, .24s, .24s, .24s;
+    /* The follow (.08s) is deliberately NOT tokenised: transitions-polish has no
+       "cursor follow" usage, and its rule is explicit — if a value's usage matches
+       no token, leave it. 80ms here is a measured follow, not a mis-tuned tooltip
+       delay.
+
+       The size/colour lane IS tokenised. The disc growing 12px to 80px is a
+       surface open, so it maps to --duration-fast — and the CLOSE is split out on
+       the .on rule below, per the open/close asymmetry rule. This base rule now
+       carries the close. */
+    transition-duration: .08s,
+                         var(--duration-quick), var(--duration-quick),
+                         var(--duration-quick), var(--duration-quick);
     transition-timing-function:
-      cubic-bezier(.165, .84, .44, 1),          /* follow — power3.out */
-      cubic-bezier(.34, 1.56, .64, 1),          /* size — back.out(1.7) */
-      cubic-bezier(.34, 1.56, .64, 1),
-      cubic-bezier(.215, .61, .355, 1),
-      cubic-bezier(.215, .61, .355, 1);
+      cubic-bezier(.165, .84, .44, 1),        /* follow — power3.out, off-token by design */
+      var(--ease-bounce), var(--ease-bounce), /* size — badge pop open */
+      var(--ease-smooth-out), var(--ease-smooth-out);
     /* Not transitioned. Opacity is a hard on/off so a zero-width disc is never
        a faint smudge — presence is binary, size is what animates. */
     opacity: 0;
@@ -197,7 +204,16 @@
   html.yy-cursor-live #yy-cursor { opacity: 1; }
 
   /* hoverState */
+  /* hoverState.
+     Open/close asymmetry, per transitions-polish: "dropdown/modal open 250ms →
+     close 150ms. Opening is an invitation; closing should get out of the way."
+     Both directions were 240ms. The base rule carries the CLOSE
+     (--duration-quick); this one overrides with the OPEN (--duration-fast), so
+     the disc blooms deliberately and snaps back out of the way. */
   #yy-cursor.on {
+    transition-duration: .08s,
+                         var(--duration-fast), var(--duration-fast),
+                         var(--duration-fast), var(--duration-fast);
     width: 80px; height: 80px;
     background: rgba(255, 255, 255, .48);
     color: #000;
@@ -210,11 +226,20 @@
     opacity: 0;
     white-space: nowrap;
     pointer-events: none;
-    transition: opacity .32s cubic-bezier(.45, 0, .55, 1);   /* power2.inOut */
+    /* Intent delay, per transitions.dev's 17-tooltip: --duration-micro (80ms)
+       before the label appears, so a pointer sweeping across a row of cards does
+       not flash "view" at every one it crosses. The skill is precise about when a
+       delay is legitimate — "to filter accidental triggers", not to pad a slow
+       animation — and a hover label is exactly that case. */
+    transition: opacity .32s cubic-bezier(.45, 0, .55, 1) var(--duration-micro);
   }
   #yy-cursor.on .yy-cursor__t { opacity: 1; }
-  /* Out is faster than in — source uses .08s for the text on leave. */
-  #yy-cursor:not(.on) .yy-cursor__t { transition-duration: .08s; }
+  /* Never delay a dismissal. Out is .08s with zero delay — the reference uses
+     .08s here too, and transitions-polish: "dismissal must feel instant". */
+  #yy-cursor:not(.on) .yy-cursor__t {
+    transition-duration: .08s;
+    transition-delay: 0s;
+  }
 
   @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
     html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
@@ -428,17 +453,62 @@
     text-decoration: none;
   }
 
+  /* Cross-fade + cross-blur from placeholder to real image, per
+     transitions.dev's 14-skeleton-reveal. Its reveal parameters land exactly on
+     the token scale — 400ms = --duration-slow ("skeleton content reveal"),
+     2px = --blur-small, ease-in-out — so they are referenced, not restated.
+
+     ⚠️ Only HALF the recipe is used, on purpose. The recipe also pulses the
+     skeleton while data loads. These slots are not loading — they are *not yet
+     supplied*. A pulse would promise an image is on its way, which would be a
+     lie until Yanice exports one. The reveal half is honest and is the part that
+     matters: drop a file into assets/images/home/ and it fades in over the
+     placeholder with no code change.
+
+     The image starts at opacity 0, so a 404 shows nothing rather than a broken
+     icon — JS only reveals it after a successful load. */
   .slot img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0;
+    filter: blur(var(--blur-small));
+    transition: opacity var(--duration-slow) var(--ease-in-out),
+                filter var(--duration-slow) var(--ease-in-out);
   }
 
-  /* Hover: 0.32s on the overshoot curve, transform only. */
-  .slot img,
+  .slot.is-revealed img {
+    opacity: 1;
+    filter: none;
+  }
+
+  /* The skeleton leaves as the content arrives — a cross-fade, not a swap. */
   .slot .ph {
-    transition: transform var(--m-dur) var(--m-overshoot);
+    transition: opacity var(--duration-slow) var(--ease-in-out),
+                transform var(--m-dur) var(--ease-bounce-strong);
+  }
+  .slot.is-revealed .ph { opacity: 0; }
+
+  /* Hover in/out split, per transitions.dev's 11-avatar-group-hover.
+     Before, BOTH directions shared the overshoot curve. transitions-polish is
+     explicit that overshoot belongs to entrances only and that hover-out is the
+     one place where the return should be MORE elaborate than the arrival:
+
+       In:  quick and direct — --duration-fast-or-less with --ease-smooth-out
+       Out: softer and springier — --ease-bounce-strong, so it settles
+            instead of snapping
+
+     Duration stays 320ms: that is both kedavra's measured hover value and the
+     avatar recipe's own live tuning (--avatar-dur: 320ms). Two independent
+     sources landing on the same number, so there is nothing to align.
+
+     The base rule carries the OUT transition; :hover overrides it with the IN. */
+  a.slot:hover img,
+  a.slot:hover .ph {
+    transition: transform var(--m-dur) var(--ease-smooth-out);
   }
   /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
      1.018, which is not perceptible — one of the three things Yanice correctly
@@ -560,9 +630,13 @@
   /* Measured on kedavra: every text link hover is exactly `opacity: 1 -> 0.64`.
      Nothing else moves. Applying it site-wide on this page keeps text hover
      consistent with the reference instead of inventing a per-element idea. */
+  /* Text-link hover. transitions-polish, hover-in: "quick and direct — a short
+     --duration-fast-or-less lift with --ease-smooth-out". 320ms was over that.
+     Kept symmetric: the in/out asymmetry rule is about transform lifts, and a
+     pure opacity fade sits with the symmetric exceptions (text swap). */
   a.tx {
     text-decoration: none;
-    transition: opacity var(--m-dur) var(--m-expo);
+    transition: opacity var(--duration-fast) var(--ease-smooth-out);
   }
   a.tx:hover { opacity: .64; }
 
@@ -592,14 +666,23 @@
 
      The class is set by a synchronous script in <head>, before first paint, so
      opting in does not cause a visible flash. */
+  /* Aligned with the subpage reveal layer and with transitions.dev's
+     18-texts-reveal, whose live tuning is 500ms / 12px / 40ms / 3px blur.
+
+     Before, this page and the case pages did the SAME job with different
+     numbers — 480ms/expo/18px/60ms here against 500ms/outQuad/100px/40ms there.
+     Same-purpose motion using different values is the inconsistency the polish
+     skill exists to catch. Both now read from one scale. */
   html.yy-rv .rv {
     opacity: 0;
-    transform: translateY(18px);
-    transition: opacity var(--m-dur-lg) var(--m-expo),
-                transform var(--m-dur-lg) var(--m-expo);
+    transform: translateY(var(--distance-medium));
+    filter: blur(var(--blur-medium));
+    transition: opacity var(--duration-very-slow) var(--ease-smooth-out),
+                transform var(--duration-very-slow) var(--ease-smooth-out),
+                filter var(--duration-very-slow) var(--ease-smooth-out);
     transition-delay: var(--d, 0s);
   }
-  html.yy-rv .rv.in { opacity: 1; transform: none; }
+  html.yy-rv .rv.in { opacity: 1; transform: none; filter: none; }
 
   /* prefers-reduced-motion means "do not animate", NOT "remove the feature".
      The first version read it as the latter: it hid the cursor entirely AND
@@ -684,7 +767,7 @@
         <h1 class="hero__title rv">
           UX designer doing the research <em>nobody else wants to do.</em>
         </h1>
-        <p class="hero__sub rv" style="--d:.06s">
+        <p class="hero__sub rv" style="--d:var(--duration-stagger)">
           Six projects across research, consumer product, enterprise and health.
           <a class="tx" href="#work">See the work</a>
         </p>
@@ -734,6 +817,8 @@
           </p>
         </div>
         <a class="slot rv" href="larkdesign.html" aria-label="Lark Design case study">
+          <img src="assets/images/home/case-lark.webp" alt="Lark Design onboarding case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-lark.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -751,6 +836,8 @@
           </p>
         </div>
         <a class="slot rv" href="ai-driven-product-design.html" aria-label="Opus Clip case study">
+          <img src="assets/images/home/case-opusclip.webp" alt="Opus Clip AI video editing case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-opusclip.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -768,6 +855,8 @@
           </p>
         </div>
         <a class="slot rv" href="mckinseyecommerce.html" aria-label="McKinsey Ecommerce case study">
+          <img src="assets/images/home/case-mckinsey.webp" alt="McKinsey live-streamed ecommerce case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-mckinsey.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -785,6 +874,8 @@
           </p>
         </div>
         <a class="slot rv" href="mifinance.html" aria-label="MiFinance case study">
+          <img src="assets/images/home/case-mifinance.webp" alt="MiFinance account flows case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-mifinance.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -802,6 +893,8 @@
           </p>
         </div>
         <a class="slot rv" href="cummins-digitalization.html" aria-label="Cummins case study">
+          <img src="assets/images/home/case-cummins.webp" alt="Cummins service tooling case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-cummins.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -820,6 +913,8 @@
           </p>
         </div>
         <a class="slot rv" href="alzheimerdisease.html" aria-label="Medical Assistive case study">
+          <img src="assets/images/home/case-medical.webp" alt="Medical assistive wearable case study"
+               loading="lazy" width="492" height="369" />
           <span class="ph">
             <span class="ph__file">home/case-medical.webp</span>
             <span class="ph__spec">4:3 · export 984 × 738</span>
@@ -835,7 +930,7 @@
       </div>
       <div>
         <p class="end__line rv">Have something that needs the awkward questions asked first?</p>
-        <p class="end__links rv" style="--d:.06s">
+        <p class="end__links rv" style="--d:var(--duration-stagger)">
           <a class="tx" href="projects.html">All work</a>
           <a class="tx" href="aboutme.html">About</a>
           <a class="tx" href="mailto:yaniceydesign@gmail.com">Email</a>
@@ -984,6 +1079,27 @@
       standDown();
       el.style.display = 'none';
       if (window.console) console.error('[landing] cursor off, native cursor active:', e);
+    }
+  })();
+  </script>
+
+  <script>
+  /* Skeleton -> content reveal (14-skeleton-reveal, reveal half only).
+     Adds .is-revealed only after the image actually decodes, so a missing file
+     leaves the placeholder in place with no broken-image icon and no layout
+     change. `complete` covers images already in cache before this runs. */
+  (function () {
+    'use strict';
+    try {
+      document.querySelectorAll('a.slot').forEach(function (slot) {
+        var img = slot.querySelector('img');
+        if (!img) return;
+        var show = function () { if (img.naturalWidth > 0) slot.classList.add('is-revealed'); };
+        if (img.complete) show();
+        else img.addEventListener('load', show, { once: true });
+      });
+    } catch (e) {
+      if (window.console) console.error('[landing] slot reveal off, placeholders kept:', e);
     }
   })();
   </script>
