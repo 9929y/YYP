@@ -1,0 +1,81 @@
+/* ============================================================================
+   yy-chrome.css — light-DOM half of the shared chrome layer
+
+   The nav and footer themselves live in Shadow DOM (see yy-chrome.js), where
+   the 19,000-line Webflow stylesheet cannot reach them. This file holds only
+   the handful of rules that must apply to the PAGE, not to the chrome:
+   focus rings, anchor offset, and the reduced-motion guard.
+
+   HARD RULE: nothing in this file may set `color` or `background` on any page
+   content. An earlier attempt (archive/revamp-2026-08-17, ds-retrofit.css)
+   crossed that line, flattened every client brand colour to near-black and
+   dropped the two dark pages to 1.20:1. The capsule carries its own colour and
+   writes none onto the page.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. Focus ring
+
+   The Webflow sheet has ZERO :focus-visible rules in 19,487 lines — the only
+   :focus rules are widget internals. This is purely additive: it cannot
+   repaint content, only outline it when keyboard focus lands.
+   --------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Anchor offset
+
+   Zero `scroll-margin` exists in the sheet today, so index.html's #one…#six
+   fragment targets already land underneath the 80px fixed navbar. The capsule
+   floats at the bottom rather than the top, so this is a straight repair of a
+   pre-existing bug rather than compensation for the new chrome.
+   --------------------------------------------------------------------------- */
+[id] { scroll-margin-top: 96px; }
+
+/* ---------------------------------------------------------------------------
+   3. prefers-reduced-motion — recovered verbatim from the abandoned branch
+      (origin/revamp/design-system:assets/css/ds-retrofit.css:154-171)
+
+   ⚠️ The usual `*, *::before, *::after { animation-duration: 0.01ms }` recipe
+   is actively dangerous in this repo. Webflow's IX2 engine animates elements
+   marked with `data-w-id`, and several pages ship an inline `opacity: 0` guard
+   keeping those elements hidden until IX2 runs. Neutralising IX2's animations
+   would leave that content PERMANENTLY INVISIBLE rather than merely still.
+
+   So: kill our own transitions, and leave anything IX2 owns alone.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *:not([data-w-id]):not([data-w-id] *),
+  *:not([data-w-id]):not([data-w-id] *)::before,
+  *:not([data-w-id]):not([data-w-id] *)::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. Preloader fallback — fixes a real availability bug on three pages
+
+   tiktok-research, cummins-digitalization and alzheimerdisease each carry
+   `.preloader-lark` with an INLINE `display:flex`, at z-index 10000, covering
+   the whole viewport. The stylesheet says `display: none`, but inline wins.
+   Only IX2 running to completion clears it — and the div has no `data-w-id`,
+   so nothing else can. With JS off or IX2 failing, those pages are a permanent
+   white screen.
+
+   `html:not(.w-mod-js)` matches only when Webflow's own inline head script did
+   not run, i.e. exactly the JS-off case. `!important` is required to beat the
+   inline style, and is scoped so tightly it cannot affect the normal path.
+   --------------------------------------------------------------------------- */
+html:not(.w-mod-js) .preloader-lark {
+  display: none !important;
+}
