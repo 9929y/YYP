@@ -33,11 +33,17 @@
 
   :root {
     /* ---- frame ---- */
-    --frame: 1280px;
+    /* MEASURED off kedavra.me, not derived. The container is 830 on a 1440
+       screen — roughly 58% of the viewport is margin, and that width is why it
+       reads as a document rather than a dashboard. Its own teardown records the
+       split as 320 + 17 + 492 = 829 while describing the container as 830.
+       Yanice chose these proportions over the 1280/936 variant on 2026-08-19. */
+    --frame: 829px;   /* 320 + 17 + 492 = 829 exactly; 830 leaves a 1px slack */
     --col-label: 320px;
-    --col-gap: 24px;
-    --col-content: 936px;
+    --col-gap: 17px;
+    --col-content: 492px;
     --edge: 24px;
+    --rule: #e9e9e9;
 
     /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
        60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero
@@ -45,12 +51,12 @@
        104 is a layout problem, not a font-size problem — in a 936 column it
        yields about 9 characters per line. */
     --t-11: 11px; --t-13: 13px; --t-16: 16px; --t-20: 20px;
-    --t-25: 25px; --t-32: 32px; --t-40: 40px; --t-48: 48px; --t-60: 60px;
+    --t-25: 25px; --t-32: 32px; --t-40: 40px; --t-48: 48px; --t-64: 64px;
 
     /* ---- line-height by ROLE, not by size ----
        Phase 1 established this: a 16px label and 16px prose need different
        leading, so deriving line-height from font-size alone is wrong. */
-    --lh-display: 1.05;
+    --lh-display: 1;      /* measured: 64px type on 64px leading, ratio 1.00 */
     --lh-tight: 1.15;
     --lh-heading: 1.25;
     --lh-body: 1.55;
@@ -93,10 +99,55 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* NOTE: no `cursor: none`. The reference site sets it and pairs it with a
-     WebGL cursor canvas. Study v3 shipped that combination with the custom
-     cursor frozen at the origin and the native one hidden, leaving the desktop
-     with no visible pointer at all. Ambience is not worth a dead pointer. */
+  /* ---------- custom cursor ----------
+     Measured on kedavra: an 80x80 circle, rgba(255,255,255,.48) fill, black
+     14px/400 text at -0.64px tracking, radius 2137px, z-index 2137, showing
+     "view" while a project image is hovered. The image scale is secondary —
+     THIS is the site's hover effect.
+
+     Study v3 shipped this and broke it: the custom cursor froze at the origin
+     while `cursor: none` hid the native one, leaving no visible pointer. Three
+     guards, all required:
+       1. `cursor: none` lives inside (hover: hover) and (pointer: fine), so a
+          touch device can never lose its pointer.
+       2. It is further gated on html.yy-cursor-live, a class JS only sets AFTER
+          the element has successfully moved at least once.
+       3. A watchdog checks the rAF loop is still ticking and drops the class if
+          it stalls, restoring the native cursor within ~500ms.
+     Any failure path ends with a visible native cursor. */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 80px; height: 80px;
+    margin: -40px 0 0 -40px;          /* centre on the pointer */
+    border-radius: 2137px;
+    background: rgba(255, 255, 255, .48);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #000;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -.64px;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 2137;
+    opacity: 0;
+    transform: scale(.2);
+    transition: opacity var(--m-dur) var(--m-expo),
+                transform var(--m-dur) var(--m-overshoot);
+    will-change: transform;
+  }
+  .cursor.on { opacity: 1; transform: scale(1); }
+
+  @media (hover: hover) and (pointer: fine) {
+    html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
+  }
+
+  /* Never on touch, never when motion is reduced. */
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .cursor { display: none !important; }
+  }
 
   a { color: inherit; }
 
@@ -131,20 +182,65 @@
     display: grid;
     grid-template-columns: var(--col-label) minmax(0, 1fr);
     gap: var(--col-gap);
+    position: relative;
   }
 
-  /* ---------- hero ---------- */
-  .hero { padding: 132px 0 96px; }
+  /* The 1px rule between the columns. Measured on kedavra: 1px, #e9e9e9, and
+     present in EVERY section — the hero's runs the full 810px. It is the
+     skeleton that makes the page read as a document. Pure CSS, no risk.
+     Sits in the gap, so it never shifts the columns. */
+  .row--ruled::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--col-label) + var(--col-gap) / 2);
+    width: 1px;
+    background: var(--rule);
+    pointer-events: none;
+  }
+  @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
+  /* ---------- hero ---------- */
+  /* Measured: the reference hero section is 810px tall in a 900px viewport,
+     i.e. it owns ~90% of the screen. A short hero is most of why the first
+     version read as quiet. */
+  .hero {
+    min-height: 90vh;
+    padding: 120px 0 56px;
+  }
+
+  /* Three zones per column — pinned top, centred, pinned bottom. The reference
+     does this in both columns and it is a large part of why the hero owns the
+     screen instead of sitting at the top of it. */
+  .hero__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .hero__foot {
+    margin: 0;
+    font-size: var(--t-11);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* Measured on kedavra.me: 64px, 492px column, 4 lines, 12 characters per
+     line, line-height exactly 1.0, letter-spacing -2.56px = -0.04em, weight 600.
+     My earlier note in the plan rejected 64px as "off-grid, nobody can see 6%".
+     That was wrong: 64 is precisely what the reference uses, and the crowding it
+     produces at 12 characters per line IS the effect, not a defect. */
   .hero__title {
     margin: 0;
     font-size: var(--t-40);
     line-height: var(--lh-display);
-    letter-spacing: -.03em;
+    letter-spacing: -.04em;
     font-weight: 600;
-    max-width: 20ch;
   }
-  @media (min-width: 992px) { .hero__title { font-size: var(--t-60); } }
+  @media (min-width: 768px) { .hero__title { font-size: var(--t-64); } }
 
   .hero__title em {
     font-style: italic;
@@ -251,8 +347,11 @@
   .slot .ph {
     transition: transform var(--m-dur) var(--m-overshoot);
   }
+  /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
+     1.018, which is not perceptible — one of the three things Yanice correctly
+     called out as "no hover effect". */
   a.slot:hover img,
-  a.slot:hover .ph { transform: scale(1.018); }
+  a.slot:hover .ph { transform: scale(1.03); }
 
   /* ---------- placeholder ----------
      Prints the exact export spec it is waiting for, so the requirement cannot
@@ -365,16 +464,27 @@
     font-size: var(--t-16);
   }
 
-  .end__links a {
+  /* Measured on kedavra: every text link hover is exactly `opacity: 1 -> 0.64`.
+     Nothing else moves. Applying it site-wide on this page keeps text hover
+     consistent with the reference instead of inventing a per-element idea. */
+  a.tx {
     text-decoration: none;
+    transition: opacity var(--m-dur) var(--m-expo);
+  }
+  a.tx:hover { opacity: .64; }
+
+  /* Inline links inside prose need a visible affordance — the opacity hover
+     only tells you once the pointer is already on it. */
+  .hero__sub a.tx {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink-3);
+  }
+
+  .end__links a {
     padding-bottom: 2px;
     border-bottom: 1px solid var(--hair);
-    transition: border-color var(--m-dur-sm) var(--m-expo),
-                transform var(--m-dur-sm) var(--m-overshoot);
-  }
-  .end__links a:hover {
-    border-color: var(--ink);
-    transform: translateY(-2px);
   }
 
   /* ---------- scroll reveal ----------
@@ -409,11 +519,9 @@
      Below the frame, the label column collapses and the content column goes
      full width. The 4:3 slot keeps its ratio at every size, so the images
      Yanice exports never need a second crop. */
-  @media (max-width: 1100px) {
-    :root { --col-label: 260px; }
-  }
-
-  @media (max-width: 900px) {
+  /* 829 + 2 x 24 edge = 877. Above that the frame fits untouched; below it the
+     label column collapses and the content column goes full width. */
+  @media (max-width: 877px) {
     .row { grid-template-columns: 1fr; gap: 20px; }
     .case__label {
       justify-content: flex-start;
@@ -462,32 +570,33 @@
   <main class="wrap">
 
     <!-- ================= hero ================= -->
-    <section class="hero row">
-      <div>
+    <section class="hero row row--ruled">
+      <div class="hero__col">
         <p class="eyebrow">Yanice Yang</p>
         <p class="hero__meta">UX Designer<br />Bay Area, US</p>
+        <p class="hero__foot">Selected work 2021 — 2026</p>
       </div>
-      <div>
+      <div class="hero__col">
+        <p class="eyebrow">Portfolio</p>
         <h1 class="hero__title rv">
           UX designer doing the research <em>nobody else wants to do.</em>
         </h1>
         <p class="hero__sub rv" style="--d:.06s">
-          Six projects across user research, consumer product, enterprise
-          systems and health. Each one is here because it proves something the
-          others cannot.
+          Six projects across research, consumer product, enterprise and health.
+          <a class="tx" href="#work">See the work</a>
         </p>
       </div>
     </section>
 
     <!-- ================= index ================= -->
-    <section class="index">
-      <div class="index__head row">
+    <section class="index" id="work">
+      <div class="index__head row row--ruled">
         <p class="eyebrow">Selected work</p>
         <p class="hero__meta">2021 — 2026</p>
       </div>
 
       <!-- AtlasNova — typographic panel, no image, deliberately not a link -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">AtlasNova</h2>
           <p class="case__scope">Product Design · Design Systems</p>
@@ -513,7 +622,7 @@
       </article>
 
       <!-- Lark Design -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">Lark Design</h2>
           <p class="case__scope">User Research</p>
@@ -524,13 +633,13 @@
         <a class="slot rv" href="larkdesign.html" aria-label="Lark Design case study">
           <span class="ph">
             <span class="ph__file">home/case-lark.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
 
       <!-- Opus Clip -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">Opus Clip</h2>
           <p class="case__scope">Consumer Product · 0 → 1</p>
@@ -541,13 +650,13 @@
         <a class="slot rv" href="ai-driven-product-design.html" aria-label="Opus Clip case study">
           <span class="ph">
             <span class="ph__file">home/case-opusclip.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
 
       <!-- McKinsey Ecommerce -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">McKinsey Ecommerce</h2>
           <p class="case__scope">Strategy &amp; Ecommerce</p>
@@ -558,13 +667,13 @@
         <a class="slot rv" href="mckinseyecommerce.html" aria-label="McKinsey Ecommerce case study">
           <span class="ph">
             <span class="ph__file">home/case-mckinsey.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
 
       <!-- MiFinance -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">MiFinance</h2>
           <p class="case__scope">Interaction &amp; Craft</p>
@@ -575,13 +684,13 @@
         <a class="slot rv" href="mifinance.html" aria-label="MiFinance case study">
           <span class="ph">
             <span class="ph__file">home/case-mifinance.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
 
       <!-- Cummins -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">Cummins</h2>
           <p class="case__scope">Enterprise · Digitalization</p>
@@ -592,13 +701,13 @@
         <a class="slot rv" href="cummins-digitalization.html" aria-label="Cummins case study">
           <span class="ph">
             <span class="ph__file">home/case-cummins.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
 
       <!-- Medical Assistive -->
-      <article class="case row">
+      <article class="case row row--ruled">
         <div class="case__label">
           <h2 class="case__name">Medical Assistive</h2>
           <p class="case__scope">Health · Wearable</p>
@@ -610,29 +719,133 @@
         <a class="slot rv" href="alzheimerdisease.html" aria-label="Medical Assistive case study">
           <span class="ph">
             <span class="ph__file">home/case-medical.webp</span>
-            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+            <span class="ph__spec">4:3 · export 984 × 738</span>
           </span>
         </a>
       </article>
     </section>
 
     <!-- ================= closing ================= -->
-    <section class="end row">
+    <section class="end row row--ruled">
       <div>
         <p class="eyebrow">Next</p>
       </div>
       <div>
         <p class="end__line rv">Have something that needs the awkward questions asked first?</p>
         <p class="end__links rv" style="--d:.06s">
-          <a href="projects.html">All work</a>
-          <a href="aboutme.html">About</a>
-          <a href="mailto:yaniceydesign@gmail.com">Email</a>
-          <a href="https://302437672248143872.hello.cv/" target="_blank" rel="noopener">Resume ↗</a>
+          <a class="tx" href="projects.html">All work</a>
+          <a class="tx" href="aboutme.html">About</a>
+          <a class="tx" href="mailto:yaniceydesign@gmail.com">Email</a>
+          <a class="tx" href="https://302437672248143872.hello.cv/" target="_blank" rel="noopener">Resume ↗</a>
         </p>
       </div>
     </section>
 
   </main>
+
+  <div class="cursor" aria-hidden="true"><span class="cursor__t"></span></div>
+
+  <script src="assets/js/lenis.min.js"></script>
+  <script>
+  /* ---------- inertial smooth scroll ----------
+     Measured: kedavra runs Lenis (html carries the `lenis` class) plus GSAP
+     ScrollTrigger. The inertia is the single largest contributor to how the
+     site feels — larger than any individual effect — which is why the first
+     version of this page felt flat despite having reveals.
+
+     Vendored into the repo rather than loaded from a CDN, so the page keeps
+     zero build step AND zero runtime third-party dependency.
+
+     Off entirely under prefers-reduced-motion, and if the library is missing or
+     throws, the page keeps native scrolling. Nothing here can prevent scrolling. */
+  (function () {
+    'use strict';
+    try {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (typeof Lenis !== 'function') return;
+      var lenis = new Lenis({ duration: 1.05, smoothWheel: true, smoothTouch: false });
+      function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      /* Keep in-page anchors working — Lenis owns the scroll position now. */
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a) return;
+        var el = document.querySelector(a.getAttribute('href'));
+        if (!el) return;
+        e.preventDefault();
+        lenis.scrollTo(el, { offset: -24 });
+      });
+    } catch (e) {
+      if (window.console) console.error('[landing] smooth scroll off, native scroll active:', e);
+    }
+  })();
+  </script>
+
+  <script>
+  /* ---------- the "view" cursor ----------
+     Guards, in order of what they protect against:
+       1. Bail entirely on coarse pointers and reduced motion.
+       2. `cursor: none` is applied ONLY after the element has actually moved,
+          via html.yy-cursor-live — so a dead loop never hides the native one.
+       3. A watchdog confirms the rAF loop is still ticking every 400ms and
+          drops the class if it stalls.
+     Study v3 shipped this exact effect with the cursor frozen at the origin and
+     `cursor: none` already applied, leaving the desktop with no pointer at all. */
+  (function () {
+    'use strict';
+    var html = document.documentElement;
+    var el = document.querySelector('.cursor');
+    var label = el && el.querySelector('.cursor__t');
+    if (!el) return;
+
+    try {
+      if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      var tx = 0, ty = 0, x = 0, y = 0, seen = false, ticks = 0, lastCheck = 0;
+
+      window.addEventListener('mousemove', function (e) {
+        tx = e.clientX; ty = e.clientY;
+        if (!seen) { x = tx; y = ty; seen = true; }
+      }, { passive: true });
+
+      function frame() {
+        ticks++;
+        if (seen) {
+          x += (tx - x) * .18;             /* lerp: the trail, not a hard follow */
+          y += (ty - y) * .18;
+          el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+          if (!html.classList.contains('yy-cursor-live')) html.classList.add('yy-cursor-live');
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      /* Watchdog — if the loop stops, give the native cursor back. */
+      setInterval(function () {
+        if (ticks === lastCheck) html.classList.remove('yy-cursor-live');
+        lastCheck = ticks;
+      }, 400);
+
+      /* "view" only over a project image, matching the reference. */
+      document.querySelectorAll('a.slot').forEach(function (s) {
+        s.addEventListener('mouseenter', function () {
+          if (label) label.textContent = 'view';
+          el.classList.add('on');
+        });
+        s.addEventListener('mouseleave', function () {
+          el.classList.remove('on');
+        });
+      });
+
+      window.addEventListener('blur', function () { el.classList.remove('on'); });
+    } catch (e) {
+      html.classList.remove('yy-cursor-live');
+      el.style.display = 'none';
+      if (window.console) console.error('[landing] cursor off, native cursor active:', e);
+    }
+  })();
+  </script>
 
   <script>
   /* Scroll reveal. IntersectionObserver only — no scroll listener, no rAF loop,
