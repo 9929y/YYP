@@ -100,52 +100,75 @@
   }
 
   /* ---------- custom cursor ----------
-     Measured on kedavra: an 80x80 circle, rgba(255,255,255,.48) fill, black
-     14px/400 text at -0.64px tracking, radius 2137px, z-index 2137, showing
-     "view" while a project image is hovered. The image scale is secondary —
-     THIS is the site's hover effect.
+     Measured on kedavra: an 80x80 circle, radius 2137px, 14px/400 text at
+     -0.64px tracking, z-index 2137, reading "view" over a project image.
 
-     Study v3 shipped this and broke it: the custom cursor froze at the origin
-     while `cursor: none` hid the native one, leaving no visible pointer. Three
-     guards, all required:
-       1. `cursor: none` lives inside (hover: hover) and (pointer: fine), so a
-          touch device can never lose its pointer.
-       2. It is further gated on html.yy-cursor-live, a class JS only sets AFTER
-          the element has successfully moved at least once.
-       3. A watchdog checks the rAF loop is still ticking and drops the class if
-          it stalls, restoring the native cursor within ~500ms.
-     Any failure path ends with a visible native cursor. */
+     ⛔ THE BUG THIS REPLACES was mine, and it was a design error rather than an
+     edge case: `cursor: none` went global the moment the mouse moved, while the
+     disc was opacity 0 except over an a.slot. Result — no visible pointer
+     ANYWHERE on the page. Measured at three positions, all reporting native
+     cursor `none` with the custom disc at opacity 0.
+
+     I had written that "every failure path ends with a visible native cursor".
+     That was true. The SUCCESS path had no pointer, and none of my three guards
+     was watching for that.
+
+     So the disc is now ALWAYS visible once the cursor is live, resting as a
+     small dot and expanding to the 80px "view" chip over a slot. Size changes;
+     presence never does.
+
+     Second bug: the position was transitioned. A 0.32s overshoot transition on
+     `transform` while rAF rewrote transform every frame made the disc trail the
+     pointer by a measured 114px. Position now lives on the OUTER element and is
+     never transitioned; scale lives on the INNER element, so the inline
+     transform cannot clobber it and the two never fight.
+
+     Third bug: rgba(255,255,255,.48) on a pale placeholder measured a
+     brightness delta of 3.7 — effectively invisible. The disc is dark now, so
+     it reads on the pale ground, on placeholders, and on photographs. */
   .cursor {
     position: fixed;
     top: 0; left: 0;
     width: 80px; height: 80px;
-    margin: -40px 0 0 -40px;          /* centre on the pointer */
+    margin: -40px 0 0 -40px;          /* centre on the hotspot */
+    pointer-events: none;
+    z-index: 2137;
+    opacity: 0;                        /* until the first real move */
+    will-change: transform;
+    /* NO transition here. This element only ever carries position. */
+  }
+  html.yy-cursor-live .cursor { opacity: 1; }
+
+  .cursor__d {
+    width: 100%; height: 100%;
     border-radius: 2137px;
-    background: rgba(255, 255, 255, .48);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-    color: #000;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    color: var(--ground);
     font-size: 14px;
     font-weight: 400;
     letter-spacing: -.64px;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-    z-index: 2137;
-    opacity: 0;
-    transform: scale(.2);
-    transition: opacity var(--m-dur) var(--m-expo),
-                transform var(--m-dur) var(--m-overshoot);
-    will-change: transform;
+    transform: scale(.115);            /* 80 x .115 = 9.2px resting dot */
+    transition: transform var(--m-dur) var(--m-overshoot);
   }
-  .cursor.on { opacity: 1; transform: scale(1); }
+  .cursor.on .cursor__d { transform: scale(1); }
 
+  .cursor__t {
+    opacity: 0;
+    transition: opacity var(--m-dur-sm) var(--m-expo);
+  }
+  .cursor.on .cursor__t { opacity: 1; }
+
+  /* `cursor: none` is gated on the live class, so it can only ever apply while
+     a disc is actually being drawn and moved. */
   @media (hover: hover) and (pointer: fine) {
     html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
   }
 
-  /* Never on touch, never when motion is reduced. */
-  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  /* Touch has no pointer to replace. Reduced motion keeps the NATIVE cursor —
+     see the reduced-motion block below for why this is not `display: none`. */
+  @media (hover: none), (pointer: coarse) {
     .cursor { display: none !important; }
   }
 
@@ -508,10 +531,20 @@
   }
   html.yy-rv .rv.in { opacity: 1; transform: none; }
 
+  /* prefers-reduced-motion means "do not animate", NOT "remove the feature".
+     The first version read it as the latter: it hid the cursor entirely AND
+     cancelled the hover scale, so a reader with Reduce Motion enabled saw no
+     pointer treatment and no hover response at all — indistinguishable from the
+     page being broken.
+
+     Now: the reveal lands visible with no transition, the hover scale still
+     happens but instantly, and the custom cursor stands down so the NATIVE
+     cursor stays on screen. Function preserved, motion removed. */
   @media (prefers-reduced-motion: reduce) {
     html.yy-rv .rv { opacity: 1; transform: none; transition: none; }
-    a.slot:hover img, a.slot:hover .ph { transform: none; }
-    .end__links a:hover { transform: none; }
+    a.slot:hover img, a.slot:hover .ph { transition: none; }   /* instant, not cancelled */
+    .cursor { display: none !important; }                       /* native cursor stays */
+    html.yy-cursor-live, html.yy-cursor-live * { cursor: auto; }
     html { scroll-behavior: auto; }
   }
 
@@ -743,7 +776,7 @@
 
   </main>
 
-  <div class="cursor" aria-hidden="true"><span class="cursor__t"></span></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__d"><span class="cursor__t"></span></span></div>
 
   <script src="assets/js/lenis.min.js"></script>
   <script>
@@ -802,6 +835,9 @@
       if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+      /* Lerp 0.62. The previous 0.18 measured a 114px steady-state trail, which
+         stops reading as a cursor and starts reading as a stray dot. */
+      var LERP = .62;
       var tx = 0, ty = 0, x = 0, y = 0, seen = false, ticks = 0, lastCheck = 0;
 
       window.addEventListener('mousemove', function (e) {
@@ -812,8 +848,10 @@
       function frame() {
         ticks++;
         if (seen) {
-          x += (tx - x) * .18;             /* lerp: the trail, not a hard follow */
-          y += (ty - y) * .18;
+          x += (tx - x) * LERP;
+          y += (ty - y) * LERP;
+          if (Math.abs(tx - x) < .5) x = tx;     /* snap, so it never idles off-target */
+          if (Math.abs(ty - y) < .5) y = ty;
           el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
           if (!html.classList.contains('yy-cursor-live')) html.classList.add('yy-cursor-live');
         }
