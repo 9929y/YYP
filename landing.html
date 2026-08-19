@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" class="yy-landing">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Yanice Yang — UX Designer</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta name="description" content="UX designer. Selected work in user research, consumer product, enterprise and health." />
+  <link href="assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
+  <link href="assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
+
+  <!-- Same font loader the 11 legacy pages use, so landing and case pages
+       resolve Plus Jakarta Sans identically and there is no swap on navigation. -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" />
+
+  <style>
+  /* ==========================================================================
+     landing.html — the new homepage.
+
+     Coexists with index.html; the cutover is a separate reviewable commit
+     (Phase 5). Nothing here touches the legacy pages.
+
+     Locked decisions this file implements:
+       · frame 1280 = 320 (label col) + 24 (gap) + 936 (content col)
+       · s-index  = stacked full-width rows, one project per row
+       · s-card   = uniform 4:3, 16px radius, NO container (bare image on ground)
+       · v-tone   = light / neutral, no dark band
+       · v-type   = Plus Jakarta Sans only; Georgia is reserved for <blockquote>
+       · motion   = measured off kedavra.me, see the --m-* tokens below
+     ========================================================================== */
+
+  :root {
+    /* ---- frame ---- */
+    --frame: 1280px;
+    --col-label: 320px;
+    --col-gap: 24px;
+    --col-content: 936px;
+    --edge: 24px;
+
+    /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
+       60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero
+       title and ONLY at >=992px. 64 would be off-grid and nobody can see 6%;
+       104 is a layout problem, not a font-size problem — in a 936 column it
+       yields about 9 characters per line. */
+    --t-11: 11px; --t-13: 13px; --t-16: 16px; --t-20: 20px;
+    --t-25: 25px; --t-32: 32px; --t-40: 40px; --t-48: 48px; --t-60: 60px;
+
+    /* ---- line-height by ROLE, not by size ----
+       Phase 1 established this: a 16px label and 16px prose need different
+       leading, so deriving line-height from font-size alone is wrong. */
+    --lh-display: 1.05;
+    --lh-tight: 1.15;
+    --lh-heading: 1.25;
+    --lh-body: 1.55;
+    --lh-caption: 1.45;
+
+    /* ---- light / neutral ---- */
+    --ink: #1a1917;
+    --ink-2: #55534e;
+    --ink-3: #6d6a63;   /* 5.18:1 on --ground; #8a877f was 3.44:1 */
+    --ground: #fbfaf9;
+    --hair: #e4e1dc;
+    --slot: #efece8;
+
+    /* ---- motion — MEASURED off kedavra.me 2026-08-19, not invented ----
+       0.32s appears 54 times and is the site's single dominant duration.
+       The signature easing has y2 = 2.56 > 1, i.e. it overshoots — that
+       springiness is the entire source of the reference site's "feel".
+       Only transform and opacity are ever transitioned (64 and 10 uses
+       against 6 for margin), which is why it never drops frames. */
+    --m-dur: .32s;
+    --m-dur-sm: .24s;
+    --m-dur-lg: .48s;
+    --m-overshoot: cubic-bezier(.34, 2.56, .64, 1);
+    --m-expo: cubic-bezier(.19, 1, .22, 1);
+    --m-stagger: .06s;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    font-size: var(--t-16);
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* NOTE: no `cursor: none`. The reference site sets it and pairs it with a
+     WebGL cursor canvas. Study v3 shipped that combination with the custom
+     cursor frozen at the origin and the native one hidden, leaving the desktop
+     with no visible pointer at all. Ambience is not worth a dead pointer. */
+
+  a { color: inherit; }
+
+  ::selection { background: #1a1917; color: #fbfaf9; }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- shell ---------- */
+  .wrap {
+    width: 100%;
+    max-width: calc(var(--frame) + var(--edge) * 2);
+    margin: 0 auto;
+    padding: 0 var(--edge);
+  }
+
+  /* The two-column row. At a viewport of 1328+ the content box is exactly
+     1280, so this resolves to 320 + 24 + 936 — the locked frame. Below that
+     the label column holds and the content column absorbs the loss.
+
+     The content column is `minmax(0, 1fr)`, NOT the fixed 936px it started as:
+     fixed track sizes cannot shrink, so between 1100 and 1327 the grid kept
+     demanding 1280 inside a narrower box and pushed 24px of page off-screen.
+
+     The gap is carried by `gap`, never by padding on the label column —
+     padding would fold the gutter into the 320 and the grid would resolve to
+     320 + 936 = 1256, leaving 24px dangling. */
+  .row {
+    display: grid;
+    grid-template-columns: var(--col-label) minmax(0, 1fr);
+    gap: var(--col-gap);
+  }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 132px 0 96px; }
+
+  .hero__title {
+    margin: 0;
+    font-size: var(--t-40);
+    line-height: var(--lh-display);
+    letter-spacing: -.03em;
+    font-weight: 600;
+    max-width: 20ch;
+  }
+  @media (min-width: 992px) { .hero__title { font-size: var(--t-60); } }
+
+  .hero__title em {
+    font-style: italic;
+    font-weight: 500;
+    /* Plus Jakarta Sans Italic, NOT Georgia. Georgia is reserved for
+       <blockquote> and appears in exactly 12 places, all inside one. */
+  }
+
+  .hero__sub {
+    margin: 28px 0 0;
+    font-size: var(--t-20);
+    line-height: var(--lh-heading);
+    color: var(--ink-2);
+    max-width: 36em;           /* book measure, same cap as the case pages */
+    letter-spacing: normal;    /* tracking is for headings only */
+  }
+
+  .hero__meta {
+    margin: 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-3);
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: var(--t-11);
+    line-height: var(--lh-caption);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- index of work ---------- */
+  .index { padding: 40px 0 120px; }
+
+  .index__head {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 64px;
+  }
+
+  .case { margin-bottom: 112px; }
+  .case:last-child { margin-bottom: 0; }
+
+  /* Label column sits at the BOTTOM of the row, so the project name lines up
+     with the base of its image rather than floating at the top. */
+  .case__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 4px;
+  }
+
+  .case__name {
+    margin: 0;
+    font-size: var(--t-20);
+    line-height: var(--lh-heading);
+    letter-spacing: -.03em;
+    font-weight: 600;
+  }
+
+  .case__scope {
+    margin: 6px 0 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-3);
+  }
+
+  /* The description is ALWAYS visible. The study had it at opacity 0, revealed
+     only on desktop hover, which means touch-screen desktops and keyboard users
+     could never read it. */
+  .case__note {
+    margin: 14px 0 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-2);
+    max-width: 30em;
+  }
+
+  /* ---------- the 4:3 slot ----------
+     No card. No border, no backing panel, no elevation shadow. The reference
+     site's own design DNA: "There is no card component. A portfolio entry is a
+     bare image at 16px radius in the right column." */
+  .slot {
+    display: block;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--slot);
+    text-decoration: none;
+  }
+
+  .slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Hover: 0.32s on the overshoot curve, transform only. */
+  .slot img,
+  .slot .ph {
+    transition: transform var(--m-dur) var(--m-overshoot);
+  }
+  a.slot:hover img,
+  a.slot:hover .ph { transform: scale(1.018); }
+
+  /* ---------- placeholder ----------
+     Prints the exact export spec it is waiting for, so the requirement cannot
+     drift away from the page that needs it. */
+  .ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 10px;
+    text-align: center;
+    background:
+      repeating-linear-gradient(45deg,
+        transparent 0 11px, rgba(26,25,23,.028) 11px 22px),
+      var(--slot);
+  }
+
+  .ph__file {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-13);
+    color: var(--ink-2);
+  }
+
+  .ph__spec {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-11);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- AtlasNova: a typographic panel, not a grey box ----------
+     It has no page and no imagery yet, so it carries the outline as its
+     content. A placeholder labelled "placeholder" says nothing; the act
+     titles say what the project is. Deliberately NOT a link — there is
+     nowhere to go, and a dead link is worse than no link. */
+  .panel {
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    background: var(--slot);
+    padding: 44px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* A single flex column that DISTRIBUTES across whatever height the panel has,
+     rather than a 2-column block that stacks at the top. The first version used
+     `columns: 2` and left roughly 450 of the 702px empty, which reads as
+     unfinished rather than composed. space-between is self-adjusting, so this
+     holds at every breakpoint and if the act list ever changes length. */
+  .panel__acts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 28px;
+  }
+
+  .panel__acts li {
+    font-size: var(--t-16);
+    line-height: var(--lh-heading);
+    color: var(--ink-2);
+    counter-increment: act;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    border-bottom: 1px solid rgba(26, 25, 23, .06);
+    padding-bottom: 9px;
+  }
+  .panel__acts li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+  .panel__acts li::before {
+    content: counter(act, decimal-leading-zero);
+    color: var(--ink-3);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-11);
+    flex: none;
+  }
+
+  .panel__foot {
+    margin: 0;
+    font-size: var(--t-11);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- closing ---------- */
+  .end { padding: 0 0 160px; }
+
+  .end__line {
+    margin: 0;
+    font-size: var(--t-32);
+    line-height: var(--lh-tight);
+    letter-spacing: -.03em;
+    font-weight: 600;
+    max-width: 24ch;
+  }
+  @media (min-width: 992px) { .end__line { font-size: var(--t-48); } }
+
+  .end__links {
+    margin: 32px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 28px;
+    font-size: var(--t-16);
+  }
+
+  .end__links a {
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--hair);
+    transition: border-color var(--m-dur-sm) var(--m-expo),
+                transform var(--m-dur-sm) var(--m-overshoot);
+  }
+  .end__links a:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  /* ---------- scroll reveal ----------
+     0.48s / 0.06s stagger. The study used 1.2s with 0.16s stagger, which means
+     a four-item row takes 1.68s to settle — the reader has already scrolled
+     past. Transform + opacity only. */
+  /* ⚠️ Direction matters. Elements are VISIBLE by default and the animation is
+     opt-in via html.yy-rv, which only a working script sets. The first version
+     had this backwards — `.rv { opacity: 0 }` as the default, undone by a
+     `.no-js` class — so with JS off nothing removed the hiding and all 11
+     blocks were permanently invisible. Content must never need JS to be read.
+
+     The class is set by a synchronous script in <head>, before first paint, so
+     opting in does not cause a visible flash. */
+  html.yy-rv .rv {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity var(--m-dur-lg) var(--m-expo),
+                transform var(--m-dur-lg) var(--m-expo);
+    transition-delay: var(--d, 0s);
+  }
+  html.yy-rv .rv.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.yy-rv .rv { opacity: 1; transform: none; transition: none; }
+    a.slot:hover img, a.slot:hover .ph { transform: none; }
+    .end__links a:hover { transform: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ---------- responsive ----------
+     Below the frame, the label column collapses and the content column goes
+     full width. The 4:3 slot keeps its ratio at every size, so the images
+     Yanice exports never need a second crop. */
+  @media (max-width: 1100px) {
+    :root { --col-label: 260px; }
+  }
+
+  @media (max-width: 900px) {
+    .row { grid-template-columns: 1fr; gap: 20px; }
+    .case__label {
+      justify-content: flex-start;
+      padding-bottom: 0;
+      order: -1;
+    }
+    .hero { padding: 104px 0 72px; }
+    .case { margin-bottom: 80px; }
+    .panel { padding: 32px; aspect-ratio: auto; }
+    /* No fixed height to distribute across once the ratio is released. */
+    .panel__acts { display: block; padding-bottom: 20px; }
+    .panel__acts li { padding: 0 0 10px; margin-bottom: 10px; }
+  }
+
+  @media (max-width: 560px) {
+    :root { --edge: 20px; }
+    .hero { padding: 88px 0 56px; }
+    .hero__title { font-size: var(--t-32); }
+    .index__head { margin-bottom: 44px; }
+    .case { margin-bottom: 64px; }
+    .end__line { font-size: var(--t-25); }
+  }
+  </style>
+
+  <script>
+  /* Opt into the scroll reveal before first paint. Gated on IntersectionObserver
+     so browsers without it simply keep everything visible, and on
+     prefers-reduced-motion so we never hide content we then refuse to animate
+     back in. Nothing below this line can make content unreadable. */
+  (function () {
+    try {
+      if (!('IntersectionObserver' in window)) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.documentElement.className += ' yy-rv';
+    } catch (e) { /* stay visible */ }
+  })();
+  </script>
+
+  <!-- shared chrome: the same capsule nav + footer the 11 legacy pages load.
+       This is the anchor of site-wide UI consistency — landing and case pages
+       run one component, so a change lands everywhere at once. -->
+  <script src="assets/js/yy-chrome.js"></script>
+</head>
+
+<body>
+  <main class="wrap">
+
+    <!-- ================= hero ================= -->
+    <section class="hero row">
+      <div>
+        <p class="eyebrow">Yanice Yang</p>
+        <p class="hero__meta">UX Designer<br />Bay Area, US</p>
+      </div>
+      <div>
+        <h1 class="hero__title rv">
+          UX designer doing the research <em>nobody else wants to do.</em>
+        </h1>
+        <p class="hero__sub rv" style="--d:.06s">
+          Six projects across user research, consumer product, enterprise
+          systems and health. Each one is here because it proves something the
+          others cannot.
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= index ================= -->
+    <section class="index">
+      <div class="index__head row">
+        <p class="eyebrow">Selected work</p>
+        <p class="hero__meta">2021 — 2026</p>
+      </div>
+
+      <!-- AtlasNova — typographic panel, no image, deliberately not a link -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">AtlasNova</h2>
+          <p class="case__scope">Product Design · Design Systems</p>
+          <p class="case__note">
+            In progress. The outline is the content until the work is ready to
+            show.
+          </p>
+        </div>
+        <div class="panel rv" style="counter-reset: act">
+          <ul class="panel__acts">
+            <li>Problem &amp; premise</li>
+            <li>Landscape</li>
+            <li>Research</li>
+            <li>Framing</li>
+            <li>System</li>
+            <li>Interface</li>
+            <li>Validation</li>
+            <li>Build</li>
+            <li>What it changed</li>
+          </ul>
+          <p class="panel__foot">Nine acts · writing in progress</p>
+        </div>
+      </article>
+
+      <!-- Lark Design -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">Lark Design</h2>
+          <p class="case__scope">User Research</p>
+          <p class="case__note">
+            One-to-one interviews driving an onboarding rebuild.
+          </p>
+        </div>
+        <a class="slot rv" href="larkdesign.html" aria-label="Lark Design case study">
+          <span class="ph">
+            <span class="ph__file">home/case-lark.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Opus Clip -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">Opus Clip</h2>
+          <p class="case__scope">Consumer Product · 0 → 1</p>
+          <p class="case__note">
+            AI video editing, from a prompt to a finished cut.
+          </p>
+        </div>
+        <a class="slot rv" href="ai-driven-product-design.html" aria-label="Opus Clip case study">
+          <span class="ph">
+            <span class="ph__file">home/case-opusclip.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+
+      <!-- McKinsey Ecommerce -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">McKinsey Ecommerce</h2>
+          <p class="case__scope">Strategy &amp; Ecommerce</p>
+          <p class="case__note">
+            The longest write-up here, and the one with the most argument in it.
+          </p>
+        </div>
+        <a class="slot rv" href="mckinseyecommerce.html" aria-label="McKinsey Ecommerce case study">
+          <span class="ph">
+            <span class="ph__file">home/case-mckinsey.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+
+      <!-- MiFinance -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">MiFinance</h2>
+          <p class="case__scope">Interaction &amp; Craft</p>
+          <p class="case__note">
+            Account flows where the detail is the point.
+          </p>
+        </div>
+        <a class="slot rv" href="mifinance.html" aria-label="MiFinance case study">
+          <span class="ph">
+            <span class="ph__file">home/case-mifinance.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Cummins -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">Cummins</h2>
+          <p class="case__scope">Enterprise · Digitalization</p>
+          <p class="case__note">
+            Service tooling for people who use it all day.
+          </p>
+        </div>
+        <a class="slot rv" href="cummins-digitalization.html" aria-label="Cummins case study">
+          <span class="ph">
+            <span class="ph__file">home/case-cummins.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+
+      <!-- Medical Assistive -->
+      <article class="case row">
+        <div class="case__label">
+          <h2 class="case__name">Medical Assistive</h2>
+          <p class="case__scope">Health · Wearable</p>
+          <p class="case__note">
+            A wearable for care, designed around the carer as much as the
+            patient.
+          </p>
+        </div>
+        <a class="slot rv" href="alzheimerdisease.html" aria-label="Medical Assistive case study">
+          <span class="ph">
+            <span class="ph__file">home/case-medical.webp</span>
+            <span class="ph__spec">4:3 · export 1872 × 1404</span>
+          </span>
+        </a>
+      </article>
+    </section>
+
+    <!-- ================= closing ================= -->
+    <section class="end row">
+      <div>
+        <p class="eyebrow">Next</p>
+      </div>
+      <div>
+        <p class="end__line rv">Have something that needs the awkward questions asked first?</p>
+        <p class="end__links rv" style="--d:.06s">
+          <a href="projects.html">All work</a>
+          <a href="aboutme.html">About</a>
+          <a href="mailto:yaniceydesign@gmail.com">Email</a>
+          <a href="https://302437672248143872.hello.cv/" target="_blank" rel="noopener">Resume ↗</a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+  /* Scroll reveal. IntersectionObserver only — no scroll listener, no rAF loop,
+     no canvas, and no backdrop-filter outside the shared capsule.
+
+     Order matters: the no-js class is removed only after we confirm we can
+     observe. If anything here throws, .no-js stays and every .rv element is
+     visible. Content must never depend on JS to become readable. */
+  (function () {
+    'use strict';
+    var d = document.documentElement;
+    /* If the head script did not opt in, everything is already visible and
+       there is nothing to do. */
+    if (!d.classList.contains('yy-rv')) return;
+
+    try {
+
+      var io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (!entries[i].isIntersecting) continue;
+          entries[i].target.classList.add('in');
+          io.unobserve(entries[i].target);               /* reveal once, never re-hide */
+        }
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.01 });
+
+      var items = document.querySelectorAll('.rv');
+      for (var j = 0; j < items.length; j++) io.observe(items[j]);
+
+      /* Anything already in view on load reveals immediately rather than
+         waiting for a scroll that may never come on a short viewport. */
+      requestAnimationFrame(function () {
+        for (var k = 0; k < items.length; k++) {
+          var r = items[k].getBoundingClientRect();
+          if (r.top < innerHeight && r.bottom > 0) items[k].classList.add('in');
+        }
+      });
+    } catch (e) {
+      /* Back out of the animation entirely rather than leaving content hidden. */
+      d.classList.remove('yy-rv');
+      if (window.console) console.error('[landing] reveal failed, content shown:', e);
+    }
+  })();
+  </script>
+</body>
+
+</html>
