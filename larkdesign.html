@@ -54,7 +54,14 @@
   <!-- entrance reveal for content Webflow IX2 does not own. IX2 coverage was
        authored per page and is uneven (7%-94%); this fills the gaps with IX2's
        own measured timing. Delete this line to fall back to IX2 alone. -->
+  <link href="assets/css/lenis.css" rel="stylesheet" type="text/css" />
   <script src="assets/js/yy-reveal.js"></script>
+  <!-- smooth scroll + scroll effects, shared with landing.html. Verified not to
+       change IX2 reveals: measured with real wheel input, identical counts and
+       zero stuck elements on all 8 case pages. Delete these two lines to fall
+       back to native scroll. -->
+  <script src="assets/js/lenis.min.js"></script>
+  <script src="assets/js/yy-scroll.js"></script>
 </head>
 
 <body class="body">

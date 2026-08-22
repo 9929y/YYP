@@ -179,3 +179,51 @@ html.yy-reveal .yy-rv.in {
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   6. Scroll effects  (see assets/js/yy-scroll.js)
+   --------------------------------------------------------------------------- */
+
+/* Filmic image reveal. The base reveal in section 5 rises and un-blurs — right
+   for text, but a large image should have its frame WIPE open with a micro
+   over-scale settling back, rather than sliding. Same --duration-very-slow and
+   same --ease-smooth-out as the text reveal, so both read as one system; only
+   the shape of the motion differs.
+
+   The wipe replaces the translate entirely: moving AND wiping at once reads as
+   two effects fighting. 1.06 is the over-scale — small enough that the crop
+   never visibly shifts, large enough that the image settles rather than lands. */
+html.yy-reveal .yy-rv--wipe {
+  transform: scale(1.06);
+  clip-path: inset(100% 0 0 0);
+  filter: none;                       /* the wipe carries it; blur would muddy the edge */
+  transition: opacity var(--duration-very-slow) var(--ease-smooth-out),
+              transform var(--duration-very-slow) var(--ease-smooth-out),
+              clip-path var(--duration-very-slow) var(--ease-smooth-out);
+}
+
+html.yy-reveal .yy-rv--wipe.in {
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* ⛔ 这里原本有一层"滚动速度模糊"，已删除。留下记录避免有人再加一次。
+   两个原因，第二个更重要：
+
+   1. 它渲染不出来。--yy-vblur 确实被写到 1.60px、lenis-smooth 类也在，但 <img> 的
+      computed filter 一直是 none —— 因为 reveal 层的 `.yy-rv.in { filter: none }`
+      特异性是 (0,3,1)，压过 `html.lenis-smooth img` 的 (0,1,2)。要救它就得和
+      reveal 层打特异性战争，而"两层各自往同一个属性上写"正是最容易出 bug 的结构。
+
+   2. 它的依据站不住。参考站确实有速度模糊 —— 但实测量是 blur(0.0145px)，在**一个**
+      元素（hero 的斜体词）上。我做的是 1.6px 加在**每一张图**上，是放大了 100 倍的
+      自己的发明，不是量来的东西。删掉比修好。 */
+
+@media (prefers-reduced-motion: reduce) {
+  html.yy-reveal .yy-rv--wipe {
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+  html.lenis-smooth img { filter: none; }
+}

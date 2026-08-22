@@ -945,42 +945,13 @@
 
   <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
 
+  <link href="assets/css/lenis.css" rel="stylesheet" type="text/css" />
   <script src="assets/js/yy-flow.js"></script>
   <script src="assets/js/lenis.min.js"></script>
-  <script>
-  /* ---------- inertial smooth scroll ----------
-     Measured: kedavra runs Lenis (html carries the `lenis` class) plus GSAP
-     ScrollTrigger. The inertia is the single largest contributor to how the
-     site feels — larger than any individual effect — which is why the first
-     version of this page felt flat despite having reveals.
-
-     Vendored into the repo rather than loaded from a CDN, so the page keeps
-     zero build step AND zero runtime third-party dependency.
-
-     Off entirely under prefers-reduced-motion, and if the library is missing or
-     throws, the page keeps native scrolling. Nothing here can prevent scrolling. */
-  (function () {
-    'use strict';
-    try {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      if (typeof Lenis !== 'function') return;
-      var lenis = new Lenis({ duration: 1.05, smoothWheel: true, smoothTouch: false });
-      function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-      /* Keep in-page anchors working — Lenis owns the scroll position now. */
-      document.addEventListener('click', function (e) {
-        var a = e.target.closest && e.target.closest('a[href^="#"]');
-        if (!a) return;
-        var el = document.querySelector(a.getAttribute('href'));
-        if (!el) return;
-        e.preventDefault();
-        lenis.scrollTo(el, { offset: -24 });
-      });
-    } catch (e) {
-      if (window.console) console.error('[landing] smooth scroll off, native scroll active:', e);
-    }
-  })();
-  </script>
+  <!-- Smooth scroll now comes from the shared yy-scroll.js, the same file the 11
+       legacy pages load. It used to be inlined here with its own config — which is
+       how the two reveal layers ended up on different numbers. One file, one config. -->
+  <script src="assets/js/yy-scroll.js"></script>
 
   <script>
   /* ---------- the "view" cursor ----------
