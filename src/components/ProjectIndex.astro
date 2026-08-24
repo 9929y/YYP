@@ -1,0 +1,23 @@
+---
+import type { Project } from '../data/projects';
+import ProjectSlot from './ProjectSlot.astro';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+{
+  projects.map((project) => (
+    <article class="case row row--ruled">
+      <div class="case__label">
+        <h2 class="case__name">{project.title}</h2>
+        <p class="case__scope">{project.scope}</p>
+        <p class="case__note">{project.note}</p>
+      </div>
+      <ProjectSlot project={project} />
+    </article>
+  ))
+}

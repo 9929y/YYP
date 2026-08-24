@@ -1,0 +1,23 @@
+---
+import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
+import { astroCaseStudies, getProject } from '../data/projects';
+
+export function getStaticPaths() {
+  return astroCaseStudies().map((project) => ({
+    params: { slug: project.slug.replace(/\.html$/, '') }
+  }));
+}
+
+const project = getProject(Astro.params.slug);
+if (!project) {
+  throw new Error(`Unknown Astro case study: ${Astro.params.slug}`);
+}
+---
+
+<CaseStudyLayout project={project}>
+  <p>
+    Case-study body goes here. Add sections, MediaFigure blocks, and page-local
+    motion mounts. This route only emits pages whose engine is <code>astro</code>
+    and status is <code>published</code>.
+  </p>
+</CaseStudyLayout>

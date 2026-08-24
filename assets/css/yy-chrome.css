@@ -14,54 +14,19 @@
    ============================================================================ */
 
 /* ============================================================================
-   动效 token 尺度 —— 来自 transitions.dev 的 transitions-polish skill
-   （`_root.css`，逐值抄录，未改动）
+   Motion tokens live in assets/css/yy-tokens.css and MUST be linked from
+   <head> on every page. This sheet only consumes them.
 
-   装这一份的意义不是"让数字整齐"，而是给五个维度一个**按用途命名**的单一来源。
-   skill 的核心主张，也是本仓库反复验证过的同一条纪律：
-
-     > 按用途匹配，永不按最接近的数字匹配。一个值不是因为差 20ms 就错了，
-     > 而是因为它不符合这个动效**在做什么**。用途匹配不上任何 token 的，就别动。
-
-   本文件与 landing.html 都引用这些名字。landing 通过 yy-chrome.js 注入本表，
-   所以两边共享同一套尺度 —— 这正是修掉"两套 reveal 各自定参数"的机制。
+   Property ownership (one writer per animated property):
+     reveal  → opacity, transform, filter, clip-path   (html.yy-reveal .yy-rv/.rv)
+     hover   → transform, opacity                      (page CSS, e.g. a.slot:hover)
+     cursor  → transform, width, height, background, color
+     IX2     → anything on [data-w-id]                 (do not compete)
+     Lenis   → scroll position
+     flow    → canvas pixels only
+   Do not add a second writer for `filter`. A velocity-blur attempt already lost
+   that fight to `.yy-rv.in { filter: none }`.
    ============================================================================ */
-:root {
-  /* 时长 */
-  --duration-stagger: 40ms;      /* 每项错开偏移 */
-  --duration-micro: 80ms;        /* tooltip 意图延迟、shake 分段、大项错开 */
-  --duration-quick: 150ms;       /* 模态/下拉关闭、文字互换、tooltip 出现 */
-  --duration-fast: 250ms;        /* 图标切换、下拉/模态打开、滑动 tab、页面滑动 */
-  --duration-medium: 350ms;      /* 面板关闭、toast 关闭 */
-  --duration-slow: 400ms;        /* 面板打开、骨架屏内容揭示、输入清空 */
-  --duration-very-slow: 500ms;   /* 强调时刻、badge 出现、文字揭示、成功勾选 */
-
-  /* 缓动 */
-  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);      /* 开关、滑动、尺寸/位置变化 —— 默认 */
-  --ease-in-out: ease-in-out;                              /* 图标互换、文字互换、骨架揭示 */
-  --ease-out: ease-out;                                    /* tooltip 开关 */
-  --ease-linear: linear;                                   /* shimmer、骨架脉冲、spinner */
-  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);        /* badge 弹出 */
-  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1); /* 有弹性的 hover-out（头像归位）*/
-
-  /* 位移 */
-  --distance-micro: 4px;         /* 文字互换 */
-  --distance-small: 6px;         /* error shake 小段 */
-  --distance-base: 8px;          /* badge 斜向出现、页面滑动、shake 大段 */
-  --distance-medium: 12px;       /* 文字揭示 */
-  --distance-large: 30px;        /* 勾选 badge 出现 */
-
-  /* 缩放（入场前值，均落定到 1）*/
-  --scale-large: 0.96;           /* 模态开关 */
-  --scale-medium: 0.97;          /* 下拉打开 */
-  --scale-small: 0.98;           /* tooltip 打开 */
-  --scale-tiny: 0.99;            /* 下拉关闭 */
-
-  /* 模糊（入场前值，均落定到 0）*/
-  --blur-small: 2px;             /* 面板揭示、图标互换、文字互换、骨架揭示、数字弹入 */
-  --blur-medium: 3px;            /* 页面滑动、文字揭示 */
-  --blur-large: 8px;             /* 成功勾选打开 */
-}
 
 /* ---------------------------------------------------------------------------
    1. Focus ring
@@ -149,33 +114,34 @@ button:focus-visible,
    Without the class every element renders normally, so JS off / no
    IntersectionObserver / any throw all end with visible content.
    --------------------------------------------------------------------------- */
-html.yy-reveal .yy-rv {
+html.yy-reveal .yy-rv,
+html.yy-reveal .rv {
   opacity: 0;
   transform: translateY(var(--distance-medium));
   filter: blur(var(--blur-medium));
   transition: opacity var(--duration-very-slow) var(--ease-smooth-out),
               transform var(--duration-very-slow) var(--ease-smooth-out),
               filter var(--duration-very-slow) var(--ease-smooth-out);
+  transition-delay: var(--d, 0s);
   will-change: opacity, transform, filter;
 }
 
-html.yy-reveal .yy-rv.in {
+html.yy-reveal .yy-rv.in,
+html.yy-reveal .rv.in {
   opacity: 1;
   transform: none;
   filter: none;
-}
-
-/* Once settled, stop advertising a composite layer we no longer need. */
-html.yy-reveal .yy-rv.in {
   will-change: auto;
 }
 
 /* Reduced motion: the script bails before setting the class, so this is only a
    belt-and-braces guard in case the class is ever set another way. */
 @media (prefers-reduced-motion: reduce) {
-  html.yy-reveal .yy-rv {
+  html.yy-reveal .yy-rv,
+  html.yy-reveal .rv {
     opacity: 1;
     transform: none;
+    filter: none;
     transition: none;
   }
 }

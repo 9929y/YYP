@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  htmlClass?: string;
+  reveal?: boolean;
+  lenis?: boolean;
+  chrome?: boolean;
+}
+
+const {
+  title,
+  description = 'UX designer. Selected work in user research, consumer product, enterprise and health.',
+  htmlClass = '',
+  reveal = false,
+  lenis = true,
+  chrome = true
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en" class={htmlClass}>
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    {description && <meta name="description" content={description} />}
+    <link href="/assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
+    <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
+    <slot name="head" />
+    {chrome && <script is:inline src="/assets/js/yy-chrome.js"></script>}
+    {reveal && <script is:inline src="/assets/js/yy-reveal.js"></script>}
+    {lenis && (
+      <>
+        <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
+        <script is:inline src="/assets/js/lenis.min.js"></script>
+        <script is:inline src="/assets/js/yy-scroll.js"></script>
+      </>
+    )}
+  </head>
+  <body>
+    <slot />
+    <slot name="scripts" />
+  </body>
+</html>

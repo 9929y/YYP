@@ -46,6 +46,21 @@ Originals are recoverable from git history — they were committed before this p
 
 ## Run locally
 
+The site is now an Astro static build. Legacy Webflow pages are copied into
+`dist/` unchanged; `landing.html` is generated from `src/pages/landing.astro`.
+
+```bash
+npm install
+npm run dev        # http://127.0.0.1:4800  (index.html still the homepage)
+npm run build      # writes dist/ — this is what Vercel publishes
+npm test           # project schema + asset/link checks
+```
+
+How to add pages, case studies, motion, and React islands: `docs/EXTENDING.md`.
+Pre-migration URL/script baseline: `docs/BASELINE.md`.
+
+The old no-build server still works for legacy files only:
+
 ```bash
 python3 -m http.server 4800   # then open http://localhost:4800
 ```

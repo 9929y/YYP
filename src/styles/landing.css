@@ -1,0 +1,664 @@
+/* landing.css — extracted from landing.html. Visual behaviour is unchanged.
+   Motion tokens come from assets/css/yy-tokens.css (linked in <head>).
+   Entrance reveal is html.yy-reveal .rv in yy-chrome.css, not duplicated here.
+*/
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    font-size: var(--t-16);
+    line-height: var(--lh-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ---------- custom cursor — transcribed from the reference's own source ----------
+     Source: kedavra-me-design-system/raw/kedavra-inline-animation.js and
+     kedavra-site-full.css. Previous attempts measured computed styles and then
+     guessed at the mechanism; this is the mechanism.
+
+       initialState = { width: 12, height: 12, background: "white",
+                        mixBlendMode: "difference", color: "white" }
+       hoverState   = { width: 80, height: 80, background: "rgba(255,255,255,.48)",
+                        backdropFilter: "blur(12px)", mixBlendMode: "unset",
+                        color: "black" }
+
+     ⭐ mix-blend-mode: difference is the part I had never guessed, and it is the
+     answer to a question I had answered wrongly twice. A WHITE 12px dot is
+     visible on a white page because difference inverts it to black — and on a
+     black hero it stays white. One dot, correct on every background. My previous
+     fix made the dot dark to "solve" visibility, which is a worse solution to a
+     problem this mechanism does not have.
+
+     Timings, also from source (not inferred):
+       follow      gsap.to(duration: .16, ease: "power3.out")
+       first show  scale 0 -> 1, duration .32, ease: "back.out(1.7)"
+       hover in    disc .24 power3.out; text opacity .32 power2.inOut
+       hover out   text opacity .08 power2.out; disc .3 power2.out
+     My earlier 114px trail came from using .32s on an overshoot curve
+     (y2 = 2.56) for the follow — twice the duration, plus overshoot. The
+     reference never overshoots the position.
+
+     Anchoring: measured centre offset is (0,0) at BOTH 12px and 80px, so the
+     disc is centred on the hotspot at any size. A trailing translate(-50%,-50%)
+     resolves against the element's own box, so it re-centres as width animates
+     — no per-size margin needed.
+
+     Enabled only above 991px, matching `if (window.innerWidth > 991)` in the
+     source, and additionally gated on a fine pointer so a touch laptop keeps
+     its own cursor. */
+  #yy-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    /* The disc always has a real 12px box. Two earlier attempts gave it a
+       zero-size or zero-scale starting state and animated up from there; both
+       left it with no size at all in some environments, which is the whole
+       reason nothing was ever visible.
+
+       The entrance is `opacity`, which is deliberately NOT in the transition
+       list — presence is binary and instant, size is the thing that animates on
+       hover. That is one fewer animated property to get pinned.
+
+       `mix-blend-mode: difference` has to stay on THIS element, a direct child
+       of <body>. It cannot move to an inner wrapper: this element carries
+       `transform`, which makes it a stacking context, which would isolate an
+       inner element's blending into a no-op against the page. */
+    width: 12px; height: 12px;
+    border-radius: 2137px;
+    background: #fff;
+    color: #fff;
+    mix-blend-mode: difference;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: -.64px;
+    pointer-events: none;
+    z-index: 2137;
+    will-change: transform;
+    /* translate(-50%,-50%) trails the position translate, so it resolves against
+       the element's own box and re-centres automatically as width animates —
+       measured centre offset (0,0) at both 12px and 80px on the reference. */
+    transform: translate3d(var(--cx, -200px), var(--cy, -200px), 0) translate(-50%, -50%);
+    transition-property: transform, width, height, background-color, color;
+    /* Source declares .16s for the follow tween. Transcribing that literally
+       measured a 23px worst-case trail against the reference's own 11px under an
+       identical probe — GSAP restarting a tween per mousemove event follows
+       tighter than a CSS transition restarting on the same events. Copying the
+       BEHAVIOUR, which is what was asked for, means .12s here: measured 13px
+       against the reference's 11px. The declared number and the observed one
+       disagree, and the observed one is the spec that matters. */
+    /* The follow (.08s) is deliberately NOT tokenised: transitions-polish has no
+       "cursor follow" usage, and its rule is explicit — if a value's usage matches
+       no token, leave it. 80ms here is a measured follow, not a mis-tuned tooltip
+       delay.
+
+       The size/colour lane IS tokenised. The disc growing 12px to 80px is a
+       surface open, so it maps to --duration-fast — and the CLOSE is split out on
+       the .on rule below, per the open/close asymmetry rule. This base rule now
+       carries the close. */
+    transition-duration: .08s,
+                         var(--duration-quick), var(--duration-quick),
+                         var(--duration-quick), var(--duration-quick);
+    transition-timing-function:
+      cubic-bezier(.165, .84, .44, 1),        /* follow — power3.out, off-token by design */
+      var(--ease-bounce), var(--ease-bounce), /* size — badge pop open */
+      var(--ease-smooth-out), var(--ease-smooth-out);
+    /* Not transitioned. Opacity is a hard on/off so a zero-width disc is never
+       a faint smudge — presence is binary, size is what animates. */
+    opacity: 0;
+  }
+  html.yy-cursor-live #yy-cursor { opacity: 1; }
+
+  /* hoverState */
+  /* hoverState.
+     Open/close asymmetry, per transitions-polish: "dropdown/modal open 250ms →
+     close 150ms. Opening is an invitation; closing should get out of the way."
+     Both directions were 240ms. The base rule carries the CLOSE
+     (--duration-quick); this one overrides with the OPEN (--duration-fast), so
+     the disc blooms deliberately and snaps back out of the way. */
+  #yy-cursor.on {
+    transition-duration: .08s,
+                         var(--duration-fast), var(--duration-fast),
+                         var(--duration-fast), var(--duration-fast);
+    width: 80px; height: 80px;
+    background: rgba(255, 255, 255, .48);
+    color: #000;
+    mix-blend-mode: normal;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .yy-cursor__t {
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    /* Intent delay, per transitions.dev's 17-tooltip: --duration-micro (80ms)
+       before the label appears, so a pointer sweeping across a row of cards does
+       not flash "view" at every one it crosses. The skill is precise about when a
+       delay is legitimate — "to filter accidental triggers", not to pad a slow
+       animation — and a hover label is exactly that case. */
+    transition: opacity .32s cubic-bezier(.45, 0, .55, 1) var(--duration-micro);
+  }
+  #yy-cursor.on .yy-cursor__t { opacity: 1; }
+  /* Never delay a dismissal. Out is .08s with zero delay — the reference uses
+     .08s here too, and transitions-polish: "dismissal must feel instant". */
+  #yy-cursor:not(.on) .yy-cursor__t {
+    transition-duration: .08s;
+    transition-delay: 0s;
+  }
+
+  @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+    html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
+  }
+
+  @media (max-width: 991px), (hover: none), (pointer: coarse) {
+    #yy-cursor { display: none !important; }
+  }
+
+  a { color: inherit; }
+
+  ::selection { background: #1a1917; color: #fbfaf9; }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- the ASCII diffusion field ----------
+     Behind all content, full viewport, never interactive. The reference puts its
+     equivalent (#hero-cursor-flow, a WebGL ChromaFlow + Ascii shader) in the
+     hero; a fixed full-viewport field keeps the effect wherever the pointer
+     goes, which is what the effect is actually about. */
+  #yy-flow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+  }
+  @media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    #yy-flow { display: none !important; }
+  }
+
+  /* ---------- shell ---------- */
+  /* .wrap no longer caps the width — each section does, because the index now
+     needs a wider frame than the hero. Capping here and overriding there would
+     mean two competing max-widths on nested elements. */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 0 var(--edge);
+  }
+
+  /* ⚠️ 一个外框，一条轴线。
+     之前首屏／收尾用 --frame(829)、索引区用 --frame-index(1160)，两个宽度各自居中，
+     于是那条 1px 竖线在两处落在不同的 x 上 —— 实测差约 330px，肉眼非常明显。
+     Yanice 明确要求中轴线统一。
+
+     所以外框只有一个（1160）。首屏不再靠"更窄的外框"来得到 kedavra 的 492 measure，
+     而是用自己的 max-width 约束**文字**宽度 —— 见下方 .hero__title / .hero__sub。
+     这样标签栏、间距、竖线位置在每个 section 完全相同，而 64px 的字仍然跑 12 字/行。 */
+  .hero,
+  .end,
+  .index__head,
+  .case {
+    max-width: var(--frame-index);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* The two-column row. At a viewport of 1328+ the content box is exactly
+     1280, so this resolves to 320 + 24 + 936 — the locked frame. Below that
+     the label column holds and the content column absorbs the loss.
+
+     The content column is `minmax(0, 1fr)`, NOT the fixed 936px it started as:
+     fixed track sizes cannot shrink, so between 1100 and 1327 the grid kept
+     demanding 1280 inside a narrower box and pushed 24px of page off-screen.
+
+     The gap is carried by `gap`, never by padding on the label column —
+     padding would fold the gutter into the 320 and the grid would resolve to
+     320 + 936 = 1256, leaving 24px dangling. */
+  .row {
+    display: grid;
+    grid-template-columns: var(--col-label) minmax(0, 1fr);
+    gap: var(--col-gap);
+    position: relative;
+  }
+
+  /* 首屏／收尾的内容列固定卡在 492（kedavra 实测的 measure），不像 .index__head／
+     .case 那样吃满 1fr 到 823。外框仍然是统一的 --frame-index，轴线仍然对齐——
+     只是这两行自己的列宽不用完那个外框，右侧多出的轨道留空，没有元素锚在那里，
+     所以看不出来。这正是本来的设计：一个外框，但列宽按内容各自的任务来定。
+
+     必须包一层 min-width:878px：`.hero.row` 两个 class 的特异性天生高于下方
+     877px 断点里的 `.row { grid-template-columns: 1fr }`，媒体查询本身不加分。
+     不包这层的话，手机宽度下这条规则会赢过折叠成单列的规则，撑出 320+492 的
+     固定宽度，在 375px 视口造成横向溢出。 */
+  @media (min-width: 878px) {
+    .hero.row,
+    .end.row {
+      grid-template-columns: var(--col-label) minmax(0, var(--col-content));
+    }
+  }
+
+  /* The 1px rule between the columns. Measured on kedavra: 1px, #e9e9e9, and
+     present in EVERY section — the hero's runs the full 810px. It is the
+     skeleton that makes the page read as a document. Pure CSS, no risk.
+     Sits in the gap, so it never shifts the columns. */
+  .row--ruled::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--col-label) + var(--col-gap) / 2);
+    width: 1px;
+    background: var(--rule);
+    pointer-events: none;
+  }
+  @media (max-width: 900px) { .row--ruled::before { display: none; } }
+
+  /* ---------- hero ---------- */
+  /* Measured: the reference hero section is 810px tall in a 900px viewport,
+     i.e. it owns ~90% of the screen. A short hero is most of why the first
+     version read as quiet. */
+  .hero {
+    min-height: 90vh;
+    padding: 120px 0 56px;
+  }
+
+  /* Three zones per column — pinned top, centred, pinned bottom. The reference
+     does this in both columns and it is a large part of why the hero owns the
+     screen instead of sitting at the top of it. */
+  .hero__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  .hero__foot {
+    margin: 0;
+    font-size: var(--t-11);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* Measured on kedavra.me: 64px, 492px column, 4 lines, 12 characters per
+     line, line-height exactly 1.0, letter-spacing -2.56px = -0.04em, weight 600.
+     My earlier note in the plan rejected 64px as "off-grid, nobody can see 6%".
+     That was wrong: 64 is precisely what the reference uses, and the crowding it
+     produces at 12 characters per line IS the effect, not a defect. */
+  .hero__title {
+    margin: 0;
+    font-size: var(--t-40);
+    line-height: var(--lh-display);
+    letter-spacing: -.04em;
+    font-weight: 600;
+    /* 492 是 kedavra 实测的内容列宽，也是让 64px 的字跑 12 字/行的那个 measure。
+       现在它约束的是文字本身，不是整个外框 —— 外框统一了，轴线才统一。 */
+    max-width: var(--col-content);
+  }
+  @media (min-width: 768px) { .hero__title { font-size: var(--t-64); } }
+
+  .hero__title em {
+    font-style: italic;
+    font-weight: 500;
+    /* Plus Jakarta Sans Italic, NOT Georgia. Georgia is reserved for
+       <blockquote> and appears in exactly 12 places, all inside one. */
+  }
+
+  .hero__sub {
+    margin: 28px 0 0;
+    font-size: var(--t-20);
+    line-height: var(--lh-heading);
+    color: var(--ink-2);
+    /* 36em 是书籍行宽，但不能超过 kedavra 的 492 内容列 —— 取两者较小值 */
+    max-width: min(36em, var(--col-content));
+    letter-spacing: normal;    /* tracking is for headings only */
+  }
+
+  .hero__meta {
+    margin: 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-3);
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: var(--t-11);
+    line-height: var(--lh-caption);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- index of work ---------- */
+  .index { padding: 40px 0 120px; }
+
+  .index__head {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 64px;
+  }
+
+  /* One project per screen. min-height 100vh with the row centred means each
+     case owns a viewport, so scrolling moves from project to project rather than
+     past a list of them. margin is gone — the viewport does the spacing now. */
+  .case {
+    min-height: 100vh;
+    display: grid;
+    align-content: center;
+    margin-bottom: 0;
+  }
+
+  /* Label column sits at the BOTTOM of the row, so the project name lines up
+     with the base of its image rather than floating at the top. */
+  .case__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 4px;
+  }
+
+  .case__name {
+    margin: 0;
+    font-size: var(--t-20);
+    line-height: var(--lh-heading);
+    letter-spacing: -.03em;
+    font-weight: 600;
+  }
+
+  .case__scope {
+    margin: 6px 0 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-3);
+  }
+
+  /* The description is ALWAYS visible. The study had it at opacity 0, revealed
+     only on desktop hover, which means touch-screen desktops and keyboard users
+     could never read it. */
+  .case__note {
+    margin: 14px 0 0;
+    font-size: var(--t-13);
+    line-height: var(--lh-caption);
+    color: var(--ink-2);
+    max-width: 30em;
+  }
+
+  /* ---------- the 4:3 slot ----------
+     No card. No border, no backing panel, no elevation shadow. The reference
+     site's own design DNA: "There is no card component. A portfolio entry is a
+     bare image at 16px radius in the right column." */
+  /* 4:3 kept — the Opus Clip thumbnail video is natively 1440x1080, so any other
+     ratio would crop it. Sized by viewport HEIGHT so one project fills a screen:
+     68vh tall gives 816px wide at 900px viewport height. `min(..., 100%)` clamps
+     it to the column on shorter or narrower viewports, and aspect-ratio derives
+     the height either way, so the crop never changes. */
+  .slot {
+    display: block;
+    position: relative;
+    width: min(calc(68vh * 4 / 3), 100%);
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--slot);
+    text-decoration: none;
+  }
+
+  /* Cross-fade + cross-blur from placeholder to real image, per
+     transitions.dev's 14-skeleton-reveal. Its reveal parameters land exactly on
+     the token scale — 400ms = --duration-slow ("skeleton content reveal"),
+     2px = --blur-small, ease-in-out — so they are referenced, not restated.
+
+     ⚠️ Only HALF the recipe is used, on purpose. The recipe also pulses the
+     skeleton while data loads. These slots are not loading — they are *not yet
+     supplied*. A pulse would promise an image is on its way, which would be a
+     lie until Yanice exports one. The reveal half is honest and is the part that
+     matters: drop a file into assets/images/home/ and it fades in over the
+     placeholder with no code change.
+
+     The image starts at opacity 0, so a 404 shows nothing rather than a broken
+     icon — JS only reveals it after a successful load. */
+  .slot img,
+  .slot video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    filter: blur(var(--blur-small));
+    transition: opacity var(--duration-slow) var(--ease-in-out),
+                filter var(--duration-slow) var(--ease-in-out);
+  }
+
+  .slot.is-revealed img,
+  .slot.is-revealed video {
+    opacity: 1;
+    filter: none;
+  }
+
+  /* The skeleton leaves as the content arrives — a cross-fade, not a swap. */
+  .slot .ph {
+    transition: opacity var(--duration-slow) var(--ease-in-out),
+                transform var(--m-dur) var(--ease-bounce-strong);
+  }
+  .slot.is-revealed .ph { opacity: 0; }
+
+  /* Hover in/out split, per transitions.dev's 11-avatar-group-hover.
+     Before, BOTH directions shared the overshoot curve. transitions-polish is
+     explicit that overshoot belongs to entrances only and that hover-out is the
+     one place where the return should be MORE elaborate than the arrival:
+
+       In:  quick and direct — --duration-fast-or-less with --ease-smooth-out
+       Out: softer and springier — --ease-bounce-strong, so it settles
+            instead of snapping
+
+     Duration stays 320ms: that is both kedavra's measured hover value and the
+     avatar recipe's own live tuning (--avatar-dur: 320ms). Two independent
+     sources landing on the same number, so there is nothing to align.
+
+     The base rule carries the OUT transition; :hover overrides it with the IN. */
+  a.slot:hover img,
+  a.slot:hover video,
+  a.slot:hover .ph {
+    transition: transform var(--m-dur) var(--ease-smooth-out);
+  }
+  /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
+     1.018, which is not perceptible — one of the three things Yanice correctly
+     called out as "no hover effect". */
+  a.slot:hover img,
+  a.slot:hover .ph { transform: scale(1.03); }
+
+  /* ---------- placeholder ----------
+     Prints the exact export spec it is waiting for, so the requirement cannot
+     drift away from the page that needs it. */
+  .ph {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 10px;
+    text-align: center;
+    background:
+      repeating-linear-gradient(45deg,
+        transparent 0 11px, rgba(26,25,23,.028) 11px 22px),
+      var(--slot);
+  }
+
+  .ph__file {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-13);
+    color: var(--ink-2);
+  }
+
+  .ph__spec {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-11);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- AtlasNova: a typographic panel, not a grey box ----------
+     It has no page and no imagery yet, so it carries the outline as its
+     content. A placeholder labelled "placeholder" says nothing; the act
+     titles say what the project is. Deliberately NOT a link — there is
+     nowhere to go, and a dead link is worse than no link. */
+  .panel {
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    background: var(--slot);
+    padding: 44px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* A single flex column that DISTRIBUTES across whatever height the panel has,
+     rather than a 2-column block that stacks at the top. The first version used
+     `columns: 2` and left roughly 450 of the 702px empty, which reads as
+     unfinished rather than composed. space-between is self-adjusting, so this
+     holds at every breakpoint and if the act list ever changes length. */
+  .panel__acts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 28px;
+  }
+
+  .panel__acts li {
+    font-size: var(--t-16);
+    line-height: var(--lh-heading);
+    color: var(--ink-2);
+    counter-increment: act;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    border-bottom: 1px solid rgba(26, 25, 23, .06);
+    padding-bottom: 9px;
+  }
+  .panel__acts li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+  .panel__acts li::before {
+    content: counter(act, decimal-leading-zero);
+    color: var(--ink-3);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--t-11);
+    flex: none;
+  }
+
+  .panel__foot {
+    margin: 0;
+    font-size: var(--t-11);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- closing ---------- */
+  .end { padding: 0 0 160px; }
+
+  .end__line {
+    margin: 0;
+    font-size: var(--t-32);
+    line-height: var(--lh-tight);
+    letter-spacing: -.03em;
+    font-weight: 600;
+    max-width: min(24ch, var(--col-content));
+  }
+  @media (min-width: 992px) { .end__line { font-size: var(--t-48); } }
+
+  .end__links {
+    margin: 32px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 28px;
+    font-size: var(--t-16);
+  }
+
+  /* Measured on kedavra: every text link hover is exactly `opacity: 1 -> 0.64`.
+     Nothing else moves. Applying it site-wide on this page keeps text hover
+     consistent with the reference instead of inventing a per-element idea. */
+  /* Text-link hover. transitions-polish, hover-in: "quick and direct — a short
+     --duration-fast-or-less lift with --ease-smooth-out". 320ms was over that.
+     Kept symmetric: the in/out asymmetry rule is about transform lifts, and a
+     pure opacity fade sits with the symmetric exceptions (text swap). */
+  a.tx {
+    text-decoration: none;
+    transition: opacity var(--duration-fast) var(--ease-smooth-out);
+  }
+  a.tx:hover { opacity: .64; }
+
+  /* Inline links inside prose need a visible affordance — the opacity hover
+     only tells you once the pointer is already on it. */
+  .hero__sub a.tx {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--ink-3);
+  }
+
+  .end__links a {
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--hair);
+  }
+
+
+  /* Reveal motion itself lives in assets/css/yy-chrome.css under html.yy-reveal
+     (.rv and .yy-rv share one contract). Landing-only reduced-motion guards: */
+  @media (prefers-reduced-motion: reduce) {
+    a.slot:hover img, a.slot:hover .ph { transition: none; }
+    #yy-cursor { display: none !important; }
+    html.yy-cursor-live, html.yy-cursor-live * { cursor: auto; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ---------- responsive ----------
+     Below the frame, the label column collapses and the content column goes
+     full width. The 4:3 slot keeps its ratio at every size, so the images
+     Yanice exports never need a second crop. */
+  /* 829 + 2 x 24 edge = 877. Above that the frame fits untouched; below it the
+     label column collapses and the content column goes full width. */
+  @media (max-width: 877px) {
+    .row { grid-template-columns: 1fr; gap: 20px; }
+    .case__label {
+      justify-content: flex-start;
+      padding-bottom: 0;
+      order: -1;
+    }
+    .hero { padding: 104px 0 72px; }
+    .case { margin-bottom: 80px; }
+    .panel { padding: 32px; aspect-ratio: auto; }
+    /* No fixed height to distribute across once the ratio is released. */
+    .panel__acts { display: block; padding-bottom: 20px; }
+    .panel__acts li { padding: 0 0 10px; margin-bottom: 10px; }
+  }
+
+  @media (max-width: 560px) {
+    :root { --edge: 20px; }
+    .hero { padding: 88px 0 56px; }
+    .hero__title { font-size: var(--t-32); }
+    .index__head { margin-bottom: 44px; }
+    .case { margin-bottom: 64px; }
+    .end__line { font-size: var(--t-25); }
+  }
+  
