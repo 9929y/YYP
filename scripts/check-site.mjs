@@ -25,7 +25,14 @@ async function loadProjects() {
   return import(pathToFileURL(path.join(ROOT, 'src/data/projects.ts')).href);
 }
 
-function checkHtmlFile(file, baseDir) {
+function resolveRef(file, ref, baseDir) {
+  const clean = ref.split('?')[0].split('#')[0];
+  if (!clean) return null;
+  if (clean.startsWith('/')) return path.join(baseDir, clean.replace(/^\//, ''));
+  return path.normalize(path.join(path.dirname(file), clean));
+}
+
+function checkHtmlFile(file, baseDir, optionalMissing) {
   const html = fs.readFileSync(file, 'utf8');
   const rel = path.relative(baseDir, file);
   if (rel.endsWith('.html') && !html.includes('yy-tokens.css') && !rel.startsWith('_astro')) {
@@ -40,14 +47,10 @@ function checkHtmlFile(file, baseDir) {
   for (const ref of refs) {
     if (!ref || ref.startsWith('#') || ref.startsWith('mailto:') || ref.startsWith('tel:')) continue;
     if (/^https?:\/\//.test(ref) || ref.startsWith('data:') || ref.startsWith('//')) continue;
-    const clean = ref.split('?')[0].split('#')[0];
-    if (!clean) continue;
-    const resolved = clean.startsWith('/')
-      ? path.join(baseDir, clean.slice(1))
-      : path.normalize(path.join(path.dirname(file), clean));
-    if (!fs.existsSync(resolved)) {
-      const fromRoot = path.relative(ROOT, resolved);
-      if (optionalMissing.has(fromRoot) || optionalMissing.has(clean.replace(/^\//, ''))) continue;
+    const resolved = resolveRef(file, ref, baseDir);
+    if (resolved && !fs.existsSync(resolved)) {
+      const clean = ref.split('?')[0].split('#')[0].replace(/^\//, '');
+      if (optionalMissing.has(clean)) continue;
       errors.push(`${rel}: broken ${ref}`);
     }
   }
@@ -57,9 +60,16 @@ const projectsMod = await loadProjects();
 const schemaErrors = projectsMod.validateProjects();
 for (const e of schemaErrors) errors.push(`projects schema: ${e}`);
 
+if (!fs.existsSync(path.join(ROOT, 'src/pages/landing.astro'))) {
+  errors.push('src/pages/landing.astro missing — Astro is the source of truth for landing.html');
+}
+if (fs.existsSync(path.join(ROOT, 'landing.html'))) {
+  errors.push('root landing.html must not exist — delete it so Astro is the only source');
+}
+
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
-  .filter((f) => f.endsWith('.html') && fs.existsSync(f) && path.basename(f) !== 'landing.html');
+  .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
 
 if (useDist && !fs.existsSync(path.join(distDir, 'landing.html'))) {
   errors.push('dist/landing.html missing — run npm run build');
@@ -71,17 +81,17 @@ if (useDist && !fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
   errors.push('dist/assets/css/yy-tokens.css missing');
 }
 
+const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
 const optionalMissing = new Set(
   projectsMod.projects.flatMap((p) => {
     const out = [];
-    if (p.placeholderFile && p.cover) out.push(p.cover.src);
+    if (p.placeholderFile && p.cover) out.push(toDisk(p.cover.src));
     return out;
   })
 );
+
 for (const file of htmlFiles) {
-  const base = path.basename(file);
-  if (base === 'landing.html' && root === ROOT) continue;
-  checkHtmlFile(file, root);
+  checkHtmlFile(file, root, optionalMissing);
 }
 
 const requiredAssets = [
@@ -101,16 +111,16 @@ for (const asset of requiredAssets) {
 
 for (const project of projectsMod.projects) {
   if (project.cover && !project.placeholderFile) {
-    const p = path.join(ROOT, project.cover.src);
+    const p = path.join(ROOT, toDisk(project.cover.src));
     if (!fs.existsSync(p)) errors.push(`${project.slug}: missing cover ${project.cover.src}`);
   }
   if (project.video) {
     for (const src of [project.video.src, project.video.poster]) {
-      if (!fs.existsSync(path.join(ROOT, src))) errors.push(`${project.slug}: missing ${src}`);
+      if (!fs.existsSync(path.join(ROOT, toDisk(src)))) errors.push(`${project.slug}: missing ${src}`);
     }
   }
   if (project.href && project.engine === 'webflow') {
-    const page = path.join(ROOT, project.href);
+    const page = path.join(ROOT, toDisk(project.href));
     if (!fs.existsSync(page)) errors.push(`${project.slug}: missing ${project.href}`);
   }
 }

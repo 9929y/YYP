@@ -53,7 +53,8 @@ The site is now an Astro static build. Legacy Webflow pages are copied into
 npm install
 npm run dev        # http://127.0.0.1:4800  (index.html still the homepage)
 npm run build      # writes dist/ — this is what Vercel publishes
-npm test           # project schema + asset/link checks
+npm test           # project schema + asset/link checks (no dist required)
+npm run check      # astro check + the same site checks against dist/
 ```
 
 How to add pages, case studies, motion, and React islands: `docs/EXTENDING.md`.

@@ -272,8 +272,6 @@ export function diskPath(src: string): string {
   return src.replace(/^\//, '');
 }
 
-const SLUG = new Map(projects.map((p) => [p.slug, p]));
-
 export function getProject(slug: string | undefined): Project | undefined {
   return slug ? SLUG.get(slug) : undefined;
 }
