@@ -117,8 +117,68 @@
      Lenis 的平滑滚动 + 上面那个 filmic wipe 已经把"更有创意"这件事做到了，
      而且两者都验得过。 */
 
+  /* --------------------------------------------------------------------------
+     Effect 2 — play a slot's video when the reader reaches it.
+
+     Deliberately NOT the `autoplay` attribute: that starts on load, which means
+     a 4.4MB download and a moving picture before anyone has scrolled to it.
+     Yanice asked for it to start when the project comes into view.
+
+     Paired with `preload="none"` in the markup, so the file is not fetched at
+     all until the first play() — the cost is zero for a reader who never
+     reaches that project.
+
+     Guards:
+       · muted + playsinline are on the element; without both, iOS refuses to
+         play inline and Chrome refuses to autoplay at all.
+       · play() returns a promise that REJECTS when a browser policy blocks it
+         (low-power mode, an autoplay setting). Unhandled, that logs an error on
+         every attempt; caught, the poster simply stays.
+       · pause when it leaves the viewport, so nothing decodes off-screen.
+       · under prefers-reduced-motion nothing plays at all — an autoplaying loop
+         is exactly what that preference is about. The poster carries the slot.
+     -------------------------------------------------------------------------- */
+  function wireVideos() {
+    try {
+      var vids = document.querySelectorAll('.slot video');
+      if (!vids.length || !('IntersectionObserver' in window)) return;
+
+      if (RM.matches) {                 /* poster only, never fetch the video */
+        for (var k = 0; k < vids.length; k++) vids[k].removeAttribute('loop');
+        return;
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          var v = entries[i].target;
+          if (entries[i].isIntersecting) {
+            var pr = v.play();
+            if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
+          } else if (!v.paused) {
+            v.pause();
+          }
+        }
+      }, {
+        /* 45% visible: on a one-project-per-screen layout that means "this is the
+           project you are looking at", not "its top edge just appeared". */
+        threshold: 0.45
+      });
+
+      for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+
+      /* A tab switch should not leave video decoding in the background. */
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) return;
+        for (var m = 0; m < vids.length; m++) if (!vids[m].paused) vids[m].pause();
+      });
+    } catch (e) {
+      if (window.console) console.error('[yy-scroll] video autoplay off, poster kept:', e);
+    }
+  }
+
   function boot() {
     tagImages();
+    wireVideos();
     /* Newly revealed images need tagging too — yy-reveal adds .yy-rv on its own
        schedule, and on the long pages that happens well after load. */
     var n = 0;
