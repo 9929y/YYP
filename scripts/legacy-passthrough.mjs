@@ -3,7 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = process.cwd();
-const GENERATED_HTML = new Set(['landing.html']);
+/** HTML emitted by Astro — never overwrite with a root passthrough copy. */
+const GENERATED_HTML = new Set(['index.html', 'landing.html']);
 
 function mime(file) {
   return {
@@ -47,9 +48,19 @@ export default function legacyPassthrough() {
                   server.middlewares.use((req, res, next) => {
                     if (req.method !== 'GET' && req.method !== 'HEAD') return next();
                     const url = decodeURIComponent((req.url || '/').split('?')[0]);
-                    if (url === '/landing' || url === '/landing.html') return next();
 
-                    const rel = url === '/' ? 'index.html' : url.replace(/^\//, '');
+                    // Let Astro own the homepage and the /landing.html redirect stub.
+                    if (
+                      url === '/' ||
+                      url === '/index' ||
+                      url === '/index.html' ||
+                      url === '/landing' ||
+                      url === '/landing.html'
+                    ) {
+                      return next();
+                    }
+
+                    const rel = url.replace(/^\//, '');
                     if (!rel || rel.includes('..') || path.isAbsolute(rel)) return next();
 
                     const fromRoot = path.join(ROOT, rel);

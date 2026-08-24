@@ -32,10 +32,20 @@ function resolveRef(file, ref, baseDir) {
   return path.normalize(path.join(path.dirname(file), clean));
 }
 
-function checkHtmlFile(file, baseDir, optionalMissing) {
+function isRedirectStub(html) {
+  return /http-equiv=["']refresh["']/i.test(html) || /location\.replace\s*\(/.test(html);
+}
+
+function checkHtmlFile(file, baseDir, optionalMissing, knownGenerated) {
   const html = fs.readFileSync(file, 'utf8');
   const rel = path.relative(baseDir, file);
-  if (rel.endsWith('.html') && !html.includes('yy-tokens.css') && !rel.startsWith('_astro')) {
+  const redirect = isRedirectStub(html);
+  if (
+    rel.endsWith('.html') &&
+    !redirect &&
+    !html.includes('yy-tokens.css') &&
+    !rel.startsWith('_astro')
+  ) {
     errors.push(`${rel}: missing yy-tokens.css link`);
   }
 
@@ -47,10 +57,11 @@ function checkHtmlFile(file, baseDir, optionalMissing) {
   for (const ref of refs) {
     if (!ref || ref.startsWith('#') || ref.startsWith('mailto:') || ref.startsWith('tel:')) continue;
     if (/^https?:\/\//.test(ref) || ref.startsWith('data:') || ref.startsWith('//')) continue;
+    const clean = ref.split('?')[0].split('#')[0].replace(/^\//, '');
+    if (knownGenerated.has(clean) || knownGenerated.has(path.basename(clean))) continue;
+    if (optionalMissing.has(clean)) continue;
     const resolved = resolveRef(file, ref, baseDir);
     if (resolved && !fs.existsSync(resolved)) {
-      const clean = ref.split('?')[0].split('#')[0].replace(/^\//, '');
-      if (optionalMissing.has(clean)) continue;
       errors.push(`${rel}: broken ${ref}`);
     }
   }
@@ -60,25 +71,48 @@ const projectsMod = await loadProjects();
 const schemaErrors = projectsMod.validateProjects();
 for (const e of schemaErrors) errors.push(`projects schema: ${e}`);
 
-if (!fs.existsSync(path.join(ROOT, 'src/pages/landing.astro'))) {
-  errors.push('src/pages/landing.astro missing — Astro is the source of truth for landing.html');
+if (!fs.existsSync(path.join(ROOT, 'src/pages/index.astro'))) {
+  errors.push('src/pages/index.astro missing — Astro is the source of truth for the homepage');
 }
 if (fs.existsSync(path.join(ROOT, 'landing.html'))) {
-  errors.push('root landing.html must not exist — delete it so Astro is the only source');
+  errors.push('root landing.html must not exist — Astro owns / and /landing.html');
+}
+if (fs.existsSync(path.join(ROOT, 'index.html'))) {
+  errors.push('root index.html must not exist — Astro emits it; archive is index.webflow.html');
+}
+if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
+  errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
 }
 
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
   .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
 
-if (useDist && !fs.existsSync(path.join(distDir, 'landing.html'))) {
-  errors.push('dist/landing.html missing — run npm run build');
-}
-if (useDist && !fs.existsSync(path.join(distDir, 'index.html'))) {
-  errors.push('dist/index.html missing — legacy passthrough failed');
-}
-if (useDist && !fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
-  errors.push('dist/assets/css/yy-tokens.css missing');
+if (useDist) {
+  const distIndex = path.join(distDir, 'index.html');
+  if (!fs.existsSync(distIndex)) {
+    errors.push('dist/index.html missing — run npm run build');
+  } else {
+    const indexHtml = fs.readFileSync(distIndex, 'utf8');
+    if (!indexHtml.includes('yy-landing')) {
+      errors.push('dist/index.html is not the Astro homepage (missing yy-landing)');
+    }
+    if (indexHtml.includes('data-wf-page')) {
+      errors.push('dist/index.html still looks like the Webflow homepage');
+    }
+  }
+  const distLanding = path.join(distDir, 'landing.html');
+  if (!fs.existsSync(distLanding)) {
+    errors.push('dist/landing.html missing — compatibility redirect stub required');
+  } else if (!isRedirectStub(fs.readFileSync(distLanding, 'utf8'))) {
+    errors.push('dist/landing.html should redirect to /');
+  }
+  if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
+    errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
+  }
+  if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
+    errors.push('dist/assets/css/yy-tokens.css missing');
+  }
 }
 
 const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
@@ -90,8 +124,12 @@ const optionalMissing = new Set(
   })
 );
 
+const knownGenerated = useDist
+  ? new Set()
+  : new Set(['index.html', 'landing.html']);
+
 for (const file of htmlFiles) {
-  checkHtmlFile(file, root, optionalMissing);
+  checkHtmlFile(file, root, optionalMissing, knownGenerated);
 }
 
 const requiredAssets = [

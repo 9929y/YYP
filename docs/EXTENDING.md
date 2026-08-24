@@ -7,14 +7,15 @@ Add new work on the Astro side. Do not edit the 19k-line Webflow stylesheet.
 
 ```bash
 npm install
-npm run dev        # http://127.0.0.1:4800  (legacy pages + /landing.html)
+npm run dev        # http://127.0.0.1:4800  (Astro homepage at /)
 npm run build      # writes dist/ — this is what Vercel publishes
 npm test           # project schema + asset/link checks
 npm run check      # astro check + the same site checks
 ```
 
-`index.html` remains the live homepage. `landing.html` is the new homepage and
-is not swapped to `/` in this foundation.
+The live homepage is `src/pages/index.astro` → `/` / `index.html`.
+`/landing.html` redirects to `/`. The pre-cutover Webflow homepage is archived
+as `index.webflow.html`.
 
 ## Add a page
 

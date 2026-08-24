@@ -6,10 +6,11 @@ it is a regression.
 
 ## URLs (flat `*.html`, no directory indexes)
 
-| URL | Role | Owner after this foundation |
+| URL | Role | Owner after cutover |
 |---|---|---|
-| `/` / `index.html` | Live Webflow homepage | passthrough, unchanged |
-| `landing.html` | New homepage (not live) | Astro `src/pages/landing.astro` |
+| `/` / `index.html` | Live Astro homepage | Astro `src/pages/index.astro` |
+| `landing.html` | Redirect stub → `/` | Astro `src/pages/landing.astro` |
+| `index.webflow.html` | Archived Webflow homepage | passthrough |
 | `projects.html` | Work hub | passthrough |
 | `aboutme.html` | About | passthrough |
 | `fashion.html` | Gallery | passthrough |
@@ -21,12 +22,13 @@ it is a regression.
 | `alzheimerdisease.html` | Medical assistive case | passthrough |
 | `tiktok-research.html` | Research case | passthrough |
 
-Homepage cutover (`landing.html` → `/`) is **out of scope**. Do it as its own reviewable commit.
+Homepage cutover (`src/pages/index.astro` → `/`) is **done**. The old Webflow
+homepage remains at `index.webflow.html` for rollback and comparison.
 
 ## Listing disagreement (do not "fix" during foundation)
 
-- `landing.html`: AtlasNova (in progress) + Lark, Opus Clip, McKinsey, MiFinance, Cummins, Medical Assistive. No TikTok.
-- `index.html`: Opus Clip, McKinsey, Lark, Cummins, MiFinance, Alzheimer. No TikTok, no AtlasNova.
+- Homepage (`/`): AtlasNova (in progress) + Lark, Opus Clip, McKinsey, MiFinance, Cummins, Medical Assistive. No TikTok.
+- `index.webflow.html` (archived): Opus Clip, McKinsey, Lark, Cummins, MiFinance, Alzheimer. No TikTok, no AtlasNova.
 - `projects.html`: Opus Clip, McKinsey, Lark, Cummins, MiFinance, Alzheimer, TikTok.
 
 ## Script order
