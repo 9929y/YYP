@@ -148,20 +148,36 @@
         return;
       }
 
+      /* ⛔ 这里原本是单一 threshold: 0.45，理由写的是"45% 可见才算你正在看的项目"。
+         那个判断在实践中是错的，实测打脸：
+
+             视口        视频高/视口   停下时实际可见   结果
+             1440×900      68%           53%          ✓ 播
+             1920×1080     57%           87%          ✓ 播
+             2560×1440     43%           91%          ✓ 播
+             1512×982      63%           33%          ✗ 不播   ← MacBook Pro 14"
+
+         读者停在只露 33% 的位置时它就永远不播 —— 而且单一阈值还会让轻微滚动
+         不断跨越同一条线，造成来回启停。
+
+         改成进场早、退场晚的迟滞：>=15% 开播，<5% 才暂停。两条线不同，所以在
+         任何一个停留位置都不会抖动，而"离开视口就别解码"的目的仍然达到。 */
+      var PLAY_AT = 0.15, PAUSE_AT = 0.05;
       var io = new IntersectionObserver(function (entries) {
         for (var i = 0; i < entries.length; i++) {
-          var v = entries[i].target;
-          if (entries[i].isIntersecting) {
-            var pr = v.play();
-            if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
-          } else if (!v.paused) {
+          var e = entries[i], v = e.target;
+          if (e.intersectionRatio >= PLAY_AT) {
+            if (v.paused) {
+              var pr = v.play();
+              if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
+            }
+          } else if (e.intersectionRatio < PAUSE_AT && !v.paused) {
             v.pause();
           }
         }
       }, {
-        /* 45% visible: on a one-project-per-screen layout that means "this is the
-           project you are looking at", not "its top edge just appeared". */
-        threshold: 0.45
+        /* 多个阈值：只有跨过其中一条才会回调，两条判定线各自独立。 */
+        threshold: [0, 0.05, 0.15, 0.3, 0.6]
       });
 
       for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
