@@ -38,7 +38,10 @@
        reads as a document rather than a dashboard. Its own teardown records the
        split as 320 + 17 + 492 = 829 while describing the container as 830.
        Yanice chose these proportions over the 1280/936 variant on 2026-08-19. */
-    --frame: 829px;   /* 320 + 17 + 492 = 829 exactly; 830 leaves a 1px slack */
+    /* --frame 保留作记录：kedavra 实测的 320 + 17 + 492 = 829。
+       它已不再用于布局 —— 见下方"一个外框，一条轴线"。首屏靠 --col-content
+       约束文字宽度来保住那个 measure。 */
+    --frame: 829px;
     /* The index needs a wider frame than the hero, and this is a deliberate
        exception rather than drift. The hero keeps kedavra's 492 measure because
        that is what makes 64px type run 12 characters to the line. The index has
@@ -293,14 +296,17 @@
     padding: 0 var(--edge);
   }
 
+  /* ⚠️ 一个外框，一条轴线。
+     之前首屏／收尾用 --frame(829)、索引区用 --frame-index(1160)，两个宽度各自居中，
+     于是那条 1px 竖线在两处落在不同的 x 上 —— 实测差约 330px，肉眼非常明显。
+     Yanice 明确要求中轴线统一。
+
+     所以外框只有一个（1160）。首屏不再靠"更窄的外框"来得到 kedavra 的 492 measure，
+     而是用自己的 max-width 约束**文字**宽度 —— 见下方 .hero__title / .hero__sub。
+     这样标签栏、间距、竖线位置在每个 section 完全相同，而 64px 的字仍然跑 12 字/行。 */
   .hero,
   .end,
-  .index__head {
-    max-width: var(--frame);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
+  .index__head,
   .case {
     max-width: var(--frame-index);
     margin-left: auto;
@@ -323,6 +329,22 @@
     grid-template-columns: var(--col-label) minmax(0, 1fr);
     gap: var(--col-gap);
     position: relative;
+  }
+
+  /* 首屏／收尾的内容列固定卡在 492（kedavra 实测的 measure），不像 .index__head／
+     .case 那样吃满 1fr 到 823。外框仍然是统一的 --frame-index，轴线仍然对齐——
+     只是这两行自己的列宽不用完那个外框，右侧多出的轨道留空，没有元素锚在那里，
+     所以看不出来。这正是本来的设计：一个外框，但列宽按内容各自的任务来定。
+
+     必须包一层 min-width:878px：`.hero.row` 两个 class 的特异性天生高于下方
+     877px 断点里的 `.row { grid-template-columns: 1fr }`，媒体查询本身不加分。
+     不包这层的话，手机宽度下这条规则会赢过折叠成单列的规则，撑出 320+492 的
+     固定宽度，在 375px 视口造成横向溢出。 */
+  @media (min-width: 878px) {
+    .hero.row,
+    .end.row {
+      grid-template-columns: var(--col-label) minmax(0, var(--col-content));
+    }
   }
 
   /* The 1px rule between the columns. Measured on kedavra: 1px, #e9e9e9, and
@@ -379,6 +401,9 @@
     line-height: var(--lh-display);
     letter-spacing: -.04em;
     font-weight: 600;
+    /* 492 是 kedavra 实测的内容列宽，也是让 64px 的字跑 12 字/行的那个 measure。
+       现在它约束的是文字本身，不是整个外框 —— 外框统一了，轴线才统一。 */
+    max-width: var(--col-content);
   }
   @media (min-width: 768px) { .hero__title { font-size: var(--t-64); } }
 
@@ -394,7 +419,8 @@
     font-size: var(--t-20);
     line-height: var(--lh-heading);
     color: var(--ink-2);
-    max-width: 36em;           /* book measure, same cap as the case pages */
+    /* 36em 是书籍行宽，但不能超过 kedavra 的 492 内容列 —— 取两者较小值 */
+    max-width: min(36em, var(--col-content));
     letter-spacing: normal;    /* tracking is for headings only */
   }
 
@@ -653,7 +679,7 @@
     line-height: var(--lh-tight);
     letter-spacing: -.03em;
     font-weight: 600;
-    max-width: 24ch;
+    max-width: min(24ch, var(--col-content));
   }
   @media (min-width: 992px) { .end__line { font-size: var(--t-48); } }
 
