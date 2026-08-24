@@ -9,7 +9,7 @@
   (function () {
     'use strict';
     try {
-      document.querySelectorAll('a.slot').forEach(function (slot) {
+      document.querySelectorAll('.slot').forEach(function (slot) {
         /* A video slot reveals as soon as its poster is painted — waiting for the
            video itself would keep the placeholder up until the reader scrolls
            there, since preload is "none" and nothing is fetched before that. */

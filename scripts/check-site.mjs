@@ -153,7 +153,7 @@ for (const project of projectsMod.projects) {
     if (!fs.existsSync(p)) errors.push(`${project.slug}: missing cover ${project.cover.src}`);
   }
   if (project.video) {
-    for (const src of [project.video.src, project.video.poster]) {
+    for (const src of [project.video.src, project.video.poster].filter(Boolean)) {
       if (!fs.existsSync(path.join(ROOT, toDisk(src)))) errors.push(`${project.slug}: missing ${src}`);
     }
   }

@@ -473,16 +473,17 @@
      sources landing on the same number, so there is nothing to align.
 
      The base rule carries the OUT transition; :hover overrides it with the IN. */
-  a.slot:hover img,
-  a.slot:hover video,
-  a.slot:hover .ph {
+  .slot:hover img,
+  .slot:hover video,
+  .slot:hover .ph {
     transition: transform var(--m-dur) var(--ease-smooth-out);
   }
   /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
      1.018, which is not perceptible — one of the three things Yanice correctly
      called out as "no hover effect". */
-  a.slot:hover img,
-  a.slot:hover .ph { transform: scale(1.03); }
+  .slot:hover img,
+  .slot:hover video,
+  .slot:hover .ph { transform: scale(1.03); }
 
   /* ---------- placeholder ----------
      Prints the exact export spec it is waiting for, so the requirement cannot
@@ -626,7 +627,7 @@
   /* Reveal motion itself lives in assets/css/yy-chrome.css under html.yy-reveal
      (.rv and .yy-rv share one contract). Landing-only reduced-motion guards: */
   @media (prefers-reduced-motion: reduce) {
-    a.slot:hover img, a.slot:hover .ph { transition: none; }
+    .slot:hover img, .slot:hover video, .slot:hover .ph { transition: none; }
     #yy-cursor { display: none !important; }
     html.yy-cursor-live, html.yy-cursor-live * { cursor: auto; }
     html { scroll-behavior: auto; }

@@ -12,10 +12,13 @@ export interface ProjectCover {
 
 export interface ProjectVideo {
   src: string;
-  poster: string;
+  /** Optional still shown before play. Prefer a real frame when available. */
+  poster?: string;
   width: number;
   height: number;
   label: string;
+  /** hover = play on pointer enter; scroll = play when in view (Opus Clip legacy). */
+  play?: 'hover' | 'scroll';
 }
 
 export interface Project {
@@ -52,27 +55,24 @@ export const projects: Project[] = [
     title: 'AtlasNova',
     href: null,
     scope: 'Product Design · Design Systems',
-    note: 'In progress. The outline is the content until the work is ready to show.',
+    note: 'In progress. Brand kit input flows while the case study is written.',
     status: 'in-progress',
     engine: 'astro',
-    kind: 'panel',
+    kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,
     featuredOnIndex: false,
     featuredOnProjects: false,
     landingOrder: 1,
-    acts: [
-      'Problem & premise',
-      'Landscape',
-      'Research',
-      'Framing',
-      'System',
-      'Interface',
-      'Validation',
-      'Build',
-      'What it changed'
-    ],
-    panelFoot: 'Nine acts · writing in progress'
+    video: {
+      src: 'assets/videos/case-atlasnova.mp4',
+      width: 1440,
+      height: 1080,
+      label: 'AtlasNova brand kit input cover',
+      play: 'hover'
+    },
+    placeholderFile: 'videos/case-atlasnova.mp4',
+    placeholderSpec: '4:3 · hover to play'
   },
   {
     slug: 'larkdesign',
@@ -89,13 +89,21 @@ export const projects: Project[] = [
     featuredOnProjects: true,
     landingOrder: 2,
     cover: {
-      src: 'assets/images/home/case-lark.webp',
+      src: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
       alt: 'Lark Design onboarding case study',
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/case-lark.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
+    video: {
+      src: 'assets/videos/case-lark.mp4',
+      poster: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
+      width: 1440,
+      height: 1080,
+      label: 'Lark Design carousel preview',
+      play: 'hover'
+    },
+    placeholderFile: 'videos/case-lark.mp4',
+    placeholderSpec: '4:3 · hover to play',
     prevSlug: 'mckinseyecommerce',
     nextSlug: 'cummins-digitalization'
   },
@@ -115,14 +123,15 @@ export const projects: Project[] = [
     featuredOnProjects: true,
     landingOrder: 3,
     video: {
-      src: 'assets/videos/case-opusclip.mp4',
+      src: 'assets/videos/case-opusclip-marquee.mp4',
       poster: 'assets/images/home/case-opusclip.jpg',
       width: 1440,
       height: 1080,
-      label: 'Opus Clip interface, animated'
+      label: 'Opus Clip marquee preview',
+      play: 'hover'
     },
-    placeholderFile: 'home/case-opusclip.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
+    placeholderFile: 'videos/case-opusclip-marquee.mp4',
+    placeholderSpec: '4:3 · hover to play',
     prevSlug: 'alzheimerdisease',
     nextSlug: 'mckinseyecommerce'
   },
@@ -141,13 +150,21 @@ export const projects: Project[] = [
     featuredOnProjects: true,
     landingOrder: 4,
     cover: {
-      src: 'assets/images/home/case-mckinsey.webp',
+      src: 'assets/images/home/hero-mckinsey-ecommerce-card-cover.webp',
       alt: 'McKinsey live-streamed ecommerce case study',
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/case-mckinsey.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
+    video: {
+      src: 'assets/videos/case-mckinsey.mp4',
+      poster: 'assets/images/home/hero-mckinsey-ecommerce-card-cover.webp',
+      width: 1440,
+      height: 1080,
+      label: 'McKinsey orbit preview',
+      play: 'hover'
+    },
+    placeholderFile: 'videos/case-mckinsey.mp4',
+    placeholderSpec: '4:3 · hover to play',
     prevSlug: 'ai-driven-product-design',
     nextSlug: 'larkdesign'
   },

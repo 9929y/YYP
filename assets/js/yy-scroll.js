@@ -118,71 +118,84 @@
      而且两者都验得过。 */
 
   /* --------------------------------------------------------------------------
-     Effect 2 — play a slot's video when the reader reaches it.
+     Effect 2 — play a slot's video on hover (landing) or when scrolled into view.
 
-     Deliberately NOT the `autoplay` attribute: that starts on load, which means
-     a 4.4MB download and a moving picture before anyone has scrolled to it.
-     Yanice asked for it to start when the project comes into view.
+     Deliberately NOT the `autoplay` attribute: that starts on load.
 
-     Paired with `preload="none"` in the markup, so the file is not fetched at
-     all until the first play() — the cost is zero for a reader who never
-     reaches that project.
+     Modes (data-play on the <video>):
+       · hover  — play on pointer enter, pause on leave (default for landing thumbs)
+       · scroll — play when in view (legacy / touch fallback)
 
      Guards:
-       · muted + playsinline are on the element; without both, iOS refuses to
-         play inline and Chrome refuses to autoplay at all.
-       · play() returns a promise that REJECTS when a browser policy blocks it
-         (low-power mode, an autoplay setting). Unhandled, that logs an error on
-         every attempt; caught, the poster simply stays.
-       · pause when it leaves the viewport, so nothing decodes off-screen.
-       · under prefers-reduced-motion nothing plays at all — an autoplaying loop
-         is exactly what that preference is about. The poster carries the slot.
+       · muted + playsinline are on the element
+       · play() promise rejection is caught so the poster stays
+       · prefers-reduced-motion → never play
+       · devices without hover → scroll-in-view fallback for data-play="hover"
      -------------------------------------------------------------------------- */
   function wireVideos() {
     try {
       var vids = document.querySelectorAll('.slot video');
-      if (!vids.length || !('IntersectionObserver' in window)) return;
+      if (!vids.length) return;
 
       if (RM.matches) {                 /* poster only, never fetch the video */
         for (var k = 0; k < vids.length; k++) vids[k].removeAttribute('loop');
         return;
       }
 
-      /* ⛔ 这里原本是单一 threshold: 0.45，理由写的是"45% 可见才算你正在看的项目"。
-         那个判断在实践中是错的，实测打脸：
+      var canHover = false;
+      try {
+        canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+      } catch (e) { canHover = false; }
 
-             视口        视频高/视口   停下时实际可见   结果
-             1440×900      68%           53%          ✓ 播
-             1920×1080     57%           87%          ✓ 播
-             2560×1440     43%           91%          ✓ 播
-             1512×982      63%           33%          ✗ 不播   ← MacBook Pro 14"
+      function tryPlay(v) {
+        var pr = v.play();
+        if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
+      }
 
-         读者停在只露 33% 的位置时它就永远不播 —— 而且单一阈值还会让轻微滚动
-         不断跨越同一条线，造成来回启停。
+      function wireHover(v) {
+        var slot = v.closest('.slot') || v;
+        var enter = function () { tryPlay(v); };
+        var leave = function () { if (!v.paused) v.pause(); };
+        slot.addEventListener('pointerenter', enter);
+        slot.addEventListener('pointerleave', leave);
+        /* Warm the first frame so hover does not wait on cold start. */
+        if (v.preload === 'none') v.preload = 'metadata';
+        try { v.load(); } catch (e) { /* ignore */ }
+      }
 
-         改成进场早、退场晚的迟滞：>=15% 开播，<5% 才暂停。两条线不同，所以在
-         任何一个停留位置都不会抖动，而"离开视口就别解码"的目的仍然达到。 */
+      var scrollVids = [];
+      for (var i = 0; i < vids.length; i++) {
+        var v = vids[i];
+        var mode = v.getAttribute('data-play') || 'scroll';
+        if (mode === 'hover' && canHover) wireHover(v);
+        else scrollVids.push(v);
+      }
+
+      if (!scrollVids.length || !('IntersectionObserver' in window)) {
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden) return;
+          for (var m = 0; m < vids.length; m++) if (!vids[m].paused) vids[m].pause();
+        });
+        return;
+      }
+
+      /* 进场早、退场晚的迟滞：>=15% 开播，<5% 才暂停。 */
       var PLAY_AT = 0.15, PAUSE_AT = 0.05;
       var io = new IntersectionObserver(function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-          var e = entries[i], v = e.target;
+        for (var n = 0; n < entries.length; n++) {
+          var e = entries[n], vid = e.target;
           if (e.intersectionRatio >= PLAY_AT) {
-            if (v.paused) {
-              var pr = v.play();
-              if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
-            }
-          } else if (e.intersectionRatio < PAUSE_AT && !v.paused) {
-            v.pause();
+            if (vid.paused) tryPlay(vid);
+          } else if (e.intersectionRatio < PAUSE_AT && !vid.paused) {
+            vid.pause();
           }
         }
       }, {
-        /* 多个阈值：只有跨过其中一条才会回调，两条判定线各自独立。 */
         threshold: [0, 0.05, 0.15, 0.3, 0.6]
       });
 
-      for (var j = 0; j < vids.length; j++) io.observe(vids[j]);
+      for (var j = 0; j < scrollVids.length; j++) io.observe(scrollVids[j]);
 
-      /* A tab switch should not leave video decoding in the background. */
       document.addEventListener('visibilitychange', function () {
         if (!document.hidden) return;
         for (var m = 0; m < vids.length; m++) if (!vids[m].paused) vids[m].pause();
