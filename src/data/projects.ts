@@ -17,7 +17,7 @@ export interface ProjectVideo {
   width: number;
   height: number;
   label: string;
-  /** hover = play on pointer enter; scroll = play when in view (Opus Clip legacy). */
+  /** scroll = play when in view (landing default); hover = play on pointer enter. */
   play?: 'hover' | 'scroll';
 }
 
@@ -69,10 +69,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'AtlasNova brand kit input cover',
-      play: 'hover'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-atlasnova.mp4',
-    placeholderSpec: '4:3 · hover to play'
+    placeholderSpec: '4:3 · plays in view'
   },
   {
     slug: 'larkdesign',
@@ -100,10 +100,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Lark Design carousel preview',
-      play: 'hover'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-lark.mp4',
-    placeholderSpec: '4:3 · hover to play',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'mckinseyecommerce',
     nextSlug: 'cummins-digitalization'
   },
@@ -128,10 +128,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Opus Clip marquee preview',
-      play: 'hover'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-opusclip-marquee.mp4',
-    placeholderSpec: '4:3 · hover to play',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'alzheimerdisease',
     nextSlug: 'mckinseyecommerce'
   },
@@ -161,10 +161,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'McKinsey orbit preview',
-      play: 'hover'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-mckinsey.mp4',
-    placeholderSpec: '4:3 · hover to play',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'ai-driven-product-design',
     nextSlug: 'larkdesign'
   },

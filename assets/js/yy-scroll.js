@@ -123,8 +123,8 @@
      Deliberately NOT the `autoplay` attribute: that starts on load.
 
      Modes (data-play on the <video>):
-       · hover  — play on pointer enter, pause on leave (default for landing thumbs)
-       · scroll — play when in view (legacy / touch fallback)
+       · scroll — play when in view, pause when leaving (landing default)
+       · hover  — play on pointer enter, pause on leave
 
      Guards:
        · muted + playsinline are on the element
