@@ -3,20 +3,17 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
- * Scroll pauses the WebGL clock (~1s). Layer transform/opacity is owned by
- * yy-canvas-motion.js via CSS variables on [data-motion-root].
+ * Plays continuously; scroll does not pause or scrub the shader.
+ * Layer scale / translate / opacity is owned by yy-canvas-motion.js.
  *
  * Editor-only export fields (axesHelper, destination, embedMode, format,
  * frameRate, gizmoHelper, bgColor*) are omitted; fov / pixelDensity live on
  * ShaderGradientCanvas.
  */
 const BASE_SPEED = 0.1;
-const SCROLL_RESUME_MS = 1000;
 
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
-  const [animate, setAnimate] = useState<'on' | 'off'>('on');
-  const [uSpeed, setUSpeed] = useState(BASE_SPEED);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -25,32 +22,6 @@ export default function LandingCanvasGradient() {
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
-
-  useEffect(() => {
-    if (!allowMotion) return;
-
-    let resumeTimer = 0;
-    const pauseForScroll = () => {
-      setAnimate('off');
-      setUSpeed(0);
-      window.clearTimeout(resumeTimer);
-      resumeTimer = window.setTimeout(() => {
-        setAnimate('on');
-        setUSpeed(BASE_SPEED);
-      }, SCROLL_RESUME_MS);
-    };
-
-    window.addEventListener('scroll', pauseForScroll, { passive: true });
-    window.addEventListener('wheel', pauseForScroll, { passive: true });
-    window.addEventListener('touchmove', pauseForScroll, { passive: true });
-
-    return () => {
-      window.clearTimeout(resumeTimer);
-      window.removeEventListener('scroll', pauseForScroll);
-      window.removeEventListener('wheel', pauseForScroll);
-      window.removeEventListener('touchmove', pauseForScroll);
-    };
-  }, [allowMotion]);
 
   if (!allowMotion) return null;
 
@@ -65,7 +36,7 @@ export default function LandingCanvasGradient() {
     >
       <ShaderGradient
         control="props"
-        animate={animate}
+        animate="on"
         brightness={1.2}
         cAzimuthAngle={200}
         cDistance={9.4}
@@ -95,7 +66,7 @@ export default function LandingCanvasGradient() {
         uAmplitude={0}
         uDensity={1.1}
         uFrequency={5.5}
-        uSpeed={uSpeed}
+        uSpeed={BASE_SPEED}
         uStrength={2.5}
         uTime={3.48}
         wireframe={false}
