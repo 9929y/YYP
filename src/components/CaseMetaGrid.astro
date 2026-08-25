@@ -1,0 +1,24 @@
+---
+interface Props {
+  overview: string;
+  role: string;
+  timeline: string;
+}
+
+const { overview, role, timeline } = Astro.props;
+---
+
+<dl class="case-meta rv">
+  <div class="case-meta__item case-meta__item--overview">
+    <dt>Overview</dt>
+    <dd>{overview}</dd>
+  </div>
+  <div class="case-meta__item">
+    <dt>Role</dt>
+    <dd>{role}</dd>
+  </div>
+  <div class="case-meta__item">
+    <dt>Timeline</dt>
+    <dd>{timeline}</dd>
+  </div>
+</dl>
