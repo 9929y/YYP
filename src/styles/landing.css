@@ -292,6 +292,13 @@
     z-index: 2;
   }
 
+  /* Footer / end-of-page: both layers fully out so chrome sits on --ground. */
+  [data-motion-root][data-canvas-clear="true"] .yy-canvas,
+  [data-motion-root][data-canvas-clear="true"] .yy-canvas__cover {
+    opacity: 0 !important;
+    visibility: hidden;
+  }
+
   /* ---------- opening intro reveal ---------- */
   html.yy-landing [data-intro="meta"],
   html.yy-landing [data-intro="headline"] {
