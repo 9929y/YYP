@@ -107,7 +107,8 @@ for (const selector of [
   '.media--video',
   '.media-pair',
   '.case-quote',
-  '.case-stat'
+  '.case-stat',
+  '.case-stat-grid'
 ]) {
   if (!caseStudyCss.includes(selector)) {
     errors.push(`src/styles/case-study.css missing ${selector} Foundation styles`);
