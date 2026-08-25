@@ -430,30 +430,20 @@
     letter-spacing: inherit;
   }
 
-  /* beyond + morph + toward + morph stay on one line */
   .morph-statement__line {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: baseline;
-    column-gap: 0.28em;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 14px;
     height: 1.08em;
-    white-space: nowrap;
   }
 
   .morph-statement__morph {
     position: relative;
-    display: inline-block;
+    display: block;
     height: 1.08em;
     font: inherit;
     letter-spacing: inherit;
     filter: url("#morph-threshold") blur(.6px);
-  }
-
-  /* Invisible longest word — keeps the morph slot wide enough for every pair */
-  .morph-statement__sizer {
-    visibility: hidden;
-    white-space: nowrap;
-    pointer-events: none;
   }
 
   .morph-statement__text {
@@ -822,13 +812,6 @@
       font-size: var(--t-32);
       letter-spacing: -.04em;
       width: 100%;
-    }
-    /* Keep readable on narrow phones — allow the beyond/toward pair to wrap */
-    .morph-statement__line {
-      flex-wrap: wrap;
-      white-space: normal;
-      height: auto;
-      row-gap: 0.08em;
     }
     .case { margin-bottom: 64px; }
   }
