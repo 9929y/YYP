@@ -87,6 +87,27 @@ if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
   errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
 }
 
+const resumePagePath = path.join(ROOT, 'src/pages/resume.astro');
+if (!fs.existsSync(resumePagePath)) {
+  errors.push('src/pages/resume.astro missing — Resume must be a first-party Astro page');
+} else {
+  const resumePageSource = fs.readFileSync(resumePagePath, 'utf8');
+  for (const marker of ['yy-resume', 'resume.css', 'id="work"', 'id="education"', 'id="skills"']) {
+    if (!resumePageSource.includes(marker)) {
+      errors.push(`src/pages/resume.astro missing ${marker}`);
+    }
+  }
+}
+
+const chromePath = path.join(ROOT, 'assets/js/yy-chrome.js');
+const chromeSource = fs.readFileSync(chromePath, 'utf8');
+if (!/var RESUME = ['"]resume\.html['"]/.test(chromeSource)) {
+  errors.push('yy-chrome.js Resume destination must be the first-party resume.html route');
+}
+if (/\{\s*href:\s*RESUME,\s*label:\s*['"]Resume['"],\s*ext:\s*true\s*\}/.test(chromeSource)) {
+  errors.push('yy-chrome.js Resume links must use same-tab first-party navigation');
+}
+
 const requiredCaseStudyComponents = [
   'CaseSection.astro',
   'CaseMetaGrid.astro',
