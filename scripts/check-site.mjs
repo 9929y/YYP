@@ -40,6 +40,9 @@ function checkHtmlFile(file, baseDir, optionalMissing, knownGenerated) {
   const html = fs.readFileSync(file, 'utf8');
   const rel = path.relative(baseDir, file);
   const redirect = isRedirectStub(html);
+  if (html.includes('mcp.figma.com/mcp/html-to-design/capture.js')) {
+    errors.push(`${rel}: temporary Figma capture script must not ship`);
+  }
   if (
     rel.endsWith('.html') &&
     !redirect &&
@@ -128,6 +131,25 @@ if (fs.existsSync(dynamicCasePath)) {
   }
 }
 
+const mediaVideoPath = path.join(ROOT, 'src/components/MediaVideo.astro');
+if (fs.existsSync(mediaVideoPath)) {
+  const mediaVideoSource = fs.readFileSync(mediaVideoPath, 'utf8');
+  if (/\sautoplay(?:\s|>)/.test(mediaVideoSource)) {
+    errors.push('MediaVideo.astro must not autoplay before its scroll/reduced-motion gate runs');
+  }
+  if (!mediaVideoSource.includes('data-play="scroll"')) {
+    errors.push('MediaVideo.astro missing the shared data-play="scroll" motion contract');
+  }
+}
+
+const morphingStatementPath = path.join(ROOT, 'src/components/islands/MorphingStatement.tsx');
+if (fs.existsSync(morphingStatementPath)) {
+  const morphingSource = fs.readFileSync(morphingStatementPath, 'utf8');
+  if (!morphingSource.includes('{beyondWords[0]}') || !morphingSource.includes('{towardWords[0]}')) {
+    errors.push('MorphingStatement must server-render its first visible word pair');
+  }
+}
+
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
   .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
@@ -156,6 +178,24 @@ if (useDist) {
   }
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
+  }
+  const templatePath = path.join(distDir, 'case-study-template.html');
+  if (!fs.existsSync(templatePath)) {
+    errors.push('dist/case-study-template.html missing — Foundation needs a rendered review surface');
+  } else {
+    const templateHtml = fs.readFileSync(templatePath, 'utf8');
+    for (const marker of ['case-meta', 'case-section', 'case-quote', 'case-stat']) {
+      if (!templateHtml.includes(marker)) errors.push(`case-study-template.html missing ${marker}`);
+    }
+    if (!templateHtml.includes('content="noindex"')) {
+      errors.push('case-study-template.html must be noindex');
+    }
+    if (!templateHtml.includes('yy-case--dark')) {
+      errors.push('case-study-template.html missing document-level dark theme class');
+    }
+    if (!/<meta property="og:image" content="https?:\/\//.test(templateHtml)) {
+      errors.push('case-study-template.html og:image must be absolute');
+    }
   }
 }
 
@@ -189,6 +229,11 @@ const requiredAssets = [
 for (const asset of requiredAssets) {
   const here = path.join(ROOT, asset);
   if (!fs.existsSync(here)) errors.push(`missing ${asset}`);
+}
+
+const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');
+if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 15 * 1024 * 1024) {
+  errors.push('case-opusclip-marquee.mp4 exceeds the 15 MB homepage media budget');
 }
 
 for (const project of projectsMod.projects) {
