@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import MorphingStatement from '../components/islands/MorphingStatement';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import { landingProjects } from '../data/projects';
 import '../styles/landing.css';
@@ -29,7 +30,7 @@ const cases = landingProjects();
       <div class="hero__col">
         <p class="eyebrow">Portfolio</p>
         <h1 class="hero__title rv">
-          UX designer doing the research <em>nobody else wants to do.</em>
+          <MorphingStatement client:load />
         </h1>
         <p class="hero__sub rv" style="--d:var(--duration-stagger)">
           Six projects across research, consumer product, enterprise and health.
