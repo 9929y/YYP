@@ -123,22 +123,26 @@ export default function MorphingStatement() {
   ].join(' ');
 
   return (
-    <>
+    <span className="morph-statement-root">
       <span className="sr-only">{accessibleText}</span>
       <span className="morph-statement" aria-hidden="true">
         <span className="morph-statement__lead">Build AI-native experiences</span>
         <span className="morph-statement__line">
           <span>beyond</span>
           <span className="morph-statement__morph morph-statement__morph--beyond">
-            <span className="morph-statement__text" ref={beyond1Ref} />
-            <span className="morph-statement__text" ref={beyond2Ref} />
+            <span className="morph-statement__text" ref={beyond1Ref}>{beyondWords[0]}</span>
+            <span className="morph-statement__text" ref={beyond2Ref} style={{ opacity: 0 }}>
+              {beyondWords[1]}
+            </span>
           </span>
         </span>
         <span className="morph-statement__line">
           <span>toward</span>
           <span className="morph-statement__morph morph-statement__morph--toward">
-            <span className="morph-statement__text" ref={toward1Ref} />
-            <span className="morph-statement__text" ref={toward2Ref} />
+            <span className="morph-statement__text" ref={toward1Ref}>{towardWords[0]}</span>
+            <span className="morph-statement__text" ref={toward2Ref} style={{ opacity: 0 }}>
+              {towardWords[1]}
+            </span>
           </span>
         </span>
       </span>
@@ -156,6 +160,6 @@ export default function MorphingStatement() {
           </filter>
         </defs>
       </svg>
-    </>
+    </span>
   );
 }

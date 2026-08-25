@@ -1,0 +1,21 @@
+---
+interface Props {
+  id: string;
+  eyebrow?: string;
+  title?: string;
+}
+
+const { id, eyebrow, title } = Astro.props;
+---
+
+<section class="case-section rv" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  {(eyebrow || title) && (
+    <header class="case-section__header">
+      {eyebrow && <p class="case-section__eyebrow">{eyebrow}</p>}
+      {title && <h2 id={`${id}-title`}>{title}</h2>}
+    </header>
+  )}
+  <div class="case-section__content">
+    <slot />
+  </div>
+</section>

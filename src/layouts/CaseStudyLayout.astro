@@ -7,23 +7,30 @@ import '../styles/case-study.css';
 
 interface Props {
   project: Project;
+  noindex?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, noindex = false } = Astro.props;
 const { prev, next } = neighbors(project.slug);
 const description = project.description ?? project.note;
+const htmlClass = project.theme === 'dark' ? 'yy-case yy-case--dark' : 'yy-case';
+const ogImage = project.cover
+  ? new URL(publicUrl(project.cover.src), Astro.site ?? 'https://www.yaniceyang.com').href
+  : undefined;
 ---
 <BaseLayout
   title={`${project.title} — Yanice Yang`}
   description={description}
-  htmlClass="yy-case"
+  htmlClass={htmlClass}
   reveal={true}
   lenis={true}
+  noindex={noindex}
 >
   <Fragment slot="head">
     <meta property="og:title" content={`${project.title} — Yanice Yang`} />
     <meta property="og:description" content={description} />
-    {project.cover && <meta property="og:image" content={publicUrl(project.cover.src)} />}
+    <meta property="og:type" content="article" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
   </Fragment>
 
   <main class="cs" data-theme={project.theme}>

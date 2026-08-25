@@ -78,11 +78,16 @@
        that owns a 900px-tall viewport is ~816px wide, which 492 cannot hold.
        320 + 17 + 823 = 1160. */
     --frame-index: 1160px;
+    /* Case rows (Figma Landing 2026-08): 372 label + ~8 gutter + 823 media ≈ 1260. */
+    --frame-case: 1260px;
     --col-label: 320px;
+    --col-label-case: 372px;
     --col-gap: 17px;
+    --col-gap-case: 8px;
     --col-content: 492px;
     --edge: 24px;
     --rule: #e9e9e9;
+    --slot-radius: 36px;
 
     /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
        60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero

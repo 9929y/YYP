@@ -1,0 +1,34 @@
+---
+import { publicUrl } from '../data/projects';
+
+interface PairImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  images: [PairImage, PairImage];
+  caption?: string;
+}
+
+const { images, caption } = Astro.props;
+---
+
+<figure class="media-pair rv">
+  <div class="media-pair__grid">
+    {images.map((image) => (
+      <div class="media">
+        <img
+          src={publicUrl(image.src)}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          loading="lazy"
+        />
+      </div>
+    ))}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

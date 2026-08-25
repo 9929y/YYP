@@ -185,11 +185,8 @@
     border-radius: 2px;
   }
 
-  /* ---------- the ASCII diffusion field ----------
-     Behind all content, full viewport, never interactive. The reference puts its
-     equivalent (#hero-cursor-flow, a WebGL ChromaFlow + Ascii shader) in the
-     hero; a fixed full-viewport field keeps the effect wherever the pointer
-     goes, which is what the effect is actually about. */
+  /* ---------- the ASCII diffusion field (optional; landing no longer mounts it) ----------
+     Kept for pages that still load yy-flow.js. Landing uses .yy-canvas instead. */
   #yy-flow {
     position: fixed;
     inset: 0;
@@ -201,6 +198,48 @@
     #yy-flow { display: none !important; }
   }
 
+  /* ---------- hero canvas (Figma GIF + frosted cover; replaces yy-flow) ---------- */
+  html.yy-landing {
+    position: relative;
+  }
+
+  .yy-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: min(100vh, 1080px);
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .yy-canvas__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .yy-canvas__media--still {
+    display: none;
+  }
+
+  .yy-canvas__cover {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 250, 250, 0.2);
+    -webkit-backdrop-filter: blur(100px);
+    backdrop-filter: blur(100px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .yy-canvas__media--motion { display: none; }
+    .yy-canvas__media--still { display: block; }
+  }
+
   /* ---------- shell ---------- */
   /* .wrap no longer caps the width — each section does, because the index now
      needs a wider frame than the hero. Capping here and overriding there would
@@ -210,6 +249,7 @@
     z-index: 1;
     width: 100%;
     padding: 0 var(--edge);
+    overflow: visible;
   }
 
   /* ⚠️ 一个外框，一条轴线。
@@ -222,9 +262,16 @@
      这样标签栏、间距、竖线位置在每个 section 完全相同，而 64px 的字仍然跑 12 字/行。 */
   .hero,
   .end,
-  .index__head,
-  .case {
+  .index__head {
     max-width: var(--frame-index);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Case rows use the wider Figma frame (1260). The vertical rule axis therefore
+     sits farther right than the hero — intentional per the Landing redesign. */
+  .case {
+    max-width: var(--frame-case);
     margin-left: auto;
     margin-right: auto;
   }
@@ -245,6 +292,11 @@
     grid-template-columns: var(--col-label) minmax(0, 1fr);
     gap: var(--col-gap);
     position: relative;
+  }
+
+  .case.row {
+    grid-template-columns: var(--col-label-case) minmax(0, 1fr);
+    gap: var(--col-gap-case);
   }
 
   /* 首屏／收尾的内容列固定卡在 492（kedavra 实测的 measure），不像 .index__head／
@@ -277,15 +329,24 @@
     background: var(--rule);
     pointer-events: none;
   }
+
+  .hero.row--ruled::before {
+    background: #939393;
+  }
+
+  .case.row--ruled::before {
+    left: calc(var(--col-label-case) + var(--col-gap-case) / 2);
+  }
+
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
   /* ---------- hero ---------- */
-  /* Measured: the reference hero section is 810px tall in a 900px viewport,
-     i.e. it owns ~90% of the screen. A short hero is most of why the first
-     version read as quiet. */
+  /* Figma Landing hero (node 1:38): 1160 frame, 320+492 cols, title overflows
+     the content track to ~1123px so 64px type stays one phrase per line. */
   .hero {
     min-height: 90vh;
     padding: 120px 0 56px;
+    overflow: visible;
   }
 
   /* Three zones per column — pinned top, centred, pinned bottom. The reference
@@ -296,53 +357,77 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 40px;
+    min-width: 0;
+  }
+
+  .hero__col--lead {
+    /* Match Figma: label column holds eyebrow / meta / empty foot. */
+  }
+
+  .hero__col--statement {
+    overflow: visible;
+  }
+
+  .hero__meta {
+    margin: 0;
+    padding: 0 0 1px;
+    border-bottom: 1px solid #939393;
+    font-size: var(--t-13);
+    line-height: 1.45;
+    color: var(--ink-3);
+    align-self: stretch;
   }
 
   .hero__foot {
     margin: 0;
+    min-height: 18px;
     font-size: var(--t-11);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--ink-3);
   }
 
-  /* Measured on kedavra.me: 64px, 492px column, 4 lines, 12 characters per
-     line, line-height exactly 1.0, letter-spacing -2.56px = -0.04em, weight 600.
-     My earlier note in the plan rejected 64px as "off-grid, nobody can see 6%".
-     That was wrong: 64 is precisely what the reference uses, and the crowding it
-     produces at 12 characters per line IS the effect, not a defect. */
+  /* Figma H1: 64px / 64 leading / -2.56px tracking / SemiBold.
+     Width 1123 overflows the 492 content column on purpose so
+     "Build AI-native experiences" reads as one line. */
   .hero__title {
     margin: 0;
-    font-size: var(--t-40);
-    line-height: var(--lh-display);
-    letter-spacing: -.04em;
+    padding-top: 1px;
+    border-top: 1px solid #939393;
+    font-size: clamp(32px, 4.45vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.04em;
     font-weight: 600;
-    /* The AI-native statement needs one wider measure so its three fixed phrases
-       can keep one type treatment. It grows into the intentionally empty track
-       to the right without moving the shared axis. */
-    width: min(620px, calc(100vw - 2 * var(--edge)));
+    width: min(1123px, calc(100vw - var(--col-label) - var(--col-gap) - 2 * var(--edge)));
     max-width: none;
   }
-  @media (min-width: 768px) { .hero__title { font-size: var(--t-64); } }
+
+  @media (min-width: 1160px) {
+    .hero__title {
+      font-size: 64px;
+      letter-spacing: -2.56px;
+    }
+  }
 
   .hero__title em {
     font-style: italic;
     font-weight: 500;
-    /* Plus Jakarta Sans Italic, NOT Georgia. Georgia is reserved for
-       <blockquote> and appears in exactly 12 places, all inside one. */
   }
 
   /* Magic UI Morphing Text: only the bracketed keywords overlap and morph.
      The lead, "beyond", and "toward" remain ordinary H1 text. */
+  .morph-statement-root,
   .morph-statement,
   .morph-statement__lead {
     display: block;
+    font: inherit;
+    letter-spacing: inherit;
   }
 
   .morph-statement__line {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
-    column-gap: .22em;
+    column-gap: 14px;
     height: 1.08em;
   }
 
@@ -375,22 +460,20 @@
     font-size: var(--t-20);
     line-height: var(--lh-heading);
     color: var(--ink-2);
-    /* 36em 是书籍行宽，但不能超过 kedavra 的 492 内容列 —— 取两者较小值 */
     max-width: min(36em, var(--col-content));
-    letter-spacing: normal;    /* tracking is for headings only */
+    letter-spacing: normal;
   }
 
-  .hero__meta {
-    margin: 0;
-    font-size: var(--t-13);
-    line-height: var(--lh-caption);
-    color: var(--ink-3);
+  /* Figma hero has no supporting sentence under the H1 — keep the slot for
+     spacing only when empty, hide copy when matching the redesign. */
+  .hero__sub--figma-hidden {
+    display: none;
   }
 
   .eyebrow {
     margin: 0 0 10px;
     font-size: var(--t-11);
-    line-height: var(--lh-caption);
+    line-height: 1.45;
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--ink-3);
@@ -424,6 +507,17 @@
     padding-bottom: 4px;
   }
 
+  .case__logo {
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: 44px;
+    max-width: 140px;
+    object-fit: contain;
+    object-position: left center;
+    margin: 0 0 12px;
+  }
+
   .case__name {
     margin: 0;
     font-size: var(--t-20);
@@ -451,20 +545,14 @@
   }
 
   /* ---------- the 4:3 slot ----------
-     No card. No border, no backing panel, no elevation shadow. The reference
-     site's own design DNA: "There is no card component. A portfolio entry is a
-     bare image at 16px radius in the right column." */
-  /* 4:3 kept — the Opus Clip thumbnail video is natively 1440x1080, so any other
-     ratio would crop it. Sized by viewport HEIGHT so one project fills a screen:
-     68vh tall gives 816px wide at 900px viewport height. `min(..., 100%)` clamps
-     it to the column on shorter or narrower viewports, and aspect-ratio derives
-     the height either way, so the crop never changes. */
+     No card. No border, no backing panel, no elevation shadow.
+     Figma Landing 2026-08: 823×617 display, 36px radius, still 4:3. */
   .slot {
     display: block;
     position: relative;
-    width: min(calc(68vh * 4 / 3), 100%);
+    width: min(823px, calc(68vh * 4 / 3), 100%);
     aspect-ratio: 4 / 3;
-    border-radius: 16px;
+    border-radius: var(--slot-radius);
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
@@ -574,7 +662,7 @@
      nowhere to go, and a dead link is worse than no link. */
   .panel {
     aspect-ratio: 4 / 3;
-    border-radius: 16px;
+    border-radius: var(--slot-radius);
     background: var(--slot);
     padding: 44px 48px;
     display: flex;
@@ -692,14 +780,15 @@
   /* 829 + 2 x 24 edge = 877. Above that the frame fits untouched; below it the
      label column collapses and the content column goes full width. */
   @media (max-width: 877px) {
-    .row { grid-template-columns: 1fr; gap: 20px; }
+    .row,
+    .case.row { grid-template-columns: 1fr; gap: 20px; }
     .case__label {
       justify-content: flex-start;
       padding-bottom: 0;
       order: -1;
     }
     .hero { padding: 104px 0 72px; }
-    .case { margin-bottom: 80px; }
+    .case { margin-bottom: 80px; min-height: 0; }
     .panel { padding: 32px; aspect-ratio: auto; }
     /* No fixed height to distribute across once the ratio is released. */
     .panel__acts { display: block; padding-bottom: 20px; }
@@ -709,7 +798,11 @@
   @media (max-width: 560px) {
     :root { --edge: 20px; }
     .hero { padding: 88px 0 56px; }
-    .hero__title { font-size: var(--t-32); }
+    .hero__title {
+      font-size: var(--t-32);
+      letter-spacing: -.04em;
+      width: 100%;
+    }
     .index__head { margin-bottom: 44px; }
     .case { margin-bottom: 64px; }
     .end__line { font-size: var(--t-25); }

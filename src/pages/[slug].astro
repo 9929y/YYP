@@ -1,5 +1,11 @@
 ---
 import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
+import CaseMetaGrid from '../components/CaseMetaGrid.astro';
+import CaseQuote from '../components/CaseQuote.astro';
+import CaseSection from '../components/CaseSection.astro';
+import CaseStat from '../components/CaseStat.astro';
+import MediaFigure from '../components/MediaFigure.astro';
+import MediaVideo from '../components/MediaVideo.astro';
 import { astroCaseStudies, getProject } from '../data/projects';
 
 export function getStaticPaths() {
@@ -15,9 +21,43 @@ if (!project) {
 ---
 
 <CaseStudyLayout project={project}>
-  <p>
-    Case-study body goes here. Add sections, MediaFigure blocks, and page-local
-    motion mounts. This route only emits pages whose engine is <code>astro</code>
-    and status is <code>published</code>.
-  </p>
+  <CaseMetaGrid
+    overview={project.note}
+    role={project.scope}
+    timeline={project.status === 'published' ? 'Published case study' : 'In progress'}
+  />
+
+  <CaseSection id="evidence" eyebrow="01" title="Evidence">
+    {project.video ? (
+      <MediaVideo
+        src={project.video.src}
+        poster={project.video.poster}
+        label={project.video.label}
+        width={project.video.width}
+        height={project.video.height}
+        caption={project.placeholderSpec}
+      />
+    ) : project.cover ? (
+      <MediaFigure
+        src={project.cover.src}
+        alt={project.cover.alt}
+        width={project.cover.width}
+        height={project.cover.height}
+        caption={project.placeholderSpec}
+      />
+    ) : (
+      <p>Add the project’s strongest evidence artifact here.</p>
+    )}
+  </CaseSection>
+
+  <CaseSection id="decision" eyebrow="02" title="Decision">
+    <CaseQuote quote={project.note} attribution={`${project.title} · Project summary`} />
+  </CaseSection>
+
+  <CaseSection id="outcome" eyebrow="03" title="Outcome">
+    <div class="case-stat-grid">
+      <CaseStat value="—" label="Primary outcome" />
+      <CaseStat value="—" label="Supporting outcome" />
+    </div>
+  </CaseSection>
 </CaseStudyLayout>

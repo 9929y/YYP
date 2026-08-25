@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../data/projects';
+import { publicUrl } from '../data/projects';
 import ProjectSlot from './ProjectSlot.astro';
 
 interface Props {
@@ -13,7 +14,17 @@ const { projects } = Astro.props;
   projects.map((project) => (
     <article class="case row row--ruled">
       <div class="case__label">
-        <h2 class="case__name">{project.title}</h2>
+        {project.logo && (
+          <img
+            class="case__logo"
+            src={publicUrl(project.logo.src)}
+            alt={project.logo.alt}
+            width={project.logo.width}
+            height={project.logo.height}
+            loading="lazy"
+          />
+        )}
+        <h2 class="case__name">{project.headline ?? project.title}</h2>
         <p class="case__scope">{project.scope}</p>
         <p class="case__note">{project.note}</p>
       </div>
