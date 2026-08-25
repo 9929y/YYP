@@ -48,51 +48,51 @@
     {
       opacity: 0.3,
       scale: 1.9,
-      rotate: 12,
+      rotate: 8,
       x: -20,
       y: 36,
       coverOpacity: 0.3,
       coverScale: 1.06,
-      coverRotate: 8,
+      coverRotate: 5,
       coverX: 14,
       coverY: 18
     },
-    /* 1 Atlas — 25deg CW */
+    /* 1 Atlas — 15deg CW */
     {
       opacity: 0.7,
       scale: 2.4,
-      rotate: 25,
+      rotate: 15,
       x: -32,
       y: 44,
       coverOpacity: 0.25,
       coverScale: 1.1,
-      coverRotate: 18,
+      coverRotate: 10,
       coverX: 22,
       coverY: 26
     },
-    /* 2 McKinsey */
+    /* 2 McKinsey — scale 2.8 */
     {
       opacity: 0.3,
-      scale: 2,
-      rotate: 40,
+      scale: 2.8,
+      rotate: 28,
       x: -10,
       y: 22,
       coverOpacity: 0.32,
-      coverScale: 1.08,
-      coverRotate: 30,
+      coverScale: 1.12,
+      coverRotate: 20,
       coverX: 8,
       coverY: 14
     },
-    /* 3 Lark */
+    /* 3 Lark — 40deg CW */
     {
       opacity: 0.2,
       scale: 1.5,
-      rotate: 55,
+      rotate: 40,
       x: -26,
       y: 40,
       coverOpacity: 0.5,
       coverScale: 1.05,
-      coverRotate: 42,
+      coverRotate: 30,
       coverX: 18,
       coverY: 24
     }
@@ -101,12 +101,12 @@
   var BOTTOM = {
     opacity: 0,
     scale: 1.4,
-    rotate: 60,
+    rotate: 45,
     x: -12,
     y: 18,
     coverOpacity: 0,
     coverScale: 1.02,
-    coverRotate: 48,
+    coverRotate: 34,
     coverX: 6,
     coverY: 10
   };
