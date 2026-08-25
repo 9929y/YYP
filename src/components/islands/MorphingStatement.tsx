@@ -130,15 +130,15 @@ export default function MorphingStatement() {
         <span className="morph-statement__line">
           <span>beyond</span>
           <span className="morph-statement__morph morph-statement__morph--beyond">
-            <span className="morph-statement__text" ref={beyond1Ref} />
-            <span className="morph-statement__text" ref={beyond2Ref} />
+            <span className="morph-statement__text" ref={beyond1Ref}>{beyondWords[0]}</span>
+            <span className="morph-statement__text" ref={beyond2Ref}>{beyondWords[1]}</span>
           </span>
         </span>
         <span className="morph-statement__line">
           <span>toward</span>
           <span className="morph-statement__morph morph-statement__morph--toward">
-            <span className="morph-statement__text" ref={toward1Ref} />
-            <span className="morph-statement__text" ref={toward2Ref} />
+            <span className="morph-statement__text" ref={toward1Ref}>{towardWords[0]}</span>
+            <span className="morph-statement__text" ref={toward2Ref}>{towardWords[1]}</span>
           </span>
         </span>
       </span>
