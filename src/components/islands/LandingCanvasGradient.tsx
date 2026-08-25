@@ -4,7 +4,8 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 /**
  * Live ShaderGradient preview for the landing hero canvas.
  * Replaces the GIF behind `.yy-canvas__cover`. Scroll pauses the WebGL clock
- * (~1s after last scroll input) without moving the canvas layer itself.
+ * (~1s after last scroll input). Layer transform/opacity is owned by
+ * yy-canvas-motion.js via CSS variables on [data-motion-root].
  */
 const BASE_SPEED = 0.1;
 const SCROLL_RESUME_MS = 1000;

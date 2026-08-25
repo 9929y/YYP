@@ -12,7 +12,8 @@ const cases = landingProjects();
 <!--
   Live homepage at /. Layout matched to Figma Landing Page node 1:2.
   Case-study pages stay Webflow passthrough. Shared chrome = yy-chrome footer/nav.
-  Hero canvas: ShaderGradient React island (preview) + still fallback for reduced motion.
+  Hero canvas: ShaderGradient React island + still fallback for reduced motion.
+  Motion: yy-canvas-motion.js drives fixed canvas/cover CSS vars + intro reveal.
 -->
 <BaseLayout
   title="Yanice Yang — Product Designer"
@@ -22,50 +23,57 @@ const cases = landingProjects();
   lenis={true}
   chrome={true}
 >
-  <div class="yy-canvas" aria-hidden="true">
-    <LandingCanvasGradient client:load />
-    <img
-      class="yy-canvas__media yy-canvas__media--still"
-      src="/assets/images/home/landing-canvas-still.png"
-      alt=""
-      width="1920"
-      height="1080"
-      decoding="async"
-    />
-    <div class="yy-canvas__cover"></div>
+  <div data-motion-root>
+    <div class="yy-canvas" data-motion-layer="canvas" aria-hidden="true">
+      <LandingCanvasGradient client:load />
+      <img
+        class="yy-canvas__media yy-canvas__media--still"
+        src="/assets/images/home/landing-canvas-still.png"
+        alt=""
+        width="1920"
+        height="1080"
+        decoding="async"
+      />
+    </div>
+    <div
+      class="yy-canvas__cover"
+      data-motion-layer="canvas-cover"
+      aria-hidden="true"
+    ></div>
+
+    <main class="wrap">
+      <section class="hero row row--ruled" data-section="hero">
+        <div class="hero__col hero__col--lead">
+          <div class="hero__zone hero__zone--top">
+            <p class="eyebrow" data-intro="meta">Yanice Yang</p>
+          </div>
+          <div class="hero__zone hero__zone--meta">
+            <p class="hero__meta" data-intro="meta">Product Designer<br />Bay Area, US</p>
+          </div>
+          <div class="hero__zone hero__zone--foot" aria-hidden="true"></div>
+        </div>
+        <div class="hero__col hero__col--statement">
+          <div class="hero__zone hero__zone--top">
+            <p class="eyebrow" data-intro="meta">Portfolio</p>
+          </div>
+          <h1 class="hero__title rv" data-intro="headline">
+            <MorphingStatement client:load />
+          </h1>
+          <div class="hero__zone hero__zone--after" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="index" id="work" data-section="projects">
+        <ProjectIndex projects={cases} />
+      </section>
+    </main>
   </div>
-
-  <main class="wrap">
-    <section class="hero row row--ruled">
-      <div class="hero__col hero__col--lead">
-        <div class="hero__zone hero__zone--top">
-          <p class="eyebrow">Yanice Yang</p>
-        </div>
-        <div class="hero__zone hero__zone--meta">
-          <p class="hero__meta">Product Designer<br />Bay Area, US</p>
-        </div>
-        <div class="hero__zone hero__zone--foot" aria-hidden="true"></div>
-      </div>
-      <div class="hero__col hero__col--statement">
-        <div class="hero__zone hero__zone--top">
-          <p class="eyebrow">Portfolio</p>
-        </div>
-        <h1 class="hero__title rv">
-          <MorphingStatement client:load />
-        </h1>
-        <div class="hero__zone hero__zone--after" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <section class="index" id="work">
-      <ProjectIndex projects={cases} />
-    </section>
-  </main>
 
   <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
 
   <Fragment slot="scripts">
     <script is:inline src="/assets/js/yy-cursor.js"></script>
     <script is:inline src="/assets/js/yy-slots.js"></script>
+    <script is:inline src="/assets/js/yy-canvas-motion.js"></script>
   </Fragment>
 </BaseLayout>
