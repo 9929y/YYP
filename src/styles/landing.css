@@ -818,6 +818,12 @@
     .panel__acts li { padding: 0 0 10px; margin-bottom: 10px; }
   }
 
+  /* Tablet: ~10% gutter each side for readable measure when the frame
+     fluidizes / stacks. Use vw (not %) so calc(100vw - 2*edge) stays valid. */
+  @media (max-width: 1024px) and (min-width: 561px) {
+    :root { --edge: 10vw; }
+  }
+
   @media (max-width: 560px) {
     :root { --edge: 20px; }
     .hero { padding: 88px 0 56px; }
