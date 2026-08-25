@@ -183,7 +183,7 @@ export const projects: Project[] = [
     featuredOnProjects: true,
     landingOrder: 4,
     logo: {
-      src: 'assets/images/brands/logo-bytedance.png',
+      src: 'assets/images/brands/logo-bytedance.svg',
       alt: 'ByteDance',
       width: 133,
       height: 22
