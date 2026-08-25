@@ -16,12 +16,12 @@ const { src, poster, label, width, height, caption, controls = false } = Astro.p
 
 <figure class="media media--video rv">
   <video
-    autoplay
     muted
     loop
     playsinline
     controls={controls}
-    preload="metadata"
+    preload="none"
+    data-play="scroll"
     poster={poster ? publicUrl(poster) : undefined}
     width={width}
     height={height}
