@@ -21,18 +21,16 @@
   };
 
   /*
-    Stops (explored against case video weight):
-    - Hero: bright open field
-    - Case 1 Opus (dark video): lower canvas opacity, larger scale; lighter field
-      via lower cover so cyan shows through
-    - Case 2 Atlas (light video): canvas down to 0.3; denser cover (darker field)
-    - Case 3 McKinsey (heavier UI): canvas back ~0.6; lighter cover
-    - Case 4 Lark (lighter UI): slightly deeper field; mid scale
-    - Bottom / footer: canvas + cover → 0 so chrome/copy sits on white
+    Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
+    - Hero: open scale 1.3
+    - Opus / McKinsey: canvas opacity 0.3 (McK scale 1.5)
+    - Atlas: scale 1.9, canvas 0.7, cover 0.25
+    - Lark: scale 2, canvas 0.2, cover 0.5
+    - Bottom / footer: canvas + cover → 0
   */
   var HERO = {
     opacity: 0.9,
-    scale: 1,
+    scale: 1.3,
     x: 0,
     y: 0,
     coverOpacity: 0.25,
@@ -42,10 +40,10 @@
   };
 
   var CASES = [
-    /* 1 — dark video → lighter field, bigger board */
+    /* 0 Opus — canvas opacity 0.3 */
     {
-      opacity: 0.6,
-      scale: 1.1,
+      opacity: 0.3,
+      scale: 1.3,
       x: -20,
       y: 36,
       coverOpacity: 0.3,
@@ -53,21 +51,21 @@
       coverX: 14,
       coverY: 18
     },
-    /* 2 — light video → deeper field, canvas 0.3 */
+    /* 1 Atlas — scale 1.9, canvas 0.7, cover 0.25 */
     {
-      opacity: 0.3,
-      scale: 1.06,
+      opacity: 0.7,
+      scale: 1.9,
       x: -32,
       y: 44,
-      coverOpacity: 0.5,
-      coverScale: 1.03,
+      coverOpacity: 0.25,
+      coverScale: 1.08,
       coverX: 22,
       coverY: 26
     },
-    /* 3 — heavier video → lighter again ~0.6 */
+    /* 2 McKinsey — canvas 0.3, scale 1.5 */
     {
-      opacity: 0.6,
-      scale: 1.12,
+      opacity: 0.3,
+      scale: 1.5,
       x: -10,
       y: 22,
       coverOpacity: 0.32,
@@ -75,14 +73,14 @@
       coverX: 8,
       coverY: 14
     },
-    /* 4 — lighter video → slightly deeper before exit */
+    /* 3 Lark — scale 2, canvas 0.2, cover 0.5 */
     {
-      opacity: 0.38,
-      scale: 1.08,
+      opacity: 0.2,
+      scale: 2,
       x: -26,
       y: 40,
-      coverOpacity: 0.48,
-      coverScale: 1.04,
+      coverOpacity: 0.5,
+      coverScale: 1.1,
       coverX: 18,
       coverY: 24
     }
@@ -90,7 +88,7 @@
 
   var BOTTOM = {
     opacity: 0,
-    scale: 1.04,
+    scale: 1.5,
     x: -12,
     y: 18,
     coverOpacity: 0,
