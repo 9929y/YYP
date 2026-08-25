@@ -14,8 +14,8 @@ export default defineConfig({
   vite: {
     server: {
       fs: { allow: ['.'] },
-      host: '0.0.0.0',
-      allowedHosts: ['qualification-collaborative-commerce-flu.trycloudflare.com', '.trycloudflare.com']
+      /* Cloudflare quick tunnels + local previews when port-forward fails. */
+      allowedHosts: ['.trycloudflare.com', 'localhost', '127.0.0.1']
     }
   }
 });
