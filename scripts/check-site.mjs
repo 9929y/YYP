@@ -92,10 +92,32 @@ if (!fs.existsSync(resumePagePath)) {
   errors.push('src/pages/resume.astro missing — Resume must be a first-party Astro page');
 } else {
   const resumePageSource = fs.readFileSync(resumePagePath, 'utf8');
-  for (const marker of ['yy-resume', 'resume.css', 'id="work"', 'id="education"', 'id="skills"']) {
+  for (const marker of [
+    'yy-resume',
+    'resume.css',
+    'yy-resume.js',
+    'resume__floating-tabs',
+    'resume-section__body--grid',
+    'id="work"',
+    'id="education"',
+    'id="skills"'
+  ]) {
     if (!resumePageSource.includes(marker)) {
       errors.push(`src/pages/resume.astro missing ${marker}`);
     }
+  }
+}
+
+const resumeCssPath = path.join(ROOT, 'src/styles/resume.css');
+const resumeCss = fs.existsSync(resumeCssPath) ? fs.readFileSync(resumeCssPath, 'utf8') : '';
+for (const marker of [
+  'font-family: Caveat',
+  '.resume__floating-tabs',
+  'backdrop-filter: blur(12px)',
+  '.resume-section__body--grid'
+]) {
+  if (!resumeCss.includes(marker)) {
+    errors.push(`src/styles/resume.css missing ${marker}`);
   }
 }
 
@@ -254,6 +276,7 @@ const requiredAssets = [
   'assets/js/yy-cursor.js',
   'assets/js/yy-slots.js',
   'assets/js/yy-flow.js',
+  'assets/js/yy-resume.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];
