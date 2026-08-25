@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 
 /**
- * Live ShaderGradient preview for the landing hero canvas.
- * Replaces the GIF behind `.yy-canvas__cover`. Scroll pauses the WebGL clock
- * (~1s after last scroll input). Layer transform/opacity is owned by
+ * Landing hero canvas — ShaderGradient export (waterPlane / city).
+ * Scroll pauses the WebGL clock (~1s). Layer transform/opacity is owned by
  * yy-canvas-motion.js via CSS variables on [data-motion-root].
+ *
+ * Editor-only export fields (axesHelper, destination, embedMode, format,
+ * frameRate, gizmoHelper, bgColor*) are omitted; fov / pixelDensity live on
+ * ShaderGradientCanvas.
  */
 const BASE_SPEED = 0.1;
 const SCROLL_RESUME_MS = 1000;
@@ -37,8 +40,6 @@ export default function LandingCanvasGradient() {
       }, SCROLL_RESUME_MS);
     };
 
-    /* Lenis still writes scrollTop, so `scroll` fires; wheel/touch catch the
-       gesture before settle so the freeze feels immediate. */
     window.addEventListener('scroll', pauseForScroll, { passive: true });
     window.addEventListener('wheel', pauseForScroll, { passive: true });
     window.addEventListener('touchmove', pauseForScroll, { passive: true });
@@ -89,6 +90,7 @@ export default function LandingCanvasGradient() {
         rotationY={0}
         rotationZ={235}
         shader="defaults"
+        toggleAxis={false}
         type="waterPlane"
         uAmplitude={0}
         uDensity={1.1}
