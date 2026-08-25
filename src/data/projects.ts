@@ -21,9 +21,18 @@ export interface ProjectVideo {
   play?: 'hover' | 'scroll';
 }
 
+export interface ProjectLogo {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
 export interface Project {
   slug: string;
   title: string;
+  /** Landing display headline; falls back to `title`. */
+  headline?: string;
   /** Public URL. Null when the page does not exist yet. */
   href: string | null;
   scope: string;
@@ -38,6 +47,7 @@ export interface Project {
   landingOrder: number;
   /** SEO description; falls back to `note`. */
   description?: string;
+  logo?: ProjectLogo;
   cover?: ProjectCover;
   video?: ProjectVideo;
   placeholderFile?: string;
@@ -51,69 +61,12 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: 'atlasnova',
-    title: 'AtlasNova',
-    href: null,
-    scope: 'Product Design · Design Systems',
-    note: 'In progress. Brand kit input flows while the case study is written.',
-    status: 'in-progress',
-    engine: 'astro',
-    kind: 'slot',
-    theme: 'light',
-    featuredOnLanding: true,
-    featuredOnIndex: false,
-    featuredOnProjects: false,
-    landingOrder: 1,
-    video: {
-      src: 'assets/videos/case-atlasnova.mp4',
-      poster: 'assets/images/home/case-atlasnova.jpg',
-      width: 1440,
-      height: 1080,
-      label: 'AtlasNova brand kit input cover',
-      play: 'scroll'
-    },
-    placeholderFile: 'videos/case-atlasnova.mp4',
-    placeholderSpec: '4:3 · plays in view'
-  },
-  {
-    slug: 'larkdesign',
-    title: 'Lark Design',
-    href: 'larkdesign.html',
-    scope: 'User Research',
-    note: 'One-to-one interviews driving an onboarding rebuild.',
-    status: 'published',
-    engine: 'webflow',
-    kind: 'slot',
-    theme: 'light',
-    featuredOnLanding: true,
-    featuredOnIndex: true,
-    featuredOnProjects: true,
-    landingOrder: 3,
-    cover: {
-      src: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
-      alt: 'Lark Design onboarding case study',
-      width: 492,
-      height: 369
-    },
-    video: {
-      src: 'assets/videos/case-lark.mp4',
-      poster: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
-      width: 1440,
-      height: 1080,
-      label: 'Lark Design carousel preview',
-      play: 'scroll'
-    },
-    placeholderFile: 'videos/case-lark.mp4',
-    placeholderSpec: '4:3 · plays in view',
-    prevSlug: 'mckinseyecommerce',
-    nextSlug: 'cummins-digitalization'
-  },
-  {
     slug: 'ai-driven-product-design',
     title: 'Opus Clip',
+    headline: 'Video Creation Beyond Prompts',
     href: 'ai-driven-product-design.html',
-    scope: 'Consumer Product · 0 → 1',
-    note: 'AI video editing, from a prompt to a finished cut.',
+    scope: 'Web-based AI SaaS',
+    note: 'Turning prompt-based generation into an intent-led video workflow',
     description: 'AI-driven product design for Opus Clip, from a prompt to a finished cut.',
     status: 'published',
     engine: 'webflow',
@@ -122,7 +75,13 @@ export const projects: Project[] = [
     featuredOnLanding: true,
     featuredOnIndex: true,
     featuredOnProjects: true,
-    landingOrder: 2,
+    landingOrder: 1,
+    logo: {
+      src: 'assets/images/brands/logo-opusclip.svg',
+      alt: 'OpusClip',
+      width: 135,
+      height: 24
+    },
     video: {
       src: 'assets/videos/case-opusclip-marquee.mp4',
       poster: 'assets/images/home/case-opusclip.jpg',
@@ -137,11 +96,44 @@ export const projects: Project[] = [
     nextSlug: 'mckinseyecommerce'
   },
   {
+    slug: 'atlasnova',
+    title: 'AtlasNova',
+    headline: 'AI-Guided Brand Discovery',
+    href: null,
+    scope: 'Web App',
+    note: 'Designing a brand kit that helps SMB build up visual language across marketing assets',
+    status: 'in-progress',
+    engine: 'astro',
+    kind: 'slot',
+    theme: 'light',
+    featuredOnLanding: true,
+    featuredOnIndex: false,
+    featuredOnProjects: false,
+    landingOrder: 2,
+    logo: {
+      src: 'assets/images/brands/logo-atlasnova.svg',
+      alt: 'AtlasNova',
+      width: 133,
+      height: 24
+    },
+    video: {
+      src: 'assets/videos/case-atlasnova.mp4',
+      poster: 'assets/images/home/case-atlasnova.jpg',
+      width: 1440,
+      height: 1080,
+      label: 'AtlasNova brand kit input cover',
+      play: 'scroll'
+    },
+    placeholderFile: 'videos/case-atlasnova.mp4',
+    placeholderSpec: '4:3 · plays in view'
+  },
+  {
     slug: 'mckinseyecommerce',
     title: 'McKinsey Ecommerce',
+    headline: 'Live shopping from 0 to 1',
     href: 'mckinseyecommerce.html',
-    scope: 'Strategy & Ecommerce',
-    note: 'The longest write-up here, and the one with the most argument in it.',
+    scope: 'Mobile App',
+    note: 'Helping an established organization build its first digital commerce business from the ground up.',
     status: 'published',
     engine: 'webflow',
     kind: 'slot',
@@ -149,7 +141,13 @@ export const projects: Project[] = [
     featuredOnLanding: true,
     featuredOnIndex: true,
     featuredOnProjects: true,
-    landingOrder: 4,
+    landingOrder: 3,
+    logo: {
+      src: 'assets/images/brands/logo-mckinsey.svg',
+      alt: 'McKinsey Design',
+      width: 97,
+      height: 44
+    },
     cover: {
       src: 'assets/images/home/hero-mckinsey-ecommerce-card-cover.webp',
       alt: 'McKinsey live-streamed ecommerce case study',
@@ -170,6 +168,46 @@ export const projects: Project[] = [
     nextSlug: 'larkdesign'
   },
   {
+    slug: 'larkdesign',
+    title: 'Lark Design',
+    headline: 'Team onboarding in all-in-one office tool',
+    href: 'larkdesign.html',
+    scope: 'Web&Mobile App',
+    note: 'Reducing information gaps in Lark’s collaboration experience',
+    status: 'published',
+    engine: 'webflow',
+    kind: 'slot',
+    theme: 'light',
+    featuredOnLanding: true,
+    featuredOnIndex: true,
+    featuredOnProjects: true,
+    landingOrder: 4,
+    logo: {
+      src: 'assets/images/brands/logo-bytedance.png',
+      alt: 'ByteDance',
+      width: 133,
+      height: 22
+    },
+    cover: {
+      src: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
+      alt: 'Lark Design onboarding case study',
+      width: 492,
+      height: 369
+    },
+    video: {
+      src: 'assets/videos/case-lark.mp4',
+      poster: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
+      width: 1440,
+      height: 1080,
+      label: 'Lark Design carousel preview',
+      play: 'scroll'
+    },
+    placeholderFile: 'videos/case-lark.mp4',
+    placeholderSpec: '4:3 · plays in view',
+    prevSlug: 'mckinseyecommerce',
+    nextSlug: 'cummins-digitalization'
+  },
+  {
     slug: 'mifinance',
     title: 'MiFinance',
     href: 'mifinance.html',
@@ -179,17 +217,17 @@ export const projects: Project[] = [
     engine: 'webflow',
     kind: 'slot',
     theme: 'light',
-    featuredOnLanding: true,
+    featuredOnLanding: false,
     featuredOnIndex: true,
     featuredOnProjects: true,
     landingOrder: 5,
     cover: {
-      src: 'assets/images/home/case-mifinance.webp',
+      src: 'assets/images/home/hero-mi-finance-account-card-cover.webp',
       alt: 'MiFinance account flows case study',
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/case-mifinance.webp',
+    placeholderFile: 'home/hero-mi-finance-account-card-cover.webp',
     placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'cummins-digitalization',
     nextSlug: 'alzheimerdisease'
@@ -204,17 +242,17 @@ export const projects: Project[] = [
     engine: 'webflow',
     kind: 'slot',
     theme: 'light',
-    featuredOnLanding: true,
+    featuredOnLanding: false,
     featuredOnIndex: true,
     featuredOnProjects: true,
     landingOrder: 6,
     cover: {
-      src: 'assets/images/home/case-cummins.webp',
+      src: 'assets/images/home/hero-cummins-guidanz-card-cover.webp',
       alt: 'Cummins service tooling case study',
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/case-cummins.webp',
+    placeholderFile: 'home/hero-cummins-guidanz-card-cover.webp',
     placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'larkdesign',
     nextSlug: 'mifinance'
@@ -229,20 +267,20 @@ export const projects: Project[] = [
     engine: 'webflow',
     kind: 'slot',
     theme: 'dark',
-    featuredOnLanding: true,
+    featuredOnLanding: false,
     featuredOnIndex: true,
     featuredOnProjects: true,
     landingOrder: 7,
     cover: {
-      src: 'assets/images/home/case-medical.webp',
+      src: 'assets/images/home/hero-alzheimer-care-wearable-card-cover.webp',
       alt: 'Medical assistive wearable case study',
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/case-medical.webp',
+    placeholderFile: 'home/hero-alzheimer-care-wearable-card-cover.webp',
     placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'mifinance',
-    nextSlug: 'mckinseyecommerce'
+    nextSlug: 'ai-driven-product-design'
   },
   {
     slug: 'tiktok-research',

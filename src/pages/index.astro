@@ -13,18 +13,38 @@ const cases = landingProjects();
   index.webflow.html. Case-study pages stay Webflow passthrough.
 -->
 <BaseLayout
-  title="Yanice Yang — UX Designer"
-  description="UX designer. Selected work in user research, consumer product, enterprise and health."
+  title="Yanice Yang — Product Designer"
+  description="Product designer. Selected work in research, consumer product, enterprise and health."
   htmlClass="yy-landing"
   reveal={true}
   lenis={false}
   chrome={true}
 >
+  <div class="yy-canvas" aria-hidden="true">
+    <img
+      class="yy-canvas__media yy-canvas__media--motion"
+      src="/assets/images/home/landing-canvas.gif"
+      alt=""
+      width="1920"
+      height="1080"
+      decoding="async"
+    />
+    <img
+      class="yy-canvas__media yy-canvas__media--still"
+      src="/assets/images/home/landing-canvas-still.png"
+      alt=""
+      width="1920"
+      height="1080"
+      decoding="async"
+    />
+    <div class="yy-canvas__cover"></div>
+  </div>
+
   <main class="wrap">
     <section class="hero row row--ruled">
       <div class="hero__col">
         <p class="eyebrow">Yanice Yang</p>
-        <p class="hero__meta">UX Designer<br />Bay Area, US</p>
+        <p class="hero__meta">Product Designer<br />Bay Area, US</p>
         <p class="hero__foot">Selected work 2021 — 2026</p>
       </div>
       <div class="hero__col">
@@ -33,7 +53,7 @@ const cases = landingProjects();
           <MorphingStatement client:load />
         </h1>
         <p class="hero__sub rv" style="--d:var(--duration-stagger)">
-          Six projects across research, consumer product, enterprise and health.
+          Four projects across research, consumer product, and AI-native tools.
           <a class="tx" href="#work">See the work</a>
         </p>
       </div>
@@ -63,12 +83,10 @@ const cases = landingProjects();
     </section>
   </main>
 
-  <canvas id="yy-flow" aria-hidden="true"></canvas>
   <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
 
   <Fragment slot="scripts">
     <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
-    <script is:inline src="/assets/js/yy-flow.js"></script>
     <script is:inline src="/assets/js/lenis.min.js"></script>
     <script is:inline src="/assets/js/yy-scroll.js"></script>
     <script is:inline src="/assets/js/yy-cursor.js"></script>

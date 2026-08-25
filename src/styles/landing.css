@@ -185,11 +185,8 @@
     border-radius: 2px;
   }
 
-  /* ---------- the ASCII diffusion field ----------
-     Behind all content, full viewport, never interactive. The reference puts its
-     equivalent (#hero-cursor-flow, a WebGL ChromaFlow + Ascii shader) in the
-     hero; a fixed full-viewport field keeps the effect wherever the pointer
-     goes, which is what the effect is actually about. */
+  /* ---------- the ASCII diffusion field (optional; landing no longer mounts it) ----------
+     Kept for pages that still load yy-flow.js. Landing uses .yy-canvas instead. */
   #yy-flow {
     position: fixed;
     inset: 0;
@@ -199,6 +196,48 @@
   }
   @media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
     #yy-flow { display: none !important; }
+  }
+
+  /* ---------- hero canvas (Figma GIF + frosted cover; replaces yy-flow) ---------- */
+  html.yy-landing {
+    position: relative;
+  }
+
+  .yy-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: min(100vh, 1080px);
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .yy-canvas__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .yy-canvas__media--still {
+    display: none;
+  }
+
+  .yy-canvas__cover {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 250, 250, 0.2);
+    -webkit-backdrop-filter: blur(100px);
+    backdrop-filter: blur(100px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .yy-canvas__media--motion { display: none; }
+    .yy-canvas__media--still { display: block; }
   }
 
   /* ---------- shell ---------- */
@@ -222,9 +261,16 @@
      这样标签栏、间距、竖线位置在每个 section 完全相同，而 64px 的字仍然跑 12 字/行。 */
   .hero,
   .end,
-  .index__head,
-  .case {
+  .index__head {
     max-width: var(--frame-index);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Case rows use the wider Figma frame (1260). The vertical rule axis therefore
+     sits farther right than the hero — intentional per the Landing redesign. */
+  .case {
+    max-width: var(--frame-case);
     margin-left: auto;
     margin-right: auto;
   }
@@ -245,6 +291,11 @@
     grid-template-columns: var(--col-label) minmax(0, 1fr);
     gap: var(--col-gap);
     position: relative;
+  }
+
+  .case.row {
+    grid-template-columns: var(--col-label-case) minmax(0, 1fr);
+    gap: var(--col-gap-case);
   }
 
   /* 首屏／收尾的内容列固定卡在 492（kedavra 实测的 measure），不像 .index__head／
@@ -277,6 +328,11 @@
     background: var(--rule);
     pointer-events: none;
   }
+
+  .case.row--ruled::before {
+    left: calc(var(--col-label-case) + var(--col-gap-case) / 2);
+  }
+
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
   /* ---------- hero ---------- */
@@ -424,6 +480,17 @@
     padding-bottom: 4px;
   }
 
+  .case__logo {
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: 44px;
+    max-width: 140px;
+    object-fit: contain;
+    object-position: left center;
+    margin: 0 0 12px;
+  }
+
   .case__name {
     margin: 0;
     font-size: var(--t-20);
@@ -451,20 +518,14 @@
   }
 
   /* ---------- the 4:3 slot ----------
-     No card. No border, no backing panel, no elevation shadow. The reference
-     site's own design DNA: "There is no card component. A portfolio entry is a
-     bare image at 16px radius in the right column." */
-  /* 4:3 kept — the Opus Clip thumbnail video is natively 1440x1080, so any other
-     ratio would crop it. Sized by viewport HEIGHT so one project fills a screen:
-     68vh tall gives 816px wide at 900px viewport height. `min(..., 100%)` clamps
-     it to the column on shorter or narrower viewports, and aspect-ratio derives
-     the height either way, so the crop never changes. */
+     No card. No border, no backing panel, no elevation shadow.
+     Figma Landing 2026-08: 823×617 display, 36px radius, still 4:3. */
   .slot {
     display: block;
     position: relative;
-    width: min(calc(68vh * 4 / 3), 100%);
+    width: min(823px, calc(68vh * 4 / 3), 100%);
     aspect-ratio: 4 / 3;
-    border-radius: 16px;
+    border-radius: var(--slot-radius);
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
@@ -574,7 +635,7 @@
      nowhere to go, and a dead link is worse than no link. */
   .panel {
     aspect-ratio: 4 / 3;
-    border-radius: 16px;
+    border-radius: var(--slot-radius);
     background: var(--slot);
     padding: 44px 48px;
     display: flex;
@@ -692,14 +753,15 @@
   /* 829 + 2 x 24 edge = 877. Above that the frame fits untouched; below it the
      label column collapses and the content column goes full width. */
   @media (max-width: 877px) {
-    .row { grid-template-columns: 1fr; gap: 20px; }
+    .row,
+    .case.row { grid-template-columns: 1fr; gap: 20px; }
     .case__label {
       justify-content: flex-start;
       padding-bottom: 0;
       order: -1;
     }
     .hero { padding: 104px 0 72px; }
-    .case { margin-bottom: 80px; }
+    .case { margin-bottom: 80px; min-height: 0; }
     .panel { padding: 32px; aspect-ratio: auto; }
     /* No fixed height to distribute across once the ratio is released. */
     .panel__acts { display: block; padding-bottom: 20px; }

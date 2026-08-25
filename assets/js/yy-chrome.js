@@ -37,7 +37,7 @@
      being a capsule at 375px. `projects.html` is the hub — it links to all
      eight content pages — so Work covers the whole case-study graph. */
   var NAV = [
-    { href: 'projects.html', label: 'Work' },
+    { href: 'projects.html', label: 'Work', homeHref: '#work' },
     { href: 'aboutme.html',  label: 'About' },
     { href: RESUME,          label: 'Resume', ext: true }
   ];
@@ -226,7 +226,9 @@
     '  line-height: 1 !important;',
     '  letter-spacing: 0 !important;',
     '  color: var(--yy-ink) !important;',
-    '  padding-left: 16px !important;',
+    '  padding: 10px 20px !important;',
+    '  background: rgba(26,25,23,.08) !important;',
+    '  border-radius: 999px !important;',
     '}',
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
@@ -272,8 +274,10 @@
 
   function link(item, here) {
     /* 页面链接用相对路径 —— 与站上 11 个页面既有的写法一致。
-       ROOT 只用于资源（css / 图片），那里相对路径才真的可能解析到别处。 */
-    var attrs = 'href="' + esc(item.href) + '"';
+       ROOT 只用于资源（css / 图片），那里相对路径才真的可能解析到别处。
+       On the homepage, Work scrolls to #work instead of bouncing to projects.html. */
+    var href = (here === 'index.html' && item.homeHref) ? item.homeHref : item.href;
+    var attrs = 'href="' + esc(href) + '"';
     if (item.ext) attrs += ' target="_blank" rel="noopener"';
     if (!item.ext && item.href === here) attrs += ' aria-current="page"';
     return '<a ' + attrs + (item.ext ? ' class="ext"' : '') + '>' + esc(item.label) + '</a>';
@@ -336,7 +340,7 @@
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
       '<nav class="cap" aria-label="Main">' +
         '<a class="brand" href="index.html"' +
-          (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
+          (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Y</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(function (i) { return link(i, here); }).join('') +
       '</nav>';

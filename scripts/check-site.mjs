@@ -232,11 +232,40 @@ const requiredAssets = [
   'assets/js/yy-scroll.js',
   'assets/js/yy-cursor.js',
   'assets/js/yy-slots.js',
-  'assets/js/yy-flow.js'
+  'assets/js/yy-flow.js',
+  'assets/images/home/landing-canvas.gif',
+  'assets/images/home/landing-canvas-still.png'
 ];
 for (const asset of requiredAssets) {
   const here = path.join(ROOT, asset);
   if (!fs.existsSync(here)) errors.push(`missing ${asset}`);
+}
+
+const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
+if (!tokensCss.includes('--slot-radius: 36px')) {
+  errors.push('yy-tokens.css missing --slot-radius: 36px for the Landing redesign');
+}
+if (!tokensCss.includes('--frame-case: 1260px')) {
+  errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
+}
+
+const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
+if (!indexAstro.includes('yy-canvas')) {
+  errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
+}
+if (indexAstro.includes('yy-flow.js')) {
+  errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+}
+
+const landingFeatured = projectsMod.landingProjects();
+if (landingFeatured.length !== 4) {
+  errors.push(`landing must feature exactly 4 projects (got ${landingFeatured.length})`);
+} else {
+  const order = landingFeatured.map((p) => p.slug);
+  const expected = ['ai-driven-product-design', 'atlasnova', 'mckinseyecommerce', 'larkdesign'];
+  if (order.join(',') !== expected.join(',')) {
+    errors.push(`landing order must be ${expected.join(' → ')} (got ${order.join(' → ')})`);
+  }
 }
 
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');
@@ -244,10 +273,19 @@ if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 15 * 1024 * 10
   errors.push('case-opusclip-marquee.mp4 exceeds the 15 MB homepage media budget');
 }
 
+const canvasGif = path.join(ROOT, 'assets/images/home/landing-canvas.gif');
+if (fs.existsSync(canvasGif) && fs.statSync(canvasGif).size > 4 * 1024 * 1024) {
+  errors.push('landing-canvas.gif exceeds the 4 MB homepage background budget');
+}
+
 for (const project of projectsMod.projects) {
   if (project.cover && !project.placeholderFile) {
     const p = path.join(ROOT, toDisk(project.cover.src));
     if (!fs.existsSync(p)) errors.push(`${project.slug}: missing cover ${project.cover.src}`);
+  }
+  if (project.logo) {
+    const logoPath = path.join(ROOT, toDisk(project.logo.src));
+    if (!fs.existsSync(logoPath)) errors.push(`${project.slug}: missing logo ${project.logo.src}`);
   }
   if (project.video) {
     for (const src of [project.video.src, project.video.poster].filter(Boolean)) {
