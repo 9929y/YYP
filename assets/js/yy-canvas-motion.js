@@ -44,7 +44,7 @@
   };
 
   var CASES = [
-    /* 0 Opus */
+    /* 0 Opus — scale 1.9 */
     {
       opacity: 0.3,
       scale: 1.9,
@@ -57,15 +57,15 @@
       coverX: 14,
       coverY: 18
     },
-    /* 1 Atlas — 15deg CW */
+    /* 1 Atlas Nova — scale 2.8, canvas/cover opacity 0.4 */
     {
-      opacity: 0.7,
-      scale: 2.4,
+      opacity: 0.4,
+      scale: 2.8,
       rotate: 15,
       x: -32,
       y: 44,
-      coverOpacity: 0.25,
-      coverScale: 1.1,
+      coverOpacity: 0.4,
+      coverScale: 1.12,
       coverRotate: 10,
       coverX: 22,
       coverY: 26
