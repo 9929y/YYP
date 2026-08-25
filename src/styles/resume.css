@@ -133,15 +133,25 @@ html.yy-resume :focus-visible {
 
 .resume__tabs-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px 28px;
   padding-left: 8px;
+  overflow-x: auto;
   font-size: var(--t-13);
+  scrollbar-width: none;
 }
 
+.resume__tabs-list::-webkit-scrollbar { display: none; }
+
 .resume__tabs a {
+  flex: none;
   color: var(--ink-2);
   text-decoration: none;
+}
+
+.resume__tabs a[aria-current="location"] {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .resume__floating-tabs {
@@ -219,8 +229,9 @@ html.yy-resume :focus-visible {
 }
 
 .resume__floating-tabs a[aria-current="location"] {
-  color: var(--ink);
-  background: rgba(26, 25, 23, 0.075);
+  color: var(--ground);
+  background: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(26, 25, 23, 0.12);
 }
 
 .resume-section {
