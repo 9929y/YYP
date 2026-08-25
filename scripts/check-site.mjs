@@ -114,6 +114,19 @@ for (const selector of [
   }
 }
 
+const dynamicCasePath = path.join(ROOT, 'src/pages/[slug].astro');
+if (fs.existsSync(dynamicCasePath)) {
+  const dynamicCaseSource = fs.readFileSync(dynamicCasePath, 'utf8');
+  if (dynamicCaseSource.includes('Case-study body goes here')) {
+    errors.push('src/pages/[slug].astro still contains the placeholder case-study body');
+  }
+  for (const component of ['CaseSection', 'CaseMetaGrid', 'CaseQuote', 'CaseStat']) {
+    if (!dynamicCaseSource.includes(component)) {
+      errors.push(`src/pages/[slug].astro does not compose ${component}`);
+    }
+  }
+}
+
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
   .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
