@@ -1,0 +1,33 @@
+---
+import { publicUrl } from '../data/projects';
+
+interface Props {
+  src: string;
+  poster?: string;
+  label: string;
+  width: number;
+  height: number;
+  caption?: string;
+  controls?: boolean;
+}
+
+const { src, poster, label, width, height, caption, controls = false } = Astro.props;
+---
+
+<figure class="media media--video rv">
+  <video
+    autoplay
+    muted
+    loop
+    playsinline
+    controls={controls}
+    preload="metadata"
+    poster={poster ? publicUrl(poster) : undefined}
+    width={width}
+    height={height}
+    aria-label={label}
+  >
+    <source src={publicUrl(src)} type={src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4'} />
+  </video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
