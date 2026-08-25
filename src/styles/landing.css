@@ -259,20 +259,32 @@
     display: block;
   }
 
+  .yy-canvas__gradient,
+  .yy-canvas__gradient canvas {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  /* Still image is the reduced-motion / no-JS fallback under the live gradient. */
   .yy-canvas__media--still {
     display: none;
+    z-index: 0;
   }
 
   .yy-canvas__cover {
     position: absolute;
     inset: 0;
+    z-index: 1;
     background: rgba(255, 250, 250, 0.2);
     -webkit-backdrop-filter: blur(100px);
     backdrop-filter: blur(100px);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .yy-canvas__media--motion { display: none; }
+    .yy-canvas__gradient { display: none !important; }
     .yy-canvas__media--still { display: block; }
   }
 

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MorphingStatement from '../components/islands/MorphingStatement';
+import LandingCanvasGradient from '../components/islands/LandingCanvasGradient';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import { landingProjects } from '../data/projects';
 import '../styles/landing.css';
@@ -11,6 +12,7 @@ const cases = landingProjects();
 <!--
   Live homepage at /. Layout matched to Figma Landing Page node 1:2.
   Case-study pages stay Webflow passthrough. Shared chrome = yy-chrome footer/nav.
+  Hero canvas: ShaderGradient React island (preview) + still fallback for reduced motion.
 -->
 <BaseLayout
   title="Yanice Yang — Product Designer"
@@ -21,14 +23,7 @@ const cases = landingProjects();
   chrome={true}
 >
   <div class="yy-canvas" aria-hidden="true">
-    <img
-      class="yy-canvas__media yy-canvas__media--motion"
-      src="/assets/images/home/landing-canvas.gif"
-      alt=""
-      width="1920"
-      height="1080"
-      decoding="async"
-    />
+    <LandingCanvasGradient client:load />
     <img
       class="yy-canvas__media yy-canvas__media--still"
       src="/assets/images/home/landing-canvas-still.png"
