@@ -14,8 +14,8 @@ export default defineConfig({
   vite: {
     server: {
       fs: { allow: ['.'] },
-      /* Cloud Agent localhost forward can fail; allow tunnel hosts for preview. */
-      allowedHosts: true
+      host: '0.0.0.0',
+      allowedHosts: ['qualification-collaborative-commerce-flu.trycloudflare.com', '.trycloudflare.com']
     }
   }
 });
