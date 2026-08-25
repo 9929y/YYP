@@ -99,6 +99,21 @@ for (const component of requiredCaseStudyComponents) {
   }
 }
 
+const caseStudyCssPath = path.join(ROOT, 'src/styles/case-study.css');
+const caseStudyCss = fs.existsSync(caseStudyCssPath) ? fs.readFileSync(caseStudyCssPath, 'utf8') : '';
+for (const selector of [
+  '.case-section',
+  '.case-meta',
+  '.media--video',
+  '.media-pair',
+  '.case-quote',
+  '.case-stat'
+]) {
+  if (!caseStudyCss.includes(selector)) {
+    errors.push(`src/styles/case-study.css missing ${selector} Foundation styles`);
+  }
+}
+
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
   .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
