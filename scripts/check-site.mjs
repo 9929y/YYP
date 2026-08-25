@@ -239,7 +239,7 @@ const optionalMissing = new Set(
 
 const knownGenerated = useDist
   ? new Set()
-  : new Set(['index.html', 'landing.html']);
+  : new Set(['index.html', 'landing.html', 'resume.html']);
 
 for (const file of htmlFiles) {
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
