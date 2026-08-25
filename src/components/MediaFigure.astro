@@ -1,0 +1,18 @@
+---
+import { publicUrl } from '../data/projects';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+}
+
+const { src, alt, width, height, caption } = Astro.props;
+---
+
+<figure class="media rv">
+  <img src={publicUrl(src)} alt={alt} width={width} height={height} loading="lazy" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

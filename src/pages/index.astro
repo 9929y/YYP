@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MorphingStatement from '../components/islands/MorphingStatement';
+import ProjectIndex from '../components/ProjectIndex.astro';
+import { landingProjects } from '../data/projects';
+import '../styles/landing.css';
+
+const cases = landingProjects();
+---
+
+<!--
+  Live homepage at /. The previous Webflow homepage is archived as
+  index.webflow.html. Case-study pages stay Webflow passthrough.
+-->
+<BaseLayout
+  title="Yanice Yang — UX Designer"
+  description="UX designer. Selected work in user research, consumer product, enterprise and health."
+  htmlClass="yy-landing"
+  reveal={true}
+  lenis={false}
+  chrome={true}
+>
+  <main class="wrap">
+    <section class="hero row row--ruled">
+      <div class="hero__col">
+        <p class="eyebrow">Yanice Yang</p>
+        <p class="hero__meta">UX Designer<br />Bay Area, US</p>
+        <p class="hero__foot">Selected work 2021 — 2026</p>
+      </div>
+      <div class="hero__col">
+        <p class="eyebrow">Portfolio</p>
+        <h1 class="hero__title rv">
+          <MorphingStatement client:load />
+        </h1>
+        <p class="hero__sub rv" style="--d:var(--duration-stagger)">
+          Six projects across research, consumer product, enterprise and health.
+          <a class="tx" href="#work">See the work</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="index" id="work">
+      <div class="index__head row row--ruled">
+        <p class="eyebrow">Selected work</p>
+        <p class="hero__meta">2021 — 2026</p>
+      </div>
+      <ProjectIndex projects={cases} />
+    </section>
+
+    <section class="end row row--ruled">
+      <div>
+        <p class="eyebrow">Next</p>
+      </div>
+      <div>
+        <p class="end__line rv">Have something that needs the awkward questions asked first?</p>
+        <p class="end__links rv" style="--d:var(--duration-stagger)">
+          <a class="tx" href="/projects.html">All work</a>
+          <a class="tx" href="/aboutme.html">About</a>
+          <a class="tx" href="mailto:yaniceydesign@gmail.com">Email</a>
+          <a class="tx" href="https://302437672248143872.hello.cv/" target="_blank" rel="noopener">Resume ↗</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <canvas id="yy-flow" aria-hidden="true"></canvas>
+  <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
+
+  <Fragment slot="scripts">
+    <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
+    <script is:inline src="/assets/js/yy-flow.js"></script>
+    <script is:inline src="/assets/js/lenis.min.js"></script>
+    <script is:inline src="/assets/js/yy-scroll.js"></script>
+    <script is:inline src="/assets/js/yy-cursor.js"></script>
+    <script is:inline src="/assets/js/yy-slots.js"></script>
+  </Fragment>
+</BaseLayout>

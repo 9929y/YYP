@@ -131,10 +131,16 @@
 
     var start = function () {
       try {
-        var items = collect();
+        /* Landing (and future Astro pages) mark explicit targets with .rv.
+           Case pages have no .rv, so we auto-collect and stamp .yy-rv.
+           One observer, one class contract: html.yy-reveal. */
+        var explicit = document.querySelectorAll('.rv');
+        var items = explicit.length ? Array.prototype.slice.call(explicit) : collect();
         if (!items.length) { html.classList.remove('yy-reveal'); return; }
 
-        for (var i = 0; i < items.length; i++) items[i].classList.add('yy-rv');
+        if (!explicit.length) {
+          for (var i = 0; i < items.length; i++) items[i].classList.add('yy-rv');
+        }
 
         var io = new IntersectionObserver(function (entries) {
           /* Sort by document position so a group staggers top-to-bottom rather
@@ -167,7 +173,7 @@
            of why the observer stayed quiet — which is the property that actually
            matters, and the one this project has repeatedly failed to hold. */
         var sweep = function () {
-          var pend = document.querySelectorAll('.yy-rv:not(.in)');
+          var pend = document.querySelectorAll('.yy-rv:not(.in), .rv:not(.in)');
           for (var i = 0; i < pend.length; i++) {
             var r = pend[i].getBoundingClientRect();
             if (r.top < innerHeight + 200) {

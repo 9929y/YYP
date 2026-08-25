@@ -1,0 +1,17 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "redirects": [
+    {
+      "source": "/landing.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/landing",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}

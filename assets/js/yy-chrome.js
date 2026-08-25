@@ -81,6 +81,13 @@
     'html.yy-chrome .footer-credit-wrapper{display:none}';
   (document.head || HTML).appendChild(boot);
 
+  if (!document.querySelector('link[href*="yy-tokens.css"]')) {
+    var tokens = document.createElement('link');
+    tokens.rel = 'stylesheet';
+    tokens.href = ROOT + 'assets/css/yy-tokens.css';
+    (document.head || HTML).appendChild(tokens);
+  }
+
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';
