@@ -261,15 +261,14 @@
      而是用自己的 max-width 约束**文字**宽度 —— 见下方 .hero__title / .hero__sub。
      这样标签栏、间距、竖线位置在每个 section 完全相同，而 64px 的字仍然跑 12 字/行。 */
   .hero,
-  .end,
-  .index__head {
+  .end {
     max-width: var(--frame-index);
     margin-left: auto;
     margin-right: auto;
   }
 
-  /* Case rows use the wider Figma frame (1260). The vertical rule axis therefore
-     sits farther right than the hero — intentional per the Landing redesign. */
+  /* Case rows use the wider Figma frame (1260). Page-level rule axis stays
+     nearly aligned with the hero (Figma: hero rule ~708px, case ~710px). */
   .case {
     max-width: var(--frame-case);
     margin-left: auto;
@@ -295,8 +294,11 @@
   }
 
   .case.row {
+    /* Figma article: 372 label + 8 + 1px rule + 8 + media */
     grid-template-columns: var(--col-label-case) minmax(0, 1fr);
-    gap: var(--col-gap-case);
+    column-gap: 17px;
+    row-gap: 20px;
+    align-items: end;
   }
 
   /* 首屏／收尾的内容列固定卡在 492（kedavra 实测的 measure），不像 .index__head／
@@ -335,61 +337,67 @@
   }
 
   .case.row--ruled::before {
-    left: calc(var(--col-label-case) + var(--col-gap-case) / 2);
+    /* Sit after the 8px pre-rule gutter, not centered in the 17px gap. */
+    left: calc(var(--col-label-case) + 8px);
   }
 
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
   /* ---------- hero ---------- */
-  /* Figma Landing hero (node 1:38): 1160 frame, 320+492 cols, title overflows
-     the content track to ~1123px so 64px type stays one phrase per line. */
+  /* Figma Section 1:38 — 1160 × 972, pt 120 / pb 56, cols 320 + 17 + 492.
+     Left zones 321 / 195 / 18; right zones 320 / ~203 / 78. Horizontal rules
+     are intentionally offset (right higher than left). */
   .hero {
-    min-height: 90vh;
+    min-height: 972px;
     padding: 120px 0 56px;
     overflow: visible;
   }
 
-  /* Three zones per column — pinned top, centred, pinned bottom. The reference
-     does this in both columns and it is a large part of why the hero owns the
-     screen instead of sitting at the top of it. */
   .hero__col {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 40px;
+    align-items: stretch;
     min-width: 0;
-  }
-
-  .hero__col--lead {
-    /* Match Figma: label column holds eyebrow / meta / empty foot. */
+    min-height: 796px;
   }
 
   .hero__col--statement {
     overflow: visible;
   }
 
-  .hero__meta {
-    margin: 0;
-    padding: 0 0 1px;
-    border-bottom: 1px solid #939393;
-    font-size: var(--t-13);
-    line-height: 1.45;
-    color: var(--ink-3);
-    align-self: stretch;
+  .hero__zone--top {
+    flex: 0 0 320px;
+    padding-bottom: 10px;
   }
 
-  .hero__foot {
+  .hero__col--lead .hero__zone--top {
+    flex-basis: 321px;
+  }
+
+  .hero__zone--meta {
+    flex: 0 0 195px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #939393;
+  }
+
+  .hero__zone--foot {
+    flex: 0 0 18px;
+  }
+
+  .hero__zone--after {
+    flex: 0 0 78px;
+  }
+
+  .hero__meta {
     margin: 0;
-    min-height: 18px;
-    font-size: var(--t-11);
-    letter-spacing: .12em;
-    text-transform: uppercase;
+    font-size: var(--t-13);
+    line-height: 1.45;
     color: var(--ink-3);
   }
 
   /* Figma H1: 64px / 64 leading / -2.56px tracking / SemiBold.
-     Width 1123 overflows the 492 content column on purpose so
-     "Build AI-native experiences" reads as one line. */
+     Width 1123 overflows the 492 content column on purpose. */
   .hero__title {
     margin: 0;
     padding-top: 1px;
@@ -414,8 +422,6 @@
     font-weight: 500;
   }
 
-  /* Magic UI Morphing Text: only the bracketed keywords overlap and morph.
-     The lead, "beyond", and "toward" remain ordinary H1 text. */
   .morph-statement-root,
   .morph-statement,
   .morph-statement__lead {
@@ -455,23 +461,8 @@
     pointer-events: none;
   }
 
-  .hero__sub {
-    margin: 28px 0 0;
-    font-size: var(--t-20);
-    line-height: var(--lh-heading);
-    color: var(--ink-2);
-    max-width: min(36em, var(--col-content));
-    letter-spacing: normal;
-  }
-
-  /* Figma hero has no supporting sentence under the H1 — keep the slot for
-     spacing only when empty, hide copy when matching the redesign. */
-  .hero__sub--figma-hidden {
-    display: none;
-  }
-
   .eyebrow {
-    margin: 0 0 10px;
+    margin: 0;
     font-size: var(--t-11);
     line-height: 1.45;
     letter-spacing: .12em;
@@ -480,31 +471,28 @@
   }
 
   /* ---------- index of work ---------- */
-  .index { padding: 40px 0 120px; }
-
-  .index__head {
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--hair);
-    margin-bottom: 64px;
+  .index {
+    /* Figma: 40px top padding before first article block */
+    padding: 40px 0 120px;
   }
 
-  /* One project per screen. min-height 100vh with the row centred means each
-     case owns a viewport, so scrolling moves from project to project rather than
-     past a list of them. margin is gone — the viewport does the spacing now. */
+  /* Figma article 1260×1080: label+media band is 618 tall, vertically centred
+     with ~231px above. One project per viewport. */
   .case {
     min-height: 100vh;
+    min-height: 1080px;
     display: grid;
     align-content: center;
     margin-bottom: 0;
   }
 
-  /* Label column sits at the BOTTOM of the row, so the project name lines up
-     with the base of its image rather than floating at the top. */
+  /* Label column bottom-aligns with the media slot (Figma justify-end + pb 4). */
   .case__label {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     padding-bottom: 4px;
+    box-sizing: border-box;
   }
 
   .case__logo {
@@ -520,42 +508,42 @@
 
   .case__name {
     margin: 0;
-    font-size: var(--t-20);
-    line-height: var(--lh-heading);
-    letter-spacing: -.03em;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: -0.6px;
     font-weight: 600;
+    color: var(--ink);
   }
 
   .case__scope {
     margin: 6px 0 0;
     font-size: var(--t-13);
-    line-height: var(--lh-caption);
+    line-height: 1.45;
     color: var(--ink-3);
+    max-width: 320px;
   }
 
-  /* The description is ALWAYS visible. The study had it at opacity 0, revealed
-     only on desktop hover, which means touch-screen desktops and keyboard users
-     could never read it. */
   .case__note {
     margin: 14px 0 0;
     font-size: var(--t-13);
-    line-height: var(--lh-caption);
+    line-height: 1.45;
     color: var(--ink-2);
-    max-width: 30em;
+    max-width: 320px;
   }
 
   /* ---------- the 4:3 slot ----------
-     No card. No border, no backing panel, no elevation shadow.
-     Figma Landing 2026-08: 823×617 display, 36px radius, still 4:3. */
+     Figma default media: 823×617, radius 36 (Opus). AtlasNova still 20 in file;
+     production keeps the shared 36 token. */
   .slot {
     display: block;
     position: relative;
-    width: min(823px, calc(68vh * 4 / 3), 100%);
-    aspect-ratio: 4 / 3;
+    width: min(823px, 100%);
+    aspect-ratio: 823 / 617;
     border-radius: var(--slot-radius);
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
+    align-self: center;
   }
 
   /* Cross-fade + cross-blur from placeholder to real image, per
@@ -784,13 +772,35 @@
     .case.row { grid-template-columns: 1fr; gap: 20px; }
     .case__label {
       justify-content: flex-start;
+      height: auto;
+      max-height: none;
       padding-bottom: 0;
       order: -1;
     }
-    .hero { padding: 104px 0 72px; }
+    .hero {
+      min-height: 0;
+      padding: 104px 0 72px;
+    }
+    .hero__col {
+      min-height: 0;
+    }
+    .hero__zone--top,
+    .hero__col--lead .hero__zone--top,
+    .hero__zone--meta,
+    .hero__zone--foot,
+    .hero__zone--after {
+      flex: 0 0 auto;
+    }
+    .hero__zone--meta {
+      padding: 28px 0 16px;
+    }
+    .hero__zone--foot,
+    .hero__zone--after {
+      display: none;
+    }
     .case { margin-bottom: 80px; min-height: 0; }
+    .slot { width: 100%; aspect-ratio: 4 / 3; }
     .panel { padding: 32px; aspect-ratio: auto; }
-    /* No fixed height to distribute across once the ratio is released. */
     .panel__acts { display: block; padding-bottom: 20px; }
     .panel__acts li { padding: 0 0 10px; margin-bottom: 10px; }
   }
@@ -803,8 +813,6 @@
       letter-spacing: -.04em;
       width: 100%;
     }
-    .index__head { margin-bottom: 44px; }
     .case { margin-bottom: 64px; }
-    .end__line { font-size: var(--t-25); }
   }
   
