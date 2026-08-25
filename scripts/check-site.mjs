@@ -84,6 +84,21 @@ if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
   errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
 }
 
+const requiredCaseStudyComponents = [
+  'CaseSection.astro',
+  'CaseMetaGrid.astro',
+  'MediaVideo.astro',
+  'MediaPair.astro',
+  'CaseQuote.astro',
+  'CaseStat.astro'
+];
+for (const component of requiredCaseStudyComponents) {
+  const componentPath = path.join(ROOT, 'src/components', component);
+  if (!fs.existsSync(componentPath)) {
+    errors.push(`src/components/${component} missing — required by the case-study Foundation`);
+  }
+}
+
 const root = useDist ? distDir : ROOT;
 const htmlFiles = (useDist ? walk(distDir) : fs.readdirSync(ROOT).map((name) => path.join(ROOT, name)))
   .filter((f) => f.endsWith('.html') && fs.existsSync(f) && fs.statSync(f).isFile());
