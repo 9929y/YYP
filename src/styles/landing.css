@@ -215,6 +215,9 @@
     --t-64: 56px;
     /* ≥10% side gutters on all but phone; phone keeps 20px below. */
     --edge: 10vw;
+    /* Tighter spine: label + gap hug the rule; media column gets the rest. */
+    --col-label-case: 300px;
+    --col-gap: 12px;
   }
 
   /* Hero-height canvas. Bottom mask fades to transparent so the seam into
@@ -474,19 +477,19 @@
 
   /* ---------- index of work ---------- */
   .index {
-    /* Figma: 40px top padding before first article block */
-    padding: 40px 0 120px;
+    padding: 24px 0 96px;
   }
 
-  /* One project per viewport: center the label+media band in the screen.
-     Do NOT floor at 1080px — that taller-than-viewport block centers content
-     in 1080, so short laptops only see the empty upper half (content sunk). */
+  /* Shorter than a full viewport so the four cases sit closer when scrolling,
+     while still reading as one band at a time. */
   .case {
-    min-height: 100svh;
-    min-height: 100vh;
+    min-height: 82svh;
+    min-height: 82vh;
     display: grid;
     align-content: center;
     margin-bottom: 0;
+    padding-block: clamp(32px, 4vh, 56px);
+    box-sizing: border-box;
   }
 
   /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
@@ -495,7 +498,7 @@
     flex-direction: column;
     justify-content: flex-end;
     gap: 36px;
-    min-height: 618px;
+    min-height: 0;
     padding-bottom: 4px;
     box-sizing: border-box;
   }
@@ -585,20 +588,19 @@
     }
   }
 
-  /* ---------- the 4:3 slot ----------
-     Figma default media: 823×617, radius 36 (Opus). AtlasNova still 20 in file;
-     production keeps the shared 36 token. */
+  /* Media fills the column past the spine — larger than the old 823 cap. */
   .slot {
     display: block;
     position: relative;
-    width: min(823px, 100%);
-    aspect-ratio: 823 / 617;
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 4 / 3;
     border-radius: var(--slot-radius);
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
     /* Must not be center — that floats media off the left info baseline
-       once the aspect-ratio height shrinks below the label min-height. */
+       once the aspect-ratio height shrinks below the label stack. */
     align-self: end;
   }
 
@@ -824,15 +826,11 @@
     html { scroll-behavior: auto; }
   }
 
-  /* ---------- responsive ----------
-     Mid widths (side-by-side but under the 1260 case frame): a locked 372px
-     label + 17px gap parks type against the media. Ease the label track and
-     open the gutter so copy and image keep clear air. --rule-x follows
-     --col-label-case, so the spine stays in the widened gap. */
+  /* Mid widths: keep label/gap tight to the rule (do not re-inflate the gutter). */
   @media (max-width: 1259px) and (min-width: 878px) {
-    :root {
-      --col-label-case: clamp(268px, 30vw, 372px);
-      --col-gap: clamp(28px, 3.6vw, 44px);
+    html.yy-landing {
+      --col-label-case: clamp(260px, 28vw, 300px);
+      --col-gap: 12px;
     }
   }
 
