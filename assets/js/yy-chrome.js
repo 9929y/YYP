@@ -107,8 +107,10 @@
     '  all: initial;',
     '  --yy-ink: #1a1917;',
     '  --yy-ink-dim: #5b5a56;',
-    '  --yy-fill: rgba(255,255,255,.72);',
-    '  --yy-hair: rgba(255,255,255,.55);',
+    '  /* Linearity glass, light-adapted: their fill is white/5 on black.',
+    '     On #fff that is invisible, so we keep a translucent white wash',
+    '     strong enough for 14px ink, thin enough that blur reads as glass. */',
+    '  --yy-fill: linear-gradient(180deg, rgba(255,255,255,.58) 0%, rgba(255,255,255,.38) 100%);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
     '  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;',
     '  font-size: 16px;',
@@ -149,36 +151,59 @@
     '}',
 
     /* ---- the glass capsule ----------------------------------------------
-       Legibility on flat white needs four layers, three of which already have
-       precedent in the shipped stylesheet:
-         · translucent fill
-         · inset hairlines (top highlight + bottom contact shade)
-         · a DROP shadow — this is what makes it visible on #fff at all, and
-           `.nav-cover` already does exactly this: 0 12px 36px -8px #3e41741a
-         · saturate(1.5), so colour behind it stays alive rather than milky
+       Recipe measured off linearity.io (static layers only — no animate-border):
+         · fill: white/5 + backdrop-blur (their nav pills use 4px; large panels
+           use 12–200px). 20px is the size that still reads as frost on a 50px
+           capsule without milking the type.
+         · kp-glass-border: 1px 135deg specular stroke, punched with a mask
+           so the highlight lives ON the edge, not as a flat box-shadow ring.
+         · inner glow: inset 0 0 11px #ffffff29
+         · drop: 0 2px 2px #00000026, plus the existing lift so it still
+           separates from #fff.
        -------------------------------------------------------------------- */
     '.cap{',
+    '  position: relative;',
+    '  isolation: isolate;',
     '  display: flex; align-items: center; gap: 2px;',
     '  padding: 6px;',
     '  border-radius: 999px;',
     '  background: var(--yy-fill);',
-    '  -webkit-backdrop-filter: blur(8px) saturate(1.5);',
-    '  backdrop-filter: blur(8px) saturate(1.5);',
+    '  -webkit-backdrop-filter: blur(20px) saturate(1.6);',
+    '  backdrop-filter: blur(20px) saturate(1.6);',
     '  box-shadow:',
-    '    inset 0 1px 0 rgba(255,255,255,.92),',
-    '    inset 0 0 0 1px var(--yy-hair),',
-    '    inset 0 -1px 0 rgba(26,25,23,.05),',
-    '    0 1px 2px rgba(62,65,116,.07),',
-    '    0 2px 8px -2px rgba(62,65,116,.09),',
+    '    inset 0 0 11px rgba(255,255,255,.16),',
+    '    inset 0 1px 0 rgba(255,255,255,.55),',
+    '    0 2px 2px rgba(0,0,0,.15),',
     '    0 12px 36px -8px rgba(62,65,116,.20);',
+    '}',
+    /* Linearity .kp-glass-border — gradient hairline via mask-composite.
+       On light ground their all-white stroke vanishes, so the 135deg ramp
+       still starts specular-white (top-left) but lands on ink at ~12%. */
+    '.cap::before{',
+    '  content: "";',
+    '  position: absolute; inset: 0; z-index: 0;',
+    '  border-radius: inherit;',
+    '  padding: 1px;',
+    '  pointer-events: none;',
+    '  box-sizing: border-box;',
+    '  background: linear-gradient(135deg, rgba(255,255,255,.85), rgba(255,255,255,.22) 25%, rgba(26,25,23,.12), rgba(255,255,255,.16) 75%, rgba(26,25,23,.16));',
+    '  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);',
+    '  -webkit-mask-composite: xor;',
+    '  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);',
+    '  mask-composite: exclude;',
     '}',
     /* Where backdrop-filter is unsupported OR silently dead (an ancestor
        forming a backdrop root), the fill alone must carry legibility. */
     '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){',
-    '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-hair: rgba(26,25,23,.10); }',
+    '  :host{ --yy-fill: rgba(255,255,255,.94); }',
+    '}',
+    '@media (prefers-reduced-transparency: reduce){',
+    '  :host{ --yy-fill: rgba(255,255,255,.94); }',
+    '  .cap{ -webkit-backdrop-filter: none; backdrop-filter: none; }',
     '}',
 
     '.cap a{',
+    '  position: relative; z-index: 1;',
     '  display: block;',
     '  padding: 8px 14px;',
     '  border-radius: 999px;',
@@ -189,9 +214,30 @@
     '  white-space: nowrap;',
     '  transition: color .2s var(--yy-ease), background-color .2s var(--yy-ease);',
     '}',
-    '.cap a:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
+    '.cap a:hover{ color: var(--yy-ink); background: rgba(255,255,255,.42); }',
     '.cap a:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
-    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
+    /* Active pill = Linearity annually toggle, static: top specular, inner
+       frost, and a held magenta glow at the bottom-right. No animation. */
+    '.cap a[aria-current="page"]{',
+    '  color: var(--yy-ink);',
+    '  background: rgba(255,255,255,.52);',
+    '  box-shadow:',
+    '    inset 0 1px 0 rgba(255,255,255,.7),',
+    '    inset 0 0 11px rgba(255,255,255,.28),',
+    '    0 2px 2px rgba(0,0,0,.08);',
+    '}',
+    '.cap a[aria-current="page"]::after{',
+    '  content: "";',
+    '  position: absolute;',
+    '  left: 18%; right: 8%; bottom: -2px;',
+    '  height: 13px;',
+    '  border-radius: 999px;',
+    '  background: rgba(196, 90, 210, .42);',
+    '  filter: blur(14px);',
+    '  opacity: .65;',
+    '  pointer-events: none;',
+    '  z-index: -1;',
+    '}',
 
     /* The handwritten wordmark — same typeface as the legacy navbar.
        Measured, not read off the stylesheet: the sheet's one Caveat rule says

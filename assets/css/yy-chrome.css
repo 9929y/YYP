@@ -227,3 +227,97 @@ html.yy-reveal .yy-rv--wipe.in {
   }
   html.lenis-smooth img { filter: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   7. Linearity glass — cards
+
+   Navigation glass lives in the shadow root (yy-chrome.js). Cards are page
+   content, so the same STATIC recipe (no animate-border) is applied here,
+   gated on html.yy-chrome so a missing script restores the original surfaces.
+
+   Scoped exception to the "no background on page content" rule above: only
+   these four surfaces, and only the fill needed for backdrop-filter to read
+   as frost. No `color` is written. Rollback is still deleting the script tag.
+
+   Recipe (from linearity.io, light-adapted):
+     fill        translucent white wash
+     blur        24px + saturate(1.45)
+     edge        1px 135deg specular stroke via mask-composite
+     inner glow  inset 0 0 11px
+     lift        2px contact shadow, not the old 5px #0003 slab
+   --------------------------------------------------------------------------- */
+html.yy-chrome .card-gradient,
+html.yy-chrome .image-base-2,
+html.yy-landing .slot,
+html.yy-landing .panel {
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(24px) saturate(1.45);
+  backdrop-filter: blur(24px) saturate(1.45);
+  box-shadow:
+    inset 0 0 11px rgba(255,255,255,.16),
+    inset 0 1px 0 rgba(255,255,255,.4),
+    0 2px 2px rgba(0,0,0,.12),
+    0 16px 40px -12px rgba(26,25,23,.16);
+}
+
+html.yy-chrome .card-gradient {
+  position: relative;
+  background-color: rgba(255,255,255,.42);
+  border-radius: 16px;
+}
+
+html.yy-landing .slot,
+html.yy-landing .panel {
+  position: relative;
+  background: rgba(255,255,255,.42);
+}
+
+/* Image frames are already filled by the photo — blur would sample nothing.
+   Keep the glass EDGE only. */
+html.yy-chrome .image-base-2 {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+html.yy-chrome .card-gradient::after,
+html.yy-chrome .image-base-2::after,
+html.yy-landing .slot::after,
+html.yy-landing .panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  box-sizing: border-box;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.85),
+    rgba(255,255,255,.22) 25%,
+    rgba(26,25,23,.12),
+    rgba(255,255,255,.16) 75%,
+    rgba(26,25,23,.16));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html.yy-chrome .card-gradient { background-color: #fff; }
+  html.yy-landing .slot,
+  html.yy-landing .panel { background: #efece8; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html.yy-chrome .card-gradient,
+  html.yy-chrome .image-base-2,
+  html.yy-landing .slot,
+  html.yy-landing .panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  html.yy-chrome .card-gradient { background-color: #fff; }
+  html.yy-landing .slot,
+  html.yy-landing .panel { background: #efece8; }
+}
