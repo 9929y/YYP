@@ -190,6 +190,9 @@ html.yy-resume :focus-visible {
     0 2px 8px -2px rgba(62, 65, 116, 0.09),
     0 12px 36px -8px rgba(62, 65, 116, 0.20);
   pointer-events: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: 12px;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 
@@ -206,6 +209,7 @@ html.yy-resume :focus-visible {
   letter-spacing: -0.01em;
   text-decoration: none;
   white-space: nowrap;
+  scroll-snap-align: center;
 }
 
 .resume__floating-tabs a:hover {
@@ -379,12 +383,13 @@ html.yy-resume :focus-visible {
 }
 
 @media (max-width: 560px) {
-  .resume { padding-inline: 20px; }
+  .resume { padding: 0 20px 96px; }
   .resume__name { font-size: var(--t-40); }
   .resume-job__header { grid-template-columns: 1fr; gap: 6px; }
   .resume-section__body { gap: 18px; }
   .resume-card { padding: 24px; border-radius: 20px; }
-  .resume__floating-tabs a { padding: 8px 12px; font-size: var(--t-13); }
+  .resume__floating-tabs-list { padding-right: 14px; }
+  .resume__floating-tabs a { padding: 8px; font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

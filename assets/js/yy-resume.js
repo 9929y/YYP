@@ -30,11 +30,27 @@
     queued = false;
     setFloating(anchor.getBoundingClientRect().bottom < 16);
 
-    var line = window.innerHeight * 0.35;
+    var line = Math.min(120, window.innerHeight * 0.2);
     var current = sections[0].id;
+    var nearest = Infinity;
     sections.forEach(function (section) {
-      if (section.getBoundingClientRect().top <= line) current = section.id;
+      var rect = section.getBoundingClientRect();
+      if (rect.top <= line && rect.bottom > line) {
+        current = section.id;
+        nearest = -1;
+        return;
+      }
+      if (nearest >= 0) {
+        var distance = Math.abs(rect.top - line);
+        if (distance < nearest) {
+          nearest = distance;
+          current = section.id;
+        }
+      }
     });
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+      current = sections[sections.length - 1].id;
+    }
     setCurrent(current);
   }
 
