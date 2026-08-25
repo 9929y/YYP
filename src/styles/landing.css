@@ -215,32 +215,34 @@
     --t-64: 56px;
     /* ≥10% side gutters on all but phone; phone keeps 20px below. */
     --edge: 10vw;
-    /* Scroll-driven canvas / cover (yy-canvas-motion.js). */
-    --canvas-scale: 1;
-    --canvas-x: 0px;
-    --canvas-y: 0px;
-    --canvas-opacity: 0.9;
-    --cover-scale: 1;
-    --cover-x: 0px;
-    --cover-y: 0px;
-    --cover-opacity: 0.85;
   }
 
-  /* Fixed background board — scroll content moves; canvas/cover stay pinned
-     and are driven by --canvas-* / --cover-* from yy-canvas-motion.js. */
+  /* Hero-height canvas. Bottom mask fades to transparent so the seam into
+     the project band is a soft opacity blend, not a hard horizontal cut. */
   .yy-canvas {
-    position: fixed;
-    inset: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: min(100svh, 1080px);
+    height: min(100vh, 1080px);
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    transform-origin: center center;
-    will-change: transform, opacity;
-    opacity: var(--canvas-opacity);
-    transform: translate3d(var(--canvas-x), var(--canvas-y), 0)
-      scale(var(--canvas-scale));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 58%,
+      rgba(0, 0, 0, 0.55) 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 58%,
+      rgba(0, 0, 0, 0.55) 78%,
+      transparent 100%
+    );
   }
 
   .yy-canvas__media {
@@ -256,107 +258,17 @@
     display: none;
   }
 
-  /* Cover is a sibling fixed layer (not nested under canvas) so opacity
-     does not multiply with --canvas-opacity. */
   .yy-canvas__cover {
-    position: fixed;
+    position: absolute;
     inset: 0;
-    z-index: 1;
-    pointer-events: none;
     background: rgba(255, 250, 250, 0.2);
     -webkit-backdrop-filter: blur(100px);
     backdrop-filter: blur(100px);
-    transform-origin: center center;
-    will-change: transform, opacity;
-    opacity: var(--cover-opacity);
-    transform: translate3d(var(--cover-x), var(--cover-y), 0)
-      scale(var(--cover-scale));
-  }
-
-  [data-motion-root] > .wrap {
-    position: relative;
-    z-index: 2;
-  }
-
-  /* ---------- opening intro reveal ---------- */
-  html.yy-landing [data-intro="meta"],
-  html.yy-landing [data-intro="headline"] {
-    opacity: 0;
-  }
-
-  html.yy-landing [data-intro="headline"] {
-    transform: translateY(14px);
-    clip-path: inset(0 0 100% 0);
-  }
-
-  html.yy-landing .hero.row--ruled::before {
-    transform: scaleY(0);
-    transform-origin: top center;
-  }
-
-  [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
-    animation: introFade 520ms cubic-bezier(.2, .8, .2, 1) 180ms forwards;
-  }
-
-  [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-    animation: introTextReveal 760ms cubic-bezier(.16, 1, .3, 1) 320ms forwards;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
-    animation: introLineGrowY 680ms cubic-bezier(.16, 1, .3, 1) 480ms forwards;
-  }
-
-  @keyframes introFade {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes introTextReveal {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  @keyframes introLineGrowY {
-    from { transform: scaleY(0); }
-    to { transform: scaleY(1); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .yy-canvas__media--motion { display: none; }
     .yy-canvas__media--still { display: block; }
-    .yy-canvas,
-    .yy-canvas__cover {
-      transform: none;
-      transition: opacity 240ms ease;
-    }
-    html.yy-landing [data-intro="meta"],
-    html.yy-landing [data-intro="headline"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="meta"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-      clip-path: none !important;
-    }
-    html.yy-landing .hero.row--ruled::before,
-    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
-      animation: none !important;
-      transform: none !important;
-    }
   }
 
   /* ---------- shell ---------- */
