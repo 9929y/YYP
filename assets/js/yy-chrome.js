@@ -200,33 +200,28 @@
     '.cap a:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
     '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
 
-    /* The handwritten wordmark — same typeface as the legacy navbar.
-       Measured, not read off the stylesheet: the sheet's one Caveat rule says
-       1.5625rem, but the legacy name actually renders at Caveat 500, 32px, with
-       line-height 20px (the 0.62 ratio Phase 1 found pinned on it), because a
-       later rule overrides the size.
-
-       Caveat is loaded document-wide by every legacy page's WebFont.load, and
-       landing.html now requests it too. @font-face is document-scoped and does
-       resolve inside a shadow root, which is why Plus Jakarta Sans already works
-       in here.
-
-       Size is 22px, not the legacy 32px: that was sized for an 80px navbar, and
-       this capsule is 49.7px tall with 14px links beside it. Caveat also runs
-       narrow for its em — 22px Caveat measures 111px against 125px for the same
-       string in Plus Jakarta Sans — so 22px carries the same optical weight as
-       the links while keeping the letterforms she asked for.
-
-       line-height 1 rather than the legacy 0.62, so the capsule's flex centring
-       has a normal box to centre. */
+    /* The handwritten wordmark — Figma uses Motterdam ("Yanice Y"). Self-hosting
+       Motterdam needs a commercial license, so we ship the Motterdam export as a
+       22px-tall PNG inside the same grey chip Figma shows. Outer .cap keeps the
+       glass fill + backdrop-filter. Body type stays Plus Jakarta Sans. */
     '.brand{',
-    '  font-family: Caveat, "Plus Jakarta Sans", cursive !important;',
-    '  font-size: 22px !important;',
-    '  font-weight: 500 !important;',
-    '  line-height: 1 !important;',
-    '  letter-spacing: 0 !important;',
+    '  display: flex !important;',
+    '  align-items: center !important;',
+    '  gap: 0 !important;',
+    '  padding: 10px 20px !important;',
+    '  background: rgba(26,25,23,.08) !important;',
+    '  border-radius: 999px !important;',
     '  color: var(--yy-ink) !important;',
-    '  padding-left: 16px !important;',
+    '  line-height: 0 !important;',
+    '}',
+    '.brand img{',
+    '  display: block;',
+    '  height: 22px;',
+    '  width: auto;',
+    '}',
+    '.brand:hover,',
+    '.brand[aria-current="page"]{',
+    '  background: rgba(26,25,23,.10) !important;',
     '}',
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
@@ -338,7 +333,9 @@
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
       '<nav class="cap" aria-label="Main">' +
         '<a class="brand" href="index.html"' +
-          (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
+          (here === 'index.html' ? ' aria-current="page"' : '') +
+          '><img src="' + esc(ROOT + 'assets/images/ui/wordmark-yanice-y.png') +
+          '" alt="Yanice Y" width="106" height="22" decoding="async"></a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(function (i) { return link(i, here); }).join('') +
       '</nav>';
