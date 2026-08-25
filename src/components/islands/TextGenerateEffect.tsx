@@ -39,7 +39,11 @@ export function TextGenerateEffect({
           className={['text-generate__word', wordClassName].filter(Boolean).join(' ')}
           initial={{ filter: filter ? 'blur(4px)' : undefined, opacity: 0 }}
           key={`${i}-${word}`}
-          transition={{ ...transition, delay: i * staggerDuration }}
+          /* Stagger on enter only — exit fades together so hover-out feels instant. */
+          transition={{
+            ...transition,
+            delay: trigger ? i * staggerDuration : 0
+          }}
         >
           {word}{' '}
         </motion.span>

@@ -208,6 +208,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: min(100svh, 1080px);
     height: min(100vh, 1080px);
     z-index: 0;
     pointer-events: none;
@@ -309,12 +310,16 @@
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
   /* ---------- hero ---------- */
-  /* Figma Section 1:38 — 1160 × 972, pt 120 / pb 56, cols 320 + 17 + 492.
-     Left zones 321 / 195 / 18; right zones 320 / ~203 / 78. Horizontal rules
-     are intentionally offset (right higher than left). */
+  /* Figma Section 1:38 — 1160 × 972 at ~1080 tall, cols 320 + 17 + 492.
+     Content (meta + statement) must sit near the vertical middle of the
+     viewport. Fixed 320/796 px zones shove that band below center on short
+     laptop heights; clamp zones to vh and center the hero grid instead. */
   .hero {
-    min-height: 972px;
-    padding: 120px 0 56px;
+    min-height: 100svh;
+    min-height: 100vh;
+    padding: clamp(72px, 10vh, 120px) 0 clamp(40px, 5vh, 56px);
+    box-sizing: border-box;
+    align-content: center;
     overflow: visible;
   }
 
@@ -323,7 +328,7 @@
     flex-direction: column;
     align-items: stretch;
     min-width: 0;
-    min-height: 796px;
+    min-height: 0;
   }
 
   .hero__col--statement {
@@ -331,27 +336,27 @@
   }
 
   .hero__zone--top {
-    flex: 0 0 320px;
+    flex: 0 0 clamp(32px, 12vh, 320px);
     padding-bottom: 10px;
   }
 
   .hero__col--lead .hero__zone--top {
-    flex-basis: 321px;
+    flex-basis: clamp(32px, 12vh, 321px);
   }
 
   .hero__zone--meta {
-    flex: 0 0 195px;
+    flex: 0 0 clamp(96px, 14vh, 195px);
     display: flex;
     align-items: center;
     border-bottom: 1px solid #939393;
   }
 
   .hero__zone--foot {
-    flex: 0 0 18px;
+    flex: 0 0 clamp(0px, 1.5vh, 18px);
   }
 
   .hero__zone--after {
-    flex: 0 0 78px;
+    flex: 0 0 clamp(16px, 6vh, 78px);
   }
 
   .hero__meta {
@@ -441,11 +446,12 @@
     padding: 40px 0 120px;
   }
 
-  /* Figma article 1260×1080: label+media band is 618 tall, vertically centred
-     with ~231px above. One project per viewport. */
+  /* One project per viewport: center the label+media band in the screen.
+     Do NOT floor at 1080px — that taller-than-viewport block centers content
+     in 1080, so short laptops only see the empty upper half (content sunk). */
   .case {
+    min-height: 100svh;
     min-height: 100vh;
-    min-height: 1080px;
     display: grid;
     align-content: center;
     margin-bottom: 0;
@@ -498,7 +504,8 @@
   }
 
   /* Figma note: 24px Bold / #55534e, sits above the brand block.
-     Idle = invisible (space reserved); hover = TextGenerateEffect blur→clear. */
+     Idle = invisible (space reserved). Reveal only while the media (.slot) is
+     hovered on fine pointers — never on scroll-into-view alone. */
   .case__note {
     display: block;
     margin: 0;
@@ -520,15 +527,28 @@
     color: inherit;
   }
 
-  .text-generate__word {
+  /* CSS baseline so SSR / pre-hydrate never flashes the note. Motion overrides
+     opacity + blur on slot hover. */
+  .case__note .text-generate__word {
     display: inline-block;
     white-space: pre;
+    opacity: 0;
+    filter: blur(4px);
     will-change: filter, opacity;
   }
 
+  @media (hover: none), (pointer: coarse) {
+    /* No hover hardware: keep the note permanently hidden (meta still informs). */
+    .case__note .text-generate__word {
+      opacity: 0 !important;
+      filter: blur(4px) !important;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .text-generate__word {
+    .case__note .text-generate__word {
       transition: none !important;
+      filter: none;
     }
   }
 
