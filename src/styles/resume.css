@@ -169,7 +169,7 @@ html.yy-resume :focus-visible {
   border-bottom: 0;
 }
 
-.resume-card h2 {
+.resume-card h3 {
   margin: 0;
   font-size: var(--t-20);
   font-weight: 600;
@@ -177,7 +177,7 @@ html.yy-resume :focus-visible {
   letter-spacing: -0.03em;
 }
 
-.resume-card h2 a { text-decoration: none; }
+.resume-card h3 a { text-decoration: none; }
 
 .resume-job__header {
   display: grid;

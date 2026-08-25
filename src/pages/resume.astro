@@ -150,16 +150,16 @@ const skills = [
       </div>
     </nav>
 
-    <section class="resume-section resume-grid resume-rule" id="work">
+    <section class="resume-section resume-grid resume-rule" id="work" aria-labelledby="work-heading">
       <div class="resume__label">
-        <p class="resume-eyebrow">Work</p>
+        <h2 class="resume-eyebrow" id="work-heading">Work</h2>
         <p class="resume__range">2019 — Present</p>
       </div>
       <div class="resume-section__body">
         {jobs.map((job) => (
           <article class="resume-card resume-job">
             <div class="resume-job__header">
-              <h2><a href={job.url} target="_blank" rel="noopener">{job.company} ↗</a></h2>
+              <h3><a href={job.url} target="_blank" rel="noopener">{job.company} ↗</a></h3>
               <p class="resume-job__role">{job.role}</p>
             </div>
             <p class="resume-job__meta">
@@ -176,12 +176,12 @@ const skills = [
       </div>
     </section>
 
-    <section class="resume-section resume-grid resume-rule" id="education">
-      <div class="resume__label"><p class="resume-eyebrow">Education</p></div>
+    <section class="resume-section resume-grid resume-rule" id="education" aria-labelledby="education-heading">
+      <div class="resume__label"><h2 class="resume-eyebrow" id="education-heading">Education</h2></div>
       <div class="resume-section__body">
         {education.map((item) => (
           <article class="resume-card resume-entry">
-            <h2>{item.school}</h2>
+            <h3>{item.school}</h3>
             <p>{item.degree}</p>
             <p class="resume-entry__meta">{item.detail}</p>
           </article>
@@ -189,13 +189,13 @@ const skills = [
       </div>
     </section>
 
-    <section class="resume-section resume-grid resume-rule" id="awards">
-      <div class="resume__label"><p class="resume-eyebrow">Awards</p></div>
+    <section class="resume-section resume-grid resume-rule" id="awards" aria-labelledby="awards-heading">
+      <div class="resume__label"><h2 class="resume-eyebrow" id="awards-heading">Awards</h2></div>
       <div class="resume-section__body">
         {awards.map((award) => (
           <article class="resume-card resume-entry">
             <div class="resume-entry__heading">
-              <h2>{award.url ? <a href={award.url} target="_blank" rel="noopener">{award.name} ↗</a> : award.name}</h2>
+              <h3>{award.url ? <a href={award.url} target="_blank" rel="noopener">{award.name} ↗</a> : award.name}</h3>
               <span>{award.tier}</span>
             </div>
             <p class="resume-entry__meta">{award.note}</p>
@@ -204,24 +204,24 @@ const skills = [
       </div>
     </section>
 
-    <section class="resume-section resume-grid resume-rule" id="publications">
-      <div class="resume__label"><p class="resume-eyebrow">Publications</p></div>
+    <section class="resume-section resume-grid resume-rule" id="publications" aria-labelledby="publications-heading">
+      <div class="resume__label"><h2 class="resume-eyebrow" id="publications-heading">Publications</h2></div>
       <div class="resume-section__body">
         {publications.map((publication) => (
           <article class="resume-card resume-entry">
-            <h2><a href={publication.url} target="_blank" rel="noopener">{publication.title} ↗</a></h2>
+            <h3><a href={publication.url} target="_blank" rel="noopener">{publication.title} ↗</a></h3>
             <p class="resume-entry__meta">{publication.publisher}</p>
           </article>
         ))}
       </div>
     </section>
 
-    <section class="resume-section resume-grid" id="skills">
-      <div class="resume__label"><p class="resume-eyebrow">Skills</p></div>
+    <section class="resume-section resume-grid" id="skills" aria-labelledby="skills-heading">
+      <div class="resume__label"><h2 class="resume-eyebrow" id="skills-heading">Skills</h2></div>
       <div class="resume-section__body">
         {skills.map((group) => (
           <article class="resume-card resume-skills">
-            <h2>{group.category}</h2>
+            <h3>{group.category}</h3>
             <ul aria-label={group.category}>
               {group.items.map((skill) => <li>{skill}</li>)}
             </ul>
