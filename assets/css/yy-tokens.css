@@ -88,6 +88,8 @@
     --edge: 24px;
     --rule: #e9e9e9;
     --slot-radius: 36px;
+    --slot-w: 823px;
+    --slot-h: 617px;
 
     /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
        60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero
