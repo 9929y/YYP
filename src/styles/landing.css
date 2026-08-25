@@ -540,18 +540,18 @@
     max-width: 16em;
   }
 
-  /* Note above brand block. Idle = invisible; reveal on .slot hover.
-     Measure ~15em so long notes wrap toward ~3 lines and free gutter. */
+  /* Same type as .case__name (size + weight); muted ink only. */
   .case__note {
     display: block;
     margin: 0;
     padding-top: 14px;
     max-width: 15em;
     width: 100%;
-    font-size: var(--t-21);
-    font-weight: 700;
+    font-size: var(--t-20);
+    font-weight: 600;
     line-height: 1.25;
-    color: #55534e;
+    letter-spacing: -0.03em;
+    color: var(--ink);
   }
 
   .case__note-generate,
