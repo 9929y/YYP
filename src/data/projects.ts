@@ -87,7 +87,7 @@ export const projects: Project[] = [
     featuredOnLanding: true,
     featuredOnIndex: true,
     featuredOnProjects: true,
-    landingOrder: 2,
+    landingOrder: 3,
     cover: {
       src: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
       alt: 'Lark Design onboarding case study',
@@ -121,7 +121,7 @@ export const projects: Project[] = [
     featuredOnLanding: true,
     featuredOnIndex: true,
     featuredOnProjects: true,
-    landingOrder: 3,
+    landingOrder: 2,
     video: {
       src: 'assets/videos/case-opusclip-marquee.mp4',
       poster: 'assets/images/home/case-opusclip.jpg',
