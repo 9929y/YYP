@@ -22,54 +22,63 @@
 
   /*
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
-    - Hero: open scale 1.3
+    - Hero: open scale 1.3, rotate 0
     - Opus / McKinsey: canvas opacity 0.3 (McK scale 1.5)
-    - Atlas: scale 1.9, canvas 0.7, cover 0.25
+    - Atlas: scale 1.9, canvas 0.7, cover 0.25, clockwise rotate ≥40deg
     - Lark: scale 2, canvas 0.2, cover 0.5
     - Bottom / footer: canvas + cover → 0
+    rotate = clockwise degrees (CSS rotate).
   */
   var HERO = {
     opacity: 0.9,
     scale: 1.3,
+    rotate: 0,
     x: 0,
     y: 0,
     coverOpacity: 0.25,
     coverScale: 1,
+    coverRotate: 0,
     coverX: 0,
     coverY: 0
   };
 
   var CASES = [
-    /* 0 Opus — canvas opacity 0.3 */
+    /* 0 Opus — canvas opacity 0.3; start turning clockwise */
     {
       opacity: 0.3,
       scale: 1.3,
+      rotate: 22,
       x: -20,
       y: 36,
       coverOpacity: 0.3,
       coverScale: 1.05,
+      coverRotate: 16,
       coverX: 14,
       coverY: 18
     },
-    /* 1 Atlas — scale 1.9, canvas 0.7, cover 0.25 */
+    /* 1 Atlas — scale 1.9, canvas 0.7, cover 0.25, ≥40deg CW */
     {
       opacity: 0.7,
       scale: 1.9,
+      rotate: 42,
       x: -32,
       y: 44,
       coverOpacity: 0.25,
       coverScale: 1.08,
+      coverRotate: 34,
       coverX: 22,
       coverY: 26
     },
-    /* 2 McKinsey — canvas 0.3, scale 1.5 */
+    /* 2 McKinsey — canvas 0.3, scale 1.5; keep turning CW */
     {
       opacity: 0.3,
       scale: 1.5,
+      rotate: 58,
       x: -10,
       y: 22,
       coverOpacity: 0.32,
       coverScale: 1.06,
+      coverRotate: 46,
       coverX: 8,
       coverY: 14
     },
@@ -77,10 +86,12 @@
     {
       opacity: 0.2,
       scale: 2,
+      rotate: 75,
       x: -26,
       y: 40,
       coverOpacity: 0.5,
       coverScale: 1.1,
+      coverRotate: 60,
       coverX: 18,
       coverY: 24
     }
@@ -89,10 +100,12 @@
   var BOTTOM = {
     opacity: 0,
     scale: 1.5,
+    rotate: 82,
     x: -12,
     y: 18,
     coverOpacity: 0,
     coverScale: 1.02,
+    coverRotate: 66,
     coverX: 6,
     coverY: 10
   };
@@ -154,10 +167,12 @@
       return {
         opacity: lerp(a.opacity, b.opacity, t),
         scale: 1,
+        rotate: 0,
         x: 0,
         y: 0,
         coverOpacity: lerp(a.coverOpacity, b.coverOpacity, t),
         coverScale: 1,
+        coverRotate: 0,
         coverX: 0,
         coverY: 0
       };
@@ -165,10 +180,12 @@
     return {
       opacity: lerp(a.opacity, b.opacity, t),
       scale: lerp(a.scale, b.scale, t),
+      rotate: lerp(a.rotate, b.rotate, t),
       x: lerp(a.x, b.x, t),
       y: lerp(a.y, b.y, t),
       coverOpacity: lerp(a.coverOpacity, b.coverOpacity, t),
       coverScale: lerp(a.coverScale, b.coverScale, t),
+      coverRotate: lerp(a.coverRotate, b.coverRotate, t),
       coverX: lerp(a.coverX, b.coverX, t),
       coverY: lerp(a.coverY, b.coverY, t)
     };
@@ -196,10 +213,12 @@
 
   function apply(state) {
     root.style.setProperty('--canvas-scale', state.scale.toFixed(4));
+    root.style.setProperty('--canvas-rotate', state.rotate.toFixed(2) + 'deg');
     root.style.setProperty('--canvas-x', state.x.toFixed(2) + 'px');
     root.style.setProperty('--canvas-y', state.y.toFixed(2) + 'px');
     root.style.setProperty('--canvas-opacity', state.opacity.toFixed(3));
     root.style.setProperty('--cover-scale', state.coverScale.toFixed(4));
+    root.style.setProperty('--cover-rotate', state.coverRotate.toFixed(2) + 'deg');
     root.style.setProperty('--cover-x', state.coverX.toFixed(2) + 'px');
     root.style.setProperty('--cover-y', state.coverY.toFixed(2) + 'px');
     root.style.setProperty('--cover-opacity', state.coverOpacity.toFixed(3));
