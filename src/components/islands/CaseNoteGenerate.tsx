@@ -5,27 +5,45 @@ interface Props {
   text: string;
 }
 
-/** Case note: TextGenerateEffect in/out synced to parent `.case` hover. */
+/**
+ * Case note: TextGenerateEffect blur→clear only while the case media (.slot)
+ * is hovered on a fine pointer. Leaves fade out together (no exit stagger).
+ * Does not run on scroll-into-view or on coarse/touch pointers.
+ */
 export default function CaseNoteGenerate({ text }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
     const caseEl = wrapRef.current?.closest('.case');
-    if (!caseEl) return;
+    const slot = caseEl?.querySelector('.slot');
+    if (!slot) return;
 
+    const hoverMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const onEnter = () => setTrigger(true);
+
+    const onEnter = () => {
+      if (hoverMq.matches) setTrigger(true);
+    };
     const onLeave = () => setTrigger(false);
 
-    caseEl.addEventListener('pointerenter', onEnter);
-    caseEl.addEventListener('pointerleave', onLeave);
+    const sync = () => {
+      if (!hoverMq.matches) {
+        setTrigger(false);
+        return;
+      }
+      if (reduced.matches && slot.matches(':hover')) setTrigger(true);
+    };
 
-    if (reduced.matches && caseEl.matches(':hover')) setTrigger(true);
+    slot.addEventListener('pointerenter', onEnter);
+    slot.addEventListener('pointerleave', onLeave);
+    hoverMq.addEventListener('change', sync);
+    sync();
 
     return () => {
-      caseEl.removeEventListener('pointerenter', onEnter);
-      caseEl.removeEventListener('pointerleave', onLeave);
+      slot.removeEventListener('pointerenter', onEnter);
+      slot.removeEventListener('pointerleave', onLeave);
+      hoverMq.removeEventListener('change', sync);
     };
   }, []);
 
