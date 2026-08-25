@@ -123,7 +123,7 @@ export default function MorphingStatement() {
   ].join(' ');
 
   return (
-    <>
+    <span className="morph-statement-root">
       <span className="sr-only">{accessibleText}</span>
       <span className="morph-statement" aria-hidden="true">
         <span className="morph-statement__lead">Build AI-native experiences</span>
@@ -160,6 +160,6 @@ export default function MorphingStatement() {
           </filter>
         </defs>
       </svg>
-    </>
+    </span>
   );
 }
