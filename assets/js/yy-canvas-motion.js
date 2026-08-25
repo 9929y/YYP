@@ -24,9 +24,9 @@
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
     - Hero: scale 1.3, rotate 0
     - Opus: scale 1.9, opacity 0.3
-    - Atlas: scale 2.4, opacity 0.7, cover 0.25, rotate 25deg CW
-    - McKinsey: scale 2, opacity 0.3
-    - Lark: scale 1.5, opacity 0.2, cover 0.5
+    - Atlas: scale 2.4, opacity 0.7, cover 0.25, rotate 15deg CW
+    - McKinsey: scale 2.8, opacity 0.3
+    - Lark: scale 1.5, opacity 0.2, cover 0.5, rotate 40deg CW
     - Bottom / footer: canvas + cover → 0
     During projects, shader speed is marked 0.7× via data-motion-zone.
   */
@@ -262,8 +262,11 @@
   if (reduce.addEventListener) reduce.addEventListener('change', scheduleApply);
   else if (reduce.addListener) reduce.addListener(scheduleApply);
 
+  /* Opening intro: wait two frames so opacity:0 / scaleY(0) paint first. */
   requestAnimationFrame(function () {
-    root.setAttribute('data-intro-ready', 'true');
+    requestAnimationFrame(function () {
+      root.setAttribute('data-intro-ready', 'true');
+    });
   });
 
   applyScrollState(readScrollY());

@@ -312,29 +312,43 @@
   html.yy-landing [data-intro="headline"] {
     transform: translateY(14px);
     clip-path: inset(0 0 100% 0);
+    overflow: hidden;
   }
 
+  /* Spine: start collapsed; grow top → bottom after intro-ready. */
   html.yy-landing .hero.row--ruled::before {
     transform: scaleY(0);
     transform-origin: top center;
   }
 
   [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
-    animation: introFade 520ms cubic-bezier(.2, .8, .2, 1) 180ms forwards;
+    animation: introFade 560ms cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-intro="meta"] {
+    animation-delay: 160ms;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-intro="meta"] {
+    animation-delay: 240ms;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-intro="meta"] {
+    animation-delay: 200ms;
   }
 
   [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-    animation: introTextReveal 760ms cubic-bezier(.16, 1, .3, 1) 320ms forwards;
+    animation: introTextReveal 820ms cubic-bezier(.16, 1, .3, 1) 320ms both;
   }
 
   [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
-    animation: introLineGrowY 680ms cubic-bezier(.16, 1, .3, 1) 480ms forwards;
+    animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
   }
 
   @keyframes introFade {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(10px);
     }
     to {
       opacity: 1;
@@ -345,7 +359,7 @@
   @keyframes introTextReveal {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(16px);
       clip-path: inset(0 0 100% 0);
     }
     to {
@@ -376,6 +390,7 @@
       opacity: 1 !important;
       transform: none !important;
       clip-path: none !important;
+      overflow: visible !important;
     }
     html.yy-landing .hero.row--ruled::before,
     [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
