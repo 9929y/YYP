@@ -83,16 +83,16 @@
       coverX: 8,
       coverY: 14
     },
-    /* 3 Lark — 40deg CW */
+    /* 3 Lark — 8deg CW */
     {
       opacity: 0.2,
       scale: 1.5,
-      rotate: 40,
+      rotate: 8,
       x: -26,
       y: 40,
       coverOpacity: 0.5,
       coverScale: 1.05,
-      coverRotate: 30,
+      coverRotate: 5,
       coverX: 18,
       coverY: 24
     }
@@ -101,12 +101,12 @@
   var BOTTOM = {
     opacity: 0,
     scale: 1.4,
-    rotate: 45,
+    rotate: 8,
     x: -12,
     y: 18,
     coverOpacity: 0,
     coverScale: 1.02,
-    coverRotate: 34,
+    coverRotate: 5,
     coverX: 6,
     coverY: 10
   };
