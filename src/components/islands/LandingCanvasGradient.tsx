@@ -4,16 +4,15 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
  * Plays continuously; scroll does not pause or scrub the shader.
- * Layer scale / translate / opacity is owned by yy-canvas-motion.js.
- *
- * Editor-only export fields (axesHelper, destination, embedMode, format,
- * frameRate, gizmoHelper, bgColor*) are omitted; fov / pixelDensity live on
- * ShaderGradientCanvas.
+ * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
+ * In the project band, uSpeed drops to 0.7× base (data-motion-zone=projects).
  */
 const BASE_SPEED = 0.1;
+const PROJECT_SPEED = BASE_SPEED * 0.7;
 
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
+  const [uSpeed, setUSpeed] = useState(BASE_SPEED);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -22,6 +21,22 @@ export default function LandingCanvasGradient() {
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
+
+  useEffect(() => {
+    if (!allowMotion) return;
+    const root = document.querySelector('[data-motion-root]');
+    if (!root) return;
+
+    const syncSpeed = () => {
+      const zone = root.getAttribute('data-motion-zone');
+      setUSpeed(zone === 'projects' ? PROJECT_SPEED : BASE_SPEED);
+    };
+
+    syncSpeed();
+    const mo = new MutationObserver(syncSpeed);
+    mo.observe(root, { attributes: true, attributeFilter: ['data-motion-zone'] });
+    return () => mo.disconnect();
+  }, [allowMotion]);
 
   if (!allowMotion) return null;
 
@@ -66,7 +81,7 @@ export default function LandingCanvasGradient() {
         uAmplitude={0}
         uDensity={1.1}
         uFrequency={5.5}
-        uSpeed={BASE_SPEED}
+        uSpeed={uSpeed}
         uStrength={2.5}
         uTime={3.48}
         wireframe={false}

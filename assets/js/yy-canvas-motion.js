@@ -22,12 +22,13 @@
 
   /*
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
-    - Hero: open scale 1.3, rotate 0
-    - Opus / McKinsey: canvas opacity 0.3 (McK scale 1.5)
-    - Atlas: scale 1.9, canvas 0.7, cover 0.25, clockwise rotate ≥40deg
-    - Lark: scale 2, canvas 0.2, cover 0.5
+    - Hero: scale 1.3, rotate 0
+    - Opus: scale 1.9, opacity 0.3
+    - Atlas: scale 2.4, opacity 0.7, cover 0.25, rotate 25deg CW
+    - McKinsey: scale 2, opacity 0.3
+    - Lark: scale 1.5, opacity 0.2, cover 0.5
     - Bottom / footer: canvas + cover → 0
-    rotate = clockwise degrees (CSS rotate).
+    During projects, shader speed is marked 0.7× via data-motion-zone.
   */
   var HERO = {
     opacity: 0.9,
@@ -43,55 +44,55 @@
   };
 
   var CASES = [
-    /* 0 Opus — canvas opacity 0.3; start turning clockwise */
+    /* 0 Opus */
     {
       opacity: 0.3,
-      scale: 1.3,
-      rotate: 22,
+      scale: 1.9,
+      rotate: 12,
       x: -20,
       y: 36,
       coverOpacity: 0.3,
-      coverScale: 1.05,
-      coverRotate: 16,
+      coverScale: 1.06,
+      coverRotate: 8,
       coverX: 14,
       coverY: 18
     },
-    /* 1 Atlas — scale 1.9, canvas 0.7, cover 0.25, ≥40deg CW */
+    /* 1 Atlas — 25deg CW */
     {
       opacity: 0.7,
-      scale: 1.9,
-      rotate: 42,
+      scale: 2.4,
+      rotate: 25,
       x: -32,
       y: 44,
       coverOpacity: 0.25,
-      coverScale: 1.08,
-      coverRotate: 34,
+      coverScale: 1.1,
+      coverRotate: 18,
       coverX: 22,
       coverY: 26
     },
-    /* 2 McKinsey — canvas 0.3, scale 1.5; keep turning CW */
+    /* 2 McKinsey */
     {
       opacity: 0.3,
-      scale: 1.5,
-      rotate: 58,
+      scale: 2,
+      rotate: 40,
       x: -10,
       y: 22,
       coverOpacity: 0.32,
-      coverScale: 1.06,
-      coverRotate: 46,
+      coverScale: 1.08,
+      coverRotate: 30,
       coverX: 8,
       coverY: 14
     },
-    /* 3 Lark — scale 2, canvas 0.2, cover 0.5 */
+    /* 3 Lark */
     {
       opacity: 0.2,
-      scale: 2,
-      rotate: 75,
+      scale: 1.5,
+      rotate: 55,
       x: -26,
       y: 40,
       coverOpacity: 0.5,
-      coverScale: 1.1,
-      coverRotate: 60,
+      coverScale: 1.05,
+      coverRotate: 42,
       coverX: 18,
       coverY: 24
     }
@@ -99,13 +100,13 @@
 
   var BOTTOM = {
     opacity: 0,
-    scale: 1.5,
-    rotate: 82,
+    scale: 1.4,
+    rotate: 60,
     x: -12,
     y: 18,
     coverOpacity: 0,
     coverScale: 1.02,
-    coverRotate: 66,
+    coverRotate: 48,
     coverX: 6,
     coverY: 10
   };
@@ -227,10 +228,24 @@
     root.setAttribute('data-canvas-clear', clear ? 'true' : 'false');
   }
 
+  function motionZone(scrollY) {
+    var cases = caseNodes();
+    if (!cases.length) return 'hero';
+    var vh = window.innerHeight || 1;
+    var first = cases[0].getBoundingClientRect();
+    var firstTop = first.top + scrollY;
+    if (scrollY + vh * 0.4 < firstTop) return 'hero';
+    var last = cases[cases.length - 1].getBoundingClientRect();
+    var lastBottom = last.bottom + scrollY;
+    if (scrollY > lastBottom - vh * 0.45) return 'footer';
+    return 'projects';
+  }
+
   function applyScrollState(scrollY) {
     if (Math.abs(scrollY - lastAppliedScroll) < 0.5) return;
     lastAppliedScroll = scrollY;
     apply(stateAtScroll(scrollY));
+    root.setAttribute('data-motion-zone', motionZone(scrollY));
   }
 
   function scheduleApply() {
