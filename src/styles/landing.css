@@ -491,13 +491,22 @@
     margin-bottom: 0;
   }
 
-  /* Label column bottom-aligns with the media slot (Figma justify-end + pb 4). */
+  /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
   .case__label {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    gap: 36px;
+    min-height: 618px;
     padding-bottom: 4px;
     box-sizing: border-box;
+  }
+
+  .case__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
   }
 
   .case__logo {
@@ -528,12 +537,54 @@
     max-width: 320px;
   }
 
+  /* Figma note: 24px Bold / #55534e, sits above the brand block */
   .case__note {
-    margin: 14px 0 0;
-    font-size: var(--t-13);
-    line-height: 1.45;
-    color: var(--ink-2);
-    max-width: 320px;
+    display: block;
+    margin: 0;
+    padding-top: 14px;
+    max-width: 390px;
+    width: 100%;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.22;
+    color: #55534e;
+  }
+
+  .morph-note__stage {
+    position: relative;
+    display: block;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+  }
+
+  .morph-note__sizer {
+    display: block;
+    visibility: hidden;
+    white-space: pre-wrap;
+    pointer-events: none;
+  }
+
+  .morph-note__text {
+    position: absolute;
+    inset: 0;
+    display: block;
+    white-space: pre-wrap;
+    will-change: filter, opacity;
+  }
+
+  .morph-note__filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .morph-note__stage {
+      filter: none !important;
+    }
   }
 
   /* ---------- the 4:3 slot ----------
@@ -777,9 +828,11 @@
     .case.row { grid-template-columns: 1fr; gap: 20px; }
     .case__label {
       justify-content: flex-start;
+      min-height: 0;
       height: auto;
       max-height: none;
       padding-bottom: 0;
+      gap: 24px;
       order: -1;
     }
     .hero {

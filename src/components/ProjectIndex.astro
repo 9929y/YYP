@@ -2,6 +2,7 @@
 import type { Project } from '../data/projects';
 import { publicUrl } from '../data/projects';
 import ProjectSlot from './ProjectSlot.astro';
+import MorphingCaseNote from './islands/MorphingCaseNote';
 
 interface Props {
   projects: Project[];
@@ -14,19 +15,21 @@ const { projects } = Astro.props;
   projects.map((project) => (
     <article class="case row row--ruled">
       <div class="case__label">
-        {project.logo && (
-          <img
-            class="case__logo"
-            src={publicUrl(project.logo.src)}
-            alt={project.logo.alt}
-            width={project.logo.width}
-            height={project.logo.height}
-            loading="lazy"
-          />
-        )}
-        <h2 class="case__name">{project.headline ?? project.title}</h2>
-        <p class="case__scope">{project.scope}</p>
-        <p class="case__note">{project.note}</p>
+        <MorphingCaseNote client:visible text={project.note} />
+        <div class="case__meta">
+          {project.logo && (
+            <img
+              class="case__logo"
+              src={publicUrl(project.logo.src)}
+              alt={project.logo.alt}
+              width={project.logo.width}
+              height={project.logo.height}
+              loading="lazy"
+            />
+          )}
+          <h2 class="case__name">{project.headline ?? project.title}</h2>
+          <p class="case__scope">{project.scope}</p>
+        </div>
       </div>
       <ProjectSlot project={project} />
     </article>
