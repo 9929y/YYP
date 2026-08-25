@@ -430,27 +430,32 @@
     letter-spacing: inherit;
   }
 
+  /* beyond + morph + toward + morph on one line; morph width hugs the visible word */
   .morph-statement__line {
-    display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    column-gap: 14px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 0.28em;
     height: 1.08em;
+    white-space: nowrap;
   }
 
   .morph-statement__morph {
     position: relative;
-    display: block;
+    display: inline-block;
     height: 1.08em;
     font: inherit;
     letter-spacing: inherit;
+    vertical-align: baseline;
     filter: url("#morph-threshold") blur(.6px);
   }
 
   .morph-statement__text {
     position: absolute;
-    inset: 0;
+    left: 0;
+    top: 0;
     display: block;
-    width: 100%;
+    white-space: nowrap;
     will-change: filter, opacity;
   }
 
