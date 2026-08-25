@@ -139,9 +139,25 @@ const skills = [
       </div>
     </header>
 
-    <nav class="resume__tabs resume-grid resume-rule" aria-label="Resume sections">
+    <nav class="resume__tabs resume-grid resume-rule" aria-label="Resume sections" data-resume-tabs-anchor>
       <div aria-hidden="true"></div>
       <div class="resume__tabs-list">
+        <a href="#work">Work</a>
+        <a href="#education">Education</a>
+        <a href="#awards">Awards</a>
+        <a href="#publications">Publications</a>
+        <a href="#skills">Skills</a>
+      </div>
+    </nav>
+
+    <nav
+      class="resume__floating-tabs"
+      aria-label="Resume sections"
+      aria-hidden="true"
+      inert
+      data-resume-floating
+    >
+      <div class="resume__floating-tabs-list">
         <a href="#work">Work</a>
         <a href="#education">Education</a>
         <a href="#awards">Awards</a>
@@ -178,7 +194,7 @@ const skills = [
 
     <section class="resume-section resume-grid resume-rule" id="education" aria-labelledby="education-heading">
       <div class="resume__label"><h2 class="resume-eyebrow" id="education-heading">Education</h2></div>
-      <div class="resume-section__body">
+      <div class="resume-section__body resume-section__body--grid">
         {education.map((item) => (
           <article class="resume-card resume-entry">
             <h3>{item.school}</h3>
@@ -191,7 +207,7 @@ const skills = [
 
     <section class="resume-section resume-grid resume-rule" id="awards" aria-labelledby="awards-heading">
       <div class="resume__label"><h2 class="resume-eyebrow" id="awards-heading">Awards</h2></div>
-      <div class="resume-section__body">
+      <div class="resume-section__body resume-section__body--grid">
         {awards.map((award) => (
           <article class="resume-card resume-entry">
             <div class="resume-entry__heading">
@@ -206,7 +222,7 @@ const skills = [
 
     <section class="resume-section resume-grid resume-rule" id="publications" aria-labelledby="publications-heading">
       <div class="resume__label"><h2 class="resume-eyebrow" id="publications-heading">Publications</h2></div>
-      <div class="resume-section__body">
+      <div class="resume-section__body resume-section__body--grid">
         {publications.map((publication) => (
           <article class="resume-card resume-entry">
             <h3><a href={publication.url} target="_blank" rel="noopener">{publication.title} ↗</a></h3>
@@ -218,7 +234,7 @@ const skills = [
 
     <section class="resume-section resume-grid" id="skills" aria-labelledby="skills-heading">
       <div class="resume__label"><h2 class="resume-eyebrow" id="skills-heading">Skills</h2></div>
-      <div class="resume-section__body">
+      <div class="resume-section__body resume-section__body--grid">
         {skills.map((group) => (
           <article class="resume-card resume-skills">
             <h3>{group.category}</h3>
@@ -230,4 +246,8 @@ const skills = [
       </div>
     </section>
   </main>
+
+  <Fragment slot="scripts">
+    <script is:inline src="/assets/js/yy-resume.js"></script>
+  </Fragment>
 </BaseLayout>
