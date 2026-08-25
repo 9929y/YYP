@@ -249,6 +249,7 @@
     z-index: 1;
     width: 100%;
     padding: 0 var(--edge);
+    overflow: visible;
   }
 
   /* ⚠️ 一个外框，一条轴线。
@@ -329,6 +330,10 @@
     pointer-events: none;
   }
 
+  .hero.row--ruled::before {
+    background: #939393;
+  }
+
   .case.row--ruled::before {
     left: calc(var(--col-label-case) + var(--col-gap-case) / 2);
   }
@@ -336,12 +341,12 @@
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
 
   /* ---------- hero ---------- */
-  /* Measured: the reference hero section is 810px tall in a 900px viewport,
-     i.e. it owns ~90% of the screen. A short hero is most of why the first
-     version read as quiet. */
+  /* Figma Landing hero (node 1:38): 1160 frame, 320+492 cols, title overflows
+     the content track to ~1123px so 64px type stays one phrase per line. */
   .hero {
     min-height: 90vh;
     padding: 120px 0 56px;
+    overflow: visible;
   }
 
   /* Three zones per column — pinned top, centred, pinned bottom. The reference
@@ -352,53 +357,77 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 40px;
+    min-width: 0;
+  }
+
+  .hero__col--lead {
+    /* Match Figma: label column holds eyebrow / meta / empty foot. */
+  }
+
+  .hero__col--statement {
+    overflow: visible;
+  }
+
+  .hero__meta {
+    margin: 0;
+    padding: 0 0 1px;
+    border-bottom: 1px solid #939393;
+    font-size: var(--t-13);
+    line-height: 1.45;
+    color: var(--ink-3);
+    align-self: stretch;
   }
 
   .hero__foot {
     margin: 0;
+    min-height: 18px;
     font-size: var(--t-11);
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--ink-3);
   }
 
-  /* Measured on kedavra.me: 64px, 492px column, 4 lines, 12 characters per
-     line, line-height exactly 1.0, letter-spacing -2.56px = -0.04em, weight 600.
-     My earlier note in the plan rejected 64px as "off-grid, nobody can see 6%".
-     That was wrong: 64 is precisely what the reference uses, and the crowding it
-     produces at 12 characters per line IS the effect, not a defect. */
+  /* Figma H1: 64px / 64 leading / -2.56px tracking / SemiBold.
+     Width 1123 overflows the 492 content column on purpose so
+     "Build AI-native experiences" reads as one line. */
   .hero__title {
     margin: 0;
-    font-size: var(--t-40);
-    line-height: var(--lh-display);
-    letter-spacing: -.04em;
+    padding-top: 1px;
+    border-top: 1px solid #939393;
+    font-size: clamp(32px, 4.45vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.04em;
     font-weight: 600;
-    /* The AI-native statement needs one wider measure so its three fixed phrases
-       can keep one type treatment. It grows into the intentionally empty track
-       to the right without moving the shared axis. */
-    width: min(620px, calc(100vw - 2 * var(--edge)));
+    width: min(1123px, calc(100vw - var(--col-label) - var(--col-gap) - 2 * var(--edge)));
     max-width: none;
   }
-  @media (min-width: 768px) { .hero__title { font-size: var(--t-64); } }
+
+  @media (min-width: 1160px) {
+    .hero__title {
+      font-size: 64px;
+      letter-spacing: -2.56px;
+    }
+  }
 
   .hero__title em {
     font-style: italic;
     font-weight: 500;
-    /* Plus Jakarta Sans Italic, NOT Georgia. Georgia is reserved for
-       <blockquote> and appears in exactly 12 places, all inside one. */
   }
 
   /* Magic UI Morphing Text: only the bracketed keywords overlap and morph.
      The lead, "beyond", and "toward" remain ordinary H1 text. */
+  .morph-statement-root,
   .morph-statement,
   .morph-statement__lead {
     display: block;
+    font: inherit;
+    letter-spacing: inherit;
   }
 
   .morph-statement__line {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
-    column-gap: .22em;
+    column-gap: 14px;
     height: 1.08em;
   }
 
@@ -431,22 +460,20 @@
     font-size: var(--t-20);
     line-height: var(--lh-heading);
     color: var(--ink-2);
-    /* 36em 是书籍行宽，但不能超过 kedavra 的 492 内容列 —— 取两者较小值 */
     max-width: min(36em, var(--col-content));
-    letter-spacing: normal;    /* tracking is for headings only */
+    letter-spacing: normal;
   }
 
-  .hero__meta {
-    margin: 0;
-    font-size: var(--t-13);
-    line-height: var(--lh-caption);
-    color: var(--ink-3);
+  /* Figma hero has no supporting sentence under the H1 — keep the slot for
+     spacing only when empty, hide copy when matching the redesign. */
+  .hero__sub--figma-hidden {
+    display: none;
   }
 
   .eyebrow {
     margin: 0 0 10px;
     font-size: var(--t-11);
-    line-height: var(--lh-caption);
+    line-height: 1.45;
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--ink-3);
@@ -771,7 +798,11 @@
   @media (max-width: 560px) {
     :root { --edge: 20px; }
     .hero { padding: 88px 0 56px; }
-    .hero__title { font-size: var(--t-32); }
+    .hero__title {
+      font-size: var(--t-32);
+      letter-spacing: -.04em;
+      width: 100%;
+    }
     .index__head { margin-bottom: 44px; }
     .case { margin-bottom: 64px; }
     .end__line { font-size: var(--t-25); }

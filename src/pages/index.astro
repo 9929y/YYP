@@ -42,17 +42,18 @@ const cases = landingProjects();
 
   <main class="wrap">
     <section class="hero row row--ruled">
-      <div class="hero__col">
+      <div class="hero__col hero__col--lead">
         <p class="eyebrow">Yanice Yang</p>
         <p class="hero__meta">Product Designer<br />Bay Area, US</p>
-        <p class="hero__foot">Selected work 2021 — 2026</p>
+        <p class="hero__foot" aria-hidden="true"></p>
       </div>
-      <div class="hero__col">
+      <div class="hero__col hero__col--statement">
         <p class="eyebrow">Portfolio</p>
         <h1 class="hero__title rv">
           <MorphingStatement client:load />
         </h1>
-        <p class="hero__sub rv" style="--d:var(--duration-stagger)">
+        <!-- Figma hero has no supporting sentence under the H1. -->
+        <p class="hero__sub hero__sub--figma-hidden rv" style="--d:var(--duration-stagger)">
           Four projects across research, consumer product, and AI-native tools.
           <a class="tx" href="#work">See the work</a>
         </p>
