@@ -86,8 +86,10 @@
     --frame-spine: var(--frame-case);
     --col-label: 320px;
     --col-label-case: 372px;
-    /* Shared rule inset inside the spine (Figma case: 372 + 8). */
+    /* Shared rule inset inside the spine (Figma case: 372 + 8).
+       Mid-width overrides shrink --col-label-case; rule stays in the gap. */
     --rule-x: calc(var(--col-label-case) + 8px);
+    /* Full-frame Figma gutter. Mid widths raise this via landing.css. */
     --col-gap: 17px;
     --col-gap-case: 8px;
     --col-content: 492px;
