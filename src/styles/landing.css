@@ -275,9 +275,10 @@
   }
 
   .case.row {
-    /* Figma article: 372 label + 8 + 1px rule + 8 + media */
+    /* Figma article at full frame: 372 label + 8 + 1px rule + 8 + media.
+       --col-gap fluidizes below 1260 so mid widths keep a real gutter. */
     grid-template-columns: var(--col-label-case) minmax(0, 1fr);
-    column-gap: 17px;
+    column-gap: var(--col-gap);
     row-gap: 20px;
     /* Shared bottom edge: left info stack + media (any viewport width). */
     align-items: end;
@@ -789,11 +790,21 @@
   }
 
   /* ---------- responsive ----------
-     Below the frame, the label column collapses and the content column goes
+     Mid widths (side-by-side but under the 1260 case frame): a locked 372px
+     label + 17px gap parks type against the media. Ease the label track and
+     open the gutter so copy and image keep clear air. --rule-x follows
+     --col-label-case, so the spine stays in the widened gap. */
+  @media (max-width: 1259px) and (min-width: 878px) {
+    :root {
+      --col-label-case: clamp(268px, 30vw, 372px);
+      --col-gap: clamp(28px, 3.6vw, 44px);
+    }
+  }
+
+  /* Below the frame, the label column collapses and the content column goes
      full width. The 4:3 slot keeps its ratio at every size, so the images
-     Yanice exports never need a second crop. */
-  /* 829 + 2 x 24 edge = 877. Above that the frame fits untouched; below it the
-     label column collapses and the content column goes full width. */
+     Yanice exports never need a second crop.
+     829 + 2 x 24 edge = 877. */
   @media (max-width: 877px) {
     .row,
     .case.row { grid-template-columns: 1fr; gap: 20px; }
