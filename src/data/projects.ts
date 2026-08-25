@@ -66,6 +66,7 @@ export const projects: Project[] = [
     landingOrder: 1,
     video: {
       src: 'assets/videos/case-atlasnova.mp4',
+      poster: 'assets/images/home/case-atlasnova.jpg',
       width: 1440,
       height: 1080,
       label: 'AtlasNova brand kit input cover',
