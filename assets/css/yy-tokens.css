@@ -78,10 +78,16 @@
        that owns a 900px-tall viewport is ~816px wide, which 492 cannot hold.
        320 + 17 + 823 = 1160. */
     --frame-index: 1160px;
-    /* Case rows (Figma Landing 2026-08): 372 label + ~8 gutter + 823 media ≈ 1260. */
+    /* One outer spine for hero + cases so the vertical rule shares one x at every
+       viewport. Figma uses 1160 (hero) / 1260 (case); centering nearly aligns them
+       on a 1920 artboard, but when both frames go fluid the old split (320 vs 372
+       label) put the rules ~52px apart. 1260 fits case media (372+17+823). */
     --frame-case: 1260px;
+    --frame-spine: var(--frame-case);
     --col-label: 320px;
     --col-label-case: 372px;
+    /* Shared rule inset inside the spine (Figma case: 372 + 8). */
+    --rule-x: calc(var(--col-label-case) + 8px);
     --col-gap: 17px;
     --col-gap-case: 8px;
     --col-content: 492px;
