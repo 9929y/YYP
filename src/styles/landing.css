@@ -199,8 +199,20 @@
   }
 
   /* ---------- hero canvas (Figma GIF + frosted cover; replaces yy-flow) ---------- */
+  /* Landing-only type scale (~12.5% under the shared tokens) so Webflow
+     case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
     position: relative;
+    --t-11: 10px;
+    --t-13: 11px;
+    --t-16: 14px;
+    --t-20: 18px;
+    --t-21: 21px;
+    --t-25: 22px;
+    --t-32: 28px;
+    --t-40: 35px;
+    --t-48: 42px;
+    --t-64: 56px;
   }
 
   .yy-canvas {
@@ -367,13 +379,12 @@
     color: var(--ink-3);
   }
 
-  /* Figma H1: 64px / 64 leading / -2.56px tracking / SemiBold.
-     Width 1123 overflows the 492 content column on purpose. */
+  /* Hero H1: scaled landing --t-64 (56). Width still overflows the content col. */
   .hero__title {
     margin: 0;
     padding-top: 1px;
     border-top: 1px solid #939393;
-    font-size: clamp(32px, 4.45vw, 64px);
+    font-size: clamp(var(--t-32), 3.9vw, var(--t-64));
     line-height: 1;
     letter-spacing: -0.04em;
     font-weight: 600;
@@ -383,8 +394,8 @@
 
   @media (min-width: 1160px) {
     .hero__title {
-      font-size: 64px;
-      letter-spacing: -2.56px;
+      font-size: var(--t-64);
+      letter-spacing: -0.04em;
     }
   }
 
@@ -489,9 +500,10 @@
 
   .case__name {
     margin: 0;
-    font-size: 20px;
-    line-height: 25px;
-    letter-spacing: -0.6px;
+    max-width: 11em;
+    font-size: var(--t-20);
+    line-height: 1.25;
+    letter-spacing: -0.03em;
     font-weight: 600;
     color: var(--ink);
   }
@@ -501,21 +513,20 @@
     font-size: var(--t-13);
     line-height: 1.45;
     color: var(--ink-3);
-    max-width: 320px;
+    max-width: 11em;
   }
 
-  /* Figma note: 24px Bold / #55534e, sits above the brand block.
-     Idle = invisible (space reserved). Reveal only while the media (.slot) is
-     hovered on fine pointers — never on scroll-into-view alone. */
+  /* Note above brand block. Idle = invisible; reveal on .slot hover.
+     Measure ~15em so long notes wrap toward ~3 lines and free gutter. */
   .case__note {
     display: block;
     margin: 0;
     padding-top: 14px;
-    max-width: 390px;
+    max-width: 15em;
     width: 100%;
-    font-size: 24px;
+    font-size: var(--t-21);
     font-weight: 700;
-    line-height: 1.22;
+    line-height: 1.25;
     color: #55534e;
   }
 
@@ -588,12 +599,15 @@
 
      The image starts at opacity 0, so a 404 shows nothing rather than a broken
      icon — JS only reveals it after a successful load. */
+  /* ~6px overscan clips export hairlines (AtlasNova top ~4 source px ≈ 2.3
+     CSS px under cover) inside overflow:hidden + radius. */
   .slot img,
   .slot video {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: -6px;
+    left: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
     object-fit: cover;
     display: block;
     opacity: 0;
