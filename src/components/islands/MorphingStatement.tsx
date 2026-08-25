@@ -13,6 +13,46 @@ const cooldownTime = 1.8;
 const beyondWords = ['prompts,', 'outputs,', 'automation,'];
 const towardWords = ['intent.', 'outcomes.', 'flow.'];
 
+function measureTextWidth(el: HTMLSpanElement): number {
+  const prev = {
+    position: el.style.position,
+    visibility: el.style.visibility,
+    opacity: el.style.opacity,
+    filter: el.style.filter,
+    inset: el.style.inset,
+    width: el.style.width
+  };
+  el.style.position = 'static';
+  el.style.visibility = 'hidden';
+  el.style.opacity = '1';
+  el.style.filter = 'none';
+  el.style.inset = 'auto';
+  el.style.width = 'auto';
+  const width = el.getBoundingClientRect().width;
+  el.style.position = prev.position;
+  el.style.visibility = prev.visibility;
+  el.style.opacity = prev.opacity;
+  el.style.filter = prev.filter;
+  el.style.inset = prev.inset;
+  el.style.width = prev.width;
+  return width;
+}
+
+function fitMorphWidth(
+  current1: HTMLSpanElement,
+  current2: HTMLSpanElement,
+  fraction: number | null
+) {
+  const morph = current1.parentElement;
+  if (!morph) return;
+
+  const w1 = measureTextWidth(current1);
+  const w2 = measureTextWidth(current2);
+  /* During morph, ease toward the incoming word; on cooldown, hug the visible one. */
+  const width = fraction == null ? w1 : w1 + (w2 - w1) * fraction;
+  morph.style.width = `${Math.ceil(width)}px`;
+}
+
 function useMorphingWords() {
   const textIndexRef = useRef(0);
   const morphRef = useRef(0);
@@ -41,6 +81,7 @@ function useMorphingWords() {
 
       current1.textContent = texts[textIndexRef.current % texts.length];
       current2.textContent = texts[(textIndexRef.current + 1) % texts.length];
+      fitMorphWidth(current1, current2, fraction);
     },
     []
   );
@@ -81,6 +122,7 @@ function useMorphingWords() {
       current2.style.opacity = '0%';
       current1.style.filter = 'none';
       current1.style.opacity = '100%';
+      fitMorphWidth(current1, current2, null);
     };
 
     resetPair(beyond1Ref.current, beyond2Ref.current, beyondWords);
@@ -135,8 +177,6 @@ export default function MorphingStatement() {
               {beyondWords[1]}
             </span>
           </span>
-        </span>
-        <span className="morph-statement__line">
           <span>toward</span>
           <span className="morph-statement__morph morph-statement__morph--toward">
             <span className="morph-statement__text" ref={toward1Ref}>{towardWords[0]}</span>
