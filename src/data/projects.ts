@@ -130,7 +130,7 @@ export const projects: Project[] = [
   {
     slug: 'mckinseyecommerce',
     title: 'McKinsey Ecommerce',
-    headline: 'Live shopping from 0 to 1',
+    headline: 'Live shopping from 0 to\u00A01',
     href: 'mckinseyecommerce.html',
     scope: 'Mobile App',
     note: 'Helping an established organization build its first digital commerce business from the ground up.',

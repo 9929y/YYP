@@ -17,63 +17,67 @@ const cases = landingProjects();
   description="Product designer. Selected work in research, consumer product, enterprise and health."
   htmlClass="yy-landing"
   reveal={true}
-  lenis={false}
+  lenis={true}
   chrome={true}
 >
-  <div class="yy-canvas" aria-hidden="true">
-    <img
-      class="yy-canvas__media yy-canvas__media--motion"
-      src="/assets/images/home/landing-canvas.gif"
-      alt=""
-      width="1920"
-      height="1080"
-      decoding="async"
-    />
-    <img
-      class="yy-canvas__media yy-canvas__media--still"
-      src="/assets/images/home/landing-canvas-still.png"
-      alt=""
-      width="1920"
-      height="1080"
-      decoding="async"
-    />
-    <div class="yy-canvas__cover"></div>
+  <div data-motion-root>
+    <div class="yy-canvas" data-motion-layer="canvas" aria-hidden="true">
+      <img
+        class="yy-canvas__media yy-canvas__media--motion"
+        src="/assets/images/home/landing-canvas.gif"
+        alt=""
+        width="1920"
+        height="1080"
+        decoding="async"
+      />
+      <img
+        class="yy-canvas__media yy-canvas__media--still"
+        src="/assets/images/home/landing-canvas-still.png"
+        alt=""
+        width="1920"
+        height="1080"
+        decoding="async"
+      />
+    </div>
+    <div
+      class="yy-canvas__cover"
+      data-motion-layer="canvas-cover"
+      aria-hidden="true"
+    ></div>
+
+    <main class="wrap">
+      <section class="hero row row--ruled" data-section="hero">
+        <div class="hero__col hero__col--lead">
+          <div class="hero__zone hero__zone--top">
+            <p class="eyebrow" data-intro="meta">Yanice Yang</p>
+          </div>
+          <div class="hero__zone hero__zone--meta">
+            <p class="hero__meta" data-intro="meta">Product Designer<br />Bay Area, US</p>
+          </div>
+          <div class="hero__zone hero__zone--foot" aria-hidden="true"></div>
+        </div>
+        <div class="hero__col hero__col--statement">
+          <div class="hero__zone hero__zone--top">
+            <p class="eyebrow" data-intro="meta">Portfolio</p>
+          </div>
+          <h1 class="hero__title rv" data-intro="headline">
+            <MorphingStatement client:load />
+          </h1>
+          <div class="hero__zone hero__zone--after" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="index" id="work" data-section="projects">
+        <ProjectIndex projects={cases} />
+      </section>
+    </main>
   </div>
-
-  <main class="wrap">
-    <section class="hero row row--ruled">
-      <div class="hero__col hero__col--lead">
-        <div class="hero__zone hero__zone--top">
-          <p class="eyebrow">Yanice Yang</p>
-        </div>
-        <div class="hero__zone hero__zone--meta">
-          <p class="hero__meta">Product Designer<br />Bay Area, US</p>
-        </div>
-        <div class="hero__zone hero__zone--foot" aria-hidden="true"></div>
-      </div>
-      <div class="hero__col hero__col--statement">
-        <div class="hero__zone hero__zone--top">
-          <p class="eyebrow">Portfolio</p>
-        </div>
-        <h1 class="hero__title rv">
-          <MorphingStatement client:load />
-        </h1>
-        <div class="hero__zone hero__zone--after" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <section class="index" id="work">
-      <ProjectIndex projects={cases} />
-    </section>
-  </main>
 
   <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
 
   <Fragment slot="scripts">
-    <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
-    <script is:inline src="/assets/js/lenis.min.js"></script>
-    <script is:inline src="/assets/js/yy-scroll.js"></script>
     <script is:inline src="/assets/js/yy-cursor.js"></script>
     <script is:inline src="/assets/js/yy-slots.js"></script>
+    <script is:inline src="/assets/js/yy-canvas-motion.js"></script>
   </Fragment>
 </BaseLayout>
