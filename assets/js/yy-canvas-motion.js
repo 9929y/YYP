@@ -40,11 +40,13 @@
     var scale = 1;
     var x = 0;
     var y = 0;
+    /* Canvas fades down toward projects (~0.9 → 0.3). */
     var opacity = 0.9 - p * 0.6;
     var coverScale = 1;
     var coverX = 0;
     var coverY = 0;
-    var coverOpacity = 0.85 - p * 0.5;
+    /* Cover goes the other way: clearer on hero, denser over projects. */
+    var coverOpacity = 0.25 + p * 0.5;
 
     if (!reduce.matches) {
       scale = 1 + p * 0.08;

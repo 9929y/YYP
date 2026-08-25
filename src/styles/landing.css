@@ -226,7 +226,7 @@
     --cover-scale: 1;
     --cover-x: 0px;
     --cover-y: 0px;
-    --cover-opacity: 0.85;
+    --cover-opacity: 0.25;
   }
 
   /* Fixed background board — scroll content moves; canvas/cover stay pinned
