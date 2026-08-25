@@ -31,7 +31,7 @@
      page moved into a subdirectory keeps working. */
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-chrome\.js.*$/, '') : '';
 
-  var RESUME = 'https://302437672248143872.hello.cv/';
+  var RESUME = 'resume.html';
 
   /* Capsule link set. Deliberately four items: any more and the capsule stops
      being a capsule at 375px. `projects.html` is the hub — it links to all
@@ -39,7 +39,7 @@
   var NAV = [
     { href: 'projects.html', label: 'Work', homeHref: '#work' },
     { href: 'aboutme.html',  label: 'About' },
-    { href: RESUME,          label: 'Resume', ext: true }
+    { href: RESUME,          label: 'Resume' }
   ];
 
   /* Footer carries the tail. `fashion.html`'s only inbound link today is a
@@ -49,7 +49,7 @@
     { href: 'projects.html', label: 'Work' },
     { href: 'aboutme.html',  label: 'About' },
     { href: 'fashion.html',  label: 'Fashion' },
-    { href: RESUME,          label: 'Resume', ext: true }
+    { href: RESUME,          label: 'Resume' }
   ];
 
   /* Resume is NOT a social profile — it lives in the nav row above as text.
