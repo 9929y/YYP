@@ -192,6 +192,12 @@ html.yy-case body {
   color: var(--ink-2);
 }
 
+.case-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
 .cs__nav {
   display: flex;
   justify-content: space-between;
@@ -240,7 +246,8 @@ html.yy-case body {
   .cs { padding: 104px var(--edge) 96px; }
   .case-section__header,
   .case-meta,
-  .media-pair__grid {
+  .media-pair__grid,
+  .case-stat-grid {
     grid-template-columns: 1fr;
   }
 }
