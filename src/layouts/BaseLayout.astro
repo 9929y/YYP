@@ -6,6 +6,7 @@ interface Props {
   reveal?: boolean;
   lenis?: boolean;
   chrome?: boolean;
+  noindex?: boolean;
 }
 
 const {
@@ -14,8 +15,11 @@ const {
   htmlClass = '',
   reveal = false,
   lenis = true,
-  chrome = true
+  chrome = true,
+  noindex = false
 } = Astro.props;
+
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 ---
 <!DOCTYPE html>
 <html lang="en" class={htmlClass}>
@@ -24,6 +28,8 @@ const {
     <title>{title}</title>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonicalUrl} />
     <link href="/assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
     <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
