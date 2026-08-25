@@ -118,7 +118,7 @@
      而且两者都验得过。 */
 
   /* --------------------------------------------------------------------------
-     Effect 2 — play a slot's video on hover (landing) or when scrolled into view.
+     Effect 2 — play a slot or case-study video on hover or when scrolled into view.
 
      Deliberately NOT the `autoplay` attribute: that starts on load.
 
@@ -134,7 +134,7 @@
      -------------------------------------------------------------------------- */
   function wireVideos() {
     try {
-      var vids = document.querySelectorAll('.slot video');
+      var vids = document.querySelectorAll('.slot video, .media--video video');
       if (!vids.length) return;
 
       if (RM.matches) {                 /* poster only, never fetch the video */
