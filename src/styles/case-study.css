@@ -1,0 +1,136 @@
+.cs {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--frame-index);
+  margin: 0 auto;
+  padding: 120px var(--edge) 160px;
+  color: var(--ink);
+  background: var(--ground);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+html.yy-case body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.cs[data-theme="dark"] {
+  --ink: #f4f1ea;
+  --ink-2: #c8c2b6;
+  --ink-3: #9a9488;
+  --ground: #11110f;
+  --hair: #2a2824;
+  --slot: #1c1b18;
+  --rule: #2a2824;
+}
+
+.cs__hero {
+  display: grid;
+  grid-template-columns: var(--col-label) minmax(0, 1fr);
+  gap: var(--col-gap);
+  padding-bottom: 64px;
+  border-bottom: 1px solid var(--hair);
+  margin-bottom: 64px;
+}
+
+.cs__eyebrow {
+  margin: 0 0 10px;
+  font-size: var(--t-11);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cs__title {
+  margin: 0;
+  font-size: var(--t-40);
+  line-height: var(--lh-display);
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  max-width: var(--col-content);
+}
+
+.cs__scope,
+.cs__note {
+  margin: 12px 0 0;
+  font-size: var(--t-16);
+  line-height: var(--lh-heading);
+  color: var(--ink-2);
+  max-width: var(--col-content);
+}
+
+.cs__body {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.cs__body :where(h2) {
+  margin: 0;
+  font-size: var(--t-25);
+  line-height: var(--lh-heading);
+  letter-spacing: -0.03em;
+}
+
+.cs__body :where(p) {
+  margin: 0;
+  max-width: 40em;
+  color: var(--ink-2);
+}
+
+.cs__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 96px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hair);
+  font-size: var(--t-13);
+}
+
+.cs__nav a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.cs__nav a:hover { opacity: 0.64; }
+
+.cs__nav-dir {
+  display: block;
+  margin-bottom: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-size: var(--t-11);
+}
+
+.media {
+  display: block;
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--slot);
+}
+
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 877px) {
+  .cs__hero { grid-template-columns: 1fr; }
+  .cs { padding: 104px var(--edge) 96px; }
+}
+
+@media (max-width: 560px) {
+  .cs__title { font-size: var(--t-32); }
+}

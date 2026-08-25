@@ -1,0 +1,24 @@
+{
+  "name": "yanice-yang-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4800",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1 --port 4800",
+    "check": "astro check && node --experimental-strip-types scripts/check-site.mjs --dist",
+    "test": "node --experimental-strip-types scripts/check-site.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.3.0",
+    "astro": "^5.13.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "typescript": "^5.9.2"
+  }
+}
