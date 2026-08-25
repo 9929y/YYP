@@ -13,7 +13,9 @@ export default defineConfig({
   devToolbar: { enabled: false },
   vite: {
     server: {
-      fs: { allow: ['.'] }
+      fs: { allow: ['.'] },
+      /* Cloud Agent localhost forward can fail; allow tunnel hosts for preview. */
+      allowedHosts: true
     }
   }
 });
