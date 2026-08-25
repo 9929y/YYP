@@ -142,6 +142,14 @@ if (fs.existsSync(mediaVideoPath)) {
   }
 }
 
+const scrollScriptPath = path.join(ROOT, 'assets/js/yy-scroll.js');
+if (fs.existsSync(scrollScriptPath)) {
+  const scrollSource = fs.readFileSync(scrollScriptPath, 'utf8');
+  if (!scrollSource.includes('.media--video video')) {
+    errors.push('yy-scroll.js does not include case-study videos in its visibility gate');
+  }
+}
+
 const morphingStatementPath = path.join(ROOT, 'src/components/islands/MorphingStatement.tsx');
 if (fs.existsSync(morphingStatementPath)) {
   const morphingSource = fs.readFileSync(morphingStatementPath, 'utf8');
