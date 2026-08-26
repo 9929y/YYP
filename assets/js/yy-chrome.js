@@ -231,15 +231,16 @@
     '  font-size: 14px; font-weight: 500;',
     '  letter-spacing: -.01em;',
     '  color: var(--yy-ink-dim);',
+    '  background: transparent;',
     '  text-decoration: none;',
     '  white-space: nowrap;',
-    '  transition: color .2s var(--yy-ease), background-color .2s var(--yy-ease);',
+    '  transition: color .2s var(--yy-ease), font-weight .2s var(--yy-ease);',
     '}',
-    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
+    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: transparent; }',
     '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
-    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
-    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
-    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: rgba(26,25,23,.075); }',
+    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: transparent; font-weight: 600; }',
+    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: transparent; font-weight: 600; }',
+    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: transparent; }',
     '.cap-back{ display: inline-flex !important; align-items: center; justify-content: center; padding: 8px 12px !important; }',
     '.cap-back svg{ display: block; width: 16px; height: 16px; }',
 
@@ -318,6 +319,8 @@
     '.expand:hover{ background: rgba(255,255,255,.62); transform: scale(1.06); }',
     '.expand:active{ transform: scale(.94); }',
     '.expand:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 2px; }',
+    /* Expanded layer is a dedicated URL — exit only via Back / history, never a shrink control. */
+    '.panel.is-expanded .expand{ display: none !important; }',
     '.expand-icon{ position: absolute; inset: 10px; }',
     '.corner{ position: absolute; width: 6px; height: 6px; transition: transform var(--duration-slow,.4s) var(--m-overshoot,var(--ease-smooth-out,ease-out)); }',
     '.corner-nw{ left: 0; top: 0; border-left: 1.5px solid; border-top: 1.5px solid; }',
@@ -583,9 +586,22 @@
     var lastOpener = null;
     var backgroundState = [];
     var resumeNavMode = false;
+    var fullHistoryPushed = false;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (panelScroll) panelScroll.setAttribute('data-lenis-prevent', '');
+
+    function fullpageHash(name) {
+      return '#/' + encodeURIComponent(name || 'panel');
+    }
+
+    function clearFullpageUrl() {
+      if (!fullHistoryPushed) return;
+      fullHistoryPushed = false;
+      if (location.hash.indexOf('#/') === 0) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
 
     function prepare(name) {
       if (name !== 'resume') return;
@@ -757,12 +773,14 @@
       var start = trigger.getBoundingClientRect();
       if (name === 'resume') enterResumeNav();
       else leaveResumeNav();
+      clearFullpageUrl();
       panel.classList.remove('is-expanded');
       host.classList.remove('is-fullpage');
       HTML.classList.remove('yy-panel-fullpage');
       HTML.classList.add('yy-panel-open');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
+      expand.hidden = false;
       expand.setAttribute('aria-label', 'Expand panel');
       expand.setAttribute('aria-pressed', 'false');
       announcePanelState(false, true);
@@ -777,7 +795,7 @@
             { duration: 350, easing: 'cubic-bezier(.22,1,.36,1)' }
           );
         }
-        expand.focus({ preventScroll: true });
+        if (!expand.hidden) expand.focus({ preventScroll: true });
       });
     }
 
@@ -793,6 +811,7 @@
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
       }
+      clearFullpageUrl();
       HTML.classList.remove('yy-panel-open');
       announcePanelState(false, false);
       setBackgroundInert(false);
@@ -812,6 +831,7 @@
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
         panel.classList.remove('is-expanded');
+        expand.hidden = false;
         expand.setAttribute('aria-label', 'Expand panel');
         expand.setAttribute('aria-pressed', 'false');
         for (var j = 0; j < views.length; j++) views[j].hidden = true;
@@ -829,6 +849,15 @@
       sync(name);
       if (name === 'resume') enterResumeNav();
       else leaveResumeNav();
+      if (panel.classList.contains('is-expanded')) {
+        /* Keep the fullpage layer, but retarget the hash to the active panel. */
+        history.replaceState(
+          { yyPanelFull: true, panel: name },
+          '',
+          location.pathname + location.search + fullpageHash(name)
+        );
+        fullHistoryPushed = true;
+      }
       restoreViewScroll(name);
       var next = viewFor(name);
       if (next && !reduced && next.animate) {
@@ -839,18 +868,61 @@
       }
     }
 
-    function toggleExpanded() {
-      if (closing) return;
+    function applyExitFullpageUI() {
+      if (!panel.classList.contains('is-expanded')) return;
       var before = panel.getBoundingClientRect();
-      var expanded = !panel.classList.contains('is-expanded');
-      panel.classList.toggle('is-expanded', expanded);
-      host.classList.toggle('is-fullpage', expanded);
-      HTML.classList.toggle('yy-panel-fullpage', expanded);
-      setBackgroundInert(expanded);
+      panel.classList.remove('is-expanded');
+      host.classList.remove('is-fullpage');
+      HTML.classList.remove('yy-panel-fullpage');
+      setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
-      announcePanelState(expanded, true);
-      expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
-      expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
+      announcePanelState(false, true);
+      expand.hidden = false;
+      expand.setAttribute('aria-label', 'Expand panel');
+      expand.setAttribute('aria-pressed', 'false');
+      fullHistoryPushed = false;
+      var after = panel.getBoundingClientRect();
+      if (!reduced && panel.animate) {
+        var scale = Math.min(before.width / Math.max(after.width, 1), before.height / Math.max(after.height, 1));
+        var dx = before.left + before.width / 2 - (after.left + after.width / 2);
+        var dy = before.top + before.height / 2 - (after.top + after.height / 2);
+        panel.animate([
+          {
+            transformOrigin: 'center',
+            transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
+          },
+          { transformOrigin: 'center', transform: 'none' }
+        ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+      }
+    }
+
+    function requestExitFullpage() {
+      if (!panel.classList.contains('is-expanded')) return;
+      if (fullHistoryPushed) {
+        history.back();
+        return;
+      }
+      applyExitFullpageUI();
+    }
+
+    function expandToFullpage() {
+      if (closing || !active) return;
+      if (panel.classList.contains('is-expanded')) return;
+      var before = panel.getBoundingClientRect();
+      panel.classList.add('is-expanded');
+      host.classList.add('is-fullpage');
+      HTML.classList.add('yy-panel-fullpage');
+      setBackgroundInert(true);
+      panel.setAttribute('aria-modal', 'false');
+      announcePanelState(true, true);
+      expand.hidden = true;
+      expand.setAttribute('aria-pressed', 'true');
+      history.pushState(
+        { yyPanelFull: true, panel: active },
+        '',
+        location.pathname + location.search + fullpageHash(active)
+      );
+      fullHistoryPushed = true;
       var after = panel.getBoundingClientRect();
       if (!reduced && panel.animate) {
         var scale = Math.min(before.width / after.width, before.height / after.height);
@@ -863,16 +935,17 @@
           },
           { transformOrigin: 'center', transform: 'none' }
         ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
-        expand.animate(
-          [{ transform: 'scale(.78)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }],
-          { duration: 400, easing: 'cubic-bezier(.34,1.36,.64,1)' }
-        );
       }
     }
 
     function onCapClick(event) {
       var back = event.target.closest('[data-resume-back]');
       if (back && cap.contains(back)) {
+        /* Fullpage is its own URL layer — Back returns to the previous page layer. */
+        if (panel.classList.contains('is-expanded')) {
+          requestExitFullpage();
+          return;
+        }
         leaveResumeNav();
         return;
       }
@@ -893,7 +966,13 @@
     }
 
     if (cap) cap.addEventListener('click', onCapClick);
-    expand.addEventListener('click', toggleExpanded);
+    expand.addEventListener('click', expandToFullpage);
+    window.addEventListener('popstate', function (event) {
+      var state = event.state;
+      if (panel.classList.contains('is-expanded') && !(state && state.yyPanelFull)) {
+        applyExitFullpageUI();
+      }
+    });
     window.addEventListener('yy:open-panel', function (event) {
       var name = event.detail && event.detail.name;
       /* After Back, Resume triggers are gone — reopen via footer or recreate main capsule. */
@@ -920,6 +999,10 @@
     root.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && active) {
         event.preventDefault();
+        if (panel.classList.contains('is-expanded')) {
+          requestExitFullpage();
+          return;
+        }
         close();
       }
     });

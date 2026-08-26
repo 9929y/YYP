@@ -361,8 +361,19 @@ for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '73.9vh']) 
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
 }
-if (!chromeJs.includes('function toggleExpanded() {\n      if (closing) return;')) {
-  errors.push('yy-chrome.js must ignore expand actions while the popup is closing');
+if (!chromeJs.includes('function expandToFullpage()') ||
+    !chromeJs.includes('if (closing || !active) return;')) {
+  errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
+}
+if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
+    !chromeJs.includes('requestExitFullpage') ||
+    !chromeJs.includes('yyPanelFull') ||
+    !chromeJs.includes('fullpageHash')) {
+  errors.push('yy-chrome.js expanded layer must hide the shrink control and exit via Back/history');
+}
+if (!chromeJs.includes('background: transparent') ||
+    chromeJs.includes(".cap button[aria-expanded=\"true\"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }")) {
+  errors.push('yy-chrome.js capsule items must be text-only by default (no gray chip fill)');
 }
 if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
