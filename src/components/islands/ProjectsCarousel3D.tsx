@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -15,7 +16,7 @@ export type ProjectsCarouselCard = {
   id: string;
   title: string;
   scope: string;
-  /** Solid placeholder color index 0..n-1 (CSS --card-tone). */
+  /** Solid placeholder color index 0..n-1 (CSS data-tone). */
   tone: number;
 };
 
@@ -58,12 +59,18 @@ export function useMediaQuery(
 }
 
 /*
- * Full-360 cylinder (B / 3d-carousel) + pointer orbit (A / OrbitControls feel).
- * No face labels, no bottom Anchor — hover/detail deferred.
+ * Partial cylinder: 8-slot spacing with only 5 faces (3 back slots empty),
+ * so ~5 cards stay on screen. Auto yaw pendulum; manual drag is faster.
+ * Per-card float/sway is CSS. No labels / Anchor this layer.
  */
-const DRAG_GAIN = 0.12;
-const WHEEL_GAIN = 0.08;
-const ROTATE_X_MAX = 22;
+const SLOT_COUNT = 8;
+const VISIBLE_CARDS = 5;
+const DRAG_GAIN_AUTO = 0.1;
+const DRAG_GAIN_MANUAL = 0.28;
+const WHEEL_GAIN = 0.12;
+const ROTATE_X_MAX = 18;
+const AUTO_AMP = 28; // deg left-right sway of the whole ring
+const AUTO_SPEED = 0.35; // rad/s-ish via sin(t * speed)
 const SPRING = {
   type: 'spring' as const,
   stiffness: 100,
@@ -80,20 +87,34 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
+/** Angle for face i on an 8-slot ring, centered on camera (back gap empty). */
+function faceAngle(index: number): number {
+  const step = 360 / SLOT_COUNT;
+  const mid = (VISIBLE_CARDS - 1) / 2;
+  return (index - mid) * step;
+}
+
+const FLOAT_META = [
+  { dur: '5.6s', delay: '0s' },
+  { dur: '6.4s', delay: '-1.2s' },
+  { dur: '7.1s', delay: '-2.4s' },
+  { dur: '5.9s', delay: '-0.6s' },
+  { dur: '6.8s', delay: '-3.1s' }
+] as const;
+
 const CarouselFace = memo(function CarouselFace({
   card,
   index,
-  faceCount,
   faceWidth,
   radius
 }: {
   card: ProjectsCarouselCard;
   index: number;
-  faceCount: number;
   faceWidth: number;
   radius: number;
 }) {
-  const angle = (360 / Math.max(faceCount, 1)) * index;
+  const angle = faceAngle(index);
+  const float = FLOAT_META[index % FLOAT_META.length];
 
   const slotStyle: CSSProperties = {
     width: `${faceWidth}px`,
@@ -103,9 +124,15 @@ const CarouselFace = memo(function CarouselFace({
   return (
     <div className="yy-projects-card-slot" style={slotStyle}>
       <div
-        className="yy-projects-card"
+        className="yy-projects-card yy-projects-card--float"
         data-tone={card.tone % 7}
-        style={{ width: `${faceWidth}px` }}
+        style={
+          {
+            width: `${faceWidth}px`,
+            '--float-dur': float.dur,
+            '--float-delay': float.delay
+          } as CSSProperties
+        }
         aria-hidden="true"
       >
         <div className="yy-projects-card__inner" />
@@ -119,11 +146,17 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const dragging = useRef(false);
   const lastPointer = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
+  const baseYaw = useRef(0);
+  const autoPhase = useRef(0);
+  const autoPausedUntil = useRef(0);
+  const autoWasPaused = useRef(false);
+
+  const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  const cylinderWidth = isScreenSizeSm ? 1100 : 1800;
-  const faceCount = cards.length;
-  const faceWidth = cylinderWidth / Math.max(faceCount, 1);
+  // Size faces from the 8-slot ring so five front seats read clearly.
+  const cylinderWidth = isScreenSizeSm ? 1200 : 2000;
+  const faceWidth = cylinderWidth / SLOT_COUNT;
   const radius = cylinderWidth / (2 * Math.PI);
 
   const rotateY = useMotionValue(0);
@@ -157,9 +190,12 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       const dy = event.clientY - lastPointer.current.y;
       lastPointer.current = { x: event.clientX, y: event.clientY };
       velocity.current = { x: dx, y: dy };
-      // OrbitControls-style: horizontal drag → yaw, vertical → pitch (clamped).
-      rotateY.set(rotateY.get() + dx * DRAG_GAIN);
-      rotateX.set(clamp(rotateX.get() - dy * DRAG_GAIN, -ROTATE_X_MAX, ROTATE_X_MAX));
+      // Manual: faster than auto gain.
+      rotateY.set(rotateY.get() + dx * DRAG_GAIN_MANUAL);
+      rotateX.set(
+        clamp(rotateX.get() - dy * DRAG_GAIN_AUTO, -ROTATE_X_MAX, ROTATE_X_MAX)
+      );
+      baseYaw.current = rotateY.get();
     },
     [rotateX, rotateY]
   );
@@ -174,21 +210,56 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
         /* already released */
       }
 
+      baseYaw.current = rotateY.get();
+      autoPausedUntil.current = performance.now() + 900;
+
       if (prefersReducedMotion()) return;
 
-      const coastY = rotateY.get() + velocity.current.x * DRAG_GAIN * 8;
+      const coastY = rotateY.get() + velocity.current.x * DRAG_GAIN_MANUAL * 6;
       const coastX = clamp(
-        rotateX.get() - velocity.current.y * DRAG_GAIN * 8,
+        rotateX.get() - velocity.current.y * DRAG_GAIN_AUTO * 6,
         -ROTATE_X_MAX,
         ROTATE_X_MAX
       );
+      baseYaw.current = coastY;
       void animate(rotateY, coastY, SPRING);
       void animate(rotateX, coastX, SPRING);
     },
     [rotateX, rotateY]
   );
 
-  // Wheel → yaw only; never scroll the page while over the stage.
+  // Auto left-right pendulum when not dragging.
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      const paused = dragging.current || now < autoPausedUntil.current;
+      if (paused) {
+        autoWasPaused.current = true;
+      } else {
+        if (autoWasPaused.current) {
+          baseYaw.current = rotateY.get();
+          autoPhase.current = 0;
+          autoWasPaused.current = false;
+        }
+        autoPhase.current += dt * AUTO_SPEED;
+        rotateY.set(baseYaw.current + Math.sin(autoPhase.current) * AUTO_AMP);
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [rotateY]);
+
+  // Wheel → yaw (manual-speed); never scroll the page while over the stage.
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -196,7 +267,11 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       stopOrbit();
-      rotateY.set(rotateY.get() + event.deltaY * WHEEL_GAIN + event.deltaX * WHEEL_GAIN);
+      const delta = event.deltaY * WHEEL_GAIN + event.deltaX * WHEEL_GAIN;
+      const next = rotateY.get() + delta;
+      rotateY.set(next);
+      baseYaw.current = next;
+      autoPausedUntil.current = performance.now() + 900;
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -216,7 +291,8 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       ref={stageRef}
       className="yy-projects-carousel"
       data-testid="projects-carousel"
-      data-face-count={faceCount}
+      data-slots={SLOT_COUNT}
+      data-visible={visibleCards.length}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -231,12 +307,11 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
             transformStyle: 'preserve-3d'
           }}
         >
-          {cards.map((card, index) => (
+          {visibleCards.map((card, index) => (
             <CarouselFace
               key={card.id}
               card={card}
               index={index}
-              faceCount={faceCount}
               faceWidth={faceWidth}
               radius={radius}
             />
@@ -248,13 +323,14 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 }
 
 function ProjectsCarouselStatic({ cards }: { cards: ProjectsCarouselCard[] }) {
+  const visibleCards = cards.slice(0, VISIBLE_CARDS);
   return (
     <div
       className="yy-projects-carousel yy-projects-carousel--static"
       data-testid="projects-carousel-static"
     >
       <ul className="yy-projects-carousel__grid">
-        {cards.map((card) => (
+        {visibleCards.map((card) => (
           <li key={card.id} className="yy-projects-card-slot">
             <div className="yy-projects-card" data-tone={card.tone % 7} data-static="true">
               <div className="yy-projects-card__inner" />
