@@ -1,102 +1,171 @@
 /* ============================================================================
-   yy-cursor.js — landing "view" cursor. Extracted from landing.html so the
-   page is no longer the owner of this effect. Behaviour is unchanged.
+   yy-cursor.js — landing "view" cursor + soft diffusion wake.
+
+   Position is written as CSS vars; the lead disc eases in CSS. The wake is a
+   sibling (#yy-cursor-wake) of lagged ghost discs (fluid trail inspired by
+   yy-flow’s pointer seed, without ASCII / green chroma).
    ============================================================================ */
-/* ---------- the "view" cursor ----------
-     Position is written as two custom properties and CSS does the easing, which
-     reproduces the source's `gsap.to(duration: .16, ease: "power3.out")` without
-     pulling in GSAP. No rAF lerp: the previous one had to be hand-tuned and the
-     tuning is what went wrong.
+(function () {
+  'use strict';
+  var html = document.documentElement;
+  var el = document.getElementById('yy-cursor');
+  var wake = document.getElementById('yy-cursor-wake');
+  var label = el && el.querySelector('.yy-cursor__t');
+  if (!el) return;
 
-     Guards, each earned by a real failure:
-       1. Above 991px and a fine pointer only — matches the source's own gate.
-       2. `cursor: none` is gated on html.yy-cursor-live, set only after the
-          first real mousemove, so a dead script never hides the native cursor.
-       3. A watchdog drops the class if the pointer stops being tracked.
-     And the design guard the last attempt lacked: the disc is ALWAYS drawn once
-     live. Only its size changes. There is no state in which the page has no
-     visible pointer. */
-  (function () {
-    'use strict';
-    var html = document.documentElement;
-    var el = document.getElementById('yy-cursor');
-    var label = el && el.querySelector('.yy-cursor__t');
-    if (!el) return;
+  var MQ = matchMedia('(min-width: 992px) and (hover: hover) and (pointer: fine)');
+  var RM = matchMedia('(prefers-reduced-motion: reduce)');
 
-    /* ⛔ THE BUG THIS REPLACES, and it is why the cursor never appeared for
-       Yanice while every headless test passed:
+  var WAKE_N = 8;
+  var IDLE_MS = 420;
+  var wakeDots = [];
+  var samples = [];
+  var tx = -1e4;
+  var ty = -1e4;
+  var raf = 0;
+  var idleTimer = 0;
+  var lastMove = 0;
+  var moves = 0;
 
-       The gate used to be evaluated ONCE, here, at script-execution time:
-           if (!matchMedia('(min-width: 992px) ...').matches) return;
+  function ensureWake() {
+    if (!wake) {
+      wake = document.createElement('div');
+      wake.id = 'yy-cursor-wake';
+      wake.setAttribute('aria-hidden', 'true');
+      el.parentNode.insertBefore(wake, el);
+    }
+    if (wakeDots.length) return;
+    wake.textContent = '';
+    for (var i = 0; i < WAKE_N; i++) {
+      var dot = document.createElement('i');
+      var t = (i + 1) / WAKE_N;
+      /* Older samples = larger, softer, fainter — keep readable on light canvas. */
+      dot.style.setProperty('--wake-opacity', String((1 - t) * 0.55 + 0.12));
+      dot.style.setProperty('--wake-scale', String(0.7 + t * 1.55));
+      dot.style.setProperty('--wake-blur', 12 + t * 22 + 'px');
+      dot.style.setProperty('--wake-size', 28 + t * 36 + 'px');
+      wake.appendChild(dot);
+      wakeDots.push(dot);
+      samples.push({ x: tx, y: ty });
+    }
+  }
 
-       Instrumented in a real browser, that check reported `gate=false w=0` —
-       window.innerWidth is 0 when the document's inline scripts run in an
-       embedded or not-yet-laid-out browser context. So the function returned
-       before attaching anything, and the listener never existed. By the time
-       any diagnostic ran, innerWidth was 1280 and the same expression returned
-       true, which is exactly why every check I made afterwards said the gate
-       was fine. Headless Playwright always has a real viewport at script time,
-       so the entire test suite passed on a page that was broken.
+  function standDown() {
+    html.classList.remove('yy-cursor-live');
+    html.classList.remove('yy-cursor-bloom');
+    el.classList.remove('on');
+    if (wake) wake.classList.add('is-fading');
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  }
 
-       The reference guards against this and I failed to transcribe it:
-           function checkViewport() {
-             if (window.innerWidth > 991) document.addEventListener('mousemove', ...);
-           }
-           window.addEventListener('resize', checkViewport);
-           checkViewport();
-       — it re-checks on resize.
+  function markMoving() {
+    lastMove = performance.now();
+    if (wake) wake.classList.remove('is-fading');
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () {
+      if (wake) wake.classList.add('is-fading');
+    }, IDLE_MS);
+  }
 
-       This goes further than the source: the listener attaches unconditionally
-       and the gate is evaluated at EVENT time via a live MediaQueryList. That
-       covers zero-width startup, resizes, browser zoom (which changes CSS px
-       width), and monitor changes, with no re-attachment logic to get wrong. */
-    var MQ = matchMedia('(min-width: 992px) and (hover: hover) and (pointer: fine)');
-    var RM = matchMedia('(prefers-reduced-motion: reduce)');
+  function tick() {
+    raf = 0;
+    if (!MQ.matches || RM.matches || !html.classList.contains('yy-cursor-live')) return;
 
-    function standDown() {
-      html.classList.remove('yy-cursor-live');
-      el.classList.remove('on');
+    var prevX = tx;
+    var prevY = ty;
+    for (var i = 0; i < samples.length; i++) {
+      var s = samples[i];
+      /* Chain: each node eases toward the previous (or the pointer). */
+      var ax = i === 0 ? prevX : samples[i - 1].x;
+      var ay = i === 0 ? prevY : samples[i - 1].y;
+      var ease = 0.22 - i * 0.018;
+      if (ease < 0.08) ease = 0.08;
+      s.x += (ax - s.x) * ease;
+      s.y += (ay - s.y) * ease;
+      wakeDots[i].style.setProperty('--wx', s.x.toFixed(2) + 'px');
+      wakeDots[i].style.setProperty('--wy', s.y.toFixed(2) + 'px');
     }
 
-    try {
-      var moves = 0;
+    /* Keep looping while live so the trail can settle after the last move. */
+    var idle = performance.now() - lastMove > IDLE_MS + 80;
+    if (!idle || html.classList.contains('yy-cursor-live')) {
+      raf = requestAnimationFrame(tick);
+    }
+  }
 
-      window.addEventListener('mousemove', function (e) {
-        /* Evaluated per event, never cached. */
-        if (!MQ.matches || RM.matches) { standDown(); return; }
-        el.style.setProperty('--cx', e.clientX + 'px');
-        el.style.setProperty('--cy', e.clientY + 'px');
-        moves++;
-        if (!html.classList.contains('yy-cursor-live')) html.classList.add('yy-cursor-live');
-      }, { passive: true });
+  function kickRaf() {
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
 
-      /* Hand the native cursor back the moment the conditions stop holding. */
-      var onChange = function () { if (!MQ.matches || RM.matches) standDown(); };
-      if (MQ.addEventListener) { MQ.addEventListener('change', onChange); RM.addEventListener('change', onChange); }
-      else if (MQ.addListener) { MQ.addListener(onChange); RM.addListener(onChange); }
+  try {
+    ensureWake();
 
-      /* Watchdog: if the class is set but nothing has been tracked, stand down. */
-      setInterval(function () {
-        if (moves === 0 && html.classList.contains('yy-cursor-live')) standDown();
-      }, 500);
+    window.addEventListener('mousemove', function (e) {
+      if (!MQ.matches || RM.matches) {
+        standDown();
+        return;
+      }
+      tx = e.clientX;
+      ty = e.clientY;
+      el.style.setProperty('--cx', tx + 'px');
+      el.style.setProperty('--cy', ty + 'px');
+      moves++;
+      if (!html.classList.contains('yy-cursor-live')) {
+        html.classList.add('yy-cursor-live');
+        /* Seed the trail at the pointer so the first frame isn't a streak from off-screen. */
+        for (var i = 0; i < samples.length; i++) {
+          samples[i].x = tx;
+          samples[i].y = ty;
+        }
+      }
+      markMoving();
+      kickRaf();
+    }, { passive: true });
 
-      /* Source targets `.case-link, .dribbble-case` on the index and
-         `.case-link, .back-link, .case-next` on a case page. Here that is the
-         project slot. */
-      document.querySelectorAll('a.slot').forEach(function (t) {
-        t.addEventListener('mouseenter', function () {
-          if (!MQ.matches || RM.matches) return;
-          if (label) label.textContent = 'view';
-          el.classList.add('on');
-        });
-        t.addEventListener('mouseleave', function () { el.classList.remove('on'); });
+    var onChange = function () {
+      if (!MQ.matches || RM.matches) standDown();
+    };
+    if (MQ.addEventListener) {
+      MQ.addEventListener('change', onChange);
+      RM.addEventListener('change', onChange);
+    } else if (MQ.addListener) {
+      MQ.addListener(onChange);
+      RM.addListener(onChange);
+    }
+
+    setInterval(function () {
+      if (moves === 0 && html.classList.contains('yy-cursor-live')) standDown();
+    }, 500);
+
+    document.querySelectorAll('a.slot').forEach(function (t) {
+      t.addEventListener('mouseenter', function () {
+        if (!MQ.matches || RM.matches) return;
+        if (label) label.textContent = 'view';
+        el.classList.add('on');
+        html.classList.add('yy-cursor-bloom');
       });
+      t.addEventListener('mouseleave', function () {
+        el.classList.remove('on');
+        html.classList.remove('yy-cursor-bloom');
+      });
+    });
 
-      window.addEventListener('blur', function () { el.classList.remove('on'); });
-      document.addEventListener('mouseleave', function () { el.classList.remove('on'); });
-    } catch (e) {
-      standDown();
-      el.style.display = 'none';
-      if (window.console) console.error('[landing] cursor off, native cursor active:', e);
-    }
-  })();
+    window.addEventListener('blur', function () {
+      el.classList.remove('on');
+      html.classList.remove('yy-cursor-bloom');
+    });
+    document.addEventListener('mouseleave', function () {
+      el.classList.remove('on');
+      html.classList.remove('yy-cursor-bloom');
+      if (wake) wake.classList.add('is-fading');
+    });
+  } catch (e) {
+    standDown();
+    el.style.display = 'none';
+    if (wake) wake.style.display = 'none';
+    if (window.console) console.error('[landing] cursor off, native cursor active:', e);
+  }
+})();
