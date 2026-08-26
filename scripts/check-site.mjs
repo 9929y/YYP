@@ -330,6 +330,9 @@ if (!chromeJs.includes('yy:panel-state')) {
 if (!chromeJs.includes('yy-panel-open') || !chromeJs.includes('open: open')) {
   errors.push('yy-chrome.js must lock the underlay for every open popup state');
 }
+if (!chromeJs.includes('scrollbar-gutter:stable')) {
+  errors.push('yy-chrome.js must reserve the page scrollbar gutter while popup scroll is locked');
+}
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
 }
