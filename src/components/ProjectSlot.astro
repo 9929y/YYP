@@ -15,14 +15,14 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
 
 {
   project.kind === 'panel' ? (
-    <div class="panel rv" style="counter-reset: act">
+    <div class="panel" data-clip-reveal style="counter-reset: act">
       <ul class="panel__acts">
         {project.acts?.map((act) => <li>{act}</li>)}
       </ul>
       {project.panelFoot && <p class="panel__foot">{project.panelFoot}</p>}
     </div>
   ) : showMedia && href ? (
-    <a class="slot rv" href={href} aria-label={label}>
+    <a class="slot" data-clip-reveal href={href} aria-label={label}>
       {project.video ? (
         <video
           class="slot__v"
@@ -55,7 +55,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       </span>
     </a>
   ) : showMedia ? (
-    <div class="slot slot--static rv" role="group" aria-label={project.title}>
+    <div class="slot slot--static" data-clip-reveal role="group" aria-label={project.title}>
       {project.video ? (
         <video
           class="slot__v"

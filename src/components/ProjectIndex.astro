@@ -3,6 +3,7 @@ import type { Project } from '../data/projects';
 import { publicUrl } from '../data/projects';
 import ProjectSlot from './ProjectSlot.astro';
 import CaseNoteGenerate from './islands/CaseNoteGenerate';
+import MaskedTextReveal from './islands/MaskedTextReveal';
 
 interface Props {
   projects: Project[];
@@ -31,8 +32,21 @@ const { projects } = Astro.props;
               loading="lazy"
             />
           )}
-          <h2 class="case__name">{project.headline ?? project.title}</h2>
-          <p class="case__scope">{project.scope}</p>
+          <MaskedTextReveal
+            client:visible
+            as="h2"
+            className="case__name"
+            splitBy="words"
+            text={project.headline ?? project.title}
+          />
+          <MaskedTextReveal
+            client:visible
+            as="p"
+            className="case__scope"
+            splitBy="lines"
+            delay={0.12}
+            text={project.scope}
+          />
         </div>
       </div>
       <ProjectSlot project={project} />

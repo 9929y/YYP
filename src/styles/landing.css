@@ -990,6 +990,32 @@
     html { scroll-behavior: auto; }
   }
 
+  /* ---------- landing clip-down (bleibtgleich data-reveal="clip-down") ----------
+     Free lane: clip-path only on the .slot / .panel frame. Media opacity/filter
+     stay with yy-slots skeleton; media transform stays with hover. Gated on
+     html.yy-clip-reveal so a dead script never leaves frames permanently clipped.
+     Timing matches yy-rv--wipe / MaskedTextReveal: 500ms + --ease-smooth-out. */
+  html.yy-clip-reveal .slot[data-clip-reveal],
+  html.yy-clip-reveal .panel[data-clip-reveal] {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path var(--duration-very-slow) var(--ease-smooth-out);
+    will-change: clip-path;
+  }
+
+  html.yy-clip-reveal .slot[data-clip-reveal].is-clip-in,
+  html.yy-clip-reveal .panel[data-clip-reveal].is-clip-in {
+    clip-path: inset(0 0 0 0);
+    will-change: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.yy-clip-reveal .slot[data-clip-reveal],
+    html.yy-clip-reveal .panel[data-clip-reveal] {
+      clip-path: none;
+      transition: none;
+    }
+  }
+
   /* Mid widths: keep label/gap tight to the rule (do not re-inflate the gutter). */
   @media (max-width: 1259px) and (min-width: 878px) {
     html.yy-landing {

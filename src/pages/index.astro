@@ -2,9 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MorphingStatement from '../components/islands/MorphingStatement';
 import LandingCanvasGradient from '../components/islands/LandingCanvasGradient';
+import MaskedTextReveal from '../components/islands/MaskedTextReveal';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import { landingProjects } from '../data/projects';
 import '../styles/landing.css';
+import '../styles/masked-reveal.css';
 
 const cases = landingProjects();
 ---
@@ -14,6 +16,7 @@ const cases = landingProjects();
   Case-study pages stay Webflow passthrough. Shared chrome = yy-chrome footer/nav.
   Hero canvas: ShaderGradient React island + still fallback for reduced motion.
   Motion: yy-canvas-motion.js drives fixed canvas/cover CSS vars + intro reveal.
+  Scroll entrance: MaskedTextReveal (text) + yy-landing-clip.js (slot clip-down).
 -->
 <BaseLayout
   title="Yanice Yang — Product Designer"
@@ -67,7 +70,14 @@ const cases = landingProjects();
 
       <section class="index" id="work" data-section="projects" aria-labelledby="featured-projects-label">
         <header class="index__head">
-          <p class="eyebrow" id="featured-projects-label">Featured projects</p>
+          <MaskedTextReveal
+            client:visible
+            as="p"
+            className="eyebrow"
+            id="featured-projects-label"
+            splitBy="words"
+            text="Featured projects"
+          />
         </header>
         <ProjectIndex projects={cases} />
       </section>
@@ -81,6 +91,7 @@ const cases = landingProjects();
     <script is:inline src="/assets/js/yy-flow.js"></script>
     <script is:inline src="/assets/js/yy-cursor.js"></script>
     <script is:inline src="/assets/js/yy-slots.js"></script>
+    <script is:inline src="/assets/js/yy-landing-clip.js"></script>
     <script is:inline src="/assets/js/yy-canvas-motion.js"></script>
   </Fragment>
 </BaseLayout>

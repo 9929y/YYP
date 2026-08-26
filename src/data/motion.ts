@@ -6,9 +6,19 @@
  *
  * When adding an effect, pick an unused lane or replace the current owner
  * explicitly. Do not stack two transitions on the same property.
+ *
+ * Landing homepage (reveal={false}):
+ * - MaskedTextReveal → transform only on its own .mtr__inner spans
+ * - yy-landing-clip   → clip-path only on .slot/[data-clip-reveal] frames
+ * - yy-slots          → opacity + filter on .slot media (skeleton)
+ * - slot hover        → transform on .slot media
+ * Do not re-enable yy-reveal on landing slots — it would fight skeleton + hover.
  */
 export const motionOwnership = {
   reveal: ['opacity', 'transform', 'filter', 'clip-path'],
+  landingClip: ['clip-path on .slot/[data-clip-reveal]'],
+  maskedText: ['transform on .mtr__inner only'],
+  slotSkeleton: ['opacity', 'filter on .slot media'],
   hover: ['transform', 'opacity'],
   cursor: ['transform', 'width', 'height', 'background-color', 'color'],
   ix2: ['any property on [data-w-id] — do not compete'],

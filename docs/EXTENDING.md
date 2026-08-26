@@ -51,6 +51,8 @@ Tokens: `assets/css/yy-tokens.css`, linked in `<head>` on every page.
 |---|---|---|
 | CSS hover | page stylesheet | Only `transform` and `opacity` unless budgeted |
 | Entrance reveal | add class `rv` | `yy-reveal.js` observes `.rv`; do not also add `.yy-rv` |
+| Landing text mask | `MaskedTextReveal` island | `transform` only on `.mtr__inner`; fail visible |
+| Landing image wipe | `data-clip-reveal` + `yy-landing-clip.js` | `clip-path` only on the frame; never on media |
 | Scroll / video | `assets/js/yy-scroll.js` or a sibling `yy-*.js` | One boot, reduced-motion gate, fail visible |
 | Canvas / shader | new `assets/js/yy-*.js`, mount on an id | Lazy, pointer + reduced-motion gated |
 | React widget | `src/components/islands/`, `client:visible` | Not a site-wide default |

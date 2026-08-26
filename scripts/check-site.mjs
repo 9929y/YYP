@@ -232,6 +232,8 @@ const requiredAssets = [
   'assets/js/yy-scroll.js',
   'assets/js/yy-cursor.js',
   'assets/js/yy-slots.js',
+  'assets/js/yy-landing-clip.js',
+  'assets/js/yy-canvas-motion.js',
   'assets/js/yy-flow.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
