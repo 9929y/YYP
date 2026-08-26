@@ -155,150 +155,10 @@
 
 .resume a:hover { opacity: 0.64; }
 
-.resume__tabs {
-  position: sticky;
-  z-index: 4;
-  top: 0;
-  isolation: isolate;
-  padding-block: 20px;
-  border-block: 1px solid var(--hair);
-  background: transparent;
-  -webkit-backdrop-filter: blur(12px) saturate(1.25);
-  backdrop-filter: blur(12px) saturate(1.25);
-}
-
-.resume__tabs::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(244, 95, 134, 0.20) 32%,
-    rgba(97, 113, 255, 0.30) 50%,
-    rgba(99, 217, 239, 0.18) 68%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-.resume__tabs-list {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 10px 28px;
-  padding-left: 8px;
-  overflow-x: auto;
-  font-size: var(--t-13);
-  scrollbar-width: none;
-}
-
-.resume__tabs-list::-webkit-scrollbar { display: none; }
-
-.resume__tabs button {
-  flex: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink-2);
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  transition: opacity var(--duration-fast) var(--ease-smooth-out);
-}
-
-.resume__tabs button:hover { opacity: 0.64; }
-
-.resume__tabs button[aria-current="location"] {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.resume__floating-tabs {
-  position: fixed;
-  z-index: 8999;
-  top: 16px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  padding-inline: 16px;
-  pointer-events: none;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition:
-    opacity var(--duration-fast) var(--ease-smooth-out),
-    transform var(--duration-fast) var(--ease-smooth-out),
-    visibility 0s linear var(--duration-fast);
-}
-
-.resume__floating-tabs.is-visible {
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 0s;
-}
-
-.resume__floating-tabs-list {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  max-width: calc(100vw - 32px);
-  padding: 6px;
-  overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.58);
-  -webkit-backdrop-filter: blur(12px) saturate(1.6);
-  backdrop-filter: blur(12px) saturate(1.6);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
-    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
-    0 1px 2px rgba(62, 65, 116, 0.07),
-    0 2px 8px -2px rgba(62, 65, 116, 0.09),
-    0 12px 36px -8px rgba(62, 65, 116, 0.20);
-  pointer-events: auto;
-  overscroll-behavior-x: contain;
-  scroll-padding-inline: 12px;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-
-.resume__floating-tabs-list::-webkit-scrollbar { display: none; }
-
-.resume__floating-tabs a {
-  flex: none;
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: var(--ink-2);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.55;
-  letter-spacing: -0.01em;
-  text-decoration: none;
-  white-space: nowrap;
-  scroll-snap-align: center;
-}
-
-.resume__floating-tabs a:hover {
-  opacity: 1;
-  color: var(--ink);
-  background: rgba(26, 25, 23, 0.055);
-}
-
-.resume__floating-tabs a[aria-current="location"] {
-  color: var(--ground);
-  background: var(--ink);
-  box-shadow: inset 0 0 0 1px rgba(26, 25, 23, 0.12);
-}
-
 .resume-section {
   padding-block: clamp(64px, 7vw, 96px);
   border-bottom: 1px solid var(--hair);
-  scroll-margin-top: 88px;
+  scroll-margin-top: 24px;
 }
 
 .resume-section:last-child { border-bottom: 0; }
@@ -444,12 +304,10 @@
   }
 
   .resume__intro,
-  .resume-section__body,
-  .resume__tabs-list {
+  .resume-section__body {
     padding-left: 0;
   }
 
-  .resume__tabs > div:first-child { display: none; }
   .resume-section { padding-block: 64px; }
   .resume-section__body--grid { grid-template-columns: 1fr; }
 }
@@ -460,18 +318,13 @@
   .resume-job__header { grid-template-columns: 1fr; gap: 6px; }
   .resume-section__body { gap: 18px; }
   .resume-card { padding: 24px; border-radius: 20px; }
-  .resume__floating-tabs-list { padding-right: 14px; }
-  .resume__floating-tabs a { padding: 8px; font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .resume a,
-  .resume__floating-tabs { transition: none; }
+  .resume a { transition: none; }
 }
 
 @media print {
-  .resume__tabs { display: none !important; }
-
   .resume { padding: 0; }
   .resume__hero { min-height: 0; padding: 32px 0; }
   .resume-section { padding-block: 32px; break-inside: avoid; }

@@ -96,11 +96,11 @@ const resumeCssPath = path.join(ROOT, 'assets/css/yy-resume.css');
 const resumeCss = fs.existsSync(resumeCssPath) ? fs.readFileSync(resumeCssPath, 'utf8') : '';
 for (const marker of [
   'font-family: Caveat',
-  '.resume__tabs',
   '--resume-brand-red',
   '.resume__contact a:hover',
   'backdrop-filter: blur(12px)',
-  '.resume-section__body--grid'
+  '.resume-section__body--grid',
+  'scroll-margin-top: 24px'
 ]) {
   if (!resumeCss.includes(marker)) {
     errors.push(`assets/css/yy-resume.css missing ${marker}`);
@@ -112,7 +112,7 @@ const chromeSource = fs.readFileSync(chromePath, 'utf8');
 if (chromeSource.includes('resume.html')) {
   errors.push('yy-chrome.js must not expose Resume as a standalone route');
 }
-for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel']) {
+for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
   if (!chromeSource.includes(marker)) {
     errors.push(`yy-chrome.js missing embedded Resume integration marker ${marker}`);
   }
@@ -126,10 +126,24 @@ for (const marker of [
   'disconnectedCallback',
   'resume-section',
   'resume-card',
-  'data-resume-tabs'
+  'yy:resume-section',
+  'yy:resume-navigate',
+  'data-yy-preview',
+  'ensureLinkPreview'
 ]) {
   if (!resumeJs.includes(marker)) {
     errors.push(`assets/js/yy-resume.js missing ${marker}`);
+  }
+}
+if (resumeJs.includes('data-resume-tabs') || resumeJs.includes('resume__tabs')) {
+  errors.push('yy-resume.js must not render in-panel sticky tabs — section nav lives in the capsule');
+}
+
+const linkPreviewPath = path.join(ROOT, 'assets/js/yy-link-preview.js');
+const linkPreviewJs = fs.existsSync(linkPreviewPath) ? fs.readFileSync(linkPreviewPath, 'utf8') : '';
+for (const marker of ['YYLinkPreview', 'api.microlink.io', 'data-yy-preview', 'enhance']) {
+  if (!linkPreviewJs.includes(marker)) {
+    errors.push(`assets/js/yy-link-preview.js missing ${marker}`);
   }
 }
 
@@ -285,6 +299,7 @@ const requiredAssets = [
   'assets/js/yy-flow.js',
   'assets/images/ui/nav-orb.gif',
   'assets/js/yy-resume.js',
+  'assets/js/yy-link-preview.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];
@@ -332,6 +347,11 @@ if (!chromeJs.includes('yy-panel-open') || !chromeJs.includes('open: open')) {
 }
 if (!chromeJs.includes('scrollbar-gutter:stable')) {
   errors.push('yy-chrome.js must reserve the page scrollbar gutter while popup scroll is locked');
+}
+if (!chromeJs.includes('data-lenis-prevent') ||
+    !chromeJs.includes('touch-action: pan-y') ||
+    !chromeJs.includes('-webkit-overflow-scrolling: touch')) {
+  errors.push('yy-chrome.js panel-scroll must allow nested wheel/touch scrolling under page lock');
 }
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');

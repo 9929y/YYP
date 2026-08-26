@@ -40,6 +40,17 @@
     { panel: 'resume', label: 'Resume' }
   ];
 
+  /* Resume-only capsule: section jumps replace Work/About/Resume while the
+     Resume panel is the active surface. Back restores the main capsule without
+     closing the popup. */
+  var RESUME_SECTIONS = [
+    { id: 'work',          label: 'Work' },
+    { id: 'education',     label: 'Education' },
+    { id: 'awards',        label: 'Awards' },
+    { id: 'publications',  label: 'Publication' },
+    { id: 'skills',        label: 'Skills' }
+  ];
+
   /* Footer carries the tail. `fashion.html`'s only inbound link today is a
      sentence inside aboutme.html — the site graph must not depend on one
      page's prose, so the chrome links it explicitly. */
@@ -228,6 +239,9 @@
     '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
     '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
     '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
+    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: rgba(26,25,23,.075); }',
+    '.cap-back{ display: inline-flex !important; align-items: center; justify-content: center; padding: 8px 12px !important; }',
+    '.cap-back svg{ display: block; width: 16px; height: 16px; }',
 
     /* Handwritten wordmark — Caveat, same as the reference glass capsule.
        No grey chip: the wordmark sits in the glass fill. */
@@ -278,7 +292,10 @@
     '    inset 0 -18px 42px rgba(255,255,255,.18);',
     '}',
     '.panel-scroll{',
-    '  height: 100%; overflow: auto; overscroll-behavior: contain;',
+    '  height: 100%; overflow: auto; overflow-y: auto;',
+    '  overscroll-behavior: contain;',
+    '  touch-action: pan-y;',
+    '  -webkit-overflow-scrolling: touch;',
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
@@ -353,6 +370,26 @@
     '  :host(.is-fullpage) .cap:hover > *, :host(.is-fullpage) .cap:focus-within > *{',
     '    opacity: 1; pointer-events: auto; transform: none;',
     '  }',
+    '  /* Resume section nav must stay readable — Orbit compact would hide jumps. */',
+    '  :host(.is-fullpage.is-resume-nav) .cap,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:hover,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within{',
+    '    width: max-content; max-width: calc(100vw - 24px); height: 56px; padding: 6px;',
+    '  }',
+    '  :host(.is-fullpage.is-resume-nav) .cap::before,',
+    '  :host(.is-fullpage.is-resume-nav) .cap::after,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:hover::before,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within::before,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:hover::after,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within::after{ opacity: 0; }',
+    '  :host(.is-fullpage.is-resume-nav) .cap > *,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:hover > *,',
+    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within > *{',
+    '    opacity: 1; pointer-events: auto; transform: none;',
+    '  }',
+    '  :host(.is-resume-nav) .cap{',
+    '    width: max-content; max-width: calc(100vw - 24px);',
+    '  }',
     '}',
 
     /* Below 560px the brand is the first thing to go: the four links are
@@ -361,6 +398,14 @@
     '  .brand, .rule{ display: none !important; }',
     '  .cap{ gap: 0; }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
+    '  :host(.is-resume-nav) .cap{',
+    '    max-width: calc(100vw - 16px);',
+    '    overflow-x: auto;',
+    '    -webkit-overflow-scrolling: touch;',
+    '    scrollbar-width: none;',
+    '  }',
+    '  :host(.is-resume-nav) .cap::-webkit-scrollbar{ display: none; }',
+    '  :host(.is-resume-nav) .cap button{ padding: 8px 10px; font-size: 12px; }',
     '  .panel{',
     '    --yy-nav-zone: 64px;',
     '    width: calc(100vw - 24px); height: min(78vh,720px); height: min(78dvh,720px);',
@@ -424,6 +469,19 @@
   function panelTrigger(item) {
     return '<button type="button" data-panel-trigger="' + esc(item.panel) + '"' +
       ' aria-controls="yy-nav-panel" aria-expanded="false">' + esc(item.label) + '</button>';
+  }
+
+  function resumeSectionTrigger(item) {
+    return '<button type="button" data-resume-target="' + esc(item.id) + '">' +
+      esc(item.label) + '</button>';
+  }
+
+  function resumeBackControl() {
+    return '<button type="button" class="cap-back" data-resume-back aria-label="Back">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M15 18l-6-6 6-6"/>' +
+      '</svg></button>';
   }
 
   function panelView(item) {
@@ -515,6 +573,7 @@
     var panel = root.querySelector('.panel');
     var panelScroll = root.querySelector('.panel-scroll');
     var expand = root.querySelector('.expand');
+    var cap = root.querySelector('.cap');
     var triggers = Array.prototype.slice.call(root.querySelectorAll('[data-panel-trigger]'));
     var views = Array.prototype.slice.call(root.querySelectorAll('[data-panel-view]'));
     var active = '';
@@ -523,7 +582,10 @@
     var closing = false;
     var lastOpener = null;
     var backgroundState = [];
+    var resumeNavMode = false;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (panelScroll) panelScroll.setAttribute('data-lenis-prevent', '');
 
     function prepare(name) {
       if (name !== 'resume') return;
@@ -548,6 +610,68 @@
         if (triggers[i].getAttribute('data-panel-trigger') === name) return triggers[i];
       }
       return null;
+    }
+
+    function refreshTriggers() {
+      triggers = Array.prototype.slice.call(root.querySelectorAll('[data-panel-trigger]'));
+    }
+
+    function paintCapsule(mode) {
+      if (!cap) return;
+      var children = Array.prototype.slice.call(cap.children);
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].classList.contains('brand') || children[i].classList.contains('rule')) continue;
+        children[i].remove();
+      }
+      var html = mode === 'resume'
+        ? RESUME_SECTIONS.map(resumeSectionTrigger).join('') + resumeBackControl()
+        : NAV.map(panelTrigger).join('');
+      var wrap = document.createElement('div');
+      wrap.innerHTML = html;
+      while (wrap.firstChild) cap.appendChild(wrap.firstChild);
+      cap.setAttribute('aria-label', mode === 'resume' ? 'Resume sections' : 'Main');
+      if (mode !== 'resume') {
+        refreshTriggers();
+        if (lastOpener && lastOpener.getAttribute) {
+          var openerName = lastOpener.getAttribute('data-panel-trigger');
+          if (openerName) {
+            var fresh = triggerFor(openerName);
+            if (fresh) lastOpener = fresh;
+          }
+        }
+      }
+    }
+
+    function enterResumeNav() {
+      if (resumeNavMode) return;
+      resumeNavMode = true;
+      host.classList.add('is-resume-nav');
+      paintCapsule('resume');
+    }
+
+    function leaveResumeNav() {
+      if (!resumeNavMode) return;
+      resumeNavMode = false;
+      host.classList.remove('is-resume-nav');
+      paintCapsule('main');
+      if (active) sync(active);
+      else {
+        for (var i = 0; i < triggers.length; i++) {
+          triggers[i].setAttribute('aria-expanded', 'false');
+        }
+      }
+    }
+
+    function setResumeSectionCurrent(id) {
+      if (!resumeNavMode || !cap) return;
+      var buttons = cap.querySelectorAll('[data-resume-target]');
+      for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].getAttribute('data-resume-target') === id) {
+          buttons[i].setAttribute('aria-current', 'location');
+        } else {
+          buttons[i].removeAttribute('aria-current');
+        }
+      }
     }
 
     function sync(name) {
@@ -630,6 +754,9 @@
       prepare(name);
       active = name;
       sync(name);
+      var start = trigger.getBoundingClientRect();
+      if (name === 'resume') enterResumeNav();
+      else leaveResumeNav();
       panel.classList.remove('is-expanded');
       host.classList.remove('is-fullpage');
       HTML.classList.remove('yy-panel-fullpage');
@@ -642,7 +769,6 @@
       host.classList.add('is-open');
       restoreViewScroll(name);
       var targetView = viewFor(name);
-      var start = trigger.getBoundingClientRect();
       animatePanel(start, false, function () {
         panelAnimation = null;
         if (targetView && !reduced && targetView.animate) {
@@ -670,6 +796,7 @@
       HTML.classList.remove('yy-panel-open');
       announcePanelState(false, false);
       setBackgroundInert(false);
+      leaveResumeNav();
       var target = returnFocus || lastOpener || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
       for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
@@ -700,6 +827,8 @@
       prepare(name);
       active = name;
       sync(name);
+      if (name === 'resume') enterResumeNav();
+      else leaveResumeNav();
       restoreViewScroll(name);
       var next = viewFor(name);
       if (next && !reduced && next.animate) {
@@ -741,24 +870,52 @@
       }
     }
 
-    for (var i = 0; i < triggers.length; i++) {
-      triggers[i].addEventListener('click', function (event) {
-        var name = event.currentTarget.getAttribute('data-panel-trigger');
-        if (closing) open(name, event.currentTarget, event.currentTarget);
-        else if (!host.classList.contains('is-open')) open(name, event.currentTarget, event.currentTarget);
-        else if (active === name) close(event.currentTarget);
-        else switchView(name, event.currentTarget);
-      });
+    function onCapClick(event) {
+      var back = event.target.closest('[data-resume-back]');
+      if (back && cap.contains(back)) {
+        leaveResumeNav();
+        return;
+      }
+      var section = event.target.closest('[data-resume-target]');
+      if (section && cap.contains(section)) {
+        window.dispatchEvent(new CustomEvent('yy:resume-navigate', {
+          detail: { id: section.getAttribute('data-resume-target') }
+        }));
+        return;
+      }
+      var trigger = event.target.closest('[data-panel-trigger]');
+      if (!trigger || !cap.contains(trigger)) return;
+      var name = trigger.getAttribute('data-panel-trigger');
+      if (closing) open(name, trigger, trigger);
+      else if (!host.classList.contains('is-open')) open(name, trigger, trigger);
+      else if (active === name) close(trigger);
+      else switchView(name, trigger);
     }
+
+    if (cap) cap.addEventListener('click', onCapClick);
     expand.addEventListener('click', toggleExpanded);
     window.addEventListener('yy:open-panel', function (event) {
       var name = event.detail && event.detail.name;
+      /* After Back, Resume triggers are gone — reopen via footer or recreate main capsule. */
+      if (resumeNavMode && name && name !== 'resume') leaveResumeNav();
       var trigger = triggerFor(name);
+      if (!trigger) {
+        if (name === 'resume' && resumeNavMode) return;
+        if (name === 'resume') {
+          leaveResumeNav();
+          trigger = triggerFor(name);
+        }
+      }
       if (!trigger) return;
       var opener = event.detail && event.detail.returnFocus;
       if (closing) open(name, trigger, opener);
       else if (!host.classList.contains('is-open')) open(name, trigger, opener);
       else if (active !== name) switchView(name, opener);
+      else if (name === 'resume' && !resumeNavMode) enterResumeNav();
+    });
+    window.addEventListener('yy:resume-section', function (event) {
+      var id = event.detail && event.detail.id;
+      if (id) setResumeSectionCurrent(id);
     });
     root.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && active) {

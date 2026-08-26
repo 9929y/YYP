@@ -118,6 +118,23 @@
     { category: 'Development and collaboration', items: ['HTML', 'CSS', 'Python', 'SQL', 'R', 'Webflow', 'Agile development', 'Jira', 'Linear', 'Notion', 'Cross-functional collaboration'] }
   ];
 
+  var previewLoad = null;
+  function ensureLinkPreview() {
+    if (window.YYLinkPreview) return Promise.resolve(window.YYLinkPreview);
+    if (previewLoad) return previewLoad;
+    previewLoad = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = ROOT + 'assets/js/yy-link-preview.js';
+      script.onload = function () { resolve(window.YYLinkPreview); };
+      script.onerror = function () {
+        previewLoad = null;
+        reject(new Error('Link preview failed to load'));
+      };
+      (document.head || document.documentElement).appendChild(script);
+    });
+    return previewLoad;
+  }
+
   function esc(value) {
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
@@ -126,27 +143,15 @@
       .replace(/"/g, '&quot;');
   }
 
-  function external(url, label) {
-    return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label) + ' ↗</a>';
-  }
-
-  function tabs() {
-    return '<nav class="resume__tabs resume-grid resume-rule" aria-label="Resume sections" data-resume-tabs>' +
-      '<div aria-hidden="true"></div>' +
-      '<div class="resume__tabs-list">' +
-        ['work', 'education', 'awards', 'publications', 'skills'].map(function (id) {
-          return '<button type="button" data-resume-target="' + id + '">' +
-            id.charAt(0).toUpperCase() + id.slice(1) +
-          '</button>';
-        }).join('') +
-      '</div>' +
-    '</nav>';
+  function external(url, label, withPreview) {
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener"' +
+      (withPreview ? ' data-yy-preview' : '') + '>' + esc(label) + ' ↗</a>';
   }
 
   function jobCard(job) {
     return '<article class="resume-card resume-job">' +
       '<div class="resume-job__header">' +
-        '<h3>' + external(job.url, job.company) + '</h3>' +
+        '<h3>' + external(job.url, job.company, true) + '</h3>' +
         '<p class="resume-job__role">' + esc(job.role) + '</p>' +
       '</div>' +
       '<p class="resume-job__meta">' +
@@ -168,11 +173,10 @@
           '<p class="resume__location">Bay Area, United States</p>' +
           '<div class="resume__contact" aria-label="Contact links">' +
             '<a href="mailto:yaniceydesign@gmail.com">Email</a>' +
-            external('https://www.linkedin.com/in/yanice-yang', 'LinkedIn') +
+            external('https://www.linkedin.com/in/yanice-yang', 'LinkedIn', false) +
           '</div>' +
         '</div>' +
       '</header>' +
-      tabs() +
       '<section class="resume-section resume-grid resume-rule" id="work" aria-labelledby="resume-work-heading">' +
         '<div class="resume__label"><h2 class="resume-eyebrow" id="resume-work-heading">Work</h2><p class="resume__range">2019 — Present</p></div>' +
         '<div class="resume-section__body">' + jobs.map(jobCard).join('') + '</div>' +
@@ -190,7 +194,7 @@
         '<div class="resume__label"><h2 class="resume-eyebrow" id="resume-awards-heading">Awards</h2></div>' +
         '<div class="resume-section__body resume-section__body--grid">' +
           awards.map(function (award) {
-            var title = award.url ? external(award.url, award.name) : esc(award.name);
+            var title = award.url ? external(award.url, award.name, true) : esc(award.name);
             return '<article class="resume-card resume-entry"><div class="resume-entry__heading"><h3>' + title +
               '</h3><span>' + esc(award.tier) + '</span></div><p class="resume-entry__meta">' + esc(award.note) + '</p></article>';
           }).join('') +
@@ -200,7 +204,7 @@
         '<div class="resume__label"><h2 class="resume-eyebrow" id="resume-publications-heading">Publications</h2></div>' +
         '<div class="resume-section__body resume-section__body--grid">' +
           publications.map(function (publication) {
-            return '<article class="resume-card resume-entry"><h3>' + external(publication.url, publication.title) +
+            return '<article class="resume-card resume-entry"><h3>' + external(publication.url, publication.title, true) +
               '</h3><p class="resume-entry__meta">' + esc(publication.publisher) + '</p></article>';
           }).join('') +
         '</div>' +
@@ -240,21 +244,22 @@
     if (this.__yyReady) return;
     this.__yyReady = true;
 
+    var host = this;
     var shadow = this.shadowRoot;
     var scroller = this.closest('.panel-scroll');
-    var tabsBar = shadow.querySelector('[data-resume-tabs]');
     var sections = Array.prototype.slice.call(shadow.querySelectorAll('.resume-section[id]'));
-    var buttons = Array.prototype.slice.call(shadow.querySelectorAll('[data-resume-target]'));
     var queued = false;
     var raf = 0;
-    var buttonHandlers = [];
+    var currentId = '';
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var SCROLL_INSET = 24;
 
-    function setCurrent(id) {
-      buttons.forEach(function (button) {
-        if (button.getAttribute('data-resume-target') === id) button.setAttribute('aria-current', 'location');
-        else button.removeAttribute('aria-current');
-      });
+    function announceSection(id) {
+      if (!id || id === currentId) return;
+      currentId = id;
+      window.dispatchEvent(new CustomEvent('yy:resume-section', {
+        detail: { id: id }
+      }));
     }
 
     function update() {
@@ -262,7 +267,7 @@
       raf = 0;
       if (!scroller || !sections.length) return;
       var scrollerRect = scroller.getBoundingClientRect();
-      var line = scrollerRect.top + (tabsBar ? tabsBar.offsetHeight : 0) + 24;
+      var line = scrollerRect.top + SCROLL_INSET;
       var current = sections[0].id;
       var nearest = Infinity;
 
@@ -283,7 +288,7 @@
       if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) {
         current = sections[sections.length - 1].id;
       }
-      setCurrent(current);
+      announceSection(current);
     }
 
     function requestUpdate() {
@@ -292,25 +297,34 @@
       raf = window.requestAnimationFrame(update);
     }
 
-    buttons.forEach(function (button) {
-      var handler = function () {
-        var section = shadow.getElementById(button.getAttribute('data-resume-target'));
-        if (!section || !scroller) return;
-        var top = scroller.scrollTop + section.getBoundingClientRect().top -
-          scroller.getBoundingClientRect().top - (tabsBar ? tabsBar.offsetHeight : 0) - 16;
-        scroller.scrollTo({ top: top, behavior: reduced ? 'auto' : 'smooth' });
-        setCurrent(section.id);
-      };
-      button.addEventListener('click', handler);
-      buttonHandlers.push({ button: button, handler: handler });
-    });
+    function navigateTo(id) {
+      var section = shadow.getElementById(id);
+      if (!section || !scroller) return;
+      var top = scroller.scrollTop + section.getBoundingClientRect().top -
+        scroller.getBoundingClientRect().top - SCROLL_INSET;
+      scroller.scrollTo({ top: Math.max(0, top), behavior: reduced ? 'auto' : 'smooth' });
+      announceSection(section.id);
+    }
+
+    function onNavigate(event) {
+      var id = event.detail && event.detail.id;
+      if (id) navigateTo(id);
+    }
 
     if (scroller) scroller.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
+    window.addEventListener('yy:resume-navigate', onNavigate);
     this.__yyScroller = scroller;
     this.__yyRequestUpdate = requestUpdate;
-    this.__yyButtonHandlers = buttonHandlers;
+    this.__yyOnNavigate = onNavigate;
     this.__yyRaf = function () { return raf; };
+
+    ensureLinkPreview().then(function (api) {
+      if (api && api.enhance) api.enhance(shadow);
+    }).catch(function (error) {
+      if (window.console) console.error('[yy-resume] link preview unavailable:', error);
+    });
+
     update();
   };
 
@@ -319,16 +333,13 @@
       this.__yyScroller.removeEventListener('scroll', this.__yyRequestUpdate);
     }
     if (this.__yyRequestUpdate) window.removeEventListener('resize', this.__yyRequestUpdate);
-    var handlers = this.__yyButtonHandlers || [];
-    for (var i = 0; i < handlers.length; i++) {
-      handlers[i].button.removeEventListener('click', handlers[i].handler);
-    }
+    if (this.__yyOnNavigate) window.removeEventListener('yy:resume-navigate', this.__yyOnNavigate);
     var raf = this.__yyRaf && this.__yyRaf();
     if (raf) window.cancelAnimationFrame(raf);
     this.__yyReady = false;
     this.__yyScroller = null;
     this.__yyRequestUpdate = null;
-    this.__yyButtonHandlers = null;
+    this.__yyOnNavigate = null;
     this.__yyRaf = null;
   };
 
