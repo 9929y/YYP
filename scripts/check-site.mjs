@@ -268,10 +268,10 @@ if (!chromeJs.includes('class="expand"')) {
 if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
   errors.push('yy-chrome.js popup missing reduced-motion fallback');
 }
-if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.94)') ||
+if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
     !chromeJs.includes('.panel.is-expanded{') ||
     !chromeJs.includes('inset: 0;')) {
-  errors.push('yy-chrome.js expanded panel must fully cover the viewport with an opaque fill');
+  errors.push('yy-chrome.js expanded panel must fully cover the viewport with a glass fill');
 }
 if (!chromeJs.includes('yy:panel-state')) {
   errors.push('yy-chrome.js must announce expanded panel state');
@@ -280,6 +280,18 @@ if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
     !chromeJs.includes(':focus-within')) {
   errors.push('yy-chrome.js missing the hover/focus navigation orb');
+}
+if (!chromeJs.includes("host.classList.toggle('is-fullpage', expanded)") ||
+    !chromeJs.includes(':host(.is-fullpage) .cap{') ||
+    !chromeJs.includes('width: 48px; height: 48px;')) {
+  errors.push('yy-chrome.js must limit the 48px navigation orb to fullpage state');
+}
+if (!chromeJs.includes(':host(.is-fullpage) .cap:hover') ||
+    !chromeJs.includes('680ms')) {
+  errors.push('yy-chrome.js fullpage orbit must expand on hover with a slow cross-fade');
+}
+if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
+  errors.push('yy-chrome.js fullpage glass missing its white inset border');
 }
 if (chromeJs.includes("borderRadius: '999px'")) {
   errors.push('yy-chrome.js panel animation must not tween through an elliptical radius');
