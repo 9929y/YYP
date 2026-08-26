@@ -79,7 +79,7 @@ html.yy-case body {
 
 .cs__body :where(p) {
   margin: 0;
-  max-width: 40em;
+  max-width: none;
   color: var(--ink-2);
 }
 

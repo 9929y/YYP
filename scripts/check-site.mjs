@@ -289,6 +289,7 @@ for (const file of htmlFiles) {
 
 const requiredAssets = [
   'assets/css/yy-tokens.css',
+  'assets/css/yy-case-layout.css',
   'assets/css/yy-chrome.css',
   'assets/css/yy-resume.css',
   'assets/js/yy-chrome.js',
@@ -314,6 +315,30 @@ if (!tokensCss.includes('--slot-radius: 36px')) {
 }
 if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
+}
+
+const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
+if (!caseLayoutCss.includes('.paragraph') || !caseLayoutCss.includes('max-width: none')) {
+  errors.push('yy-case-layout.css must lift .paragraph max-width');
+}
+if (!caseLayoutCss.includes('.textblockp1') || !caseLayoutCss.includes('max-width: none')) {
+  errors.push('yy-case-layout.css must lift .textblockp1 max-width');
+}
+
+const caseLayoutPages = [
+  'ai-driven-product-design.html',
+  'mckinseyecommerce.html',
+  'larkdesign.html',
+  'cummins-digitalization.html',
+  'mifinance.html',
+  'alzheimerdisease.html',
+  'tiktok-research.html'
+];
+for (const name of caseLayoutPages) {
+  const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
+  if (!html.includes('yy-case-layout.css')) {
+    errors.push(`${name}: missing yy-case-layout.css link`);
+  }
 }
 
 const chromeJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-chrome.js'), 'utf8');
