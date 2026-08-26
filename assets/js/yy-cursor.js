@@ -81,8 +81,8 @@
       /* Chain: each node eases toward the previous (or the pointer). */
       var ax = i === 0 ? prevX : samples[i - 1].x;
       var ay = i === 0 ? prevY : samples[i - 1].y;
-      var ease = 0.22 - i * 0.018;
-      if (ease < 0.08) ease = 0.08;
+      var ease = 0.28 - i * 0.022;
+      if (ease < 0.1) ease = 0.1;
       s.x += (ax - s.x) * ease;
       s.y += (ay - s.y) * ease;
       wakeDots[i].style.setProperty('--wx', s.x.toFixed(2) + 'px');
