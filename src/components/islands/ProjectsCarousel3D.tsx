@@ -156,15 +156,16 @@ function cardTransform(
   ].join(' ');
 }
 
-/** Final open pose — cylinder seat + clear per-card tilt. */
+/** Final open pose — cylinder seat + clear per-card tilt (kept moderate so
+ * neighboring plates do not intersect while dragging). */
 function openTransform(index: number, radius: number): string {
   return cardTransform(index, radius, {
     yawScale: 1,
     radiusScale: 1,
-    localYawStep: 9,
-    localPitchBase: -10,
-    localPitchStep: 2.2,
-    localRollStep: 3.6,
+    localYawStep: 5.5,
+    localPitchBase: -8,
+    localPitchStep: 1.8,
+    localRollStep: 2.6,
     scale: 1
   });
 }
@@ -280,7 +281,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
   // Face size from 8-slot ring math; 5 seats on the front arc, back open.
-  const cylinderWidth = isScreenSizeSm ? 1280 : 2100;
+  const cylinderWidth = isScreenSizeSm ? 1360 : 2280;
   const faceWidth = cylinderWidth / SLOT_COUNT;
   const radius = cylinderWidth / (2 * Math.PI);
 
