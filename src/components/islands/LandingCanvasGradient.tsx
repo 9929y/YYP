@@ -6,6 +6,7 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
  * Plays continuously; scroll does not pause or scrub the shader.
  * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
  * In the project band, uSpeed drops to 0.7× base (data-motion-zone=projects).
+ * Expanded navigation panels pause the shader clock via yy:panel-state.
  *
  * Entry: still image paints immediately; WebGL mounts after first paint / idle,
  * then crossfades in once the first frame is ready (avoids refresh hitch).
@@ -40,6 +41,7 @@ export default function LandingCanvasGradient() {
   const [mountCanvas, setMountCanvas] = useState(false);
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
   const [pixelDensity, setPixelDensity] = useState(1);
+  const [panelExpanded, setPanelExpanded] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -132,7 +134,19 @@ export default function LandingCanvasGradient() {
     return () => mo.disconnect();
   }, [allowMotion]);
 
+  useEffect(() => {
+    const onPanelState = (event: Event) => {
+      setPanelExpanded(Boolean((event as CustomEvent<{ expanded?: boolean }>).detail?.expanded));
+    };
+
+    window.addEventListener('yy:panel-state', onPanelState);
+    return () => window.removeEventListener('yy:panel-state', onPanelState);
+  }, []);
+
   if (!allowMotion || !mountCanvas) return null;
+
+  const motionActive = !panelExpanded;
+  const activeSpeed = motionActive ? uSpeed : 0;
 
   return (
     <ShaderGradientCanvas
@@ -146,7 +160,7 @@ export default function LandingCanvasGradient() {
     >
       <ShaderGradient
         control="props"
-        animate="on"
+        animate={motionActive ? 'on' : 'off'}
         brightness={1.2}
         cAzimuthAngle={200}
         cDistance={9.4}
@@ -176,7 +190,7 @@ export default function LandingCanvasGradient() {
         uAmplitude={0}
         uDensity={1.1}
         uFrequency={5.5}
-        uSpeed={uSpeed}
+        uSpeed={activeSpeed}
         uStrength={2.5}
         uTime={3.48}
         wireframe={false}
