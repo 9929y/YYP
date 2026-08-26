@@ -260,6 +260,11 @@ if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #
   errors.push('yy-footer host must paint a light band so dark case pages match landing chrome');
 }
 
+const chromeCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCss.includes('html.yy-chrome .paragraph') || !chromeCss.includes('max-width: none')) {
+  errors.push('yy-chrome.css must lift the 36em paragraph cap so case copy fills its cell');
+}
+
 if (!chromeJs.includes('yy-case-type.css')) {
   errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
 }
@@ -272,14 +277,27 @@ if (
 
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
 const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
+const caseTypeCssCode = caseTypeCss.replace(/\/\*[\s\S]*?\*\//g, '');
 if (!caseTypeCss.includes('--ink-2')) {
   errors.push('yy-case-type.css must use landing ink tokens');
 }
 if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
   errors.push('yy-case-type.css must restyle display, mid, and label headings');
 }
-if (caseTypeCss.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCss)) {
+if (caseTypeCssCode.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not change .section-layout1 horizontal padding');
+}
+if (/grid-template-columns/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not set grid-template-columns (keep authored 2-column layout)');
+}
+if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not set horizontal padding or margin (fonts + vertical spacing only)');
+}
+if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not use margin shorthand that zeros left/right');
+}
+if (!caseTypeCssCode.includes('object-fit: contain') || !caseTypeCssCode.includes('.grid-2-2')) {
+  errors.push('yy-case-type.css must equalize .grid-2-2 paired image cell heights');
 }
 
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
