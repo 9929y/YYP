@@ -75,6 +75,7 @@
 
   var boot = document.createElement('style');
   boot.textContent =
+    'html.yy-chrome{scrollbar-gutter:stable}' +
     'html.yy-chrome .navbar.w-nav{display:none}' +
     'html.yy-chrome .footer-credit-wrapper{display:none}' +
     'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}';
