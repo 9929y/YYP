@@ -347,6 +347,13 @@
     transform-origin: top center;
   }
 
+  /* Horizontal hairlines: grow left → right with the intro. */
+  html.yy-landing .hero__zone--meta::after,
+  html.yy-landing .hero__title::before {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
   [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
     animation: introFade 560ms cubic-bezier(.2, .8, .2, 1) both;
   }
@@ -369,6 +376,14 @@
 
   [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
     animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__zone--meta::after {
+    animation: introLineGrowX 640ms cubic-bezier(.16, 1, .3, 1) 280ms both;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__title::before {
+    animation: introLineGrowX 640ms cubic-bezier(.16, 1, .3, 1) 360ms both;
   }
 
   @keyframes introFade {
@@ -400,6 +415,11 @@
     to { transform: scaleY(1); }
   }
 
+  @keyframes introLineGrowX {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .yy-canvas__gradient { display: none !important; }
     .yy-canvas__media--still {
@@ -423,7 +443,11 @@
       overflow: visible !important;
     }
     html.yy-landing .hero.row--ruled::before,
-    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
+    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before,
+    html.yy-landing .hero__zone--meta::after,
+    html.yy-landing .hero__title::before,
+    [data-motion-root][data-intro-ready="true"] .hero__zone--meta::after,
+    [data-motion-root][data-intro-ready="true"] .hero__title::before {
       animation: none !important;
       transform: none !important;
     }
@@ -534,10 +558,21 @@
   }
 
   .hero__zone--meta {
+    position: relative;
     flex: 0 0 clamp(96px, 14vh, 195px);
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #939393;
+  }
+
+  .hero__zone--meta::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #939393;
+    pointer-events: none;
   }
 
   .hero__zone--foot {
@@ -557,15 +592,26 @@
 
   /* Hero H1: scaled landing --t-64 (56). Width still overflows the content col. */
   .hero__title {
+    position: relative;
     margin: 0;
     padding-top: 1px;
-    border-top: 1px solid #939393;
     font-size: clamp(var(--t-32), 3.9vw, var(--t-64));
     line-height: 1;
     letter-spacing: -0.04em;
     font-weight: 600;
     width: min(1123px, calc(100vw - var(--col-label) - var(--col-gap) - 2 * var(--edge)));
     max-width: none;
+  }
+
+  .hero__title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: #939393;
+    pointer-events: none;
   }
 
   @media (min-width: 1160px) {

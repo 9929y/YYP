@@ -156,7 +156,7 @@ export const projects: Project[] = [
     },
     video: {
       src: 'assets/videos/case-mckinsey.mp4',
-      poster: 'assets/images/home/hero-mckinsey-ecommerce-card-cover.webp',
+      poster: 'assets/images/home/case-mckinsey.jpg',
       width: 1440,
       height: 1080,
       label: 'McKinsey orbit preview',
@@ -196,7 +196,7 @@ export const projects: Project[] = [
     },
     video: {
       src: 'assets/videos/case-lark.mp4',
-      poster: 'assets/images/home/hero-lark-onboarding-card-cover.webp',
+      poster: 'assets/images/home/case-lark.jpg',
       width: 1440,
       height: 1080,
       label: 'Lark Design carousel preview',
