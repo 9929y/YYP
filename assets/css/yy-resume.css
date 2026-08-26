@@ -51,13 +51,13 @@
   inset-block: 0;
   left: var(--resume-rule-x);
   width: 1px;
-  background: var(--rule);
+  background: rgba(255, 255, 255, 0.72);
   pointer-events: none;
 }
 
 .resume__hero {
   align-content: center;
-  padding-block: clamp(64px, 8vh, 96px) clamp(40px, 5vh, 56px);
+  padding-block: clamp(48px, 6vh, 72px) clamp(28px, 4vh, 40px);
 }
 
 .resume__label {
@@ -156,8 +156,8 @@
 .resume a:hover { opacity: 0.64; }
 
 .resume-section {
-  padding-block: clamp(64px, 7vw, 96px);
-  border-bottom: 1px solid var(--hair);
+  padding-block: clamp(40px, 4.5vw, 64px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
   scroll-margin-top: 24px;
 }
 
@@ -274,7 +274,7 @@
 
 .resume-skills li {
   padding: 7px 12px;
-  border: 1px solid var(--hair);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 999px;
   color: var(--ink-2);
   font-size: var(--t-13);
@@ -300,7 +300,7 @@
   .resume-rule::before { display: none; }
 
   .resume__hero {
-    padding-block: 96px 48px;
+    padding-block: 64px 32px;
   }
 
   .resume__intro,
@@ -308,7 +308,7 @@
     padding-left: 0;
   }
 
-  .resume-section { padding-block: 64px; }
+  .resume-section { padding-block: 40px; }
   .resume-section__body--grid { grid-template-columns: 1fr; }
 }
 
