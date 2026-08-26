@@ -1,7 +1,8 @@
 /* ============================================================================
-   yy-cursor.js — landing "view" cursor. Extracted from landing.html so the
-   page is no longer the owner of this effect. Behaviour is unchanged.
+   yy-cursor.js — landing cursor for project slots.
 
+   Published links bloom a round disc with "view".
+   In-progress slots (Atlas Nova) bloom a glass chip with "on progress".
    ASCII diffusion wake lives in yy-flow.js (#yy-flow), not here.
    ============================================================================ */
 (function () {
@@ -14,9 +15,25 @@
   var MQ = matchMedia('(min-width: 992px) and (hover: hover) and (pointer: fine)');
   var RM = matchMedia('(prefers-reduced-motion: reduce)');
 
+  function clearHover() {
+    el.classList.remove('on', 'is-chip');
+  }
+
   function standDown() {
     html.classList.remove('yy-cursor-live');
-    el.classList.remove('on');
+    clearHover();
+  }
+
+  function bindSlot(t) {
+    t.addEventListener('mouseenter', function () {
+      if (!MQ.matches || RM.matches) return;
+      var text = t.getAttribute('data-cursor-label') || 'view';
+      var chip = t.getAttribute('data-cursor-chip') === 'true';
+      if (label) label.textContent = text;
+      el.classList.toggle('is-chip', chip);
+      el.classList.add('on');
+    });
+    t.addEventListener('mouseleave', clearHover);
   }
 
   try {
@@ -36,19 +53,13 @@
 
     setInterval(function () {
       if (moves === 0 && html.classList.contains('yy-cursor-live')) standDown();
+      moves = 0;
     }, 500);
 
-    document.querySelectorAll('a.slot').forEach(function (t) {
-      t.addEventListener('mouseenter', function () {
-        if (!MQ.matches || RM.matches) return;
-        if (label) label.textContent = 'view';
-        el.classList.add('on');
-      });
-      t.addEventListener('mouseleave', function () { el.classList.remove('on'); });
-    });
+    document.querySelectorAll('.slot[data-cursor-label]').forEach(bindSlot);
 
-    window.addEventListener('blur', function () { el.classList.remove('on'); });
-    document.addEventListener('mouseleave', function () { el.classList.remove('on'); });
+    window.addEventListener('blur', clearHover);
+    document.addEventListener('mouseleave', clearHover);
   } catch (e) {
     standDown();
     el.style.display = 'none';

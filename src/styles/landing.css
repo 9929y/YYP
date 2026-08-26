@@ -136,6 +136,17 @@
     backdrop-filter: blur(12px);
   }
 
+  /* In-progress (Atlas): same glass as .on, reshaped to a status chip. */
+  #yy-cursor.on.is-chip {
+    width: 124px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: -.02em;
+    font-weight: 500;
+  }
+
   .yy-cursor__t {
     opacity: 0;
     white-space: nowrap;

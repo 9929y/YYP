@@ -22,7 +22,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       {project.panelFoot && <p class="panel__foot">{project.panelFoot}</p>}
     </div>
   ) : showMedia && href ? (
-    <a class="slot rv" href={href} aria-label={label}>
+    <a class="slot rv" href={href} aria-label={label} data-cursor-label="view">
       {project.video ? (
         <video
           class="slot__v"
@@ -55,7 +55,14 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       </span>
     </a>
   ) : showMedia ? (
-    <div class="slot slot--static rv" role="group" aria-label={project.title}>
+    <div
+      class:list={['slot', 'slot--static', 'rv']}
+      role="group"
+      aria-label={project.title}
+      data-cursor-label={project.status === 'in-progress' ? 'on progress' : undefined}
+      data-cursor-chip={project.status === 'in-progress' ? 'true' : undefined}
+      data-status={project.status}
+    >
       {project.video ? (
         <video
           class="slot__v"
