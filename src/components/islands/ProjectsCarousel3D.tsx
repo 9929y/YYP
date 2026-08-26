@@ -111,26 +111,53 @@ function faceAngle(index: number): number {
   return (index - mid) * step;
 }
 
+const INTRO_SPRING = {
+  type: 'spring' as const,
+  stiffness: 88,
+  damping: 15,
+  mass: 0.55
+};
+
 const CarouselFace = memo(function CarouselFace({
   card,
   index,
   faceWidth,
-  radius
+  radius,
+  intro
 }: {
   card: ProjectsCarouselCard;
   index: number;
   faceWidth: number;
   radius: number;
+  intro: boolean;
 }) {
   const angle = faceAngle(index);
-
-  const slotStyle: CSSProperties = {
-    width: `${faceWidth}px`,
-    transform: `rotateY(${angle}deg) translateZ(${radius}px)`
-  };
+  const reduced = prefersReducedMotion();
 
   return (
-    <div className="yy-projects-card-slot" style={slotStyle}>
+    <motion.div
+      className="yy-projects-card-slot"
+      style={{
+        width: `${faceWidth}px`,
+        transformStyle: 'preserve-3d'
+      }}
+      initial={
+        reduced || !intro
+          ? false
+          : {
+              opacity: 0.25,
+              transform: `rotateY(0deg) translateZ(${radius * 0.1}px) scale(0.78)`
+            }
+      }
+      animate={{
+        opacity: 1,
+        transform: `rotateY(${angle}deg) translateZ(${radius}px) scale(1)`
+      }}
+      transition={{
+        ...INTRO_SPRING,
+        delay: reduced || !intro ? 0 : 0.1 + index * 0.1
+      }}
+    >
       <div
         className="yy-projects-card"
         data-tone={card.tone % 7}
@@ -139,7 +166,7 @@ const CarouselFace = memo(function CarouselFace({
       >
         <div className="yy-projects-card__inner" />
       </div>
-    </div>
+    </motion.div>
   );
 });
 
@@ -153,8 +180,17 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const autoPausedUntil = useRef(0);
   const autoWasPaused = useRef(false);
   const zoomIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [introDone, setIntroDone] = useState(() => prefersReducedMotion());
 
   const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
+
+  // Hold auto-orbit until the fan-out intro finishes.
+  useEffect(() => {
+    if (introDone) return;
+    autoPausedUntil.current = performance.now() + 2200;
+    const t = window.setTimeout(() => setIntroDone(true), 1800);
+    return () => window.clearTimeout(t);
+  }, [introDone]);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
   const cylinderWidth = isScreenSizeSm ? 1200 : 2000;
@@ -370,6 +406,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
               index={index}
               faceWidth={faceWidth}
               radius={radius}
+              intro
             />
           ))}
         </motion.div>
