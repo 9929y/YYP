@@ -121,6 +121,7 @@
     '  --yy-panel-radius: 30px;',
     '  --yy-nav-zone: 72px;',
     '  --yy-panel-width: min(83.4vw, 1600px);',
+    '  --yy-panel-height: min(73.9vh, 798px);',
     '  --yy-panel-height: min(73.9dvh, 798px);',
     '  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;',
     '  font-size: 16px;',
@@ -245,6 +246,7 @@
     /* ---- navigation panel --------------------------------------------- */
     '.panel{',
     '  position: absolute; z-index: 1; left: 0; right: 0; bottom: auto;',
+    '  top: max(16px, calc((100vh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
     '  top: max(16px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
     '  width: var(--yy-panel-width); height: var(--yy-panel-height);',
     '  margin-inline: auto; overflow: hidden;',
@@ -264,7 +266,7 @@
     ':host(.is-open) .panel{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel.is-expanded{',
     '  inset: 0;',
-    '  width: 100vw; height: 100dvh; max-width: none;',
+    '  width: 100vw; height: 100vh; height: 100dvh; max-width: none;',
     '  border-radius: 0; background: var(--yy-panel-full-fill);',
     '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
     '  backdrop-filter: blur(20px) saturate(1.35);',
@@ -360,17 +362,17 @@
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  .panel{',
     '    --yy-nav-zone: 64px;',
-    '    width: calc(100vw - 24px); height: min(78dvh,720px);',
+    '    width: calc(100vw - 24px); height: min(78vh,720px); height: min(78dvh,720px);',
     '    border-radius: 24px;',
     '  }',
-    '  .panel.is-expanded{ inset: 0; width: 100vw; height: 100dvh; border-radius: 0; }',
+    '  .panel.is-expanded{ inset: 0; width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }',
     '  .panel-view{ padding: 64px 24px 32px; }',
     '  .panel-view--resume{ padding: 0; }',
     '  .expand{ top: 14px; right: 14px; }',
     '}',
     '@media (max-height: 560px){',
-    '  .panel{ --yy-nav-zone: 72px; top: 8px; height: calc(100dvh - 80px); }',
-    '  .panel.is-expanded{ inset: 0; height: 100dvh; }',
+    '  .panel{ --yy-nav-zone: 72px; top: 8px; height: calc(100vh - 80px); height: calc(100dvh - 80px); }',
+    '  .panel.is-expanded{ inset: 0; height: 100vh; height: 100dvh; }',
     '}',
     '@media (prefers-reduced-motion: reduce){',
     '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
@@ -517,6 +519,9 @@
     var active = '';
     var panelAnimation = null;
     var viewScroll = {};
+    var closing = false;
+    var lastOpener = null;
+    var backgroundState = [];
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function prepare(name) {
@@ -566,6 +571,24 @@
       });
     }
 
+    function setBackgroundInert(inert) {
+      if (inert) {
+        if (backgroundState.length) return;
+        var children = document.body.children;
+        for (var i = 0; i < children.length; i++) {
+          var child = children[i];
+          if (child === host) continue;
+          backgroundState.push({ element: child, hadInert: child.hasAttribute('inert') });
+          child.setAttribute('inert', '');
+        }
+        return;
+      }
+      for (var j = 0; j < backgroundState.length; j++) {
+        if (!backgroundState[j].hadInert) backgroundState[j].element.removeAttribute('inert');
+      }
+      backgroundState = [];
+    }
+
     function keyframesBetween(from, to, closing) {
       var scale = Math.max(Math.min(from.width / to.width, from.height / to.height), .055);
       var dx = from.left + from.width / 2 - (to.left + to.width / 2);
@@ -600,13 +623,21 @@
       panelAnimation.oncancel = null;
     }
 
-    function open(name, trigger) {
+    function open(name, trigger, opener) {
+      closing = false;
+      lastOpener = opener || trigger || lastOpener;
       prepare(name);
       active = name;
       sync(name);
+      var wasFullpage = panel.classList.contains('is-expanded');
+      panel.classList.remove('is-expanded');
       host.classList.remove('is-fullpage');
       HTML.classList.remove('yy-panel-fullpage');
+      setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
+      expand.setAttribute('aria-label', 'Expand panel');
+      expand.setAttribute('aria-pressed', 'false');
+      if (wasFullpage) announcePanelState(false);
       host.classList.add('is-open');
       restoreViewScroll(name);
       var targetView = viewFor(name);
@@ -624,24 +655,29 @@
     }
 
     function close(returnFocus) {
-      if (!active) return;
+      if (!active || closing) return;
+      closing = true;
       var former = active;
       saveViewScroll(former);
       var wasExpanded = panel.classList.contains('is-expanded');
       if (wasExpanded) {
         host.classList.remove('is-fullpage');
         HTML.classList.remove('yy-panel-fullpage');
+        setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
+        announcePanelState(false);
       }
-      var target = returnFocus || triggerFor(former);
+      setBackgroundInert(false);
+      var target = returnFocus || lastOpener || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
-      active = '';
       for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
       animatePanel(destination, true, function () {
+        if (!closing) return;
         panelAnimation = null;
+        closing = false;
+        active = '';
         host.classList.remove('is-open');
         panel.classList.remove('is-expanded');
-        if (wasExpanded) announcePanelState(false);
         expand.setAttribute('aria-label', 'Expand panel');
         expand.setAttribute('aria-pressed', 'false');
         for (var j = 0; j < views.length; j++) views[j].hidden = true;
@@ -649,7 +685,10 @@
       });
     }
 
-    function switchView(name) {
+    function switchView(name, opener) {
+      closing = false;
+      if (panelAnimation) panelAnimation.cancel();
+      if (opener) lastOpener = opener;
       saveViewScroll(active);
       prepare(name);
       active = name;
@@ -670,7 +709,8 @@
       panel.classList.toggle('is-expanded', expanded);
       host.classList.toggle('is-fullpage', expanded);
       HTML.classList.toggle('yy-panel-fullpage', expanded);
-      panel.setAttribute('aria-modal', expanded ? 'true' : 'false');
+      setBackgroundInert(expanded);
+      panel.setAttribute('aria-modal', 'false');
       announcePanelState(expanded);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
@@ -696,9 +736,10 @@
     for (var i = 0; i < triggers.length; i++) {
       triggers[i].addEventListener('click', function (event) {
         var name = event.currentTarget.getAttribute('data-panel-trigger');
-        if (!host.classList.contains('is-open')) open(name, event.currentTarget);
+        if (closing) open(name, event.currentTarget, event.currentTarget);
+        else if (!host.classList.contains('is-open')) open(name, event.currentTarget, event.currentTarget);
         else if (active === name) close(event.currentTarget);
-        else switchView(name);
+        else switchView(name, event.currentTarget);
       });
     }
     expand.addEventListener('click', toggleExpanded);
@@ -706,13 +747,15 @@
       var name = event.detail && event.detail.name;
       var trigger = triggerFor(name);
       if (!trigger) return;
-      if (!host.classList.contains('is-open')) open(name, trigger);
-      else if (active !== name) switchView(name);
+      var opener = event.detail && event.detail.returnFocus;
+      if (closing) open(name, trigger, opener);
+      else if (!host.classList.contains('is-open')) open(name, trigger, opener);
+      else if (active !== name) switchView(name, opener);
     });
     root.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && active) {
         event.preventDefault();
-        close(triggerFor(active));
+        close();
       }
     });
   }
@@ -722,7 +765,10 @@
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].addEventListener('click', function (event) {
         window.dispatchEvent(new CustomEvent('yy:open-panel', {
-          detail: { name: event.currentTarget.getAttribute('data-open-panel') }
+          detail: {
+            name: event.currentTarget.getAttribute('data-open-panel'),
+            returnFocus: event.currentTarget
+          }
         }));
       });
     }

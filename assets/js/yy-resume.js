@@ -246,6 +246,8 @@
     var sections = Array.prototype.slice.call(shadow.querySelectorAll('.resume-section[id]'));
     var buttons = Array.prototype.slice.call(shadow.querySelectorAll('[data-resume-target]'));
     var queued = false;
+    var raf = 0;
+    var buttonHandlers = [];
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function setCurrent(id) {
@@ -257,6 +259,7 @@
 
     function update() {
       queued = false;
+      raf = 0;
       if (!scroller || !sections.length) return;
       var scrollerRect = scroller.getBoundingClientRect();
       var line = scrollerRect.top + (tabsBar ? tabsBar.offsetHeight : 0) + 24;
@@ -286,23 +289,47 @@
     function requestUpdate() {
       if (queued) return;
       queued = true;
-      window.requestAnimationFrame(update);
+      raf = window.requestAnimationFrame(update);
     }
 
     buttons.forEach(function (button) {
-      button.addEventListener('click', function () {
+      var handler = function () {
         var section = shadow.getElementById(button.getAttribute('data-resume-target'));
         if (!section || !scroller) return;
         var top = scroller.scrollTop + section.getBoundingClientRect().top -
           scroller.getBoundingClientRect().top - (tabsBar ? tabsBar.offsetHeight : 0) - 16;
         scroller.scrollTo({ top: top, behavior: reduced ? 'auto' : 'smooth' });
         setCurrent(section.id);
-      });
+      };
+      button.addEventListener('click', handler);
+      buttonHandlers.push({ button: button, handler: handler });
     });
 
     if (scroller) scroller.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
+    this.__yyScroller = scroller;
+    this.__yyRequestUpdate = requestUpdate;
+    this.__yyButtonHandlers = buttonHandlers;
+    this.__yyRaf = function () { return raf; };
     update();
+  };
+
+  YYResumeContent.prototype.disconnectedCallback = function () {
+    if (this.__yyScroller && this.__yyRequestUpdate) {
+      this.__yyScroller.removeEventListener('scroll', this.__yyRequestUpdate);
+    }
+    if (this.__yyRequestUpdate) window.removeEventListener('resize', this.__yyRequestUpdate);
+    var handlers = this.__yyButtonHandlers || [];
+    for (var i = 0; i < handlers.length; i++) {
+      handlers[i].button.removeEventListener('click', handlers[i].handler);
+    }
+    var raf = this.__yyRaf && this.__yyRaf();
+    if (raf) window.cancelAnimationFrame(raf);
+    this.__yyReady = false;
+    this.__yyScroller = null;
+    this.__yyRequestUpdate = null;
+    this.__yyButtonHandlers = null;
+    this.__yyRaf = null;
   };
 
   customElements.define('yy-resume-content', YYResumeContent);
