@@ -3,6 +3,10 @@
 The site is an Astro static build with Webflow pages copied through unchanged.
 Add new work on the Astro side. Do not edit the 19k-line Webflow stylesheet.
 
+Nav and footer are one component (`assets/js/yy-chrome.js`) on every page,
+including case studies. Do not restyle Webflow case **body** padding to match
+the landing spine; chrome is the layer that stays visually unified.
+
 ## Commands
 
 ```bash

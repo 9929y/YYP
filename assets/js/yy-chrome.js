@@ -78,7 +78,12 @@
   var boot = document.createElement('style');
   boot.textContent =
     'html.yy-chrome .navbar.w-nav{display:none}' +
-    'html.yy-chrome .footer-credit-wrapper{display:none}';
+    'html.yy-chrome .footer-credit-wrapper{display:none}' +
+    /* Credit-only Webflow shells (projects, about, archived home). Case pages
+       keep `.four-column` prev/next as in-page content, not as a second footer. */
+    'html.yy-chrome .footer-section:not(:has(.four-column)){display:none}' +
+    'html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)){display:none}' +
+    'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}';
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
@@ -139,7 +144,13 @@
     '}',
     ':host(yy-nav) .cap,',
     ':host(yy-nav) .skip{ pointer-events: auto; }',
-    ':host(yy-footer){ display: block; }',
+    /* Light band on every page, including dark Webflow cases, so the footer
+       matches the landing chrome instead of inheriting body #000. */
+    ':host(yy-footer){',
+    '  display: block;',
+    '  background: #fff;',
+    '  color: var(--yy-ink);',
+    '}',
 
     /* ---- skip link: first tab stop, parked off-screen until focused ---- */
     /* ⚠️ 不能用 `position: fixed` + 负 top 把它藏到视口外。
@@ -331,11 +342,12 @@
     document.body.insertBefore(shadow('yy-nav', navHTML), document.body.firstChild);
 
     /* ---- footer ----
-       One code path, three cases. Insert after `.footer-credit-wrapper` where
-       it exists (9 pages) and let the boot CSS hide the original; append to
-       body where it does not (fashion.html, tiktok-research.html).
+       Always append to <body>, same as the Astro landing. Nesting inside
+       `.footer-section` / `.grid-wrapper` inherited Webflow 5vw gutters and
+       made case footers look like a different component. Page content padding
+       (`.section-layout1` etc.) is untouched.
 
-       `.four-column` is NEVER touched — the prev/next project links in it are
+       `.four-column` is NEVER hidden — the prev/next project links in it are
        content, not chrome. */
     var footHTML =
       '<footer class="ft">' +
@@ -355,10 +367,7 @@
         '<p class="credit">© Yanice Yang 2026</p>' +
       '</footer>';
 
-    var host = shadow('yy-footer', footHTML);
-    var credit = document.querySelector('.footer-credit-wrapper');
-    if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
-    else document.body.appendChild(host);
+    document.body.appendChild(shadow('yy-footer', footHTML));
   }
 
   function go() {

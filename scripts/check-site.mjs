@@ -241,6 +241,24 @@ for (const asset of requiredAssets) {
   if (!fs.existsSync(here)) errors.push(`missing ${asset}`);
 }
 
+const chromeJsPath = path.join(ROOT, 'assets/js/yy-chrome.js');
+const chromeJs = fs.readFileSync(chromeJsPath, 'utf8');
+if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
+  errors.push('yy-chrome.js must hide the legacy Webflow navbar');
+}
+if (!chromeJs.includes("document.body.appendChild(shadow('yy-footer'")) {
+  errors.push('yy-chrome.js must append the shared footer to document.body (landing chrome, not Webflow grid)');
+}
+if (chromeJs.includes('insertBefore(host, credit')) {
+  errors.push('yy-chrome.js must not nest the shared footer next to .footer-credit-wrapper');
+}
+if (!chromeJs.includes('.footer-section:not(:has(.four-column))')) {
+  errors.push('yy-chrome.js must hide credit-only Webflow footer shells');
+}
+if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #fff;')) {
+  errors.push('yy-footer host must paint a light band so dark case pages match landing chrome');
+}
+
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
 if (!tokensCss.includes('--slot-radius: 36px')) {
   errors.push('yy-tokens.css missing --slot-radius: 36px for the Landing redesign');
