@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { ProjectsCarousel3D } from '../components/islands/ProjectsCarousel3D';
-import { hubProjects, publicUrl } from '../data/projects';
+import { hubProjects } from '../data/projects';
 import '../styles/projects.css';
 
 const projects = hubProjects();
@@ -9,10 +9,7 @@ const cards = projects.map((p, i) => ({
   id: p.slug,
   title: p.title,
   scope: p.scope,
-  pathLabel: `PROJECT ${String(i + 1).padStart(2, '0')}`,
-  imageSrc: publicUrl(
-    `assets/images/projects/placeholders/card-${String(i + 1).padStart(2, '0')}.png`
-  )
+  tone: i
 }));
 ---
 
@@ -21,7 +18,7 @@ const cards = projects.map((p, i) => ({
   description="Selected product design work."
   htmlClass="yy-projects"
   reveal={false}
-  lenis={true}
+  lenis={false}
   chrome={true}
 >
   <main class="projects-wrap">
