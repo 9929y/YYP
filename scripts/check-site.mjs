@@ -249,6 +249,25 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
 }
 
+const chromeJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-chrome.js'), 'utf8');
+for (const panelName of ['work', 'about', 'resume']) {
+  if (!chromeJs.includes(`data-panel-trigger="${panelName}"`)) {
+    errors.push(`yy-chrome.js missing ${panelName} panel trigger`);
+  }
+  if (!chromeJs.includes(`data-panel-view="${panelName}"`)) {
+    errors.push(`yy-chrome.js missing ${panelName} panel view`);
+  }
+}
+if (!chromeJs.includes('role="dialog"') || !chromeJs.includes('aria-modal="false"')) {
+  errors.push('yy-chrome.js popup must expose a modeless dialog');
+}
+if (!chromeJs.includes('class="expand"')) {
+  errors.push('yy-chrome.js popup missing expand control');
+}
+if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
+  errors.push('yy-chrome.js popup missing reduced-motion fallback');
+}
+
 const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
 if (!indexAstro.includes('yy-canvas')) {
   errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
