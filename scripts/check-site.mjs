@@ -356,7 +356,7 @@ if (!chromeJs.includes('data-lenis-prevent') ||
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
 }
-for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', 'calc(100vh - var(--yy-nav-zone) - 24px)']) {
+for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel-height: calc(100vh - var(--yy-nav-zone) - 24px)']) {
   if (!chromeJs.includes(marker)) {
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
