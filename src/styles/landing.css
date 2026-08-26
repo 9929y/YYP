@@ -81,7 +81,8 @@
     line-height: 22px;
     letter-spacing: -.64px;
     pointer-events: none;
-    z-index: 2137;
+    /* Above yy-nav panel (9000) and link preview (9500); below preloader (10000). */
+    z-index: 9800;
     will-change: transform;
     /* translate(-50%,-50%) trails the position translate, so it resolves against
        the element's own box and re-centres automatically as width animates —

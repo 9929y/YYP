@@ -47,9 +47,10 @@
   var isLanding = html.classList.contains('yy-landing');
   var snapTimer = 0;
   var snapping = false;
+  var panelOpen = false;
 
   function start() {
-    if (lenis || RM.matches) return;
+    if (lenis || RM.matches || panelOpen) return;
     try {
       lenis = new Lenis({
         /* Landing: slightly longer settle so soft case-snap doesn't fight the wheel. */
@@ -83,6 +84,18 @@
   start();
   if (RM.addEventListener) RM.addEventListener('change', function () { RM.matches ? stop() : start(); });
   else if (RM.addListener) RM.addListener(function () { RM.matches ? stop() : start(); });
+
+  window.addEventListener('yy:panel-state', function (event) {
+    panelOpen = Boolean(event.detail && event.detail.open);
+    if (!lenis) {
+      if (!panelOpen) start();
+      return;
+    }
+    try {
+      if (panelOpen) lenis.stop();
+      else lenis.start();
+    } catch (e) { /* native overflow lock remains the fallback */ }
+  });
 
   /* --------------------------------------------------------------------------
      Landing soft snap — after the wheel settles, ease to the nearest .case
@@ -200,6 +213,7 @@
     try {
       var vids = document.querySelectorAll('.slot video, .media--video video');
       if (!vids.length) return;
+      var panelExpanded = false;
 
       if (RM.matches) {                 /* poster only, never fetch the video */
         for (var k = 0; k < vids.length; k++) vids[k].removeAttribute('loop');
@@ -212,14 +226,22 @@
       } catch (e) { canHover = false; }
 
       function tryPlay(v) {
+        if (panelExpanded) return;
         var pr = v.play();
         if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
       }
 
       function wireHover(v) {
         var slot = v.closest('.slot') || v;
-        var enter = function () { tryPlay(v); };
-        var leave = function () { if (!v.paused) v.pause(); };
+        v.__yyUsesHover = true;
+        var enter = function () {
+          v.__yyHovering = true;
+          tryPlay(v);
+        };
+        var leave = function () {
+          v.__yyHovering = false;
+          if (!v.paused) v.pause();
+        };
         slot.addEventListener('pointerenter', enter);
         slot.addEventListener('pointerleave', leave);
         /* Warm the first frame so hover does not wait on cold start. */
@@ -235,6 +257,27 @@
         else scrollVids.push(v);
       }
 
+      function resumeEligibleVideos() {
+        for (var r = 0; r < vids.length; r++) {
+          var candidate = vids[r];
+          if ((candidate.__yyUsesHover && candidate.__yyHovering) ||
+              (!candidate.__yyUsesHover && candidate.__yyInView)) {
+            tryPlay(candidate);
+          }
+        }
+      }
+
+      window.addEventListener('yy:panel-state', function (event) {
+        panelExpanded = Boolean(event.detail && event.detail.expanded);
+        if (panelExpanded) {
+          for (var p = 0; p < vids.length; p++) {
+            if (!vids[p].paused) vids[p].pause();
+          }
+        } else {
+          resumeEligibleVideos();
+        }
+      });
+
       if (!scrollVids.length || !('IntersectionObserver' in window)) {
         document.addEventListener('visibilitychange', function () {
           if (!document.hidden) return;
@@ -248,6 +291,7 @@
       var io = new IntersectionObserver(function (entries) {
         for (var n = 0; n < entries.length; n++) {
           var e = entries[n], vid = e.target;
+          vid.__yyInView = e.intersectionRatio >= PLAY_AT;
           if (e.intersectionRatio >= PLAY_AT) {
             if (vid.paused) tryPlay(vid);
           } else if (e.intersectionRatio < PAUSE_AT && !vid.paused) {

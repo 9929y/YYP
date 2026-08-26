@@ -87,6 +87,66 @@ if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
   errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
 }
 
+const resumePagePath = path.join(ROOT, 'src/pages/resume.astro');
+if (fs.existsSync(resumePagePath)) {
+  errors.push('src/pages/resume.astro must not exist — Resume is embedded in the shared popup');
+}
+
+const resumeCssPath = path.join(ROOT, 'assets/css/yy-resume.css');
+const resumeCss = fs.existsSync(resumeCssPath) ? fs.readFileSync(resumeCssPath, 'utf8') : '';
+for (const marker of [
+  'font-family: Caveat',
+  '--resume-brand-red',
+  '.resume__contact a:hover',
+  'backdrop-filter: blur(12px)',
+  '.resume-section__body--grid',
+  'scroll-margin-top: 24px'
+]) {
+  if (!resumeCss.includes(marker)) {
+    errors.push(`assets/css/yy-resume.css missing ${marker}`);
+  }
+}
+
+const chromePath = path.join(ROOT, 'assets/js/yy-chrome.js');
+const chromeSource = fs.readFileSync(chromePath, 'utf8');
+if (chromeSource.includes('resume.html')) {
+  errors.push('yy-chrome.js must not expose Resume as a standalone route');
+}
+for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
+  if (!chromeSource.includes(marker)) {
+    errors.push(`yy-chrome.js missing embedded Resume integration marker ${marker}`);
+  }
+}
+
+const resumeJsPath = path.join(ROOT, 'assets/js/yy-resume.js');
+const resumeJs = fs.existsSync(resumeJsPath) ? fs.readFileSync(resumeJsPath, 'utf8') : '';
+for (const marker of [
+  "customElements.define('yy-resume-content'",
+  'attachShadow',
+  'disconnectedCallback',
+  'resume-section',
+  'resume-card',
+  'yy:resume-section',
+  'yy:resume-navigate',
+  'data-yy-preview',
+  'ensureLinkPreview'
+]) {
+  if (!resumeJs.includes(marker)) {
+    errors.push(`assets/js/yy-resume.js missing ${marker}`);
+  }
+}
+if (resumeJs.includes('data-resume-tabs') || resumeJs.includes('resume__tabs')) {
+  errors.push('yy-resume.js must not render in-panel sticky tabs — section nav lives in the capsule');
+}
+
+const linkPreviewPath = path.join(ROOT, 'assets/js/yy-link-preview.js');
+const linkPreviewJs = fs.existsSync(linkPreviewPath) ? fs.readFileSync(linkPreviewPath, 'utf8') : '';
+for (const marker of ['YYLinkPreview', 'api.microlink.io', 'data-yy-preview', 'enhance']) {
+  if (!linkPreviewJs.includes(marker)) {
+    errors.push(`assets/js/yy-link-preview.js missing ${marker}`);
+  }
+}
+
 const requiredCaseStudyComponents = [
   'CaseSection.astro',
   'CaseMetaGrid.astro',
@@ -184,6 +244,9 @@ if (useDist) {
   if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
     errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
   }
+  if (fs.existsSync(path.join(distDir, 'resume.html'))) {
+    errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
+  }
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
   }
@@ -232,12 +295,16 @@ const requiredAssets = [
   'assets/css/yy-chrome.css',
   'assets/css/yy-motion.css',
   'assets/css/yy-case-type.css',
+  'assets/css/yy-resume.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
   'assets/js/yy-cursor.js',
   'assets/js/yy-slots.js',
   'assets/js/yy-flow.js',
+  'assets/images/ui/nav-orb.gif',
+  'assets/js/yy-resume.js',
+  'assets/js/yy-link-preview.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];
@@ -251,8 +318,8 @@ const chromeJs = fs.readFileSync(chromeJsPath, 'utf8');
 if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
   errors.push('yy-chrome.js must hide the legacy Webflow navbar');
 }
-if (!chromeJs.includes("document.body.appendChild(shadow('yy-footer'")) {
-  errors.push('yy-chrome.js must append the shared footer to document.body (landing chrome, not Webflow grid)');
+if (!chromeJs.includes("document.body.appendChild(host)") || !chromeJs.includes("setupFooterPanelTriggers(host)")) {
+  errors.push('yy-chrome.js must append the shared footer to document.body and wire footer panel triggers');
 }
 if (chromeJs.includes('insertBefore(host, credit')) {
   errors.push('yy-chrome.js must not nest the shared footer next to .footer-credit-wrapper');
@@ -350,6 +417,116 @@ if (!tokensCss.includes('--slot-radius: 36px')) {
 }
 if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
+}
+
+for (const panelName of ['work', 'about', 'resume']) {
+  if (!chromeJs.includes(`panel: '${panelName}'`)) {
+    errors.push(`yy-chrome.js missing ${panelName} panel configuration`);
+  }
+}
+if (!chromeJs.includes('data-panel-trigger="') || !chromeJs.includes('data-panel-view="')) {
+  errors.push('yy-chrome.js must generate panel triggers and views');
+}
+if (!chromeJs.includes('role="dialog"') || !chromeJs.includes('aria-modal="false"')) {
+  errors.push('yy-chrome.js popup must expose a modeless dialog');
+}
+if (!chromeJs.includes('class="expand"')) {
+  errors.push('yy-chrome.js popup missing expand control');
+}
+if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
+  errors.push('yy-chrome.js popup missing reduced-motion fallback');
+}
+if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
+    !chromeJs.includes('.panel.is-expanded{') ||
+    !chromeJs.includes('.panel-stack.is-expanded{')) {
+  errors.push('yy-chrome.js expanded panel must fully cover the viewport with a glass fill');
+}
+if (!chromeJs.includes('yy:panel-state')) {
+  errors.push('yy-chrome.js must announce expanded panel state');
+}
+if (!chromeJs.includes('yy-panel-open') || !chromeJs.includes('open: open')) {
+  errors.push('yy-chrome.js must lock the underlay for every open popup state');
+}
+if (!chromeJs.includes('scrollbar-gutter:stable')) {
+  errors.push('yy-chrome.js must reserve the page scrollbar gutter while popup scroll is locked');
+}
+if (!chromeJs.includes('data-lenis-prevent') ||
+    !chromeJs.includes('touch-action: pan-y') ||
+    !chromeJs.includes('-webkit-overflow-scrolling: touch')) {
+  errors.push('yy-chrome.js panel-scroll must allow nested wheel/touch scrolling under page lock');
+}
+if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
+  errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
+}
+for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel-gap: 12px']) {
+  if (!chromeJs.includes(marker)) {
+    errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
+  }
+}
+if (!chromeJs.includes('function expandToFullpage()') ||
+    !chromeJs.includes('if (closing || !active) return;')) {
+  errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
+}
+if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
+    !chromeJs.includes('leaveFullpageToOrigin') ||
+    !chromeJs.includes('yyPanelFull') ||
+    !chromeJs.includes('fullpageHash')) {
+  errors.push('yy-chrome.js expanded layer must hide the expand control and exit via Go Back to the origin page');
+}
+if (!chromeJs.includes('View full screen') ||
+    !chromeJs.includes('expand-label') ||
+    !chromeJs.includes("top: 18px; right: 18px;") ||
+    !chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)')) {
+  errors.push('yy-chrome.js popup must keep View full screen as an icon inside the panel card');
+}
+if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
+    !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
+  errors.push('yy-chrome.js must keep main nav on Resume popup and enter section nav only on expand');
+}
+if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }') ||
+    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }')) {
+  errors.push('yy-chrome.js capsule must show a selected pill for active nav items');
+}
+if (chromeJs.includes('width: 36px; height: 36px;') &&
+    chromeJs.includes(':host(.is-fullpage) .cap{')) {
+  errors.push('yy-chrome.js must not shrink the capsule into a 36px Orbit on fullpage');
+}
+if (!chromeJs.includes("host.classList.toggle('is-fullpage'") ||
+    !chromeJs.includes('is-resume-nav') ||
+    !chromeJs.includes('Go Back')) {
+  errors.push('yy-chrome.js fullpage Resume must keep the navigation bar with Go Back');
+}
+if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
+  errors.push('yy-chrome.js fullpage glass missing its white inset border');
+}
+if (!chromeJs.includes('--yy-cap-size: 56px') ||
+    !chromeJs.includes('bottom: calc(var(--yy-nav-zone) + var(--yy-panel-gap))') ||
+    !chromeJs.includes('top: var(--yy-panel-gap)')) {
+  errors.push('yy-chrome.js normal panel must use equal top/bottom gaps above the capsule');
+}
+if (!chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
+  errors.push('yy-chrome.js capsule must carry the shared nav shadow');
+}
+if (chromeJs.includes("borderRadius: '999px'")) {
+  errors.push('yy-chrome.js panel animation must not tween through an elliptical radius');
+}
+
+const canvasGradient = fs.readFileSync(
+  path.join(ROOT, 'src/components/islands/LandingCanvasGradient.tsx'),
+  'utf8'
+);
+if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('panelExpanded')) {
+  errors.push('LandingCanvasGradient must pause for expanded navigation panels');
+}
+
+const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
+if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
+  errors.push('yy-scroll.js must pause videos for expanded navigation panels');
+}
+if (!scrollJs.includes('panelOpen') ||
+    !scrollJs.includes('lenis.stop()') ||
+    !scrollJs.includes('lenis.start()')) {
+  errors.push('yy-scroll.js must pause Lenis while any popup is open');
 }
 
 const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
