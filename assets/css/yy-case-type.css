@@ -226,10 +226,14 @@ html.yy-case-type .w-layout-grid.grid-11.ne > img {
   justify-self: stretch;
 }
 
+/* Same-height boxes: the Lark old/new workflow pair is 3380 vs 2080 tall.
+   A shared aspect box + contain keeps both cells one length without
+   changing the 2-column template. */
 html.yy-case-type .w-layout-grid.grid-2-2:not(.mck) > img,
 html.yy-case-type .w-layout-grid.grid-2-2:not(.mck) > a img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
   object-fit: contain;
   object-position: center;
 }
@@ -238,13 +242,15 @@ html.yy-case-type .w-layout-grid.grid-2-2:not(.mck) > a img {
    stretching the drawing. Side gutters stay as authored. */
 html.yy-case-type .w-layout-grid.grid-2-2.mck > img {
   width: 100%;
+  height: 30vh;
   object-fit: contain;
   object-position: center;
 }
 
 html.yy-case-type .w-layout-grid.grid-11.ne > img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center;
 }
