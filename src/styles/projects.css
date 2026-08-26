@@ -1,5 +1,5 @@
-/* projects.css — Astro projects hub + full-360 cylinder + pointer orbit.
-   Tokens from yy-tokens.css. Opaque distinct card tones (no glass stack). */
+/* projects.css — Astro projects hub + cylinder carousel + pointer orbit.
+   Tokens from yy-tokens.css. Card faces mirror yy-nav glass capsule. */
 
 html.yy-projects {
   background: var(--ground);
@@ -194,14 +194,20 @@ html.yy-projects body {
   }
 }
 
-/* ---------- opaque distinct cards ---------- */
+/* ---------- nav-matched glass cards (perspective sheen) ----------
+   Real backdrop-filter dies under 3D transforms (same reason yy-nav avoids
+   a transformed host). Simulate the capsule: frosted fill, inset hair,
+   indigo drop, plus a per-seat specular for perspective. */
 
 .yy-projects-card {
+  --tone: #2f6fed;
+  --sheen-angle: 145deg;
+  --sheen-x: 50%;
   position: relative;
   display: block;
   aspect-ratio: 1 / 1;
   margin: 0;
-  padding: 8px;
+  padding: 0;
   border: 0;
   border-radius: 18px;
   box-sizing: border-box;
@@ -210,37 +216,99 @@ html.yy-projects body {
   pointer-events: none;
 }
 
-.yy-projects-card__inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
+.yy-projects-card__plate,
+.yy-projects-card__glass {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
   box-sizing: border-box;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 10px 28px -12px rgba(26, 25, 23, 0.35);
+  pointer-events: none;
 }
 
-/* Seven clearly different solid tones — depth reads without labels. */
-.yy-projects-card[data-tone='0'] .yy-projects-card__inner {
-  background: #2f6fed;
+/* Distinct tone bed — stays readable through the frost. */
+.yy-projects-card__plate {
+  background: var(--tone);
+  transform: translateZ(0);
+  box-shadow: 0 10px 28px -12px rgba(26, 25, 23, 0.28);
 }
-.yy-projects-card[data-tone='1'] .yy-projects-card__inner {
-  background: #e4572e;
+
+/* Nav capsule glass recipe (yy-chrome .cap) — frost light enough for tone to read. */
+.yy-projects-card__glass {
+  background:
+    linear-gradient(
+      var(--sheen-angle),
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.16) 34%,
+      rgba(255, 255, 255, 0.04) 62%,
+      rgba(255, 255, 255, 0) 82%
+    ),
+    rgba(255, 255, 255, 0.32);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.2);
+  /* Slight lift so the frost reads as a front glass face in 3D. */
+  transform: translateZ(1.5px);
 }
-.yy-projects-card[data-tone='2'] .yy-projects-card__inner {
-  background: #1f9d6a;
+
+/* Specular catch-light — position tracks seat index for perspective. */
+.yy-projects-card__glass::after {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: var(--sheen-x);
+  width: 46%;
+  height: 42%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0) 72%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
-.yy-projects-card[data-tone='3'] .yy-projects-card__inner {
-  background: #c9a227;
+
+.yy-projects-card[data-tone='0'] {
+  --tone: #2f6fed;
 }
-.yy-projects-card[data-tone='4'] .yy-projects-card__inner {
-  background: #7c4dff;
+.yy-projects-card[data-tone='1'] {
+  --tone: #e4572e;
 }
-.yy-projects-card[data-tone='5'] .yy-projects-card__inner {
-  background: #0f766e;
+.yy-projects-card[data-tone='2'] {
+  --tone: #1f9d6a;
 }
-.yy-projects-card[data-tone='6'] .yy-projects-card__inner {
-  background: #db2777;
+.yy-projects-card[data-tone='3'] {
+  --tone: #c9a227;
+}
+.yy-projects-card[data-tone='4'] {
+  --tone: #7c4dff;
+}
+.yy-projects-card[data-tone='5'] {
+  --tone: #0f766e;
+}
+.yy-projects-card[data-tone='6'] {
+  --tone: #db2777;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .yy-projects-card__glass {
+    background:
+      linear-gradient(
+        var(--sheen-angle),
+        rgba(255, 255, 255, 0.72) 0%,
+        rgba(255, 255, 255, 0.28) 40%,
+        rgba(255, 255, 255, 0.1) 100%
+      ),
+      rgba(255, 255, 255, 0.88);
+  }
 }
 
 /* ---------- static / reduced-motion fallback ---------- */

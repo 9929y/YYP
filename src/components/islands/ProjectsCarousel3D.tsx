@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent
 } from 'react';
 
@@ -225,10 +226,17 @@ const CarouselFace = memo(function CarouselFace({
         <div
           className="yy-projects-card"
           data-tone={card.tone % 7}
-          style={{ width: `${faceWidth}px` }}
+          style={
+            {
+              width: `${faceWidth}px`,
+              ['--sheen-angle' as string]: `${125 + (index - 2) * 18}deg`,
+              ['--sheen-x' as string]: `${50 + (index - 2) * 14}%`
+            } as CSSProperties
+          }
           aria-hidden="true"
         >
-          <div className="yy-projects-card__inner" />
+          <div className="yy-projects-card__plate" />
+          <div className="yy-projects-card__glass" />
         </div>
       </div>
       <div
