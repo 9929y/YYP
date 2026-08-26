@@ -156,7 +156,9 @@
     '  justify-content: center;',
     '  pointer-events: none;',
     '}',
+    ':host(yy-nav) .panel-stack,',
     ':host(yy-nav) .panel,',
+    ':host(yy-nav) .top-bar,',
     ':host(yy-nav) .cap,',
     ':host(yy-nav) .skip{ pointer-events: auto; }',
     ':host(yy-footer){ display: block; }',
@@ -259,13 +261,48 @@
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
-    /* ---- navigation panel --------------------------------------------- */
+    /* ---- navigation panel + top action bar -----------------------------
+       Bottom .cap = filled frosted capsule.
+       Top .top-bar = outline pill with a white stroke so the two read as
+       separate chrome layers when the mid-size popup is open. */
+    '.panel-stack{',
+    '  position: absolute; z-index: 1; left: 0; right: 0;',
+    '  top: max(16px, calc((100vh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2 - 56px));',
+    '  top: max(16px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2 - 56px));',
+    '  width: var(--yy-panel-width);',
+    '  margin-inline: auto;',
+    '  display: flex; flex-direction: column; align-items: center; gap: 12px;',
+    '  box-sizing: border-box;',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '}',
+    ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
+    '.panel-stack.is-expanded{',
+    '  inset: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh;',
+    '  max-width: none; gap: 0;',
+    '}',
+    '.top-bar{',
+    '  display: flex; align-items: center; justify-content: flex-end;',
+    '  align-self: stretch;',
+    '  flex: none;',
+    '  pointer-events: auto;',
+    '}',
+    '.panel-stack.is-expanded .top-bar{ display: none; }',
+    '.top-bar-inner{',
+    '  display: inline-flex; align-items: center; gap: 8px;',
+    '  padding: 5px 8px 5px 14px;',
+    '  border-radius: 999px;',
+    '  color: var(--yy-ink);',
+    '  background: rgba(255,255,255,.22);',
+    '  -webkit-backdrop-filter: blur(10px) saturate(1.35);',
+    '  backdrop-filter: blur(10px) saturate(1.35);',
+    '  box-shadow:',
+    '    inset 0 0 0 1.5px rgba(255,255,255,.96),',
+    '    0 2px 10px -2px rgba(62,65,116,.12);',
+    '}',
     '.panel{',
-    '  position: absolute; z-index: 1; left: 0; right: 0; bottom: auto;',
-    '  top: max(16px, calc((100vh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
-    '  top: max(16px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
-    '  width: var(--yy-panel-width); height: var(--yy-panel-height);',
-    '  margin-inline: auto; overflow: hidden;',
+    '  position: relative; z-index: 1; left: auto; right: auto; bottom: auto; top: auto;',
+    '  width: 100%; height: var(--yy-panel-height);',
+    '  margin-inline: 0; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
     '  color: var(--yy-ink); background: var(--yy-fill);',
     '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
@@ -275,14 +312,12 @@
     '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
     '    inset 0 -1px 0 rgba(26,25,23,.05),',
     '    0 5px 50px 5px rgba(0,0,0,.18);',
-    '  opacity: 0; visibility: hidden; pointer-events: none;',
     '  transform-origin: center bottom; contain: layout paint;',
     '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out), backdrop-filter 680ms var(--ease-smooth-out,ease-out);',
     '}',
-    ':host(.is-open) .panel{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel.is-expanded{',
-    '  inset: 0;',
-    '  width: 100vw; height: 100vh; height: 100dvh; max-width: none;',
+    '  flex: 1 1 auto;',
+    '  width: 100%; height: 100%; max-width: none;',
     '  border-radius: 0; background: var(--yy-panel-full-fill);',
     '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
     '  backdrop-filter: blur(20px) saturate(1.35);',
@@ -310,31 +345,31 @@
     '.panel-title{ margin: 0; font-size: clamp(32px,5vw,64px); line-height: 1; letter-spacing: -.04em; }',
     '.panel-note{ margin: 18px 0 0; max-width: 38rem; color: var(--yy-ink-dim); font-size: 14px; }',
     '.expand{',
-    '  position: absolute; z-index: 2; top: 18px; right: 18px;',
-    '  width: 28px; height: 28px; padding: 0; border: 0; border-radius: 0;',
+    '  position: relative; display: inline-flex; align-items: center; gap: 8px;',
+    '  width: auto; height: auto; min-height: 28px; padding: 0; border: 0; border-radius: 0;',
     '  color: var(--yy-ink); background: transparent;',
     '  box-shadow: none;',
     '  cursor: pointer;',
+    '  font: inherit;',
     '  transition: color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out), transform var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
     '}',
     '.expand:hover{ color: var(--yy-ink); background: transparent; transform: none; }',
-    '.expand:active{ transform: scale(.94); }',
+    '.expand:active{ transform: scale(.97); }',
     '.expand:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; }',
     '.expand-label{',
-    '  position: absolute; right: calc(100% + 10px); top: 50%;',
-    '  transform: translateY(-50%);',
+    '  position: static; right: auto; top: auto; transform: none;',
     '  margin: 0; padding: 0; border: 0;',
     '  white-space: nowrap;',
     '  font-size: 12px; font-weight: 500; letter-spacing: -.01em;',
     '  color: var(--yy-ink-dim);',
-    '  opacity: 0; pointer-events: none;',
-    '  transition: opacity var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '  opacity: 1; pointer-events: none;',
     '}',
     '.expand:hover .expand-label, .expand:focus-visible .expand-label{ opacity: 1; color: var(--yy-ink); }',
-    /* Expanded layer is a dedicated URL — exit only via Back / history, never a shrink control. */
-    '.panel.is-expanded .expand{ display: none !important; }',
-    '.expand-icon{ position: absolute; inset: 6px; }',
-    '.corner{ position: absolute; width: 6px; height: 6px; transition: transform var(--duration-slow,.4s) var(--m-overshoot,var(--ease-smooth-out,ease-out)); }',
+    '.expand-icon{',
+    '  position: relative; inset: auto;',
+    '  display: block; width: 16px; height: 16px; flex: none;',
+    '}',
+    '.corner{ position: absolute; width: 5px; height: 5px; transition: transform var(--duration-slow,.4s) var(--m-overshoot,var(--ease-smooth-out,ease-out)); }',
     '.corner-nw{ left: 0; top: 0; border-left: 1.5px solid; border-top: 1.5px solid; }',
     '.corner-ne{ right: 0; top: 0; border-right: 1.5px solid; border-top: 1.5px solid; }',
     '.corner-sw{ left: 0; bottom: 0; border-left: 1.5px solid; border-bottom: 1.5px solid; }',
@@ -386,22 +421,31 @@
     '  }',
     '  :host(.is-resume-nav) .cap::-webkit-scrollbar{ display: none; }',
     '  :host(.is-resume-nav) .cap button{ padding: 8px 10px; font-size: 12px; }',
-    '  .panel{',
+    '  .panel-stack{',
     '    --yy-nav-zone: 64px;',
-    '    width: calc(100vw - 24px); height: min(78vh,720px); height: min(78dvh,720px);',
+    '    width: calc(100vw - 24px);',
+    '    top: max(12px, calc((100vh - var(--yy-nav-zone) - min(78vh,720px)) / 2 - 52px));',
+    '    top: max(12px, calc((100dvh - var(--yy-nav-zone) - min(78dvh,720px)) / 2 - 52px));',
+    '  }',
+    '  .panel{',
+    '    height: min(78vh,720px); height: min(78dvh,720px);',
     '    border-radius: 24px;',
     '  }',
-    '  .panel.is-expanded{ inset: 0; width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; }',
+    '  .panel-stack.is-expanded{ inset: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh; }',
+    '  .panel.is-expanded{ border-radius: 0; height: 100%; }',
     '  .panel-view{ padding: 64px 24px 32px; }',
     '  .panel-view--resume{ padding: 0; }',
-    '  .expand{ top: 14px; right: 14px; }',
+    '  .top-bar-inner{ padding: 5px 8px 5px 12px; }',
+    '  .expand-label{ font-size: 11px; }',
     '}',
     '@media (max-height: 560px){',
-    '  .panel{ --yy-nav-zone: 72px; top: 8px; height: calc(100vh - 80px); height: calc(100dvh - 80px); }',
-    '  .panel.is-expanded{ inset: 0; height: 100vh; height: 100dvh; }',
+    '  .panel-stack{ --yy-nav-zone: 72px; top: 8px; }',
+    '  .panel{ height: calc(100vh - 80px - 52px); height: calc(100dvh - 80px - 52px); }',
+    '  .panel-stack.is-expanded{ inset: 0; top: 0; height: 100vh; height: 100dvh; }',
+    '  .panel.is-expanded{ height: 100%; }',
     '}',
     '@media (prefers-reduced-motion: reduce){',
-    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
+    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner, .top-bar-inner{ transition-duration: 1ms !important; }',
     '}',
 
     /* ---- footer -------------------------------------------------------- */
@@ -550,6 +594,7 @@
 
   function setupPanel(host) {
     var root = host.shadowRoot;
+    var panelStack = root.querySelector('.panel-stack');
     var panel = root.querySelector('.panel');
     var panelScroll = root.querySelector('.panel-scroll');
     var expand = root.querySelector('.expand');
@@ -567,6 +612,13 @@
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (panelScroll) panelScroll.setAttribute('data-lenis-prevent', '');
+
+    function setExpandedChrome(expanded) {
+      panel.classList.toggle('is-expanded', expanded);
+      if (panelStack) panelStack.classList.toggle('is-expanded', expanded);
+      host.classList.toggle('is-fullpage', expanded);
+      HTML.classList.toggle('yy-panel-fullpage', expanded);
+    }
 
     function fullpageHash(name) {
       return '#/' + encodeURIComponent(name || 'panel');
@@ -751,9 +803,7 @@
       /* Popup always keeps main Navigation; section nav only after expand. */
       leaveResumeNav();
       clearFullpageUrl();
-      panel.classList.remove('is-expanded');
-      host.classList.remove('is-fullpage');
-      HTML.classList.remove('yy-panel-fullpage');
+      setExpandedChrome(false);
       HTML.classList.add('yy-panel-open');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
@@ -783,8 +833,7 @@
       saveViewScroll(former);
       var wasExpanded = panel.classList.contains('is-expanded');
       if (wasExpanded) {
-        host.classList.remove('is-fullpage');
-        HTML.classList.remove('yy-panel-fullpage');
+        setExpandedChrome(false);
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
       }
@@ -802,12 +851,10 @@
         closing = false;
         active = '';
         host.classList.remove('is-open');
-        host.classList.remove('is-fullpage');
-        HTML.classList.remove('yy-panel-fullpage');
+        setExpandedChrome(false);
         HTML.classList.remove('yy-panel-open');
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
-        panel.classList.remove('is-expanded');
         expand.hidden = false;
         expand.setAttribute('aria-label', 'View full screen');
         expand.setAttribute('aria-pressed', 'false');
@@ -855,9 +902,7 @@
 
     function applyExitFullpageUI() {
       if (!panel.classList.contains('is-expanded')) return;
-      panel.classList.remove('is-expanded');
-      host.classList.remove('is-fullpage');
-      HTML.classList.remove('yy-panel-fullpage');
+      setExpandedChrome(false);
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
       expand.hidden = false;
@@ -884,9 +929,7 @@
       if (closing || !active) return;
       if (panel.classList.contains('is-expanded')) return;
       var before = panel.getBoundingClientRect();
-      panel.classList.add('is-expanded');
-      host.classList.add('is-fullpage');
-      HTML.classList.add('yy-panel-fullpage');
+      setExpandedChrome(true);
       setBackgroundInert(true);
       panel.setAttribute('aria-modal', 'false');
       announcePanelState(true, true);
@@ -1004,15 +1047,21 @@
        renders identically, so only focus order catches it. */
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
-      '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
-        '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
-          '<span class="expand-label" aria-hidden="true">View full screen</span>' +
-          '<span class="expand-icon" aria-hidden="true">' +
-            '<span class="corner corner-nw"></span><span class="corner corner-ne"></span>' +
-            '<span class="corner corner-sw"></span><span class="corner corner-se"></span>' +
-          '</span>' +
-        '</button>' +
-        '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
+      '<div class="panel-stack">' +
+        '<div class="top-bar" aria-label="Panel actions">' +
+          '<div class="top-bar-inner">' +
+            '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
+              '<span class="expand-label">View full screen</span>' +
+              '<span class="expand-icon" aria-hidden="true">' +
+                '<span class="corner corner-nw"></span><span class="corner corner-ne"></span>' +
+                '<span class="corner corner-sw"></span><span class="corner corner-se"></span>' +
+              '</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
+          '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
+        '</div>' +
       '</div>' +
       '<nav class="cap" aria-label="Main" style="--yy-orb:url(' +
         esc(ROOT + 'assets/images/ui/nav-orb.gif') + ')">' +

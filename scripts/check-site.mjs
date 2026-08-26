@@ -336,7 +336,7 @@ if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
 }
 if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
     !chromeJs.includes('.panel.is-expanded{') ||
-    !chromeJs.includes('inset: 0;')) {
+    !chromeJs.includes('.panel-stack.is-expanded{')) {
   errors.push('yy-chrome.js expanded panel must fully cover the viewport with a glass fill');
 }
 if (!chromeJs.includes('yy:panel-state')) {
@@ -365,7 +365,7 @@ if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {
   errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
 }
-if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
+if (!chromeJs.includes('.panel-stack.is-expanded .top-bar{ display: none') ||
     !chromeJs.includes('leaveFullpageToOrigin') ||
     !chromeJs.includes('yyPanelFull') ||
     !chromeJs.includes('fullpageHash')) {
@@ -373,9 +373,9 @@ if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
 }
 if (!chromeJs.includes('View full screen') ||
     !chromeJs.includes('expand-label') ||
-    !chromeJs.includes('background: transparent;') ||
-    chromeJs.includes(".expand{\n  position: absolute; z-index: 2; top: 18px; right: 18px;\n  width: 38px; height: 38px;")) {
-  errors.push('yy-chrome.js expand control must be icon-only with a View full screen hover label');
+    !chromeJs.includes('top-bar-inner') ||
+    !chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)')) {
+  errors.push('yy-chrome.js popup must show a stroked top bar with View full screen above the panel');
 }
 if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
     !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
@@ -389,7 +389,7 @@ if (chromeJs.includes('width: 36px; height: 36px;') &&
     chromeJs.includes(':host(.is-fullpage) .cap{')) {
   errors.push('yy-chrome.js must not shrink the capsule into a 36px Orbit on fullpage');
 }
-if (!chromeJs.includes("host.classList.add('is-fullpage')") ||
+if (!chromeJs.includes("host.classList.toggle('is-fullpage'") ||
     !chromeJs.includes('is-resume-nav') ||
     !chromeJs.includes('Go Back')) {
   errors.push('yy-chrome.js fullpage Resume must keep the navigation bar with Go Back');
@@ -398,7 +398,7 @@ if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
   errors.push('yy-chrome.js fullpage glass missing its white inset border');
 }
 if (!chromeJs.includes('--yy-nav-zone: 72px') ||
-    !chromeJs.includes('calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2)')) {
+    !chromeJs.includes('var(--yy-panel-height)) / 2 - 56px)')) {
   errors.push('yy-chrome.js normal panel must balance space above and below');
 }
 if (!chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
