@@ -95,7 +95,7 @@ One composition, not a dashboard:
 
 ### Card anatomy
 
-- Media: transparent-background PNG placeholder (aspect TBD from art direction; default square-ish like the demo unless assets dictate otherwise).
+- Media: transparent-background PNG placeholder at **1:1** (matches the pasted carousel faces). Later art can change aspect without changing the remnant layout contract.
 - Overlay: glass layer matching `.cap` nav treatment (`backdrop-filter: blur(12px) saturate(1.6)`, semi-transparent `--yy-fill`, inset hairlines / soft indigo shadow as used in `yy-chrome`).
 - Frame: rounded corners aligned with existing `--slot-radius` / case frame tokens where sensible.
 - Path text: absolute path along the frame perimeter; animates right→left on hover; uses placeholder glyphs (`PROJECT 01` …) until real copy arrives.
