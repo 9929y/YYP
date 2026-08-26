@@ -41,6 +41,7 @@ The pasted demo assumed a shadcn + Tailwind app. This repo does **not**. Integra
 6. **Click (this version):** Visual select / bring-forward only. No detail panel. No required navigation.
 7. **Web Coding special:** Skipped this version.
 8. **Content:** Deferred; placeholders for labels and transparent-PNG media.
+9. **Typography:** Unify with current site style — reuse landing eyebrow / case name / scope recipes and `yy-tokens` type + ink. No new display system for this page.
 
 ## Architecture
 
@@ -89,16 +90,30 @@ Dependency to add: `framer-motion` only (plus existing React). Do not add shadcn
 One composition, not a dashboard:
 
 1. Site chrome (existing bottom nav capsule).
-2. Quiet page title / eyebrow consistent with site type.
+2. Quiet page title / eyebrow using the **same type recipes as the landing** (not a new display style).
 3. Dominant carousel stage (edge-aware, full-bleed within content width rules of the site).
 4. No stat strips, no schedule blocks, no multi-card marketing grids in the hero.
+
+### Typography (must match current site)
+
+All readable text on the new projects hub — page chrome labels, any selected-card meta, and path-text placeholders — must reuse the existing system. Do **not** invent a parallel type scale for this page.
+
+| Role | Match existing | Tokens / recipe |
+|---|---|---|
+| Page / section label | Landing `.eyebrow` / `.index__head .eyebrow` | `Plus Jakarta Sans`, `--t-11`, uppercase, `letter-spacing: .12em`, `--ink-3`, `--lh-caption` |
+| Project name (when shown) | `.case__name` | `--t-20`, weight 600, `letter-spacing: -0.03em`, `--ink`, `--lh-heading` |
+| Scope / secondary line | `.case__scope` | `--t-13`, `--ink-3`, `--lh-caption` |
+| Path-text on card frame | Same family + caption scale as eyebrow (mono only if a measured site pattern already uses it for micro labels) | Prefer `--t-11` / `--ink` or `--ink-2` on glass; keep tracking tight enough to read while crawling |
+| Colors / ground | Landing tokens | `--ink`, `--ink-2`, `--ink-3`, `--ground`, `--hair`, `--slot` |
+
+Implementation rule: pull sizes, weights, tracking, and ink from `yy-tokens.css` + the landing case label CSS. Placeholder strings are fine; **placeholder styling is not** — text must already look like the rest of the site.
 
 ### Card anatomy
 
 - Media: transparent-background PNG placeholder at **1:1** (matches the pasted carousel faces). Later art can change aspect without changing the remnant layout contract.
 - Overlay: glass layer matching `.cap` nav treatment (`backdrop-filter: blur(12px) saturate(1.6)`, semi-transparent `--yy-fill`, inset hairlines / soft indigo shadow as used in `yy-chrome`).
 - Frame: rounded corners aligned with existing `--slot-radius` / case frame tokens where sensible.
-- Path text: absolute path along the frame perimeter; animates right→left on hover; uses placeholder glyphs (`PROJECT 01` …) until real copy arrives.
+- Path text: absolute path along the frame perimeter; animates right→left on hover; uses placeholder glyphs (`PROJECT 01` …) until real copy arrives; **styled with the site eyebrow/caption recipe** (see Typography above), not demo/Tailwind defaults.
 - Stagger: each face gets a small X offset / yaw bias so the remnant reads creative, not a perfect fence.
 
 ### Motion
