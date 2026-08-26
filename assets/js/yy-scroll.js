@@ -44,9 +44,10 @@
 
   var RM = matchMedia('(prefers-reduced-motion: reduce)');
   var lenis = null;
+  var panelOpen = false;
 
   function start() {
-    if (lenis || RM.matches) return;
+    if (lenis || RM.matches || panelOpen) return;
     try {
       lenis = new Lenis({
         duration: 1.05,          /* measured off kedavra: ~1s settle */
@@ -75,6 +76,18 @@
   start();
   if (RM.addEventListener) RM.addEventListener('change', function () { RM.matches ? stop() : start(); });
   else if (RM.addListener) RM.addListener(function () { RM.matches ? stop() : start(); });
+
+  window.addEventListener('yy:panel-state', function (event) {
+    panelOpen = Boolean(event.detail && event.detail.open);
+    if (!lenis) {
+      if (!panelOpen) start();
+      return;
+    }
+    try {
+      if (panelOpen) lenis.stop();
+      else lenis.start();
+    } catch (e) { /* native overflow lock remains the fallback */ }
+  });
 
   /* --------------------------------------------------------------------------
      Effect 1 — filmic image reveal.

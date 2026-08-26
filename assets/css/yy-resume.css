@@ -3,6 +3,9 @@
   --resume-label: 300px;
   --resume-gap: 12px;
   --resume-rule-x: calc(var(--resume-label) + 8px);
+  --resume-brand-red: #f45f86;
+  --resume-brand-blue: #6171ff;
+  --resume-brand-cyan: #63d9ef;
   color: var(--ink);
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   font-size: var(--t-16);
@@ -112,6 +115,36 @@
   margin-top: 24px;
 }
 
+.resume__contact a {
+  position: relative;
+  padding-bottom: 3px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.resume__contact a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(26, 25, 23, 0.52);
+  transition:
+    height var(--duration-fast) var(--ease-smooth-out),
+    background var(--duration-fast) var(--ease-smooth-out);
+}
+
+.resume__contact a:hover {
+  opacity: 1;
+}
+
+.resume__contact a:hover::after,
+.resume__contact a:focus-visible::after {
+  height: 2px;
+  background: linear-gradient(90deg, var(--resume-brand-red), var(--resume-brand-blue));
+}
+
 .resume a {
   color: inherit;
   text-decoration-thickness: 1px;
@@ -126,11 +159,28 @@
   position: sticky;
   z-index: 4;
   top: 0;
+  isolation: isolate;
   padding-block: 20px;
   border-block: 1px solid var(--hair);
-  background: rgba(255, 255, 255, 0.86);
+  background: transparent;
   -webkit-backdrop-filter: blur(12px) saturate(1.25);
   backdrop-filter: blur(12px) saturate(1.25);
+}
+
+.resume__tabs::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 95, 134, 0.20) 32%,
+    rgba(97, 113, 255, 0.30) 50%,
+    rgba(99, 217, 239, 0.18) 68%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 .resume__tabs-list {

@@ -77,7 +77,7 @@
   boot.textContent =
     'html.yy-chrome .navbar.w-nav{display:none}' +
     'html.yy-chrome .footer-credit-wrapper{display:none}' +
-    'html.yy-panel-fullpage,html.yy-panel-fullpage body{overflow:hidden!important}';
+    'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}';
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
@@ -601,9 +601,9 @@
       return closing ? [large, small] : [small, large];
     }
 
-    function announcePanelState(expanded) {
+    function announcePanelState(expanded, open) {
       window.dispatchEvent(new CustomEvent('yy:panel-state', {
-        detail: { expanded: expanded }
+        detail: { expanded: expanded, open: open }
       }));
     }
 
@@ -629,15 +629,15 @@
       prepare(name);
       active = name;
       sync(name);
-      var wasFullpage = panel.classList.contains('is-expanded');
       panel.classList.remove('is-expanded');
       host.classList.remove('is-fullpage');
       HTML.classList.remove('yy-panel-fullpage');
+      HTML.classList.add('yy-panel-open');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
       expand.setAttribute('aria-label', 'Expand panel');
       expand.setAttribute('aria-pressed', 'false');
-      if (wasFullpage) announcePanelState(false);
+      announcePanelState(false, true);
       host.classList.add('is-open');
       restoreViewScroll(name);
       var targetView = viewFor(name);
@@ -665,8 +665,9 @@
         HTML.classList.remove('yy-panel-fullpage');
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
-        announcePanelState(false);
       }
+      HTML.classList.remove('yy-panel-open');
+      announcePanelState(false, false);
       setBackgroundInert(false);
       var target = returnFocus || lastOpener || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
@@ -679,6 +680,7 @@
         host.classList.remove('is-open');
         host.classList.remove('is-fullpage');
         HTML.classList.remove('yy-panel-fullpage');
+        HTML.classList.remove('yy-panel-open');
         setBackgroundInert(false);
         panel.setAttribute('aria-modal', 'false');
         panel.classList.remove('is-expanded');
@@ -716,7 +718,7 @@
       HTML.classList.toggle('yy-panel-fullpage', expanded);
       setBackgroundInert(expanded);
       panel.setAttribute('aria-modal', 'false');
-      announcePanelState(expanded);
+      announcePanelState(expanded, true);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
       var after = panel.getBoundingClientRect();
