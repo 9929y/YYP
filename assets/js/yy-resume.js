@@ -114,8 +114,8 @@
   var skills = [
     { category: 'Design', items: ['UI and interaction design', 'Prototyping', 'Wireframing', 'Design systems', 'Motion design', 'Information architecture', 'User journeys and flows', 'Accessibility and inclusive design'] },
     { category: 'Research', items: ['User interviews', 'Field research', 'Surveys', 'Usability testing', 'A/B testing', 'Heuristic evaluation', 'Competitive analysis', 'Journey mapping', 'Kano model'] },
-    { category: 'AI tools', items: ['Cursor', 'ChatGPT', 'Claude', 'Midjourney', 'Adobe Firefly', 'Runway', 'Framer AI', 'Notion AI', 'Thunderbit', 'Gamma'] },
-    { category: 'Development and collaboration', items: ['HTML', 'CSS', 'Python', 'SQL', 'R', 'Webflow', 'Agile development', 'Jira', 'Linear', 'Notion', 'Cross-functional collaboration'] }
+    { category: 'AI tools', items: ['Cursor', 'ChatGPT', 'Claude', 'Midjourney', 'Adobe Firefly', 'Runway', 'Framer AI', 'Notion AI', 'Canva', 'Whisper', 'Kimi', 'Warp', 'Gamma'] },
+    { category: 'Development and collaboration', items: ['HTML', 'CSS', 'JavaScript', 'Python', 'SQL', 'R', 'WebGL', 'Astro', 'Cloudflare', 'Agile development', 'Jira', 'Cross-functional collaboration'] }
   ];
 
   var previewLoad = null;
