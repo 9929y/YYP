@@ -1,0 +1,68 @@
+/* ============================================================================
+   masked-reveal.css — the bleibtgleich.dev masked line/word reveal.
+
+   Paired with src/components/islands/MaskedTextReveal.tsx. Each visual line is
+   an overflow-hidden mask; the inner content slides up from below (the island
+   writes only `transform` on .mtr__inner). Everything here is layout/clip only.
+
+   Motion RHYTHM is the repo's measured text-reveal (500ms + 40–60ms stagger on
+   --ease-smooth-out), set in the island — so this reads as one system with
+   yy-reveal.js rather than a competing second reveal.
+
+   Fail-safe: the island renders plain visible text until it has hydrated and
+   measured, and under prefers-reduced-motion. Nothing here hides content on its
+   own — no `opacity: 0`, no default-hidden state that a dead script could strand.
+   ============================================================================ */
+
+.mtr {
+  position: relative;
+  display: block;
+}
+
+/* Offscreen twin used only to measure where lines break. Stretched to the same
+   content box as the real element and given the same class, so its wrapping is
+   identical. Never painted, never in the a11y tree, never affects layout. */
+.mtr__measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: normal;
+}
+
+/* The clip window for one visual line. Vertical padding gives descenders (j, g,
+   y, p) room inside the mask; the matching negative margin keeps outer layout
+   position unchanged. */
+.mtr__line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.14em;
+  margin-block: -0.14em;
+}
+
+/* The only animated element. transform is written by motion; translateZ keeps
+   the slide on the compositor so long headings never drop a frame. */
+.mtr__inner {
+  display: inline-block;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.mtr__inner--block {
+  display: block;
+}
+
+/* Word box — inline-block so it can be masked/translated as a unit, with the
+   0.25em inter-word gap the measure twin also uses (so both wrap the same). */
+.mtr__word {
+  display: inline-block;
+  backface-visibility: hidden;
+}
+
+.mtr__word:not(:last-child) {
+  margin-inline-end: 0.25em;
+}

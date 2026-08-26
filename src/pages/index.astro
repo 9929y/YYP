@@ -2,9 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MorphingStatement from '../components/islands/MorphingStatement';
 import LandingCanvasGradient from '../components/islands/LandingCanvasGradient';
+import MaskedTextReveal from '../components/islands/MaskedTextReveal';
 import ProjectIndex from '../components/ProjectIndex.astro';
 import { landingProjects } from '../data/projects';
 import '../styles/landing.css';
+import '../styles/masked-reveal.css';
 
 const cases = landingProjects();
 ---
@@ -67,7 +69,14 @@ const cases = landingProjects();
 
       <section class="index" id="work" data-section="projects" aria-labelledby="featured-projects-label">
         <header class="index__head">
-          <p class="eyebrow" id="featured-projects-label">Featured projects</p>
+          <MaskedTextReveal
+            client:visible
+            as="p"
+            className="eyebrow"
+            id="featured-projects-label"
+            splitBy="words"
+            text="Featured projects"
+          />
         </header>
         <ProjectIndex projects={cases} />
       </section>
