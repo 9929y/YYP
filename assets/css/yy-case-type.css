@@ -25,6 +25,14 @@ html.yy-case-type .body.al {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Solid black Webflow shells (Opus hero + large-screen .mck.new). Photo /
+   gradient heroes (Lark, McKinsey _1, Cummins) keep their images. */
+html.yy-case-type .grid-wrapper-5.mck.new,
+html.yy-case-type .grid-wrapper-5.mck.new.ai,
+html.yy-case-type .inner-page-hero-2.ai {
+  background-color: var(--ground) !important;
+}
+
 /* ---- display (大标题) --------------------------------------------------- */
 html.yy-case-type .heading-xl,
 html.yy-case-type .heading-xl-2,
@@ -88,6 +96,18 @@ html.yy-case-type .heading-medium-3.counttext {
   font-weight: 500 !important;
   color: var(--ink-2) !important;
   margin: 0 !important;
+}
+
+html.yy-case-type .heading-medium-3.ai._1,
+html.yy-case-type .heading-medium-3.ai._2,
+html.yy-case-type .heading-medium-3.ai.mid {
+  font-size: var(--t-25) !important;
+  font-weight: 600 !important;
+  line-height: var(--lh-heading) !important;
+  letter-spacing: -0.03em !important;
+  text-transform: none !important;
+  color: var(--ink) !important;
+  margin: 28px 0 12px !important;
 }
 
 /* ---- body copy ---------------------------------------------------------- */

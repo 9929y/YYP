@@ -101,8 +101,15 @@
      module and for the two `#w-node-…` grid-placement rules that target it.
      -------------------------------------------------------------------------- */
   HTML.className += ' yy-chrome';
+  var typeBoot = '';
   if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
     HTML.className += ' yy-case-type';
+    /* Inline so black Webflow shells cannot flash or win on specificity
+       before yy-case-type.css arrives. */
+    typeBoot =
+      'html.yy-case-type,html.yy-case-type body,html.yy-case-type .body.blk,html.yy-case-type .body.al,' +
+      'html.yy-case-type .grid-wrapper-5.mck.new,html.yy-case-type .grid-wrapper-5.mck.new.ai' +
+      '{background-color:#fff!important;color:#1a1917!important}';
   }
 
   var boot = document.createElement('style');
@@ -115,7 +122,8 @@
        keep `.four-column` prev/next as in-page content, not as a second footer. */
     'html.yy-chrome .footer-section:not(:has(.four-column)){display:none}' +
     'html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)){display:none}' +
-    'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}';
+    'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}' +
+    typeBoot;
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
