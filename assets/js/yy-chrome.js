@@ -205,14 +205,7 @@
     '  -webkit-backdrop-filter: blur(7px) saturate(1.25);',
     '  backdrop-filter: blur(7px) saturate(1.25);',
     '}',
-    '.orbit-canvas{',
-    '  position: absolute; z-index: 0; inset: 0;',
-    '  width: 100%; height: 100%; border-radius: inherit;',
-    '  opacity: 0; pointer-events: none;',
-    '  filter: blur(.45px) saturate(1.45) contrast(1.08);',
-    '  transition: opacity 680ms var(--ease-smooth-out,ease-out), filter 680ms var(--ease-smooth-out,ease-out);',
-    '}',
-    '.cap > :not(.orbit-canvas){ position: relative; z-index: 2; }',
+    '.cap > *{ position: relative; z-index: 2; }',
     /* Where backdrop-filter is unsupported OR silently dead (an ancestor
        forming a backdrop root), the fill alone must carry legibility. */
     '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){',
@@ -331,7 +324,7 @@
     '    opacity: 0;',
     '    transition: opacity 680ms var(--ease-smooth-out,ease-out);',
     '  }',
-    '  .cap > :not(.orbit-canvas){',
+    '  .cap > *{',
     '    opacity: 1; pointer-events: auto; transform: none;',
     '    transition: opacity 420ms var(--ease-smooth-out,ease-out), transform 520ms var(--yy-orbit-ease);',
     '  }',
@@ -347,15 +340,13 @@
     '  }',
     '  :host(.is-fullpage) .cap::before{ opacity: .80; }',
     '  :host(.is-fullpage) .cap::after{ opacity: 1; }',
-    '  :host(.is-fullpage) .orbit-canvas{ opacity: .88; }',
-    '  :host(.is-fullpage) .cap > :not(.orbit-canvas){ opacity: 0; pointer-events: none; transform: translateY(2px) scale(.90); }',
+    '  :host(.is-fullpage) .cap > *{ opacity: 0; pointer-events: none; transform: translateY(2px) scale(.90); }',
     '  :host(.is-fullpage) .cap:hover, :host(.is-fullpage) .cap:focus-within{',
     '    width: 377px; height: 56px; padding: 6px;',
     '  }',
     '  :host(.is-fullpage) .cap:hover::before, :host(.is-fullpage) .cap:focus-within::before{ opacity: .08; }',
     '  :host(.is-fullpage) .cap:hover::after, :host(.is-fullpage) .cap:focus-within::after{ opacity: .10; }',
-    '  :host(.is-fullpage) .cap:hover .orbit-canvas, :host(.is-fullpage) .cap:focus-within .orbit-canvas{ opacity: .12; }',
-    '  :host(.is-fullpage) .cap:hover > :not(.orbit-canvas), :host(.is-fullpage) .cap:focus-within > :not(.orbit-canvas){',
+    '  :host(.is-fullpage) .cap:hover > *, :host(.is-fullpage) .cap:focus-within > *{',
     '    opacity: 1; pointer-events: auto; transform: none;',
     '  }',
     '}',
@@ -380,7 +371,7 @@
     '  .panel.is-expanded{ inset: 0; height: 100dvh; }',
     '}',
     '@media (prefers-reduced-motion: reduce){',
-    '  .cap, .cap::before, .cap::after, .orbit-canvas, .cap > :not(.orbit-canvas), .expand, .corner{ transition-duration: 1ms !important; }',
+    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
     '}',
 
     /* ---- footer -------------------------------------------------------- */
@@ -483,120 +474,6 @@
     return host;
   }
 
-  function orbitTheme() {
-    var here = currentPage().toLowerCase();
-    var title = (document.title || '').toLowerCase();
-    if (here === 'ai-driven-product-design.html' || title.indexOf('opus') !== -1) {
-      return {
-        name: 'opus',
-        colors: ['#291259', '#7650df', '#c69cff', '#f0d7ff']
-      };
-    }
-    if (here === 'index.html' || here === 'landing.html') {
-      return {
-        name: 'landing',
-        colors: ['#e8c66b', '#b9eef4', '#d9fcff', '#f3e8bd']
-      };
-    }
-
-    var palettes = [
-      { name: 'violet', colors: ['#4b316f', '#9778d1', '#d7c5f4', '#f0e8f8'] },
-      { name: 'aqua', colors: ['#225e68', '#7bc8cf', '#d6f5f2', '#d9e9b0'] },
-      { name: 'coral', colors: ['#7a3742', '#d47d7d', '#f4c0a8', '#f3e2c2'] },
-      { name: 'blue', colors: ['#254b75', '#6fa8dc', '#c9e4f5', '#e8d9b8'] }
-    ];
-    var hash = 0;
-    for (var i = 0; i < here.length; i++) hash = ((hash << 5) - hash + here.charCodeAt(i)) | 0;
-    return palettes[Math.abs(hash) % palettes.length];
-  }
-
-  function setupOrbit(host) {
-    var root = host.shadowRoot;
-    var cap = root.querySelector('.cap');
-    var canvas = root.querySelector('.orbit-canvas');
-    var context = canvas && canvas.getContext && canvas.getContext('2d', { alpha: false });
-    var theme = orbitTheme();
-    var active = false;
-    var raf = 0;
-    var last = 0;
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (canvas) canvas.setAttribute('data-orbit-theme', theme.name);
-    if (!context || !cap) return { setActive: function () {} };
-
-    function rgba(hex, alpha) {
-      var value = parseInt(hex.slice(1), 16);
-      return 'rgba(' + ((value >> 16) & 255) + ',' + ((value >> 8) & 255) + ',' +
-        (value & 255) + ',' + alpha + ')';
-    }
-
-    function blob(x, y, radius, color) {
-      var gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-      gradient.addColorStop(0, rgba(color, .98));
-      gradient.addColorStop(.48, rgba(color, .72));
-      gradient.addColorStop(1, rgba(color, 0));
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function draw(now) {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      var cssWidth = Math.min(Math.max(cap.clientWidth, 36), 160);
-      var cssHeight = Math.min(Math.max(cap.clientHeight, 36), 64);
-      var width = Math.round(cssWidth * dpr);
-      var height = Math.round(cssHeight * dpr);
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
-
-      var t = now / 720;
-      var base = context.createLinearGradient(0, 0, width, height);
-      base.addColorStop(0, theme.colors[0]);
-      base.addColorStop(.52, theme.colors[2]);
-      base.addColorStop(1, theme.colors[3]);
-      context.globalCompositeOperation = 'source-over';
-      context.fillStyle = base;
-      context.fillRect(0, 0, width, height);
-
-      context.globalCompositeOperation = 'source-over';
-      var span = Math.max(width, height);
-      blob(width * (.24 + .23 * Math.sin(t * .82)), height * (.28 + .20 * Math.cos(t)), span * .72, theme.colors[1]);
-      blob(width * (.72 + .20 * Math.cos(t * .68)), height * (.68 + .22 * Math.sin(t * .91)), span * .68, theme.colors[2]);
-      blob(width * (.52 + .28 * Math.sin(t * .43 + 1.8)), height * (.48 + .25 * Math.cos(t * .57)), span * .48, theme.colors[3]);
-      context.globalCompositeOperation = 'source-over';
-    }
-
-    function frame(now) {
-      if (!active) return;
-      raf = requestAnimationFrame(frame);
-      if (now - last < 33) return;
-      last = now;
-      draw(now);
-    }
-
-    function setActive(next) {
-      active = Boolean(next);
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-      if (!active) return;
-      draw(performance.now());
-      if (!reduced && !document.hidden) raf = requestAnimationFrame(frame);
-    }
-
-    document.addEventListener('visibilitychange', function () {
-      if (!active) return;
-      if (document.hidden && raf) {
-        cancelAnimationFrame(raf);
-        raf = 0;
-      } else if (!document.hidden && !reduced && !raf) {
-        raf = requestAnimationFrame(frame);
-      }
-    });
-
-    return { setActive: setActive };
-  }
-
   function setupPanel(host) {
     var root = host.shadowRoot;
     var panel = root.querySelector('.panel');
@@ -606,7 +483,6 @@
     var active = '';
     var panelAnimation = null;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var orbit = setupOrbit(host);
 
     function viewFor(name) {
       for (var i = 0; i < views.length; i++) {
@@ -689,10 +565,7 @@
       if (!active) return;
       var former = active;
       var wasExpanded = panel.classList.contains('is-expanded');
-      if (wasExpanded) {
-        host.classList.remove('is-fullpage');
-        orbit.setActive(false);
-      }
+      if (wasExpanded) host.classList.remove('is-fullpage');
       var target = returnFocus || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
       active = '';
@@ -726,7 +599,6 @@
       var expanded = !panel.classList.contains('is-expanded');
       panel.classList.toggle('is-expanded', expanded);
       host.classList.toggle('is-fullpage', expanded);
-      orbit.setActive(expanded);
       announcePanelState(expanded);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
@@ -787,7 +659,6 @@
       '</div>' +
       '<nav class="cap" aria-label="Main" style="--yy-orb:url(' +
         esc(ROOT + 'assets/images/ui/nav-orb.gif') + ')">' +
-        '<canvas class="orbit-canvas" width="72" height="72" aria-hidden="true"></canvas>' +
         '<a class="brand" href="index.html"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
