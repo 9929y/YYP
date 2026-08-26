@@ -116,9 +116,10 @@
     '  --yy-ink-dim: #5b5a56;',
     '  --yy-fill: rgba(255,255,255,.58);',
     '  --yy-hair: rgba(255,255,255,.65);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.94);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
     '  --yy-panel-radius: 30px;',
-    '  --yy-panel-bottom: 70px;',
+    '  --yy-panel-bottom: 86px;',
     '  --yy-panel-width: min(83.4vw, 1600px);',
     '  --yy-panel-height: min(73.9dvh, 798px);',
     '  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;',
@@ -137,7 +138,7 @@
     '  top: 0;',
     '  left: 0;',
     '  right: 0;',
-    '  bottom: 16px;',
+    '  bottom: 0;',
     '  display: flex;',
     '  justify-content: center;',
     '  pointer-events: none;',
@@ -172,10 +173,11 @@
        inset hairlines, drop shadow, saturate so colour behind stays alive.
        -------------------------------------------------------------------- */
     '.cap{',
-    '  position: absolute; left: 50%; bottom: 0;',
+    '  position: absolute; z-index: 4; left: 50%; bottom: 16px;',
     '  transform: translateX(-50%);',
     '  display: flex; align-items: center; gap: 2px;',
     '  padding: 6px;',
+    '  box-sizing: border-box;',
     '  border-radius: 999px;',
     '  background: var(--yy-fill);',
     '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
@@ -187,7 +189,22 @@
     '    0 1px 2px rgba(62,65,116,.07),',
     '    0 2px 8px -2px rgba(62,65,116,.09),',
     '    0 12px 36px -8px rgba(62,65,116,.20);',
+    '  overflow: hidden;',
     '}',
+    '.cap::before, .cap::after{',
+    '  content: ""; position: absolute; inset: 0; border-radius: inherit;',
+    '  opacity: 0; pointer-events: none;',
+    '}',
+    '.cap::before{',
+    '  z-index: 0; background-image: var(--yy-orb); background-position: center;',
+    '  background-repeat: no-repeat; background-size: cover;',
+    '}',
+    '.cap::after{',
+    '  z-index: 1; background: rgba(255,255,255,.18);',
+    '  -webkit-backdrop-filter: blur(7px) saturate(1.25);',
+    '  backdrop-filter: blur(7px) saturate(1.25);',
+    '}',
+    '.cap > *{ position: relative; z-index: 2; }',
     /* Where backdrop-filter is unsupported OR silently dead (an ancestor
        forming a backdrop root), the fill alone must carry legibility. */
     '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){',
@@ -227,7 +244,7 @@
 
     /* ---- navigation panel --------------------------------------------- */
     '.panel{',
-    '  position: absolute; left: 0; right: 0; bottom: var(--yy-panel-bottom);',
+    '  position: absolute; z-index: 1; left: 0; right: 0; bottom: var(--yy-panel-bottom);',
     '  width: var(--yy-panel-width); height: var(--yy-panel-height);',
     '  margin-inline: auto; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
@@ -244,8 +261,9 @@
     '}',
     ':host(.is-open) .panel{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel.is-expanded{',
-    '  top: 16px; bottom: var(--yy-panel-bottom);',
-    '  width: calc(100vw - 32px); height: auto; max-width: none;',
+    '  inset: 0;',
+    '  width: 100vw; height: 100dvh; max-width: none;',
+    '  border-radius: 0; background: var(--yy-panel-full-fill);',
     '}',
     '.panel-scroll{',
     '  height: 100%; overflow: auto; overscroll-behavior: contain;',
@@ -280,6 +298,26 @@
     '.panel.is-expanded .corner-sw{ transform: translate(4px,-4px) rotate(180deg); }',
     '.panel.is-expanded .corner-se{ transform: translate(-4px,-4px) rotate(180deg); }',
 
+    /* A fine-pointer desktop gets a quiet animated orb. Keyboard focus opens
+       the same capsule, while touch stays expanded because it has no hover. */
+    '@media (hover: hover) and (pointer: fine){',
+    '  .cap{',
+    '    width: 56px; height: 56px; padding: 6px;',
+    '    transition: width var(--duration-slow,.4s) var(--ease-smooth-out,ease-out), background-color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '  }',
+    '  .cap::before, .cap::after{',
+    '    opacity: 1;',
+    '    transition: opacity var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '  }',
+    '  .cap > *{',
+    '    opacity: 0; pointer-events: none; transform: scale(.96);',
+    '    transition: opacity var(--duration-quick,.15s) var(--ease-smooth-out,ease-out), transform var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '  }',
+    '  .cap:hover, .cap:focus-within{ width: 377px; }',
+    '  .cap:hover::before, .cap:hover::after, .cap:focus-within::before, .cap:focus-within::after{ opacity: .10; }',
+    '  .cap:hover > *, .cap:focus-within > *{ opacity: 1; pointer-events: auto; transform: none; }',
+    '}',
+
     /* Below 560px the brand is the first thing to go: the four links are
        navigation, the brand is decoration that also links home. */
     '@media (max-width: 560px){',
@@ -287,20 +325,20 @@
     '  .cap{ gap: 0; }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  .panel{',
-    '    --yy-panel-bottom: 66px;',
+    '    --yy-panel-bottom: 82px;',
     '    width: calc(100vw - 24px); height: min(78dvh,720px);',
     '    border-radius: 24px;',
     '  }',
-    '  .panel.is-expanded{ top: 12px; width: calc(100vw - 24px); height: auto; }',
+    '  .panel.is-expanded{ inset: 0; width: 100vw; height: 100dvh; border-radius: 0; }',
     '  .panel-view{ padding: 64px 24px 32px; }',
     '  .expand{ top: 14px; right: 14px; }',
     '}',
     '@media (max-height: 560px){',
-    '  .panel{ --yy-panel-bottom: 58px; height: calc(100dvh - 74px); }',
-    '  .panel.is-expanded{ top: 8px; }',
+    '  .panel{ --yy-panel-bottom: 74px; height: calc(100dvh - 74px); }',
+    '  .panel.is-expanded{ inset: 0; height: 100dvh; }',
     '}',
     '@media (prefers-reduced-motion: reduce){',
-    '  .expand, .corner{ transition-duration: 1ms !important; }',
+    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
     '}',
 
     /* ---- footer -------------------------------------------------------- */
@@ -438,17 +476,21 @@
     }
 
     function keyframesBetween(from, to, closing) {
-      var scaleX = Math.max(from.width / to.width, .055);
-      var scaleY = Math.max(from.height / to.height, .055);
+      var scale = Math.max(Math.min(from.width / to.width, from.height / to.height), .055);
       var dx = from.left + from.width / 2 - (to.left + to.width / 2);
       var dy = from.top + from.height / 2 - (to.top + to.height / 2);
       var small = {
         opacity: 0,
-        transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scaleX + ',' + scaleY + ')',
-        borderRadius: '999px'
+        transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
       };
-      var large = { opacity: 1, transform: 'none', borderRadius: getComputedStyle(panel).borderRadius };
+      var large = { opacity: 1, transform: 'none' };
       return closing ? [large, small] : [small, large];
+    }
+
+    function announcePanelState(expanded) {
+      window.dispatchEvent(new CustomEvent('yy:panel-state', {
+        detail: { expanded: expanded }
+      }));
     }
 
     function animatePanel(from, closing, done) {
@@ -488,6 +530,7 @@
     function close(returnFocus) {
       if (!active) return;
       var former = active;
+      var wasExpanded = panel.classList.contains('is-expanded');
       var target = returnFocus || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
       active = '';
@@ -496,6 +539,7 @@
         panelAnimation = null;
         host.classList.remove('is-open');
         panel.classList.remove('is-expanded');
+        if (wasExpanded) announcePanelState(false);
         expand.setAttribute('aria-label', 'Expand panel');
         expand.setAttribute('aria-pressed', 'false');
         for (var j = 0; j < views.length; j++) views[j].hidden = true;
@@ -519,19 +563,20 @@
       var before = panel.getBoundingClientRect();
       var expanded = !panel.classList.contains('is-expanded');
       panel.classList.toggle('is-expanded', expanded);
+      announcePanelState(expanded);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
       var after = panel.getBoundingClientRect();
       if (!reduced && panel.animate) {
-        var dx = before.left - after.left;
-        var dy = before.top - after.top;
+        var scale = Math.min(before.width / after.width, before.height / after.height);
+        var dx = before.left + before.width / 2 - (after.left + after.width / 2);
+        var dy = before.top + before.height / 2 - (after.top + after.height / 2);
         panel.animate([
           {
-            transformOrigin: 'top left',
-            transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' +
-              (before.width / after.width) + ',' + (before.height / after.height) + ')'
+            transformOrigin: 'center',
+            transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
           },
-          { transformOrigin: 'top left', transform: 'none' }
+          { transformOrigin: 'center', transform: 'none' }
         ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
         expand.animate(
           [{ transform: 'scale(.78)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }],
@@ -576,7 +621,8 @@
         '</button>' +
         '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
       '</div>' +
-      '<nav class="cap" aria-label="Main">' +
+      '<nav class="cap" aria-label="Main" style="--yy-orb:url(' +
+        esc(ROOT + 'assets/images/ui/nav-orb.gif') + ')">' +
         '<a class="brand" href="index.html"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
