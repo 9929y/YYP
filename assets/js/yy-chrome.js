@@ -1185,12 +1185,13 @@
     setupPanel(navHost);
 
     /* ---- footer ----
-       One code path, three cases. Insert after `.footer-credit-wrapper` where
-       it exists (9 pages) and let the boot CSS hide the original; append to
-       body where it does not (fashion.html, tiktok-research.html).
+       Insert after `.footer-section` when the page has prev/next project links
+       (those stay in `.four-column`, which is content, not chrome). Placing
+       the capsule footer outside `.footer-section` lets dark case pages drop
+       the white prev/next stripe without also flattening the site footer.
 
-       `.four-column` is NEVER touched — the prev/next project links in it are
-       content, not chrome. */
+       Fall back: after `.footer-credit-wrapper`, then append to body
+       (fashion.html, tiktok-research.html). */
     var footHTML =
       '<footer class="ft">' +
         '<nav aria-label="Footer">' +
@@ -1211,8 +1212,10 @@
 
     var host = shadow('yy-footer', footHTML);
     setupFooterPanelTriggers(host);
+    var section = document.querySelector('.footer-section');
     var credit = document.querySelector('.footer-credit-wrapper');
-    if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
+    if (section && section.parentNode) section.parentNode.insertBefore(host, section.nextSibling);
+    else if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
     else document.body.appendChild(host);
   }
 

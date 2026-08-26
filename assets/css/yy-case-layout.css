@@ -149,3 +149,49 @@
   max-width: 100%;
   width: 100%;
 }
+
+/* ---------- dark pages: readable type, no white prev/next stripe ----------
+   `.body { color: #fff; background: #fff }` is the light default. Dark case
+   pages override the background (`.blk` black, `.al` #2c2c2c) but
+   `.footer-section` stays `#fff` with `.footer-link { color: #0c0c0c }`, so
+   Previous / Next Project paint as a white bar on the black well.
+
+   Alzheimer `.ural` is a white island. `.headingpt.al` does not set color, so
+   those titles inherit body white → ~1.2:1 on the island. Opus impact captions
+   (`.counttext`) are `#606670` on black (~3.6:1, short of 4.5:1 for 1rem). */
+.body.blk .footer-section,
+.body.al .footer-section {
+  background-color: transparent;
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+.body.blk .footer-section .footer-link,
+.body.al .footer-section .footer-link {
+  color: #fff;
+}
+
+.body.blk .footer-section .hover-line,
+.body.al .footer-section .hover-line {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.body.blk .footer-section .hover-line-fill-3,
+.body.al .footer-section .hover-line-fill-3 {
+  background-color: #fff;
+}
+
+.body.blk yy-footer,
+.body.al yy-footer {
+  display: block;
+  width: 100%;
+  background-color: #fff;
+  color: #1a1917;
+}
+
+.body.al .ural .headingpt.al:not(.white):not(.new) {
+  color: #2c2c2c;
+}
+
+.body.blk .heading-medium-3.counttext {
+  color: #d4d4d4;
+}

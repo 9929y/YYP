@@ -330,6 +330,18 @@ if (!caseLayoutCss.includes('.layout125_component.mck1.mck2:not(.b1)')) {
 if (!caseLayoutCss.includes('.hero-intro-2.mck')) {
   errors.push('yy-case-layout.css must stack McKinsey/Cummins heroes as one column');
 }
+if (
+  !caseLayoutCss.includes('.body.blk .footer-section') ||
+  !caseLayoutCss.includes('.body.al .footer-section')
+) {
+  errors.push('yy-case-layout.css must drop the white prev/next bar on dark case pages');
+}
+if (!caseLayoutCss.includes('.ural .headingpt.al')) {
+  errors.push('yy-case-layout.css must keep Alzheimer ural headings dark on the white island');
+}
+if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
+  errors.push('yy-case-layout.css must lighten Opus impact captions on black');
+}
 
 const caseLayoutPages = [
   'ai-driven-product-design.html',
@@ -348,6 +360,12 @@ for (const name of caseLayoutPages) {
 }
 
 const chromeJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-chrome.js'), 'utf8');
+if (
+  !chromeJs.includes("querySelector('.footer-section')") ||
+  !chromeJs.includes('insertBefore(host, section.nextSibling)')
+) {
+  errors.push('yy-chrome.js must mount the site footer outside .footer-section');
+}
 for (const panelName of ['work', 'about', 'resume']) {
   if (!chromeJs.includes(`panel: '${panelName}'`)) {
     errors.push(`yy-chrome.js missing ${panelName} panel configuration`);
