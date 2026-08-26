@@ -130,6 +130,8 @@
     '  --yy-panel-full-fill: rgba(255,255,255,.92);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
     '  --yy-orbit-ease: cubic-bezier(.22,1.08,.36,1);',
+    '  --yy-panel-ease: cubic-bezier(.22,1,.36,1);',
+    '  --yy-panel-motion: 520ms;',
     '  --yy-panel-radius: 30px;',
     '  --yy-cap-offset: 16px;',
     '  --yy-cap-size: 56px;',
@@ -206,6 +208,13 @@
     '    0 2px 8px -2px rgba(62,65,116,.09),',
     '    0 12px 36px -8px rgba(62,65,116,.20);',
     '  overflow: hidden;',
+    '  transition:',
+    '    width 520ms var(--yy-orbit-ease),',
+    '    max-width 520ms var(--yy-orbit-ease),',
+    '    height 520ms var(--yy-orbit-ease),',
+    '    padding 520ms var(--yy-orbit-ease),',
+    '    background-color 680ms var(--ease-smooth-out,ease-out),',
+    '    box-shadow 680ms var(--ease-smooth-out,ease-out);',
     '}',
     '.cap::before, .cap::after{',
     '  content: ""; position: absolute; inset: 0; border-radius: inherit;',
@@ -237,7 +246,18 @@
     '  background: transparent;',
     '  text-decoration: none;',
     '  white-space: nowrap;',
-    '  transition: color .2s var(--yy-ease), background-color .2s var(--yy-ease), font-weight .2s var(--yy-ease);',
+    '  transition:',
+    '    color .2s var(--yy-ease),',
+    '    background-color .2s var(--yy-ease),',
+    '    font-weight .2s var(--yy-ease),',
+    '    opacity 280ms var(--yy-panel-ease,ease-out),',
+    '    transform 420ms var(--yy-orbit-ease);',
+    '}',
+    '.cap a.is-enter, .cap button.is-enter{',
+    '  opacity: 0; transform: translateY(4px);',
+    '}',
+    '.cap a.is-shown, .cap button.is-shown{',
+    '  opacity: 1; transform: none;',
     '}',
     '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
     '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
@@ -376,12 +396,6 @@
     '@media (hover: hover) and (pointer: fine) and (min-width: 561px){',
     '  .cap{',
     '    width: 377px; height: var(--yy-cap-size);',
-    '    transition:',
-    '      width 520ms var(--yy-orbit-ease),',
-    '      height 520ms var(--yy-orbit-ease),',
-    '      padding 520ms var(--yy-orbit-ease),',
-    '      background-color 680ms var(--ease-smooth-out,ease-out),',
-    '      box-shadow 680ms var(--ease-smooth-out,ease-out);',
     '  }',
     '  .cap::before, .cap::after{',
     '    opacity: 0;',
@@ -389,7 +403,6 @@
     '  }',
     '  .cap > *{',
     '    opacity: 1; pointer-events: auto; transform: none;',
-    '    transition: opacity 420ms var(--ease-smooth-out,ease-out), transform 520ms var(--yy-orbit-ease);',
     '  }',
     '  :host(.is-resume-nav) .cap,',
     '  :host(.is-fullpage.is-resume-nav) .cap{',
@@ -660,7 +673,15 @@
         : NAV.map(panelTrigger).join('');
       var wrap = document.createElement('div');
       wrap.innerHTML = html;
-      while (wrap.firstChild) cap.appendChild(wrap.firstChild);
+      var entering = [];
+      while (wrap.firstChild) {
+        var node = wrap.firstChild;
+        if (node.nodeType === 1 && (node.tagName === 'A' || node.tagName === 'BUTTON')) {
+          node.classList.add('is-enter');
+          entering.push(node);
+        }
+        cap.appendChild(node);
+      }
       cap.setAttribute('aria-label', mode === 'resume' ? 'Resume sections' : 'Main');
       if (mode !== 'resume') {
         refreshTriggers();
@@ -671,6 +692,16 @@
             if (fresh) lastOpener = fresh;
           }
         }
+      }
+      if (entering.length) {
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            for (var e = 0; e < entering.length; e++) {
+              entering[e].classList.remove('is-enter');
+              entering[e].classList.add('is-shown');
+            }
+          });
+        });
       }
     }
 
@@ -752,9 +783,14 @@
       var dy = from.top + from.height / 2 - (to.top + to.height / 2);
       var small = {
         opacity: 0,
+        transformOrigin: 'center center',
         transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
       };
-      var large = { opacity: 1, transform: 'none' };
+      var large = {
+        opacity: 1,
+        transformOrigin: 'center center',
+        transform: 'none'
+      };
       return closing ? [large, small] : [small, large];
     }
 
@@ -764,20 +800,48 @@
       }));
     }
 
+    var PANEL_MOTION_MS = 520;
+    var PANEL_MOTION_EASE = 'cubic-bezier(.22,1,.36,1)';
+
+    function clearPanelAnimation() {
+      if (!panelAnimation) return;
+      try { panelAnimation.cancel(); } catch (err) {}
+      panelAnimation = null;
+    }
+
     function animatePanel(from, closing, done) {
-      if (panelAnimation) panelAnimation.cancel();
+      clearPanelAnimation();
       if (reduced || !panel.animate) {
         done();
         return;
       }
       var to = panel.getBoundingClientRect();
       panelAnimation = panel.animate(keyframesBetween(from, to, closing), {
-        duration: closing ? 350 : 500,
-        easing: 'cubic-bezier(.22,1,.36,1)',
+        duration: PANEL_MOTION_MS,
+        easing: PANEL_MOTION_EASE,
         fill: 'both'
       });
-      panelAnimation.onfinish = done;
+      panelAnimation.onfinish = function () {
+        clearPanelAnimation();
+        done();
+      };
       panelAnimation.oncancel = null;
+    }
+
+    function finishClose(target) {
+      closing = false;
+      active = '';
+      host.classList.remove('is-open');
+      setExpandedChrome(false);
+      HTML.classList.remove('yy-panel-open');
+      setBackgroundInert(false);
+      panel.setAttribute('aria-modal', 'false');
+      expand.hidden = false;
+      expand.setAttribute('aria-label', 'View full screen');
+      expand.setAttribute('aria-pressed', 'false');
+      for (var j = 0; j < views.length; j++) views[j].hidden = true;
+      for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
+      if (target && target.focus) target.focus({ preventScroll: true });
     }
 
     function open(name, trigger, opener) {
@@ -802,11 +866,10 @@
       restoreViewScroll(name);
       var targetView = viewFor(name);
       animatePanel(start, false, function () {
-        panelAnimation = null;
         if (targetView && !reduced && targetView.animate) {
           targetView.animate(
             [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
-            { duration: 350, easing: 'cubic-bezier(.22,1,.36,1)' }
+            { duration: 350, easing: PANEL_MOTION_EASE }
           );
         }
         if (!expand.hidden) expand.focus({ preventScroll: true });
@@ -815,15 +878,13 @@
 
     function close(returnFocus) {
       if (!active || closing) return;
+      if (panel.classList.contains('is-expanded')) {
+        leaveFullpageToOrigin();
+        return;
+      }
       closing = true;
       var former = active;
       saveViewScroll(former);
-      var wasExpanded = panel.classList.contains('is-expanded');
-      if (wasExpanded) {
-        setExpandedChrome(false);
-        setBackgroundInert(false);
-        panel.setAttribute('aria-modal', 'false');
-      }
       clearFullpageUrl();
       HTML.classList.remove('yy-panel-open');
       announcePanelState(false, false);
@@ -831,28 +892,15 @@
       leaveResumeNav();
       var target = returnFocus || lastOpener || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
-      for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
       animatePanel(destination, true, function () {
         if (!closing) return;
-        panelAnimation = null;
-        closing = false;
-        active = '';
-        host.classList.remove('is-open');
-        setExpandedChrome(false);
-        HTML.classList.remove('yy-panel-open');
-        setBackgroundInert(false);
-        panel.setAttribute('aria-modal', 'false');
-        expand.hidden = false;
-        expand.setAttribute('aria-label', 'View full screen');
-        expand.setAttribute('aria-pressed', 'false');
-        for (var j = 0; j < views.length; j++) views[j].hidden = true;
-        if (target) target.focus({ preventScroll: true });
+        finishClose(target);
       });
     }
 
     function switchView(name, opener) {
       closing = false;
-      if (panelAnimation) panelAnimation.cancel();
+      clearPanelAnimation();
       if (opener) lastOpener = opener;
       saveViewScroll(active);
       prepare(name);
@@ -881,8 +929,8 @@
       var next = viewFor(name);
       if (next && !reduced && next.animate) {
         next.animate(
-          [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 250, easing: 'cubic-bezier(.22,1,.36,1)' }
+          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 320, easing: PANEL_MOTION_EASE }
         );
       }
     }
@@ -899,17 +947,77 @@
     }
 
     /* Back from the fullpage URL layer returns to the pre-expand page —
-       the underlying site with the panel fully closed — not the mid-size popup. */
+       one continuous retract (full → trigger), matching the open ease. */
     function leaveFullpageToOrigin() {
-      if (!panel.classList.contains('is-expanded')) return;
+      if (!panel.classList.contains('is-expanded') || closing) return;
+      if (!active) {
+        applyExitFullpageUI();
+        return;
+      }
+      closing = true;
+      var former = active;
+      saveViewScroll(former);
+
       if (fullHistoryPushed) {
         fullHistoryPushed = false;
         if (location.hash.indexOf('#/') === 0) {
           history.replaceState(null, '', location.pathname + location.search);
         }
       }
-      applyExitFullpageUI();
-      close();
+
+      var before = panel.getBoundingClientRect();
+      leaveResumeNav();
+      announcePanelState(false, false);
+      HTML.classList.remove('yy-panel-open');
+      setBackgroundInert(false);
+      panel.setAttribute('aria-modal', 'false');
+      setExpandedChrome(false);
+      expand.hidden = false;
+      expand.setAttribute('aria-label', 'View full screen');
+      expand.setAttribute('aria-pressed', 'false');
+
+      var target = lastOpener || triggerFor(former);
+      var mid = panel.getBoundingClientRect();
+      var destination = target ? target.getBoundingClientRect() : mid;
+
+      function end() {
+        if (!closing) return;
+        finishClose(target);
+      }
+
+      if (reduced || !panel.animate) {
+        end();
+        return;
+      }
+
+      var sFull = Math.max(Math.min(before.width / Math.max(mid.width, 1), before.height / Math.max(mid.height, 1)), .055);
+      var dxFull = before.left + before.width / 2 - (mid.left + mid.width / 2);
+      var dyFull = before.top + before.height / 2 - (mid.top + mid.height / 2);
+      var sTrig = Math.max(Math.min(destination.width / Math.max(mid.width, 1), destination.height / Math.max(mid.height, 1)), .055);
+      var dxTrig = destination.left + destination.width / 2 - (mid.left + mid.width / 2);
+      var dyTrig = destination.top + destination.height / 2 - (mid.top + mid.height / 2);
+
+      clearPanelAnimation();
+      panelAnimation = panel.animate([
+        {
+          opacity: 1,
+          transformOrigin: 'center center',
+          transform: 'translate(' + dxFull + 'px,' + dyFull + 'px) scale(' + sFull + ')'
+        },
+        {
+          opacity: 0,
+          transformOrigin: 'center center',
+          transform: 'translate(' + dxTrig + 'px,' + dyTrig + 'px) scale(' + sTrig + ')'
+        }
+      ], {
+        duration: PANEL_MOTION_MS,
+        easing: PANEL_MOTION_EASE,
+        fill: 'both'
+      });
+      panelAnimation.onfinish = function () {
+        clearPanelAnimation();
+        end();
+      };
     }
 
     function expandToFullpage() {
@@ -932,16 +1040,25 @@
       fullHistoryPushed = true;
       var after = panel.getBoundingClientRect();
       if (!reduced && panel.animate) {
-        var scale = Math.min(before.width / after.width, before.height / after.height);
+        var scale = Math.min(before.width / Math.max(after.width, 1), before.height / Math.max(after.height, 1));
         var dx = before.left + before.width / 2 - (after.left + after.width / 2);
         var dy = before.top + before.height / 2 - (after.top + after.height / 2);
-        panel.animate([
+        clearPanelAnimation();
+        panelAnimation = panel.animate([
           {
-            transformOrigin: 'center',
+            opacity: 1,
+            transformOrigin: 'center center',
             transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
           },
-          { transformOrigin: 'center', transform: 'none' }
-        ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+          { opacity: 1, transformOrigin: 'center center', transform: 'none' }
+        ], {
+          duration: PANEL_MOTION_MS,
+          easing: PANEL_MOTION_EASE,
+          fill: 'both'
+        });
+        panelAnimation.onfinish = function () {
+          clearPanelAnimation();
+        };
       }
     }
 
@@ -974,8 +1091,7 @@
       var state = event.state;
       if (panel.classList.contains('is-expanded') && !(state && state.yyPanelFull)) {
         fullHistoryPushed = false;
-        applyExitFullpageUI();
-        if (active) close();
+        leaveFullpageToOrigin();
       }
     });
     window.addEventListener('yy:open-panel', function (event) {
@@ -998,15 +1114,14 @@
       var id = event.detail && event.detail.id;
       if (id) setResumeSectionCurrent(id);
     });
-    root.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && active) {
-        event.preventDefault();
-        if (panel.classList.contains('is-expanded')) {
-          leaveFullpageToOrigin();
-          return;
-        }
-        close();
+    window.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape' || !active) return;
+      event.preventDefault();
+      if (panel.classList.contains('is-expanded')) {
+        leaveFullpageToOrigin();
+        return;
       }
+      close();
     });
   }
 
