@@ -14,9 +14,7 @@ html.yy-case-type {
 }
 
 html.yy-case-type body,
-html.yy-case-type .body,
-html.yy-case-type .body.blk,
-html.yy-case-type .body.al {
+html.yy-case-type .body {
   background-color: var(--ground) !important;
   color: var(--ink) !important;
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
@@ -25,18 +23,9 @@ html.yy-case-type .body.al {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Solid black Webflow shells (Opus hero + large-screen .mck.new). Photo /
-   gradient heroes (Lark, McKinsey _1, Cummins) keep their images. */
-html.yy-case-type .grid-wrapper-5.mck.new,
-html.yy-case-type .grid-wrapper-5.mck.new.ai,
-html.yy-case-type .inner-page-hero-2.ai {
-  background-color: var(--ground) !important;
-}
-
 /* ---- display (大标题) --------------------------------------------------- */
 html.yy-case-type .heading-xl,
 html.yy-case-type .heading-xl-2,
-html.yy-case-type .heading-xl.al,
 html.yy-case-type .xxl-heading-2 {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
   font-size: var(--t-40) !important;
@@ -199,31 +188,7 @@ html.yy-case-type h4 {
 
 html.yy-case-type .heading-medium,
 html.yy-case-type .heading-medium.title,
-html.yy-case-type .heading-medium.style,
-html.yy-case-type .heading-medium.style.white,
 html.yy-case-type .cmi,
 html.yy-case-type .display-sm {
-  font-size: var(--t-13) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
-  color: var(--ink-3) !important;
-}
-
-html.yy-case-type .paragraph-2 {
-  font-size: var(--t-16) !important;
-  line-height: var(--lh-body) !important;
-  color: var(--ink-2) !important;
-}
-
-html.yy-case-type .heading-medium-3.al,
-html.yy-case-type .heading-medium-3.al.dark,
-html.yy-case-type .heading-medium-3.wt {
-  font-size: var(--t-20) !important;
-  font-weight: 600 !important;
-  line-height: var(--lh-heading) !important;
-  letter-spacing: -0.03em !important;
-  text-transform: none !important;
   color: var(--ink) !important;
-  margin: 12px 0 !important;
 }
