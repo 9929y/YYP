@@ -116,8 +116,9 @@
     '  --yy-ink-dim: #5b5a56;',
     '  --yy-fill: rgba(255,255,255,.58);',
     '  --yy-hair: rgba(255,255,255,.65);',
-    '  --yy-panel-full-fill: rgba(255,255,255,.94);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.92);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
+    '  --yy-orbit-ease: cubic-bezier(.22,1.08,.36,1);',
     '  --yy-panel-radius: 30px;',
     '  --yy-panel-bottom: 86px;',
     '  --yy-panel-width: min(83.4vw, 1600px);',
@@ -258,12 +259,19 @@
     '    0 5px 50px 5px rgba(0,0,0,.18);',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
     '  transform-origin: center bottom; contain: layout paint;',
+    '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out), backdrop-filter 680ms var(--ease-smooth-out,ease-out);',
     '}',
     ':host(.is-open) .panel{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel.is-expanded{',
     '  inset: 0;',
     '  width: 100vw; height: 100dvh; max-width: none;',
     '  border-radius: 0; background: var(--yy-panel-full-fill);',
+    '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
+    '  backdrop-filter: blur(20px) saturate(1.35);',
+    '  box-shadow:',
+    '    inset 0 0 0 1px rgba(255,255,255,.88),',
+    '    inset 0 1px 0 rgba(255,255,255,.96),',
+    '    inset 0 -18px 42px rgba(255,255,255,.18);',
     '}',
     '.panel-scroll{',
     '  height: 100%; overflow: auto; overscroll-behavior: contain;',
@@ -298,24 +306,43 @@
     '.panel.is-expanded .corner-sw{ transform: translate(4px,-4px) rotate(180deg); }',
     '.panel.is-expanded .corner-se{ transform: translate(-4px,-4px) rotate(180deg); }',
 
-    /* A fine-pointer desktop gets a quiet animated orb. Keyboard focus opens
-       the same capsule, while touch stays expanded because it has no hover. */
-    '@media (hover: hover) and (pointer: fine){',
+    /* The full navigation is the default everywhere. Only an expanded panel
+       earns the quiet Orbit state; touch never depends on hover to reveal nav. */
+    '@media (hover: hover) and (pointer: fine) and (min-width: 561px){',
     '  .cap{',
-    '    width: 56px; height: 56px; padding: 6px;',
-    '    transition: width var(--duration-slow,.4s) var(--ease-smooth-out,ease-out), background-color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '    width: 377px; height: 56px;',
+    '    transition:',
+    '      width 520ms var(--yy-orbit-ease),',
+    '      height 520ms var(--yy-orbit-ease),',
+    '      padding 520ms var(--yy-orbit-ease),',
+    '      background-color 680ms var(--ease-smooth-out,ease-out),',
+    '      box-shadow 680ms var(--ease-smooth-out,ease-out);',
     '  }',
     '  .cap::before, .cap::after{',
-    '    opacity: 1;',
-    '    transition: opacity var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '    opacity: 0;',
+    '    transition: opacity 680ms var(--ease-smooth-out,ease-out);',
     '  }',
     '  .cap > *{',
-    '    opacity: 0; pointer-events: none; transform: scale(.96);',
-    '    transition: opacity var(--duration-quick,.15s) var(--ease-smooth-out,ease-out), transform var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '    opacity: 1; pointer-events: auto; transform: none;',
+    '    transition: opacity 420ms var(--ease-smooth-out,ease-out), transform 520ms var(--yy-orbit-ease);',
     '  }',
-    '  .cap:hover, .cap:focus-within{ width: 377px; }',
-    '  .cap:hover::before, .cap:hover::after, .cap:focus-within::before, .cap:focus-within::after{ opacity: .10; }',
-    '  .cap:hover > *, .cap:focus-within > *{ opacity: 1; pointer-events: auto; transform: none; }',
+    '  :host(.is-fullpage) .cap{',
+    '    width: 48px; height: 48px; padding: 4px;',
+    '    box-shadow:',
+    '      inset 0 1px 0 rgba(255,255,255,.95),',
+    '      inset 0 0 0 1px rgba(255,255,255,.76),',
+    '      0 10px 32px -8px rgba(62,65,116,.28);',
+    '  }',
+    '  :host(.is-fullpage) .cap::before, :host(.is-fullpage) .cap::after{ opacity: 1; }',
+    '  :host(.is-fullpage) .cap > *{ opacity: 0; pointer-events: none; transform: translateY(2px) scale(.90); }',
+    '  :host(.is-fullpage) .cap:hover, :host(.is-fullpage) .cap:focus-within{',
+    '    width: 377px; height: 56px; padding: 6px;',
+    '  }',
+    '  :host(.is-fullpage) .cap:hover::before, :host(.is-fullpage) .cap:hover::after,',
+    '  :host(.is-fullpage) .cap:focus-within::before, :host(.is-fullpage) .cap:focus-within::after{ opacity: .10; }',
+    '  :host(.is-fullpage) .cap:hover > *, :host(.is-fullpage) .cap:focus-within > *{',
+    '    opacity: 1; pointer-events: auto; transform: none;',
+    '  }',
     '}',
 
     /* Below 560px the brand is the first thing to go: the four links are
@@ -512,6 +539,7 @@
     function open(name, trigger) {
       active = name;
       sync(name);
+      host.classList.remove('is-fullpage');
       host.classList.add('is-open');
       var targetView = viewFor(name);
       var start = trigger.getBoundingClientRect();
@@ -531,6 +559,7 @@
       if (!active) return;
       var former = active;
       var wasExpanded = panel.classList.contains('is-expanded');
+      if (wasExpanded) host.classList.remove('is-fullpage');
       var target = returnFocus || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
       active = '';
@@ -563,6 +592,7 @@
       var before = panel.getBoundingClientRect();
       var expanded = !panel.classList.contains('is-expanded');
       panel.classList.toggle('is-expanded', expanded);
+      host.classList.toggle('is-fullpage', expanded);
       announcePanelState(expanded);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
