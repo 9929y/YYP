@@ -163,6 +163,14 @@
     ':host(yy-nav) .expand,',
     ':host(yy-nav) .cap,',
     ':host(yy-nav) .skip{ pointer-events: auto; }',
+    /* Hide the system cursor inside the panel when the landing custom cursor is live,
+       so it does not fight the disc that now stacks above yy-nav. */
+    ':host-context(html.yy-cursor-live),',
+    ':host-context(html.yy-cursor-live) .cap,',
+    ':host-context(html.yy-cursor-live) .cap *,',
+    ':host-context(html.yy-cursor-live) .panel,',
+    ':host-context(html.yy-cursor-live) .panel *,',
+    ':host-context(html.yy-cursor-live) .expand{ cursor: none !important; }',
     ':host(yy-footer){ display: block; }',
 
     /* ---- skip link: first tab stop, parked off-screen until focused ---- */
@@ -766,6 +774,8 @@
         for (var i = 0; i < children.length; i++) {
           var child = children[i];
           if (child === host) continue;
+          /* Keep the landing cursor above the fullpage panel — never inert it. */
+          if (child.id === 'yy-cursor') continue;
           backgroundState.push({ element: child, hadInert: child.hasAttribute('inert') });
           child.setAttribute('inert', '');
         }
