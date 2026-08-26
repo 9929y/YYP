@@ -389,6 +389,15 @@ if (chromeJs.includes('width: 36px; height: 36px;') &&
     chromeJs.includes(':host(.is-fullpage) .cap{')) {
   errors.push('yy-chrome.js must not shrink the capsule into a 36px Orbit on fullpage');
 }
+if (!chromeJs.includes('class="brand-orb"') ||
+    !chromeJs.includes('aria-label="Yanice Yang home"') ||
+    !chromeJs.includes('assets/images/ui/nav-orb.gif')) {
+  errors.push('yy-chrome.js capsule brand must be the Orbit home link');
+}
+if (chromeJs.includes('width: 377px; height: var(--yy-cap-size)') ||
+    chromeJs.includes('>Yanice Yang</a>')) {
+  errors.push('yy-chrome.js must not keep the fixed wordmark capsule width or text brand');
+}
 if (!chromeJs.includes("host.classList.toggle('is-fullpage'") ||
     !chromeJs.includes('is-resume-nav') ||
     !chromeJs.includes('Go Back')) {

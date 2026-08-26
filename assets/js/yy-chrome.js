@@ -275,17 +275,22 @@
     '.cap-back{ display: inline-flex !important; align-items: center; justify-content: center; padding: 8px 12px !important; }',
     '.cap-back svg{ display: block; width: 16px; height: 16px; }',
 
-    /* Handwritten wordmark — Caveat, same as the reference glass capsule.
-       No grey chip: the wordmark sits in the glass fill. */
+    /* Orbit brand — animated disc that links home (replaces Caveat wordmark). */
     '.brand{',
-    '  font-family: Caveat, "Plus Jakarta Sans", cursive !important;',
-    '  font-size: 22px !important;',
-    '  font-weight: 500 !important;',
-    '  line-height: 1 !important;',
-    '  letter-spacing: 0 !important;',
-    '  color: var(--yy-ink) !important;',
-    '  padding: 8px 14px 8px 16px !important;',
+    '  display: inline-flex !important; align-items: center; justify-content: center;',
+    '  width: 44px !important; height: 44px !important;',
+    '  padding: 4px !important; margin: 0 !important;',
+    '  border-radius: 999px !important;',
     '  background: transparent !important;',
+    '  color: transparent !important;',
+    '  font-size: 0 !important; line-height: 0 !important;',
+    '  overflow: hidden;',
+    '}',
+    '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
+    '.brand-orb{',
+    '  display: block; width: 36px; height: 36px;',
+    '  border-radius: 50%; object-fit: cover;',
+    '  pointer-events: none;',
     '}',
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
@@ -400,10 +405,10 @@
     '.panel.is-expanded .corner-se{ transform: translate(-4px,-4px) rotate(180deg); }',
 
     /* Capsule stays a full navigation bar everywhere — including fullpage.
-       Orbit compact (36px orb) is retired for now; may be removed entirely later. */
+       Brand is the Orbit disc; width hugs content (no fixed 377px wordmark slot). */
     '@media (hover: hover) and (pointer: fine) and (min-width: 561px){',
     '  .cap{',
-    '    width: 377px; height: var(--yy-cap-size);',
+    '    width: max-content; max-width: calc(100vw - 24px); height: var(--yy-cap-size);',
     '  }',
     '  .cap::before, .cap::after{',
     '    opacity: 0;',
@@ -412,20 +417,14 @@
     '  .cap > *{',
     '    opacity: 1; pointer-events: auto; transform: none;',
     '  }',
-    '  :host(.is-resume-nav) .cap,',
-    '  :host(.is-fullpage.is-resume-nav) .cap{',
-    '    width: max-content; max-width: calc(100vw - 24px);',
-    '  }',
     '}',
 
-    /* Below 560px the brand is the first thing to go on the main capsule.
-       Resume fullpage keeps the wordmark + Go Back so the bar stays complete. */
+    /* Mobile keeps the Orbit home control; section nav may scroll horizontally. */
     '@media (max-width: 560px){',
-    '  .brand, .rule{ display: none !important; }',
-    '  :host(.is-resume-nav) .brand{ display: block !important; }',
-    '  :host(.is-resume-nav) .rule{ display: block !important; }',
-    '  .cap{ gap: 0; }',
+    '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
+    '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
+    '  .brand-orb{ width: 34px; height: 34px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',
@@ -1171,10 +1170,12 @@
           '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
         '</div>' +
       '</div>' +
-      '<nav class="cap" aria-label="Main" style="--yy-orb:url(' +
-        esc(ROOT + 'assets/images/ui/nav-orb.gif') + ')">' +
-        '<a class="brand" href="index.html"' +
-          (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
+      '<nav class="cap" aria-label="Main">' +
+        '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
+          (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
+          '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
+            '" alt="" width="36" height="36" decoding="async">' +
+        '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
       '</nav>';
