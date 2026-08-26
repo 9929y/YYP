@@ -49,7 +49,7 @@
     { href: 'projects.html', label: 'Work' },
     { href: 'aboutme.html',  label: 'About' },
     { href: 'fashion.html',  label: 'Fashion' },
-    { href: RESUME,          label: 'Resume', ext: true }
+    { href: RESUME,          label: 'Resume' }
   ];
 
   /* Resume is NOT a social profile — it lives in the nav row above as text.
