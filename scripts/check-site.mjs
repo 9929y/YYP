@@ -333,6 +333,9 @@ for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '73.9vh']) 
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
 }
+if (!chromeJs.includes('function toggleExpanded() {\n      if (closing) return;')) {
+  errors.push('yy-chrome.js must ignore expand actions while the popup is closing');
+}
 if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
     !chromeJs.includes(':focus-within')) {
