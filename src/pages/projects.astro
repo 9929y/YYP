@@ -26,7 +26,7 @@ const cards = projects.map((p, i) => ({
       <p class="eyebrow">Projects</p>
     </header>
     <section class="projects-stage" aria-label="Project carousel">
-      <ProjectsCarousel3D client:visible cards={cards} />
+      <ProjectsCarousel3D client:load cards={cards} />
     </section>
   </main>
 </BaseLayout>

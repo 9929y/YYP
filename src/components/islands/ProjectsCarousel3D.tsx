@@ -9,7 +9,6 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent
 } from 'react';
-import { MotionGate } from './MotionGate';
 
 export type ProjectsCarouselCard = {
   id: string;
@@ -58,11 +57,17 @@ export function useMediaQuery(
 }
 
 /*
- * Partial 8-slot / 5-card cylinder + OrbitControls-like interaction:
- * elastic rubber-band pitch, damped yaw, zoom with spring settle.
+ * Open arc: size from an 8-slot ring (back ~3 seats empty), place 5 cards on the
+ * front so all stay readable with clear yaw. OrbitControls-like drag/zoom.
+ * No flat-grid SSR — first paint is already a 3D cluster that fans open.
+ *
+ * Intro + open MUST share the same transform function chain so Motion never
+ * interpolates through an identity / planar frame.
  */
 const SLOT_COUNT = 8;
 const VISIBLE_CARDS = 5;
+/** Degrees between seats — tighter than 45° so ± outer cards are not edge-on. */
+const ARC_STEP = 36;
 const DRAG_YAW = 0.28;
 const DRAG_PITCH = 0.16;
 const WHEEL_ZOOM = 0.00135;
@@ -87,6 +92,11 @@ const SPRING_SNAP = {
   damping: 20,
   mass: 0.28
 };
+const INTRO_EASE = {
+  type: 'tween' as const,
+  duration: 1.05,
+  ease: [0.16, 1, 0.3, 1] as [number, number, number, number]
+};
 
 function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return false;
@@ -97,7 +107,6 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
-/** Soft overscroll like OrbitControls damping against a limit. */
 function rubberBand(value: number, min: number, max: number, resist = RUBBER): number {
   if (value < min) return min + (value - min) * resist;
   if (value > max) return max + (value - max) * resist;
@@ -105,33 +114,95 @@ function rubberBand(value: number, min: number, max: number, resist = RUBBER): n
 }
 
 function faceAngle(index: number): number {
-  const step = 360 / SLOT_COUNT;
   const mid = (VISIBLE_CARDS - 1) / 2;
-  return (index - mid) * step;
+  return (index - mid) * ARC_STEP;
 }
 
-const INTRO_SPRING = {
-  type: 'spring' as const,
-  stiffness: 88,
-  damping: 15,
-  mass: 0.55
-};
+/** Shared chain: rotateY → translateZ → local yaw/pitch/roll → scale. */
+function cardTransform(
+  index: number,
+  radius: number,
+  {
+    yawScale,
+    radiusScale,
+    localYawStep,
+    localPitchBase,
+    localPitchStep,
+    localRollStep,
+    scale
+  }: {
+    yawScale: number;
+    radiusScale: number;
+    localYawStep: number;
+    localPitchBase: number;
+    localPitchStep: number;
+    localRollStep: number;
+    scale: number;
+  }
+): string {
+  const mid = (VISIBLE_CARDS - 1) / 2;
+  const offset = index - mid;
+  const yaw = faceAngle(index) * yawScale;
+  const localYaw = offset * localYawStep;
+  const localPitch = localPitchBase + Math.abs(offset) * localPitchStep;
+  const localRoll = offset * localRollStep;
+  return [
+    `rotateY(${yaw}deg)`,
+    `translateZ(${radius * radiusScale}px)`,
+    `rotateY(${localYaw}deg)`,
+    `rotateX(${localPitch}deg)`,
+    `rotateZ(${localRoll}deg)`,
+    `scale(${scale})`
+  ].join(' ');
+}
+
+/** Final open pose — cylinder seat + clear per-card tilt. */
+function openTransform(index: number, radius: number): string {
+  return cardTransform(index, radius, {
+    yawScale: 1,
+    radiusScale: 1,
+    localYawStep: 9,
+    localPitchBase: -10,
+    localPitchStep: 2.2,
+    localRollStep: 3.6,
+    scale: 1
+  });
+}
+
+/**
+ * Intro start pose — compact 3D wedge (never planar / never flat grid).
+ * Same transform chain as openTransform for clean interpolation.
+ */
+function introTransform(index: number, radius: number): string {
+  return cardTransform(index, radius, {
+    yawScale: 0.38,
+    radiusScale: 0.36,
+    localYawStep: 6,
+    localPitchBase: -14,
+    localPitchStep: 3,
+    localRollStep: 4,
+    scale: 0.88
+  });
+}
 
 const CarouselFace = memo(function CarouselFace({
   card,
   index,
   faceWidth,
   radius,
-  intro
+  spread,
+  settled
 }: {
   card: ProjectsCarouselCard;
   index: number;
   faceWidth: number;
   radius: number;
-  intro: boolean;
+  spread: boolean;
+  settled: boolean;
 }) {
-  const angle = faceAngle(index);
   const reduced = prefersReducedMotion();
+  const from = introTransform(index, radius);
+  const to = openTransform(index, radius);
 
   return (
     <motion.div
@@ -140,22 +211,21 @@ const CarouselFace = memo(function CarouselFace({
         width: `${faceWidth}px`,
         transformStyle: 'preserve-3d'
       }}
-      initial={
-        reduced || !intro
-          ? false
-          : {
-              opacity: 0.25,
-              transform: `rotateY(0deg) translateZ(${radius * 0.1}px) scale(0.78)`
-            }
-      }
+      initial={false}
       animate={{
         opacity: 1,
-        transform: `rotateY(${angle}deg) translateZ(${radius}px) scale(1)`
+        transform: reduced || spread ? to : from
       }}
-      transition={{
-        ...INTRO_SPRING,
-        delay: reduced || !intro ? 0 : 0.1 + index * 0.1
-      }}
+      transition={
+        reduced
+          ? { duration: 0 }
+          : settled
+            ? SPRING
+            : {
+                ...INTRO_EASE,
+                delay: spread ? 0.04 + index * 0.07 : 0
+              }
+      }
     >
       <div
         className="yy-projects-card"
@@ -179,20 +249,38 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const autoPausedUntil = useRef(0);
   const autoWasPaused = useRef(false);
   const zoomIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [introDone, setIntroDone] = useState(() => prefersReducedMotion());
+
+  // SSR + first client paint: compact 3D wedge. Hold briefly, then fan open.
+  // Never mount a flat-grid fallback (that was the one-frame planar flash).
+  const [spread, setSpread] = useState(() => prefersReducedMotion());
+  const [settled, setSettled] = useState(() => prefersReducedMotion());
 
   const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
 
-  // Hold auto-orbit until the fan-out intro finishes.
-  useEffect(() => {
-    if (introDone) return;
-    autoPausedUntil.current = performance.now() + 2200;
-    const t = window.setTimeout(() => setIntroDone(true), 1800);
-    return () => window.clearTimeout(t);
-  }, [introDone]);
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) {
+      setSpread(true);
+      setSettled(true);
+      return;
+    }
+    autoPausedUntil.current = performance.now() + 2600;
+    let openTimer = 0;
+    let doneTimer = 0;
+    // Paint cluster for a beat, then fan — avoids skipping straight through midposes.
+    const raf = requestAnimationFrame(() => {
+      openTimer = window.setTimeout(() => setSpread(true), 90);
+      doneTimer = window.setTimeout(() => setSettled(true), 1500);
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(doneTimer);
+    };
+  }, []);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  const cylinderWidth = isScreenSizeSm ? 1200 : 2000;
+  // Face size from 8-slot ring math; 5 seats on the front arc, back open.
+  const cylinderWidth = isScreenSizeSm ? 1280 : 2100;
   const faceWidth = cylinderWidth / SLOT_COUNT;
   const radius = cylinderWidth / (2 * Math.PI);
 
@@ -218,20 +306,18 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       return;
     }
 
-    // Pitch: spring toward home (0) — OrbitControls-like elastic settle / 吸附.
     const pitch = rotateX.get();
     const pitchTarget =
       Math.abs(pitch) < 3 ? 0 : clamp(pitch, -ROTATE_X_SOFT, ROTATE_X_SOFT);
     void animate(rotateX, pitchTarget, SPRING_SNAP);
 
-    // Zoom: spring into hard range with a touch of overshoot.
     const z = zoom.get();
-    const zoomTarget = clamp(z, ZOOM_MIN, ZOOM_MAX);
-    void animate(zoom, zoomTarget, SPRING_SNAP);
+    void animate(zoom, clamp(z, ZOOM_MIN, ZOOM_MAX), SPRING_SNAP);
   }, [rotateX, zoom]);
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!settled) return;
       if (event.button !== 0) return;
       dragging.current = true;
       stopOrbit();
@@ -239,7 +325,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       lastPointer.current = { x: event.clientX, y: event.clientY };
       event.currentTarget.setPointerCapture(event.pointerId);
     },
-    [stopOrbit]
+    [settled, stopOrbit]
   );
 
   const onPointerMove = useCallback(
@@ -252,7 +338,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
       rotateY.set(rotateY.get() + dx * DRAG_YAW);
 
-      // Vertical drag: rubber-band pitch (elastic past soft limit).
       const nextPitch = rubberBand(
         rotateX.get() - dy * DRAG_PITCH,
         -ROTATE_X_SOFT,
@@ -260,7 +345,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       );
       rotateX.set(clamp(nextPitch, -ROTATE_X_HARD, ROTATE_X_HARD));
 
-      // Pulling up slightly also eases zoom in (OrbitControls dolly feel).
       if (Math.abs(dy) > Math.abs(dx) * 0.85) {
         const zNext = rubberBand(
           zoom.get() - dy * 0.0018,
@@ -293,7 +377,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
         return;
       }
 
-      // Damped inertia on yaw (OrbitControls enableDamping).
       const coastY = rotateY.get() + velocity.current.x * DRAG_YAW * 7;
       baseYaw.current = coastY;
       void animate(rotateY, coastY, SPRING);
@@ -302,7 +385,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     [rotateY, settleElastic]
   );
 
-  // Auto left-right pendulum when idle.
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
@@ -313,7 +395,8 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
 
-      const paused = dragging.current || now < autoPausedUntil.current;
+      const paused =
+        dragging.current || now < autoPausedUntil.current || !settled;
       if (paused) {
         autoWasPaused.current = true;
       } else {
@@ -331,19 +414,21 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [rotateY]);
+  }, [rotateY, settled]);
 
-  // Wheel → zoom (OrbitControls dolly); never scroll the page on the stage.
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
     const onWheel = (event: WheelEvent) => {
+      if (!settled) {
+        event.preventDefault();
+        return;
+      }
       event.preventDefault();
       stopOrbit();
       autoPausedUntil.current = performance.now() + 1100;
 
-      // Shift+wheel keeps yaw nudge for power users; default is zoom.
       if (event.shiftKey) {
         const next = rotateY.get() + (event.deltaY + event.deltaX) * 0.12;
         rotateY.set(next);
@@ -375,7 +460,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       stage.removeEventListener('wheel', onWheel);
       stage.removeEventListener('touchmove', onTouchMove);
     };
-  }, [rotateY, settleElastic, stopOrbit, zoom]);
+  }, [rotateY, settleElastic, settled, stopOrbit, zoom]);
 
   return (
     <div
@@ -384,6 +469,8 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       data-testid="projects-carousel"
       data-slots={SLOT_COUNT}
       data-visible={visibleCards.length}
+      data-spread={spread ? 'true' : 'false'}
+      data-settled={settled ? 'true' : 'false'}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -405,31 +492,12 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
               index={index}
               faceWidth={faceWidth}
               radius={radius}
-              intro
+              spread={spread}
+              settled={settled}
             />
           ))}
         </motion.div>
       </div>
-    </div>
-  );
-}
-
-function ProjectsCarouselStatic({ cards }: { cards: ProjectsCarouselCard[] }) {
-  const visibleCards = cards.slice(0, VISIBLE_CARDS);
-  return (
-    <div
-      className="yy-projects-carousel yy-projects-carousel--static"
-      data-testid="projects-carousel-static"
-    >
-      <ul className="yy-projects-carousel__grid">
-        {visibleCards.map((card) => (
-          <li key={card.id} className="yy-projects-card-slot">
-            <div className="yy-projects-card" data-tone={card.tone % 7} data-static="true">
-              <div className="yy-projects-card__inner" />
-            </div>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
@@ -440,12 +508,8 @@ export function ProjectsCarousel3D({
   cards: ProjectsCarouselCard[];
 }) {
   if (!cards.length) return null;
-
-  return (
-    <MotionGate fallback={<ProjectsCarouselStatic cards={cards} />}>
-      <ProjectsCarouselMotion cards={cards} />
-    </MotionGate>
-  );
+  // Always mount the 3D stage (no flat-grid MotionGate fallback flash).
+  return <ProjectsCarouselMotion cards={cards} />;
 }
 
 export default ProjectsCarousel3D;

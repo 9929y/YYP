@@ -69,8 +69,16 @@ html.yy-projects body {
   -webkit-user-select: none;
 }
 
+.yy-projects-carousel[data-settled='false'] {
+  cursor: default;
+}
+
 .yy-projects-carousel:active {
   cursor: grabbing;
+}
+
+.yy-projects-carousel[data-settled='false']:active {
+  cursor: default;
 }
 
 .yy-projects-carousel__stage {
@@ -79,7 +87,7 @@ html.yy-projects body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  perspective: 1000px;
+  perspective: 1100px;
   transform-style: preserve-3d;
   will-change: transform;
   background: transparent;
@@ -106,8 +114,9 @@ html.yy-projects body {
   justify-content: center;
   height: 100%;
   transform-style: preserve-3d;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  /* Keep side faces visible (angled plates), do not cull as if flat. */
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
 /* ---------- opaque distinct cards ---------- */
