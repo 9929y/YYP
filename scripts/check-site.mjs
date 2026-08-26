@@ -283,8 +283,11 @@ if (!chromeJs.includes('nav-orb.gif') ||
 }
 if (!chromeJs.includes("host.classList.toggle('is-fullpage', expanded)") ||
     !chromeJs.includes(':host(.is-fullpage) .cap{') ||
-    !chromeJs.includes('width: 48px; height: 48px;')) {
-  errors.push('yy-chrome.js must limit the 48px navigation orb to fullpage state');
+    !chromeJs.includes('width: 36px; height: 36px;')) {
+  errors.push('yy-chrome.js must limit the 36px navigation orb to fullpage state');
+}
+if (!chromeJs.includes(':host(.is-fullpage) .cap::before{ opacity: .80; }')) {
+  errors.push('yy-chrome.js fullpage Orbit GIF must render at 80% opacity');
 }
 if (!chromeJs.includes(':host(.is-fullpage) .cap:hover') ||
     !chromeJs.includes('680ms')) {
