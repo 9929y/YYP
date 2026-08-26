@@ -121,6 +121,7 @@ const resumeJs = fs.existsSync(resumeJsPath) ? fs.readFileSync(resumeJsPath, 'ut
 for (const marker of [
   "customElements.define('yy-resume-content'",
   'attachShadow',
+  'disconnectedCallback',
   'resume-section',
   'resume-card',
   'data-resume-tabs'
@@ -326,6 +327,11 @@ if (!chromeJs.includes('yy:panel-state')) {
 }
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
+}
+for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '73.9vh']) {
+  if (!chromeJs.includes(marker)) {
+    errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
+  }
 }
 if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
