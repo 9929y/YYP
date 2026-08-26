@@ -1,0 +1,306 @@
+/* projects.css — Astro projects hub + 3D remnant carousel.
+   Tokens from yy-tokens.css; glass recipe mirrors yy-chrome .cap. */
+
+html.yy-projects {
+  background: var(--ground);
+  color: var(--ink);
+}
+
+html.yy-projects body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.projects-wrap {
+  min-height: 100svh;
+  min-height: 100vh;
+  padding: clamp(48px, 8vh, 96px) var(--edge, 24px) 120px;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.projects-hero {
+  max-width: var(--frame-spine, 1260px);
+  margin: 0 auto;
+  padding: 0 0 clamp(20px, 3vh, 36px);
+  box-sizing: border-box;
+}
+
+.projects-hero .eyebrow {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-caption, 1.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.projects-stage {
+  max-width: var(--frame-spine, 1260px);
+  margin: 0 auto;
+}
+
+/* ---------- carousel stage ---------- */
+
+.yy-projects-carousel {
+  position: relative;
+  width: 100%;
+  min-height: min(70vh, 640px);
+  height: min(70vh, 640px);
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.yy-projects-carousel__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.yy-projects-carousel__cylinder {
+  position: relative;
+  display: flex;
+  height: 100%;
+  max-width: none;
+  transform-origin: center center;
+  cursor: grab;
+  transform-style: preserve-3d;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.yy-projects-carousel__cylinder:active {
+  cursor: grabbing;
+}
+
+.yy-projects-card-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.yy-projects-card-slot .yy-projects-card {
+  pointer-events: auto;
+}
+
+/* ---------- card face ---------- */
+
+.yy-projects-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: min(280px, 72vw);
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--slot-radius, 36px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.yy-projects-card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.yy-projects-card__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--slot, #efece8) 70%, transparent);
+  transition: transform var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    filter var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.yy-projects-card[data-active='true'] .yy-projects-card__inner,
+.yy-projects-card__inner[data-active='true'] {
+  transform: translateZ(12px);
+  filter: brightness(1.04);
+}
+
+.yy-projects-card__inner[data-hover='true'] {
+  filter: brightness(1.03);
+}
+
+.yy-projects-card__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Glass overlay — mirrors yy-chrome .cap */
+.yy-projects-card__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 18px 18px 20px;
+  border-radius: inherit;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--ground, #fff) 55%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.2);
+  pointer-events: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .yy-projects-card__glass {
+    background: color-mix(in srgb, var(--ground, #fff) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.92),
+      inset 0 0 0 1px rgba(26, 25, 23, 0.1),
+      inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+      0 1px 2px rgba(62, 65, 116, 0.07),
+      0 2px 8px -2px rgba(62, 65, 116, 0.09),
+      0 12px 36px -8px rgba(62, 65, 116, 0.2);
+  }
+}
+
+.yy-projects-card__name {
+  margin: 0;
+  max-width: 100%;
+  font-size: var(--t-20);
+  font-weight: 600;
+  line-height: var(--lh-heading, 1.25);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.yy-projects-card__scope {
+  margin: 0;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption, 1.45);
+  color: var(--ink-3);
+  max-width: 16em;
+}
+
+/* Path text — eyebrow / caption recipe along the frame */
+.yy-projects-card__path {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--m-dur-sm, 0.24s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.yy-projects-card__inner[data-hover='true'] .yy-projects-card__path,
+.yy-projects-card__path--static {
+  opacity: 1;
+}
+
+.yy-projects-card__path-text {
+  fill: var(--ink-3);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-11);
+  line-height: var(--lh-caption, 1.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- static / reduced-motion fallback ---------- */
+
+.yy-projects-carousel--static {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.yy-projects-carousel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: clamp(16px, 3vw, 28px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.yy-projects-carousel--static .yy-projects-card-slot {
+  position: relative;
+  inset: auto;
+  margin: 0;
+  height: auto;
+  pointer-events: auto;
+}
+
+.yy-projects-carousel--static .yy-projects-card {
+  max-width: none;
+  width: 100%;
+  cursor: default;
+}
+
+.yy-projects-carousel--static .yy-projects-card__path {
+  opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .yy-projects-carousel {
+    height: min(62vh, 520px);
+    min-height: min(62vh, 520px);
+  }
+
+  .yy-projects-card {
+    max-width: min(240px, 78vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yy-projects-card__inner {
+    transition: none;
+  }
+
+  .yy-projects-card__path {
+    transition: none;
+    opacity: 0.85;
+  }
+}
