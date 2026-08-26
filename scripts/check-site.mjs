@@ -371,6 +371,16 @@ if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
     !chromeJs.includes('fullpageHash')) {
   errors.push('yy-chrome.js expanded layer must hide the shrink control and exit via Go Back to the origin page');
 }
+if (!chromeJs.includes('View full screen') ||
+    !chromeJs.includes('expand-label') ||
+    !chromeJs.includes('background: transparent;') ||
+    chromeJs.includes(".expand{\n  position: absolute; z-index: 2; top: 18px; right: 18px;\n  width: 38px; height: 38px;")) {
+  errors.push('yy-chrome.js expand control must be icon-only with a View full screen hover label');
+}
+if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
+    !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
+  errors.push('yy-chrome.js must keep main nav on Resume popup and enter section nav only on expand');
+}
 if (!chromeJs.includes('background: transparent') ||
     chromeJs.includes(".cap button[aria-expanded=\"true\"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }")) {
   errors.push('yy-chrome.js capsule items must be text-only by default (no gray chip fill)');
