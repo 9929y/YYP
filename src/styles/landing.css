@@ -634,6 +634,15 @@
 
      The image starts at opacity 0, so a 404 shows nothing rather than a broken
      icon — JS only reveals it after a successful load. */
+  /* Media's positioning context. Full-bleed by default; .slot--glass insets
+     it to reveal the frosted mat around the edges (see below). */
+  .slot__window {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
   /* ~6px overscan clips export hairlines (AtlasNova top ~4 source px ≈ 2.3
      CSS px under cover) inside overflow:hidden + radius. */
   .slot img,
@@ -689,6 +698,32 @@
   .slot:hover img,
   .slot:hover video,
   .slot:hover .ph { transform: scale(1.03); }
+
+  /* ---------- Opus Clip: frosted-glass card frame (Figma node 37:688) ----------
+     A translucent mat sits behind the video and blurs whatever page background
+     shows through its edges; the video keeps its own sharp inset window. Values
+     are the exact export from Figma's dev-mode panel — not tokenized, since
+     nothing else on the page uses this treatment. */
+  .slot--glass {
+    --glass-inset: 16px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(200px);
+    backdrop-filter: blur(200px);
+    box-shadow:
+      inset 0 15px 20px 0 rgba(255, 255, 255, 0.13),
+      inset 0 0 20px 10px rgba(255, 255, 255, 0.2),
+      0 5px 50px 5px rgba(0, 0, 0, 0.25);
+  }
+
+  .slot--glass .slot__window {
+    inset: var(--glass-inset);
+    border-radius: calc(30px - var(--glass-inset));
+  }
+
+  @media (max-width: 700px) {
+    .slot--glass { --glass-inset: 10px; }
+  }
 
   /* ---------- placeholder ----------
      Prints the exact export spec it is waiting for, so the requirement cannot
