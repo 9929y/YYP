@@ -105,9 +105,9 @@
   ];
 
   var publications = [
-    { title: 'DeepSORT-Driven Visual Tracking Approach for Gesture Recognition in Interactive Systems', publisher: 'IEEE', url: 'https://ieeexplore.ieee.org/document/11065783/' },
-    { title: 'Automated UI Interface Generation via Diffusion Models: Enhancing Personalization and Efficiency', publisher: 'ISCAIT 2025 · Mar 2025', url: 'https://ieeexplore.ieee.org/document/11010595/' },
-    { title: 'Optimizing Gesture Recognition for Seamless UI Interaction', publisher: 'IEEE · Nov 2024', url: 'https://ieeexplore.ieee.org/document/10958166/' },
+    { title: 'DeepSORT-Driven Visual Tracking Approach for Gesture Recognition in Interactive Systems', publisher: 'IEEE · May 2025', url: 'https://arxiv.org/abs/2505.07110' },
+    { title: 'Automated UI Interface Generation via Diffusion Models: Enhancing Personalization and Efficiency', publisher: 'ISCAIT 2025 · Mar 2025', url: 'https://arxiv.org/abs/2503.20229' },
+    { title: 'Optimizing Gesture Recognition for Seamless UI Interaction Using Convolutional Neural Networks', publisher: 'IEEE · Nov 2024', url: 'https://arxiv.org/abs/2411.15598' },
     { title: 'Computer Vision-Driven Gesture Recognition: Toward Natural and Intuitive Human–Computer Interfaces', publisher: 'IEEE · Nov 2024', url: 'https://arxiv.org/abs/2412.18321' }
   ];
 
