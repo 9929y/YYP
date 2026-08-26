@@ -16,7 +16,7 @@ interface Props {
 const { images, caption } = Astro.props;
 ---
 
-<figure class="media-pair rv">
+<figure class="media-pair rv" data-reveal="media">
   <div class="media-pair__grid">
     {images.map((image) => (
       <div class="media">

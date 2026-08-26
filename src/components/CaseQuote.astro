@@ -7,7 +7,7 @@ interface Props {
 const { quote, attribution } = Astro.props;
 ---
 
-<figure class="case-quote rv">
+<figure class="case-quote rv" data-reveal="text">
   <blockquote>{quote}</blockquote>
   <figcaption>{attribution}</figcaption>
 </figure>

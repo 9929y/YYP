@@ -18,7 +18,7 @@
    <head> on every page. This sheet only consumes them.
 
    Property ownership (one writer per animated property):
-     reveal  → opacity, transform, filter, clip-path   (html.yy-reveal .yy-rv/.rv)
+     reveal  → opacity, transform, filter, clip-path   (assets/css/yy-motion.css)
      hover   → transform, opacity                      (page CSS, e.g. a.slot:hover)
      cursor  → transform, width, height, background, color
      IX2     → anything on [data-w-id]                 (do not compete)
@@ -78,102 +78,9 @@ button:focus-visible,
 }
 
 /* ---------------------------------------------------------------------------
-   5. Entrance reveal for what IX2 does not own  (see assets/js/yy-reveal.js)
+   5–6. Entrance recipes live in assets/css/yy-motion.css (yy-reveal.js).
 
-   Entrance motion on the case pages comes from Webflow IX2, which only animates
-   elements carrying `data-w-id`. Measured coverage of images plus text blocks:
-   McKinsey 94%, Opus Clip 93%, Cummins 89% — but larkdesign 7%, mifinance 11%,
-   alzheimerdisease 14%. So some content animates in and some simply appears.
-   That is the original per-page authoring, not a regression.
-
-   Both values below are MEASURED off IX2 so the two systems read as one:
-     --duration-very-slow (500ms)  — the dominant duration in McKinsey's IX2
-                                     action list, 39 of 308 items. transitions.dev
-                                     independently documents 500ms for "text
-                                     reveal", and its 18-texts-reveal recipe ships
-                                     exactly 500ms + 40ms stagger. Two sources,
-                                     same answer — so the RHYTHM matches IX2.
-     --ease-smooth-out             — from 18-texts-reveal's live tuning. IX2 uses
-                                     outQuad; smooth-out is a stronger ease-out on
-                                     the same family, and the perceived cadence is
-                                     set by the 500ms it shares with IX2.
-     --distance-medium (12px)      — NOT IX2's 100px. transitions-polish: a
-                                     translate over ~40px "reads as sluggish" for
-                                     anything but a panel. 100px on all 87 of
-                                     larkdesign's blocks would be exactly that.
-                                     12px is the documented distance for "text
-                                     reveal", and it keeps the 500ms rhythm.
-     --blur-medium (3px)           — ADDED. The token table lists blur for text
-                                     reveal and notes it can be "absent as well as
-                                     off-token"; a reveal with no blur lane is
-                                     missing one. This is the single change that
-                                     most improves how each reveal reads.
-
-   ⚠️ Gated on html.yy-reveal, a class only a working script sets, and only ever
-   applied to .yy-rv, which the script only adds to elements IX2 does not own.
-   Without the class every element renders normally, so JS off / no
-   IntersectionObserver / any throw all end with visible content.
-   --------------------------------------------------------------------------- */
-html.yy-reveal .yy-rv,
-html.yy-reveal .rv {
-  opacity: 0;
-  transform: translateY(var(--distance-medium));
-  filter: blur(var(--blur-medium));
-  transition: opacity var(--duration-very-slow) var(--ease-smooth-out),
-              transform var(--duration-very-slow) var(--ease-smooth-out),
-              filter var(--duration-very-slow) var(--ease-smooth-out);
-  transition-delay: var(--d, 0s);
-  will-change: opacity, transform, filter;
-}
-
-html.yy-reveal .yy-rv.in,
-html.yy-reveal .rv.in {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  will-change: auto;
-}
-
-/* Reduced motion: the script bails before setting the class, so this is only a
-   belt-and-braces guard in case the class is ever set another way. */
-@media (prefers-reduced-motion: reduce) {
-  html.yy-reveal .yy-rv,
-  html.yy-reveal .rv {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   6. Scroll effects  (see assets/js/yy-scroll.js)
-   --------------------------------------------------------------------------- */
-
-/* Filmic image reveal. The base reveal in section 5 rises and un-blurs — right
-   for text, but a large image should have its frame WIPE open with a micro
-   over-scale settling back, rather than sliding. Same --duration-very-slow and
-   same --ease-smooth-out as the text reveal, so both read as one system; only
-   the shape of the motion differs.
-
-   The wipe replaces the translate entirely: moving AND wiping at once reads as
-   two effects fighting. 1.06 is the over-scale — small enough that the crop
-   never visibly shifts, large enough that the image settles rather than lands. */
-html.yy-reveal .yy-rv--wipe {
-  transform: scale(1.06);
-  clip-path: inset(100% 0 0 0);
-  filter: none;                       /* the wipe carries it; blur would muddy the edge */
-  transition: opacity var(--duration-very-slow) var(--ease-smooth-out),
-              transform var(--duration-very-slow) var(--ease-smooth-out),
-              clip-path var(--duration-very-slow) var(--ease-smooth-out);
-}
-
-html.yy-reveal .yy-rv--wipe.in {
-  transform: none;
-  clip-path: inset(0 0 0 0);
-}
-
-/* ⛔ 这里原本有一层"滚动速度模糊"，已删除。留下记录避免有人再加一次。
+   ⛔ 这里原本有一层"滚动速度模糊"，已删除。留下记录避免有人再加一次。
    两个原因，第二个更重要：
 
    1. 它渲染不出来。--yy-vblur 确实被写到 1.60px、lenis-smooth 类也在，但 <img> 的
@@ -216,10 +123,5 @@ html.yy-chrome .div-block-40.grid img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.yy-reveal .yy-rv--wipe {
-    transform: none;
-    clip-path: none;
-    transition: none;
-  }
   html.lenis-smooth img { filter: none; }
 }

@@ -1,0 +1,198 @@
+/* ============================================================================
+   yy-motion.css — named enter/exit recipes for landing, Astro pages, and
+   Webflow case gaps (what IX2 does not own).
+
+   ONE-SHOT default text enter: edit the :root --reveal-text-* block below.
+   Every [data-reveal="text"], .rv, and auto-stamped .yy-rv follows it.
+
+   Per-node override (no new recipe):
+     style="--reveal-delay: 120ms; --reveal-distance: 8px;
+            --reveal-duration: 400ms; --reveal-blur: 0px"
+
+   Named recipes: text | fade | wipe | media | clip | intro-meta | intro-headline
+   Custom names: start from the text recipe; add a later rule for
+     html.yy-reveal [data-reveal="your-name"] { ... }
+
+   HARD RULE: this file may only animate opacity, transform, filter, clip-path.
+   Do not set grid-template-columns, padding-left/right, or content color.
+   IX2 ([data-w-id]) is a different writer — do not target those nodes here.
+   ============================================================================ */
+
+:root {
+  /* ---- default TEXT enter (change these to restyle the whole site) ---- */
+  --reveal-text-distance: var(--distance-medium);
+  --reveal-text-blur: var(--blur-medium);
+  --reveal-text-duration: var(--duration-very-slow);
+  --reveal-text-ease: var(--ease-smooth-out);
+
+  /* ---- default MEDIA / wipe enter ---- */
+  --reveal-media-scale: 1.06;
+  --reveal-media-duration: var(--duration-very-slow);
+  --reveal-media-ease: var(--ease-smooth-out);
+
+  /* Per-element knobs (inherit; set on a node to customize) */
+  --reveal-distance: var(--reveal-text-distance);
+  --reveal-blur: var(--reveal-text-blur);
+  --reveal-duration: var(--reveal-text-duration);
+  --reveal-ease: var(--reveal-text-ease);
+  --reveal-delay: var(--d, 0s);
+}
+
+/* ---------------------------------------------------------------------------
+   Gate: html.yy-reveal is set by yy-reveal.js only. JS off → visible content.
+   --------------------------------------------------------------------------- */
+
+html.yy-reveal .yy-rv,
+html.yy-reveal .rv,
+html.yy-reveal [data-reveal="text"],
+html.yy-reveal [data-reveal="fade"],
+html.yy-reveal [data-reveal="wipe"],
+html.yy-reveal [data-reveal="media"],
+html.yy-reveal [data-reveal="clip"],
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]) {
+  opacity: 0;
+  transition-property: opacity, transform, filter, clip-path;
+  transition-duration: var(--reveal-duration);
+  transition-timing-function: var(--reveal-ease);
+  transition-delay: var(--reveal-delay);
+  will-change: opacity, transform, filter;
+}
+
+/* Default TEXT: 12px rise + fade + light blur, 500ms. */
+html.yy-reveal .yy-rv,
+html.yy-reveal .rv,
+html.yy-reveal [data-reveal="text"],
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="media"]):not([data-reveal="clip"]) {
+  transform: translateY(var(--reveal-distance));
+  filter: blur(var(--reveal-blur));
+}
+
+html.yy-reveal [data-reveal="fade"] {
+  transform: none;
+  filter: none;
+}
+
+html.yy-reveal [data-reveal="clip"] {
+  transform: translateY(var(--reveal-distance));
+  filter: none;
+  clip-path: inset(0 0 100% 0);
+  overflow: hidden;
+}
+
+/* MEDIA / wipe: frame opens; no blur (muddies the edge). */
+html.yy-reveal .yy-rv--wipe,
+html.yy-reveal [data-reveal="wipe"],
+html.yy-reveal [data-reveal="media"] {
+  transform: scale(var(--reveal-media-scale));
+  clip-path: inset(100% 0 0 0);
+  filter: none;
+  transition-duration: var(--reveal-media-duration, var(--reveal-duration));
+  transition-timing-function: var(--reveal-media-ease, var(--reveal-ease));
+}
+
+html.yy-reveal .yy-rv.in,
+html.yy-reveal .rv.in,
+html.yy-reveal [data-reveal].in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  will-change: auto;
+}
+
+html.yy-reveal .yy-rv--wipe.in,
+html.yy-reveal [data-reveal="wipe"].in,
+html.yy-reveal [data-reveal="media"].in,
+html.yy-reveal [data-reveal="clip"].in {
+  clip-path: inset(0 0 0 0);
+}
+
+html.yy-reveal [data-reveal="none"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  clip-path: none;
+  transition: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Landing hero intro — CSS timeline, not IntersectionObserver.
+   Timing matches the previous landing.css introFade / introTextReveal.
+   --------------------------------------------------------------------------- */
+
+html.yy-landing [data-reveal="intro-meta"],
+html.yy-landing [data-reveal="intro-headline"] {
+  opacity: 0;
+}
+
+html.yy-landing [data-reveal="intro-headline"] {
+  transform: translateY(14px);
+  clip-path: inset(0 0 100% 0);
+  overflow: hidden;
+}
+
+[data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"] {
+  animation: yy-intro-fade 560ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-reveal="intro-meta"] {
+  animation-delay: 160ms;
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-reveal="intro-meta"] {
+  animation-delay: 240ms;
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-reveal="intro-meta"] {
+  animation-delay: 200ms;
+}
+
+[data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
+  animation: yy-intro-text 820ms cubic-bezier(.16, 1, .3, 1) 320ms both;
+}
+
+@keyframes yy-intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes yy-intro-text {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.yy-reveal .yy-rv,
+  html.yy-reveal .rv,
+  html.yy-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: none;
+    transition: none;
+  }
+
+  html.yy-landing [data-reveal="intro-meta"],
+  html.yy-landing [data-reveal="intro-headline"],
+  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"],
+  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    overflow: visible !important;
+  }
+}

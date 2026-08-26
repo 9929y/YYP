@@ -131,6 +131,13 @@
     (document.head || HTML).appendChild(tokens);
   }
 
+  if (!document.querySelector('link[href*="yy-motion.css"]')) {
+    var motion = document.createElement('link');
+    motion.rel = 'stylesheet';
+    motion.href = ROOT + 'assets/css/yy-motion.css';
+    (document.head || HTML).appendChild(motion);
+  }
+
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';

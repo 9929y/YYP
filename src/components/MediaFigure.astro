@@ -12,7 +12,7 @@ interface Props {
 const { src, alt, width, height, caption } = Astro.props;
 ---
 
-<figure class="media rv">
+<figure class="media rv" data-reveal="media">
   <img src={publicUrl(src)} alt={alt} width={width} height={height} loading="lazy" />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
