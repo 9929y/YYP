@@ -165,9 +165,9 @@ function openTransform(index: number, radius: number): string {
  */
 function introTransform(index: number, radius: number): string {
   return cardTransform(index, radius, {
-    yawScale: 0.38,
-    radiusScale: 0.36,
-    scale: 0.88
+    yawScale: 0.62,
+    radiusScale: 0.48,
+    scale: 0.62
   });
 }
 
@@ -210,12 +210,16 @@ const CarouselFace = memo(function CarouselFace({
             ? SPRING
             : {
                 ...INTRO_EASE,
-                delay: spread ? 0.04 + index * 0.07 : 0
+                delay: spread ? 0.06 : 0
               }
       }
     >
       <div
-        className="yy-projects-card-float"
+        className={
+          settled
+            ? 'yy-projects-card-float is-floating'
+            : 'yy-projects-card-float'
+        }
         style={{ animationDelay: floatDelay }}
       >
         <div
@@ -228,7 +232,11 @@ const CarouselFace = memo(function CarouselFace({
         </div>
       </div>
       <div
-        className="yy-projects-card-shadow"
+        className={
+          settled
+            ? 'yy-projects-card-shadow is-floating'
+            : 'yy-projects-card-shadow'
+        }
         style={{
           width: `${faceWidth * 0.78}px`,
           animationDelay: floatDelay

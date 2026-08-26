@@ -118,12 +118,15 @@ html.yy-projects body {
   -webkit-backface-visibility: visible;
 }
 
-/* Soft float — tiny Y bob + micro yaw; staggered via inline animation-delay. */
+/* Soft float — gated by .is-floating so entrance fan stays clip-free. */
 .yy-projects-card-float {
   position: relative;
   z-index: 1;
   transform-style: preserve-3d;
   will-change: transform;
+}
+
+.yy-projects-card-float.is-floating {
   animation: yy-card-float 5.6s ease-in-out infinite;
 }
 
@@ -151,6 +154,10 @@ html.yy-projects body {
   filter: blur(10px);
   pointer-events: none;
   will-change: transform, opacity, filter;
+  opacity: 0.45;
+}
+
+.yy-projects-card-shadow.is-floating {
   animation: yy-card-shadow 5.6s ease-in-out infinite;
 }
 
@@ -170,8 +177,8 @@ html.yy-projects body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .yy-projects-card-float,
-  .yy-projects-card-shadow {
+  .yy-projects-card-float.is-floating,
+  .yy-projects-card-shadow.is-floating {
     animation: none;
   }
 
