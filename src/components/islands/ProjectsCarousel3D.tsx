@@ -59,23 +59,34 @@ export function useMediaQuery(
 }
 
 /*
- * Partial cylinder: 8-slot spacing with only 5 faces (3 back slots empty),
- * so ~5 cards stay on screen. Auto yaw pendulum; manual drag is faster.
- * Per-card float/sway is CSS. No labels / Anchor this layer.
+ * Partial 8-slot / 5-card cylinder + OrbitControls-like interaction:
+ * elastic rubber-band pitch, damped yaw, zoom with spring settle.
  */
 const SLOT_COUNT = 8;
 const VISIBLE_CARDS = 5;
-const DRAG_GAIN_AUTO = 0.1;
-const DRAG_GAIN_MANUAL = 0.28;
-const WHEEL_GAIN = 0.12;
-const ROTATE_X_MAX = 18;
-const AUTO_AMP = 28; // deg left-right sway of the whole ring
-const AUTO_SPEED = 0.35; // rad/s-ish via sin(t * speed)
+const DRAG_YAW = 0.28;
+const DRAG_PITCH = 0.16;
+const WHEEL_ZOOM = 0.00135;
+const ROTATE_X_SOFT = 16;
+const ROTATE_X_HARD = 28;
+const ZOOM_MIN = 0.78;
+const ZOOM_MAX = 1.55;
+const ZOOM_SOFT_MIN = 0.68;
+const ZOOM_SOFT_MAX = 1.72;
+const AUTO_AMP = 28;
+const AUTO_SPEED = 0.35;
+const RUBBER = 0.32;
 const SPRING = {
   type: 'spring' as const,
-  stiffness: 100,
-  damping: 30,
-  mass: 0.1
+  stiffness: 120,
+  damping: 18,
+  mass: 0.35
+};
+const SPRING_SNAP = {
+  type: 'spring' as const,
+  stiffness: 160,
+  damping: 20,
+  mass: 0.28
 };
 
 function prefersReducedMotion(): boolean {
@@ -87,7 +98,13 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
-/** Angle for face i on an 8-slot ring, centered on camera (back gap empty). */
+/** Soft overscroll like OrbitControls damping against a limit. */
+function rubberBand(value: number, min: number, max: number, resist = RUBBER): number {
+  if (value < min) return min + (value - min) * resist;
+  if (value > max) return max + (value - max) * resist;
+  return value;
+}
+
 function faceAngle(index: number): number {
   const step = 360 / SLOT_COUNT;
   const mid = (VISIBLE_CARDS - 1) / 2;
@@ -150,26 +167,48 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const autoPhase = useRef(0);
   const autoPausedUntil = useRef(0);
   const autoWasPaused = useRef(false);
+  const zoomIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  // Size faces from the 8-slot ring so five front seats read clearly.
   const cylinderWidth = isScreenSizeSm ? 1200 : 2000;
   const faceWidth = cylinderWidth / SLOT_COUNT;
   const radius = cylinderWidth / (2 * Math.PI);
 
   const rotateY = useMotionValue(0);
   const rotateX = useMotionValue(0);
+  const zoom = useMotionValue(1);
   const transform = useTransform(
-    [rotateY, rotateX],
-    ([y, x]) => `rotateX(${x as number}deg) rotateY(${y as number}deg)`
+    [rotateY, rotateX, zoom],
+    ([y, x, z]) =>
+      `scale(${z as number}) rotateX(${x as number}deg) rotateY(${y as number}deg)`
   );
 
   const stopOrbit = useCallback(() => {
     rotateY.stop();
     rotateX.stop();
-  }, [rotateX, rotateY]);
+    zoom.stop();
+  }, [rotateX, rotateY, zoom]);
+
+  const settleElastic = useCallback(() => {
+    if (prefersReducedMotion()) {
+      rotateX.set(clamp(rotateX.get(), -ROTATE_X_SOFT, ROTATE_X_SOFT));
+      zoom.set(clamp(zoom.get(), ZOOM_MIN, ZOOM_MAX));
+      return;
+    }
+
+    // Pitch: spring toward home (0) — OrbitControls-like elastic settle / 吸附.
+    const pitch = rotateX.get();
+    const pitchTarget =
+      Math.abs(pitch) < 3 ? 0 : clamp(pitch, -ROTATE_X_SOFT, ROTATE_X_SOFT);
+    void animate(rotateX, pitchTarget, SPRING_SNAP);
+
+    // Zoom: spring into hard range with a touch of overshoot.
+    const z = zoom.get();
+    const zoomTarget = clamp(z, ZOOM_MIN, ZOOM_MAX);
+    void animate(zoom, zoomTarget, SPRING_SNAP);
+  }, [rotateX, zoom]);
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -190,14 +229,30 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       const dy = event.clientY - lastPointer.current.y;
       lastPointer.current = { x: event.clientX, y: event.clientY };
       velocity.current = { x: dx, y: dy };
-      // Manual: faster than auto gain.
-      rotateY.set(rotateY.get() + dx * DRAG_GAIN_MANUAL);
-      rotateX.set(
-        clamp(rotateX.get() - dy * DRAG_GAIN_AUTO, -ROTATE_X_MAX, ROTATE_X_MAX)
+
+      rotateY.set(rotateY.get() + dx * DRAG_YAW);
+
+      // Vertical drag: rubber-band pitch (elastic past soft limit).
+      const nextPitch = rubberBand(
+        rotateX.get() - dy * DRAG_PITCH,
+        -ROTATE_X_SOFT,
+        ROTATE_X_SOFT
       );
+      rotateX.set(clamp(nextPitch, -ROTATE_X_HARD, ROTATE_X_HARD));
+
+      // Pulling up slightly also eases zoom in (OrbitControls dolly feel).
+      if (Math.abs(dy) > Math.abs(dx) * 0.85) {
+        const zNext = rubberBand(
+          zoom.get() - dy * 0.0018,
+          ZOOM_MIN,
+          ZOOM_MAX
+        );
+        zoom.set(clamp(zNext, ZOOM_SOFT_MIN, ZOOM_SOFT_MAX));
+      }
+
       baseYaw.current = rotateY.get();
     },
-    [rotateX, rotateY]
+    [rotateX, rotateY, zoom]
   );
 
   const onPointerUp = useCallback(
@@ -210,25 +265,24 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
         /* already released */
       }
 
-      baseYaw.current = rotateY.get();
-      autoPausedUntil.current = performance.now() + 900;
+      autoPausedUntil.current = performance.now() + 1100;
 
-      if (prefersReducedMotion()) return;
+      if (prefersReducedMotion()) {
+        baseYaw.current = rotateY.get();
+        settleElastic();
+        return;
+      }
 
-      const coastY = rotateY.get() + velocity.current.x * DRAG_GAIN_MANUAL * 6;
-      const coastX = clamp(
-        rotateX.get() - velocity.current.y * DRAG_GAIN_AUTO * 6,
-        -ROTATE_X_MAX,
-        ROTATE_X_MAX
-      );
+      // Damped inertia on yaw (OrbitControls enableDamping).
+      const coastY = rotateY.get() + velocity.current.x * DRAG_YAW * 7;
       baseYaw.current = coastY;
       void animate(rotateY, coastY, SPRING);
-      void animate(rotateX, coastX, SPRING);
+      settleElastic();
     },
-    [rotateX, rotateY]
+    [rotateY, settleElastic]
   );
 
-  // Auto left-right pendulum when not dragging.
+  // Auto left-right pendulum when idle.
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
@@ -259,7 +313,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     return () => cancelAnimationFrame(raf);
   }, [rotateY]);
 
-  // Wheel → yaw (manual-speed); never scroll the page while over the stage.
+  // Wheel → zoom (OrbitControls dolly); never scroll the page on the stage.
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -267,11 +321,27 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
       stopOrbit();
-      const delta = event.deltaY * WHEEL_GAIN + event.deltaX * WHEEL_GAIN;
-      const next = rotateY.get() + delta;
-      rotateY.set(next);
-      baseYaw.current = next;
-      autoPausedUntil.current = performance.now() + 900;
+      autoPausedUntil.current = performance.now() + 1100;
+
+      // Shift+wheel keeps yaw nudge for power users; default is zoom.
+      if (event.shiftKey) {
+        const next = rotateY.get() + (event.deltaY + event.deltaX) * 0.12;
+        rotateY.set(next);
+        baseYaw.current = next;
+        return;
+      }
+
+      const zNext = rubberBand(
+        zoom.get() - event.deltaY * WHEEL_ZOOM,
+        ZOOM_MIN,
+        ZOOM_MAX
+      );
+      zoom.set(clamp(zNext, ZOOM_SOFT_MIN, ZOOM_SOFT_MAX));
+
+      if (zoomIdle.current) clearTimeout(zoomIdle.current);
+      zoomIdle.current = setTimeout(() => {
+        settleElastic();
+      }, 140);
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -281,10 +351,11 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     stage.addEventListener('wheel', onWheel, { passive: false });
     stage.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => {
+      if (zoomIdle.current) clearTimeout(zoomIdle.current);
       stage.removeEventListener('wheel', onWheel);
       stage.removeEventListener('touchmove', onTouchMove);
     };
-  }, [rotateY, stopOrbit]);
+  }, [rotateY, settleElastic, stopOrbit, zoom]);
 
   return (
     <div
