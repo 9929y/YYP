@@ -23,10 +23,10 @@
   /*
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
     - Hero: scale 1.3, rotate 0
-    - Opus: scale 1.9, opacity 0.3
-    - Atlas: scale 2.4, opacity 0.7, cover 0.25, rotate 15deg CW
-    - McKinsey: scale 2.8, opacity 0.3
-    - Lark: scale 1.5, opacity 0.2, cover 0.5, rotate 40deg CW
+    - Opus: scale 1.9, opacity 0.3, cover 0.7
+    - Atlas Nova: scale 2.8, canvas 0.4, cover 0.1, rotate 15deg CW
+    - McKinsey: scale 2.8, opacity 0.3, cover 0.5
+    - Lark: scale 1.5, opacity 0.2, cover 0.6, rotate 8deg CW
     - Bottom / footer: canvas + cover → 0
     During projects, shader speed is marked 0.7× via data-motion-zone.
   */
@@ -44,53 +44,53 @@
   };
 
   var CASES = [
-    /* 0 Opus — scale 1.9 */
+    /* 0 Opus — cover 0.7 */
     {
       opacity: 0.3,
       scale: 1.9,
       rotate: 8,
       x: -20,
       y: 36,
-      coverOpacity: 0.3,
+      coverOpacity: 0.7,
       coverScale: 1.06,
       coverRotate: 5,
       coverX: 14,
       coverY: 18
     },
-    /* 1 Atlas Nova — scale 2.8, canvas/cover opacity 0.4 */
+    /* 1 Atlas Nova — cover 0.1 (clearest glass) */
     {
       opacity: 0.4,
       scale: 2.8,
       rotate: 15,
       x: -32,
       y: 44,
-      coverOpacity: 0.4,
+      coverOpacity: 0.1,
       coverScale: 1.12,
       coverRotate: 10,
       coverX: 22,
       coverY: 26
     },
-    /* 2 McKinsey — scale 2.8 */
+    /* 2 McKinsey — cover 0.5 */
     {
       opacity: 0.3,
       scale: 2.8,
       rotate: 28,
       x: -10,
       y: 22,
-      coverOpacity: 0.32,
+      coverOpacity: 0.5,
       coverScale: 1.12,
       coverRotate: 20,
       coverX: 8,
       coverY: 14
     },
-    /* 3 Lark — 8deg CW */
+    /* 3 Lark — cover 0.6 */
     {
       opacity: 0.2,
       scale: 1.5,
       rotate: 8,
       x: -26,
       y: 40,
-      coverOpacity: 0.5,
+      coverOpacity: 0.6,
       coverScale: 1.05,
       coverRotate: 5,
       coverX: 18,

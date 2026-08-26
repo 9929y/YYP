@@ -600,19 +600,25 @@
 
   /* ---------- index of work ---------- */
   .index {
-    padding: 24px 0 96px;
+    padding: 48px 0 120px;
   }
 
-  /* Shorter than a full viewport so the four cases sit closer when scrolling,
-     while still reading as one band at a time. */
+  /* One case ≈ one viewport, with air between bands so Lenis settle
+     lands on a single project rather than two overlapping. */
   .case {
-    min-height: 82svh;
-    min-height: 82vh;
+    min-height: 100svh;
+    min-height: 100vh;
     display: grid;
     align-content: center;
-    margin-bottom: 0;
-    padding-block: clamp(32px, 4vh, 56px);
+    margin-bottom: clamp(64px, 18vh, 200px);
+    padding-block: clamp(48px, 8vh, 96px);
     box-sizing: border-box;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  html.yy-landing {
+    scroll-snap-type: y proximity;
   }
 
   /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
