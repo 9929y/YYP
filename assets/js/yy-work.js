@@ -10,48 +10,56 @@
     {
       href: 'ai-driven-product-design.html',
       cover: 'assets/images/opusclip/hero-opusclip-ai-video-editing-cover.webp',
+      pos: '50%',
       title: 'AI-powered Video Tool',
       sub: 'Launch new features with AI'
     },
     {
       href: 'mckinseyecommerce.html',
       cover: 'assets/images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp',
+      pos: '0 0',
       title: 'Digital Consulting UXD',
       sub: 'build a product from 0 to 1'
     },
     {
       href: 'larkdesign.html',
       cover: 'assets/images/lark/illustration-bytedance-workspace-modules-ring.webp',
+      pos: '50%',
       title: 'All-in-One Office Tool UXD',
       sub: 'Product Ideations and iterations'
     },
     {
       href: 'cummins-digitalization.html',
       cover: 'assets/images/cummins/hero-cummins-diagnostic-session-screens.webp',
+      pos: '50% 100%',
       title: 'Cummins Digital Tool UXD',
       sub: 'Design system, ideation and research'
     },
     {
       href: 'mifinance.html',
       cover: 'assets/images/mifinance/screen-mi-finance-e-account-screens-stack.webp',
+      pos: '50%',
       title: 'Financial Digital Tool UXD',
       sub: 'ACCESSIBILITY&UX IMPROVEMENT'
     },
     {
       href: 'alzheimerdisease.html',
       cover: 'assets/images/home/hero-alzheimer-care-wearable-card-cover.webp',
+      pos: '100%',
       title: 'Wearable Communication Device',
       sub: 'Benefit for medical realm'
     },
     {
       href: 'tiktok-research.html',
       cover: 'assets/images/tiktok/hero-tiktok-safety-strategy-cover.webp',
+      pos: '0%',
       title: 'Global Platform Research Case Study',
       sub: 'Quantitative research & analysis'
     },
     {
       href: null,
       cover: 'assets/images/lark/illustration-lark-education-class-collaboration-cover.webp',
+      pos: '50%',
       title: 'Lark Education Field Study',
       sub: 'Qualitative&Quantitative (ON process)',
       unable: true
@@ -68,7 +76,8 @@
 
   function cardHTML(card) {
     var inner =
-      '<div class="card__media" style="background-image:url(\'' + esc(ROOT + card.cover) + '\')"></div>' +
+      '<div class="card__media" style="background-image:url(\'' + esc(ROOT + card.cover) + '\')' +
+        (card.pos ? ';background-position:' + esc(card.pos) : '') + '"></div>' +
       '<div class="card__meta">' +
         '<p class="card__title">' + esc(card.title) + '</p>' +
         '<p class="card__sub">' + esc(card.sub) + '</p>' +
