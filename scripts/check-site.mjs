@@ -324,6 +324,9 @@ if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
 if (!chromeJs.includes('yy:panel-state')) {
   errors.push('yy-chrome.js must announce expanded panel state');
 }
+if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
+  errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
+}
 if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
     !chromeJs.includes(':focus-within')) {
