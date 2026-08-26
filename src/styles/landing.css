@@ -185,20 +185,24 @@
     border-radius: 2px;
   }
 
-  /* ---------- the ASCII diffusion field (optional; landing no longer mounts it) ----------
-     Kept for pages that still load yy-flow.js. Landing uses .yy-canvas instead. */
+  /* ---------- the ASCII diffusion field (cursor wake; landing + optional pages) ---------- */
   #yy-flow {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: 2;
     pointer-events: none;
     display: block;
+  }
+  /* Above frosted cover, under page copy. */
+  html.yy-landing [data-motion-root] > .wrap {
+    position: relative;
+    z-index: 3;
   }
   @media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
     #yy-flow { display: none !important; }
   }
 
-  /* ---------- hero canvas (Figma GIF + frosted cover; replaces yy-flow) ---------- */
+  /* ---------- hero canvas (ShaderGradient + frosted cover) ---------- */
   /* Landing-only type scale (~12.5% under the shared tokens) so Webflow
      case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
@@ -218,36 +222,34 @@
     /* Tighter spine: label + gap hug the rule; media column gets the rest. */
     --col-label-case: 300px;
     --col-gap: 12px;
+    /* Scroll-driven canvas / cover (yy-canvas-motion.js). */
+    --canvas-scale: 1.3;
+    --canvas-rotate: 0deg;
+    --canvas-x: 0px;
+    --canvas-y: 0px;
+    --canvas-opacity: 0.9;
+    /* Cover frost: only blur + fill vary per case; opacity stays 1 until footer. */
+    --cover-opacity: 1;
+    --cover-blur: 85px;
+    --cover-fill: 0.16;
   }
 
-  /* Hero-height canvas. Bottom mask fades to transparent so the seam into
-     the project band is a soft opacity blend, not a hard horizontal cut. */
+  /* Fixed background board — scroll content moves; canvas/cover stay pinned
+     and are driven by --canvas-* / --cover-* from yy-canvas-motion.js. */
   .yy-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    inset: 0;
     width: 100%;
-    height: min(100svh, 1080px);
-    height: min(100vh, 1080px);
+    height: 100%;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 42%,
-      rgba(0, 0, 0, 0.65) 62%,
-      rgba(0, 0, 0, 0.25) 82%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 42%,
-      rgba(0, 0, 0, 0.65) 62%,
-      rgba(0, 0, 0, 0.25) 82%,
-      transparent 100%
-    );
+    transform-origin: center center;
+    will-change: transform, opacity;
+    opacity: var(--canvas-opacity);
+    transform: translate3d(var(--canvas-x), var(--canvas-y), 0)
+      rotate(var(--canvas-rotate))
+      scale(var(--canvas-scale));
   }
 
   .yy-canvas__media {
@@ -266,26 +268,153 @@
     width: 100% !important;
     height: 100% !important;
     display: block;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 560ms ease;
   }
 
-  /* Still image is the reduced-motion / no-JS fallback under the live gradient. */
+  /* Still is the instant LCP stand-in; WebGL crossfades over it when ready. */
   .yy-canvas__media--still {
-    display: none;
+    display: block;
     z-index: 0;
+    opacity: 1;
+    transition: opacity 520ms ease;
   }
 
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__gradient,
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__gradient canvas {
+    opacity: 1;
+  }
+
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__media--still {
+    opacity: 0;
+  }
+
+  /* Cover is a sibling fixed layer (not nested under canvas) so opacity
+     does not multiply with --canvas-opacity. Geometry stays identity;
+     --cover-blur / --cover-fill / --cover-opacity set frost per stop. */
   .yy-canvas__cover {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: 1;
-    background: rgba(255, 250, 250, 0.2);
-    -webkit-backdrop-filter: blur(100px);
-    backdrop-filter: blur(100px);
+    pointer-events: none;
+    background: rgba(255, 250, 250, var(--cover-fill));
+    -webkit-backdrop-filter: blur(var(--cover-blur));
+    backdrop-filter: blur(var(--cover-blur));
+    opacity: var(--cover-opacity);
+    transform: none;
+  }
+
+  [data-motion-root] > .wrap {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Footer / end-of-page: both layers fully out so chrome sits on --ground. */
+  [data-motion-root][data-canvas-clear="true"] .yy-canvas,
+  [data-motion-root][data-canvas-clear="true"] .yy-canvas__cover {
+    opacity: 0 !important;
+    visibility: hidden;
+  }
+
+  /* ---------- opening intro reveal ---------- */
+  html.yy-landing [data-intro="meta"],
+  html.yy-landing [data-intro="headline"] {
+    opacity: 0;
+  }
+
+  html.yy-landing [data-intro="headline"] {
+    transform: translateY(14px);
+    clip-path: inset(0 0 100% 0);
+    overflow: hidden;
+  }
+
+  /* Spine: start collapsed; grow top → bottom after intro-ready. */
+  html.yy-landing .hero.row--ruled::before {
+    transform: scaleY(0);
+    transform-origin: top center;
+  }
+
+  [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
+    animation: introFade 560ms cubic-bezier(.2, .8, .2, 1) both;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-intro="meta"] {
+    animation-delay: 160ms;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-intro="meta"] {
+    animation-delay: 240ms;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-intro="meta"] {
+    animation-delay: 200ms;
+  }
+
+  [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
+    animation: introTextReveal 820ms cubic-bezier(.16, 1, .3, 1) 320ms both;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
+    animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
+  }
+
+  @keyframes introFade {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes introTextReveal {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes introLineGrowY {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .yy-canvas__gradient { display: none !important; }
-    .yy-canvas__media--still { display: block; }
+    .yy-canvas__media--still {
+      display: block;
+      opacity: 1 !important;
+      transition: none;
+    }
+    .yy-canvas,
+    .yy-canvas__cover {
+      transform: none;
+      transition: opacity 240ms ease;
+    }
+    html.yy-landing [data-intro="meta"],
+    html.yy-landing [data-intro="headline"],
+    [data-motion-root][data-intro-ready="true"] [data-intro="meta"],
+    [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+      overflow: visible !important;
+    }
+    html.yy-landing .hero.row--ruled::before,
+    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
+      animation: none !important;
+      transform: none !important;
+    }
   }
 
   /* ---------- shell ---------- */
@@ -489,18 +618,31 @@
 
   /* ---------- index of work ---------- */
   .index {
-    padding: 24px 0 96px;
+    padding: 48px 0 120px;
   }
 
-  /* Shorter than a full viewport so the four cases sit closer when scrolling,
-     while still reading as one band at a time. */
+  /* Section label: same .eyebrow recipe as hero / case-study (t-11, uppercase,
+     ink-3). Sits on the spine frame, left track — above cases, not in media. */
+  .index__head {
+    max-width: var(--frame-spine);
+    margin: 0 auto;
+    padding: 0 0 clamp(20px, 3vh, 36px);
+    box-sizing: border-box;
+  }
+
+  .index__head .eyebrow {
+    max-width: var(--col-label-case);
+  }
+
+  /* One case ≈ one viewport, with air between bands. Soft snap is handled in
+     yy-scroll.js (Lenis) — CSS scroll-snap fights Lenis and feels sticky. */
   .case {
-    min-height: 82svh;
-    min-height: 82vh;
+    min-height: 100svh;
+    min-height: 100vh;
     display: grid;
     align-content: center;
-    margin-bottom: 0;
-    padding-block: clamp(32px, 4vh, 56px);
+    margin-bottom: clamp(64px, 18vh, 200px);
+    padding-block: clamp(48px, 8vh, 96px);
     box-sizing: border-box;
   }
 
@@ -600,7 +742,9 @@
     }
   }
 
-  /* Media fills the column past the spine — larger than the old 823 cap. */
+  /* Media fills the column past the spine — larger than the old 823 cap.
+     Shadow mirrors the nav capsule (inset hair + soft indigo drop) on all
+     four sides so the thumb lifts off the canvas/cover. */
   .slot {
     display: block;
     position: relative;
@@ -611,9 +755,17 @@
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
-    /* Must not be center — that floats media off the left info baseline
-       once the aspect-ratio height shrinks below the label stack. */
     align-self: end;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .72),
+      inset 0 0 0 1px rgba(26, 25, 23, .06),
+      inset 0 -1px 0 rgba(26, 25, 23, .04),
+      0 1px 2px rgba(62, 65, 116, .07),
+      0 2px 8px -2px rgba(62, 65, 116, .10),
+      0 12px 36px -8px rgba(62, 65, 116, .22),
+      0 -6px 20px -10px rgba(62, 65, 116, .12),
+      8px 0 28px -12px rgba(62, 65, 116, .16),
+      -8px 0 28px -12px rgba(62, 65, 116, .16);
   }
 
   .case .panel {

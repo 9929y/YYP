@@ -12,8 +12,12 @@ const { projects } = Astro.props;
 ---
 
 {
-  projects.map((project) => (
-    <article class="case row row--ruled">
+  projects.map((project, index) => (
+    <article
+      class="case row row--ruled"
+      data-motion-case={String(index)}
+      data-case-theme={project.theme}
+    >
       <div class="case__label">
         <CaseNoteGenerate client:visible text={project.note} />
         <div class="case__meta">
