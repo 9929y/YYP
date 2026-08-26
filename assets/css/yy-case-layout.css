@@ -101,3 +101,51 @@
     padding-right: 0;
   }
 }
+
+/* ---------- project heroes: one column, not logo | title ----------
+   `.hero-intro-2` is a 0.5fr|1fr grid. The wordmark is `justify-self: end` in
+   the first track, so a 300px lockup hangs off the left and `overflow-x: clip`
+   crops it (the “y / n” fragments on McKinsey). The H1 then lives only in the
+   second track instead of the full hero well.
+
+   McKinsey and Cummins share `.hero-intro-2.mck`. Stack logo, then title. */
+.hero-intro-2.mck {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.hero-intro-2.mck > img {
+  display: block;
+  width: auto;
+  max-width: min(300px, 100%);
+  height: auto;
+}
+
+.hero-intro-2.mck .stacked-title-2.mck {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  left: 0;
+  top: 0;
+  right: auto;
+}
+
+.hero-intro-2.mck .heading-xl,
+.hero-intro-2.mck h1 {
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero-intro-2.mck .medium-width-2,
+.hero-intro-2.mck .body-display-2 {
+  max-width: 100%;
+  width: 100%;
+}
