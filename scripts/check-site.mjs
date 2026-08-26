@@ -289,6 +289,16 @@ if (!chromeJs.includes("host.classList.toggle('is-fullpage', expanded)") ||
 if (!chromeJs.includes(':host(.is-fullpage) .cap::before{ opacity: .80; }')) {
   errors.push('yy-chrome.js fullpage Orbit GIF must render at 80% opacity');
 }
+if (!chromeJs.includes('class="orbit-canvas"') ||
+    !chromeJs.includes('function setupOrbit(') ||
+    !chromeJs.includes('requestAnimationFrame(frame)')) {
+  errors.push('yy-chrome.js Orbit must provide an independent animated canvas');
+}
+if (!chromeJs.includes('ai-driven-product-design.html') ||
+    !chromeJs.includes('opus') ||
+    !chromeJs.includes('orbit.setActive(expanded)')) {
+  errors.push('yy-chrome.js Orbit must switch dynamic palettes by page');
+}
 if (!chromeJs.includes(':host(.is-fullpage) .cap:hover') ||
     !chromeJs.includes('680ms')) {
   errors.push('yy-chrome.js fullpage orbit must expand on hover with a slow cross-fade');
