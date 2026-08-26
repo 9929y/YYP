@@ -1,0 +1,10 @@
+{
+  "name": "Yanice Yang Portfolio",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "astro-dev",
+      "command": "npm run dev"
+    }
+  ]
+}
