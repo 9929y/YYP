@@ -17,6 +17,10 @@ The live homepage is `src/pages/index.astro` → `/` / `index.html`.
 `/landing.html` redirects to `/`. The pre-cutover Webflow homepage is archived
 as `index.webflow.html`.
 
+The projects hub is `src/pages/projects.astro` → `/projects.html`.
+The pre-cutover Webflow work hub is archived as `projects.webflow.html`
+(passthrough only — do not edit it for new work).
+
 ## Add a page
 
 1. Put a file in `src/pages/`. `build.format` is `file`, so `src/pages/foo.astro`
@@ -26,6 +30,9 @@ as `index.webflow.html`.
 3. Import page CSS in the frontmatter. Do not add rules to
    `assets/css/123-782b5b.webflow.shared.a9431a3c9.css`.
 
+`projects.html` is Astro-owned. Prefer extending `src/pages/projects.astro` and
+`hubProjects()` rather than resurrecting root `projects.html`.
+
 ## Add a case study
 
 1. Append a record to `src/data/projects.ts`.
@@ -34,6 +41,8 @@ as `index.webflow.html`.
    - `featuredOnLanding` / `featuredOnIndex` / `featuredOnProjects` control
      listings. Keep those flags honest; the three surfaces currently disagree
      on purpose (see `docs/BASELINE.md`).
+   - Projects hub cards come from `hubProjects()` — projects with
+     `featuredOnProjects: true`, sorted by `landingOrder`.
 2. Put the narrative in the `[slug].astro` slot, using `MediaFigure` for images.
 3. Cover images live under `assets/images/<slug>/` plus a 4:3 card at
    `assets/images/home/`. Update `assets/images/manifest.json` when you add files.

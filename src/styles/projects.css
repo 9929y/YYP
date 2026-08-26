@@ -1,0 +1,282 @@
+/* projects.css — Astro projects hub + full-360 cylinder + pointer orbit.
+   Tokens from yy-tokens.css. Opaque distinct card tones (no glass stack). */
+
+html.yy-projects {
+  background: var(--ground);
+  color: var(--ink);
+}
+
+html.yy-projects,
+html.yy-projects body {
+  overflow-x: clip;
+}
+
+html.yy-projects body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.projects-wrap {
+  min-height: 100svh;
+  min-height: 100vh;
+  padding: clamp(48px, 8vh, 96px) 0 80px;
+  box-sizing: border-box;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.projects-hero {
+  max-width: var(--frame-spine, 1260px);
+  margin: 0 auto;
+  padding: 0 var(--edge, 24px) clamp(20px, 3vh, 36px);
+  box-sizing: border-box;
+}
+
+.projects-hero .eyebrow {
+  margin: 0;
+  font-size: var(--t-11);
+  line-height: var(--lh-caption, 1.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.projects-stage {
+  max-width: none;
+  margin: 0 auto;
+  padding: 48px 0;
+  overflow: visible;
+}
+
+/* ---------- carousel stage ---------- */
+
+.yy-projects-carousel {
+  position: relative;
+  width: 100%;
+  height: min(72vh, 640px);
+  min-height: 560px;
+  overflow: visible;
+  touch-action: none;
+  overscroll-behavior: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.yy-projects-carousel[data-settled='false'] {
+  cursor: default;
+}
+
+.yy-projects-carousel:active {
+  cursor: grabbing;
+}
+
+.yy-projects-carousel[data-settled='false']:active {
+  cursor: default;
+}
+
+.yy-projects-carousel__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  background: transparent;
+}
+
+.yy-projects-carousel__cylinder {
+  position: relative;
+  display: flex;
+  height: 100%;
+  max-width: none;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
+.yy-projects-card-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+}
+
+/* Soft float — tiny Y bob + micro yaw; staggered via inline animation-delay. */
+.yy-projects-card-float {
+  position: relative;
+  z-index: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+  animation: yy-card-float 5.6s ease-in-out infinite;
+}
+
+@keyframes yy-card-float {
+  0%,
+  100% {
+    transform: translateY(4px) rotateY(-3deg);
+  }
+  50% {
+    transform: translateY(-5px) rotateY(3deg);
+  }
+}
+
+/* Ground shadow — top-light oval under the floating plate. */
+.yy-projects-card-shadow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  height: 28%;
+  max-height: 72px;
+  border-radius: 50%;
+  background: rgba(26, 25, 23, 0.28);
+  transform: translate(-50%, 58%) scaleY(0.35);
+  filter: blur(10px);
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+  animation: yy-card-shadow 5.6s ease-in-out infinite;
+}
+
+@keyframes yy-card-shadow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, 58%) scale(0.92) scaleY(0.35);
+    filter: blur(9px);
+  }
+  50% {
+    /* Card rises → softer, larger, more transparent shadow */
+    opacity: 0.32;
+    transform: translate(-50%, 62%) scale(1.08) scaleY(0.32);
+    filter: blur(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yy-projects-card-float,
+  .yy-projects-card-shadow {
+    animation: none;
+  }
+
+  .yy-projects-card-float {
+    transform: none;
+  }
+
+  .yy-projects-card-shadow {
+    opacity: 0.45;
+    transform: translate(-50%, 58%) scaleY(0.35);
+    filter: blur(10px);
+  }
+}
+
+/* ---------- opaque distinct cards ---------- */
+
+.yy-projects-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 18px;
+  box-sizing: border-box;
+  background: transparent;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.yy-projects-card__inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  box-sizing: border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 28px -12px rgba(26, 25, 23, 0.35);
+}
+
+/* Seven clearly different solid tones — depth reads without labels. */
+.yy-projects-card[data-tone='0'] .yy-projects-card__inner {
+  background: #2f6fed;
+}
+.yy-projects-card[data-tone='1'] .yy-projects-card__inner {
+  background: #e4572e;
+}
+.yy-projects-card[data-tone='2'] .yy-projects-card__inner {
+  background: #1f9d6a;
+}
+.yy-projects-card[data-tone='3'] .yy-projects-card__inner {
+  background: #c9a227;
+}
+.yy-projects-card[data-tone='4'] .yy-projects-card__inner {
+  background: #7c4dff;
+}
+.yy-projects-card[data-tone='5'] .yy-projects-card__inner {
+  background: #0f766e;
+}
+.yy-projects-card[data-tone='6'] .yy-projects-card__inner {
+  background: #db2777;
+}
+
+/* ---------- static / reduced-motion fallback ---------- */
+
+.yy-projects-carousel--static {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  cursor: default;
+  touch-action: auto;
+}
+
+.yy-projects-carousel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: clamp(16px, 3vw, 28px);
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--edge, 24px);
+}
+
+.yy-projects-carousel--static .yy-projects-card-slot {
+  position: relative;
+  inset: auto;
+  margin: 0;
+  height: auto;
+}
+
+.yy-projects-carousel--static .yy-projects-card {
+  width: 100%;
+  max-width: none;
+}
+
+@media (max-width: 640px) {
+  .yy-projects-carousel {
+    height: min(64vh, 520px);
+    min-height: 440px;
+  }
+
+  .projects-hero {
+    padding-inline: var(--edge, 24px);
+  }
+
+  .projects-stage {
+    padding: 32px 0;
+  }
+}

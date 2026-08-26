@@ -338,6 +338,12 @@ export function landingProjects(): Project[] {
     .sort((a, b) => a.landingOrder - b.landingOrder);
 }
 
+export function hubProjects(): Project[] {
+  return projects
+    .filter((p) => p.featuredOnProjects)
+    .sort((a, b) => a.landingOrder - b.landingOrder);
+}
+
 export function astroCaseStudies(): Project[] {
   return projects.filter((p) => p.engine === 'astro' && p.status === 'published' && p.href);
 }

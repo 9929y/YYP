@@ -86,6 +86,12 @@ if (fs.existsSync(path.join(ROOT, 'index.html'))) {
 if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
   errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
 }
+if (fs.existsSync(path.join(ROOT, 'projects.html'))) {
+  errors.push('root projects.html must not exist — Astro owns /projects.html; archive is projects.webflow.html');
+}
+if (!fs.existsSync(path.join(ROOT, 'projects.webflow.html'))) {
+  errors.push('projects.webflow.html missing — archive the pre-cutover Webflow projects hub');
+}
 
 const requiredCaseStudyComponents = [
   'CaseSection.astro',
@@ -184,6 +190,24 @@ if (useDist) {
   if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
     errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
   }
+  const distProjects = path.join(distDir, 'projects.html');
+  if (!fs.existsSync(distProjects)) {
+    errors.push('dist/projects.html missing — run npm run build after adding src/pages/projects.astro');
+  } else {
+    const projectsHtml = fs.readFileSync(distProjects, 'utf8');
+    if (!projectsHtml.includes('yy-projects')) {
+      errors.push('dist/projects.html is not the Astro projects hub (missing yy-projects)');
+    }
+    if (projectsHtml.includes('w-nav') && projectsHtml.includes('webflow')) {
+      // Soft signal only if the archived markup leaked; Astro page must not ship Webflow IX2 shell.
+      if (projectsHtml.includes('data-w-id') || projectsHtml.includes('w-mod-js')) {
+        errors.push('dist/projects.html still looks like the Webflow projects hub');
+      }
+    }
+  }
+  if (!fs.existsSync(path.join(distDir, 'projects.webflow.html'))) {
+    errors.push('dist/projects.webflow.html missing — archived Webflow projects hub should passthrough');
+  }
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
   }
@@ -218,7 +242,7 @@ const optionalMissing = new Set(
 
 const knownGenerated = useDist
   ? new Set()
-  : new Set(['index.html', 'landing.html']);
+  : new Set(['index.html', 'landing.html', 'projects.html']);
 
 for (const file of htmlFiles) {
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
@@ -253,8 +277,8 @@ const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'ut
 if (!indexAstro.includes('yy-canvas')) {
   errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
 }
-if (indexAstro.includes('yy-flow.js')) {
-  errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+if (!indexAstro.includes('yy-flow.js')) {
+  errors.push('src/pages/index.astro must load yy-flow.js for the ASCII flow canvas');
 }
 
 const landingFeatured = projectsMod.landingProjects();
@@ -266,6 +290,15 @@ if (landingFeatured.length !== 4) {
   if (order.join(',') !== expected.join(',')) {
     errors.push(`landing order must be ${expected.join(' → ')} (got ${order.join(' → ')})`);
   }
+}
+
+const hub = typeof projectsMod.hubProjects === 'function' ? projectsMod.hubProjects() : null;
+if (!hub) {
+  errors.push('projects.ts must export hubProjects() for the Astro projects hub');
+} else if (hub.length < 6 || hub.length > 7) {
+  errors.push(`hubProjects() must return 6–7 projects for the UI scaffold (got ${hub.length})`);
+} else if (hub.some((p) => !p.featuredOnProjects)) {
+  errors.push('hubProjects() must only include featuredOnProjects entries');
 }
 
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');

@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ProjectsCarousel3D } from '../components/islands/ProjectsCarousel3D';
+import { hubProjects } from '../data/projects';
+import '../styles/projects.css';
+
+const projects = hubProjects();
+const cards = projects.map((p, i) => ({
+  id: p.slug,
+  title: p.title,
+  scope: p.scope,
+  tone: i
+}));
+---
+
+<BaseLayout
+  title="Projects — Yanice Yang"
+  description="Selected product design work."
+  htmlClass="yy-projects"
+  reveal={false}
+  lenis={false}
+  chrome={true}
+>
+  <main class="projects-wrap">
+    <header class="projects-hero">
+      <p class="eyebrow">Projects</p>
+    </header>
+    <section class="projects-stage" aria-label="Project carousel">
+      <ProjectsCarousel3D client:load cards={cards} />
+    </section>
+  </main>
+</BaseLayout>
