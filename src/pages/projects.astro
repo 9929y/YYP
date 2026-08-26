@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ProjectsCarousel3D } from '../components/islands/ProjectsCarousel3D';
+import { hubProjects, publicUrl } from '../data/projects';
+import '../styles/projects.css';
+
+const projects = hubProjects();
+const cards = projects.map((p, i) => ({
+  id: p.slug,
+  title: p.title,
+  scope: p.scope,
+  pathLabel: `PROJECT ${String(i + 1).padStart(2, '0')}`,
+  imageSrc: publicUrl(
+    `assets/images/projects/placeholders/card-${String(i + 1).padStart(2, '0')}.png`
+  )
+}));
+---
+
+<BaseLayout
+  title="Projects — Yanice Yang"
+  description="Selected product design work."
+  htmlClass="yy-projects"
+  reveal={false}
+  lenis={true}
+  chrome={true}
+>
+  <main class="projects-wrap">
+    <header class="projects-hero">
+      <p class="eyebrow">Projects</p>
+    </header>
+    <section class="projects-stage" aria-label="Project carousel">
+      <ProjectsCarousel3D client:visible cards={cards} />
+    </section>
+  </main>
+</BaseLayout>

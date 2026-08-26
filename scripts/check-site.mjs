@@ -277,8 +277,8 @@ const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'ut
 if (!indexAstro.includes('yy-canvas')) {
   errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
 }
-if (indexAstro.includes('yy-flow.js')) {
-  errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+if (!indexAstro.includes('yy-flow.js')) {
+  errors.push('src/pages/index.astro must load yy-flow.js for the ASCII flow canvas');
 }
 
 const landingFeatured = projectsMod.landingProjects();
