@@ -271,7 +271,7 @@
     '  top: max(16px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2 - 56px));',
     '  width: var(--yy-panel-width);',
     '  margin-inline: auto;',
-    '  display: flex; flex-direction: column; align-items: center; gap: 12px;',
+    '  display: flex; flex-direction: column; align-items: center; gap: 14px;',
     '  box-sizing: border-box;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
     '}',
@@ -281,23 +281,25 @@
     '  max-width: none; gap: 0;',
     '}',
     '.top-bar{',
+    '  position: relative; z-index: 3;',
     '  display: flex; align-items: center; justify-content: flex-end;',
     '  align-self: stretch;',
     '  flex: none;',
     '  pointer-events: auto;',
     '}',
-    '.panel-stack.is-expanded .top-bar{ display: none; }',
+    '.panel-stack.is-expanded .top-bar{ display: none !important; }',
     '.top-bar-inner{',
     '  display: inline-flex; align-items: center; gap: 8px;',
-    '  padding: 5px 8px 5px 14px;',
+    '  padding: 6px 10px 6px 14px;',
     '  border-radius: 999px;',
     '  color: var(--yy-ink);',
-    '  background: rgba(255,255,255,.22);',
+    '  background: rgba(255,255,255,.42);',
     '  -webkit-backdrop-filter: blur(10px) saturate(1.35);',
     '  backdrop-filter: blur(10px) saturate(1.35);',
     '  box-shadow:',
-    '    inset 0 0 0 1.5px rgba(255,255,255,.96),',
-    '    0 2px 10px -2px rgba(62,65,116,.12);',
+    '    inset 0 0 0 1.5px #fff,',
+    '    0 0 0 1px rgba(255,255,255,.72),',
+    '    0 2px 10px -2px rgba(62,65,116,.14);',
     '}',
     '.panel{',
     '  position: relative; z-index: 1; left: auto; right: auto; bottom: auto; top: auto;',
@@ -983,6 +985,13 @@
 
     if (cap) cap.addEventListener('click', onCapClick);
     expand.addEventListener('click', expandToFullpage);
+    var topBarInner = root.querySelector('.top-bar-inner');
+    if (topBarInner) {
+      topBarInner.addEventListener('click', function (event) {
+        if (event.target.closest('.expand')) return;
+        expand.click();
+      });
+    }
     window.addEventListener('popstate', function (event) {
       var state = event.state;
       if (panel.classList.contains('is-expanded') && !(state && state.yyPanelFull)) {
