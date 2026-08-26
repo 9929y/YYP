@@ -621,6 +621,19 @@
     padding: 48px 0 120px;
   }
 
+  /* Section label: same .eyebrow recipe as hero / case-study (t-11, uppercase,
+     ink-3). Sits on the spine frame, left track — above cases, not in media. */
+  .index__head {
+    max-width: var(--frame-spine);
+    margin: 0 auto;
+    padding: 0 0 clamp(20px, 3vh, 36px);
+    box-sizing: border-box;
+  }
+
+  .index__head .eyebrow {
+    max-width: var(--col-label-case);
+  }
+
   /* One case ≈ one viewport, with air between bands. Soft snap is handled in
      yy-scroll.js (Lenis) — CSS scroll-snap fights Lenis and feels sticky. */
   .case {

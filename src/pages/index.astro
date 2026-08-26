@@ -65,7 +65,10 @@ const cases = landingProjects();
         </div>
       </section>
 
-      <section class="index" id="work" data-section="projects">
+      <section class="index" id="work" data-section="projects" aria-labelledby="featured-projects-label">
+        <header class="index__head">
+          <p class="eyebrow" id="featured-projects-label">Featured projects</p>
+        </header>
         <ProjectIndex projects={cases} />
       </section>
     </main>
