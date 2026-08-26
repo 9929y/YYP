@@ -254,3 +254,12 @@ html.yy-case-type .w-layout-grid.grid-11.ne > img {
   object-fit: cover;
   object-position: center;
 }
+
+/* Lark discovery two-up (chart vs waiting spot) — keep 2-col template. */
+html.yy-case-type .w-layout-grid.grid-3-2.grid2 > img.imagecutin {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  object-position: center;
+}
