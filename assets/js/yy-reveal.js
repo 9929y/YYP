@@ -102,6 +102,27 @@
     el.style.setProperty('--d', (Math.min(step, 4) * 40) + 'ms');
   }
 
+  function syncKey(el) {
+    var g = el.closest && el.closest('[data-reveal-sync], .case');
+    return g || el;
+  }
+
+  function revealList(list, io) {
+    var seen = [];
+    for (var i = 0; i < list.length; i++) {
+      var key = syncKey(list[i]);
+      var idx = -1;
+      for (var s = 0; s < seen.length; s++) if (seen[s] === key) { idx = s; break; }
+      if (idx < 0) {
+        idx = seen.length;
+        seen.push(key);
+      }
+      setStagger(list[i], idx);
+      list[i].classList.add('in');
+      if (modeOf(list[i]) !== 'inout' && io) io.unobserve(list[i]);
+    }
+  }
+
   try {
     if (!('IntersectionObserver' in window)) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -129,11 +150,7 @@
           shown.sort(function (a, b) {
             return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
           });
-          for (var m = 0; m < shown.length; m++) {
-            setStagger(shown[m], m);
-            shown[m].classList.add('in');
-            if (modeOf(shown[m]) !== 'inout') io.unobserve(shown[m]);
-          }
+          revealList(shown, io);
           for (var h = 0; h < left.length; h++) {
             if (modeOf(left[h]) === 'inout') left[h].classList.remove('in');
           }
@@ -163,15 +180,12 @@
         setTimeout(sweep, 2500);
 
         requestAnimationFrame(function () {
-          var d = 0;
+          var onScreen = [];
           for (var q = 0; q < items.length; q++) {
             var box = items[q].getBoundingClientRect();
-            if (box.top < innerHeight && box.bottom > 0) {
-              setStagger(items[q], d++);
-              items[q].classList.add('in');
-              if (modeOf(items[q]) !== 'inout') io.unobserve(items[q]);
-            }
+            if (box.top < innerHeight && box.bottom > 0) onScreen.push(items[q]);
           }
+          revealList(onScreen, io);
         });
       } catch (e) {
         html.classList.remove('yy-reveal');

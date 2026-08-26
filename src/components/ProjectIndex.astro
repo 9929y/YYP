@@ -17,8 +17,10 @@ const { projects } = Astro.props;
       class="case row row--ruled"
       data-motion-case={String(index)}
       data-case-theme={project.theme}
+      data-reveal="text"
+      data-reveal-sync="case"
     >
-      <div class="case__label" data-reveal="text">
+      <div class="case__label">
         <CaseNoteGenerate client:visible text={project.note} />
         <div class="case__meta">
           {project.logo && (
