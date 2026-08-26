@@ -16,6 +16,10 @@ export default defineConfig({
       fs: { allow: ['.'] },
       /* Cloudflare quick tunnels + local previews when port-forward fails. */
       allowedHosts: ['.trycloudflare.com', 'localhost', '127.0.0.1']
+    },
+    preview: {
+      /* astro preview uses vite.preview — same tunnel hosts as server. */
+      allowedHosts: ['.trycloudflare.com', 'localhost', '127.0.0.1']
     }
   }
 });
