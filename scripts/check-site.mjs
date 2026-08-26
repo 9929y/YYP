@@ -404,6 +404,9 @@ const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
 }
+if (!revealJs.includes('data-reveal-sync') || !fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8').includes('data-reveal-sync="case"')) {
+  errors.push('landing case rows must share one reveal (data-reveal-sync) so text and cards enter together');
+}
 if (!revealJs.includes('intro-')) {
   errors.push('yy-reveal.js must skip intro-* CSS-timeline recipes');
 }
