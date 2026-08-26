@@ -233,6 +233,7 @@ const requiredAssets = [
   'assets/js/yy-cursor.js',
   'assets/js/yy-slots.js',
   'assets/js/yy-flow.js',
+  'assets/images/ui/nav-orb.gif',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];
@@ -266,6 +267,35 @@ if (!chromeJs.includes('class="expand"')) {
 }
 if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
   errors.push('yy-chrome.js popup missing reduced-motion fallback');
+}
+if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.94)') ||
+    !chromeJs.includes('.panel.is-expanded{') ||
+    !chromeJs.includes('inset: 0;')) {
+  errors.push('yy-chrome.js expanded panel must fully cover the viewport with an opaque fill');
+}
+if (!chromeJs.includes('yy:panel-state')) {
+  errors.push('yy-chrome.js must announce expanded panel state');
+}
+if (!chromeJs.includes('nav-orb.gif') ||
+    !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
+    !chromeJs.includes(':focus-within')) {
+  errors.push('yy-chrome.js missing the hover/focus navigation orb');
+}
+if (chromeJs.includes("borderRadius: '999px'")) {
+  errors.push('yy-chrome.js panel animation must not tween through an elliptical radius');
+}
+
+const canvasGradient = fs.readFileSync(
+  path.join(ROOT, 'src/components/islands/LandingCanvasGradient.tsx'),
+  'utf8'
+);
+if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('panelExpanded')) {
+  errors.push('LandingCanvasGradient must pause for expanded navigation panels');
+}
+
+const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
+if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
+  errors.push('yy-scroll.js must pause videos for expanded navigation panels');
 }
 
 const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
