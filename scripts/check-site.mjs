@@ -88,46 +88,46 @@ if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
 }
 
 const resumePagePath = path.join(ROOT, 'src/pages/resume.astro');
-if (!fs.existsSync(resumePagePath)) {
-  errors.push('src/pages/resume.astro missing — Resume must be a first-party Astro page');
-} else {
-  const resumePageSource = fs.readFileSync(resumePagePath, 'utf8');
-  for (const marker of [
-    'yy-resume',
-    'resume.css',
-    'yy-resume.js',
-    'resume__floating-tabs',
-    'resume-section__body--grid',
-    'id="work"',
-    'id="education"',
-    'id="skills"'
-  ]) {
-    if (!resumePageSource.includes(marker)) {
-      errors.push(`src/pages/resume.astro missing ${marker}`);
-    }
-  }
+if (fs.existsSync(resumePagePath)) {
+  errors.push('src/pages/resume.astro must not exist — Resume is embedded in the shared popup');
 }
 
-const resumeCssPath = path.join(ROOT, 'src/styles/resume.css');
+const resumeCssPath = path.join(ROOT, 'assets/css/yy-resume.css');
 const resumeCss = fs.existsSync(resumeCssPath) ? fs.readFileSync(resumeCssPath, 'utf8') : '';
 for (const marker of [
   'font-family: Caveat',
-  '.resume__floating-tabs',
+  '.resume__tabs',
   'backdrop-filter: blur(12px)',
   '.resume-section__body--grid'
 ]) {
   if (!resumeCss.includes(marker)) {
-    errors.push(`src/styles/resume.css missing ${marker}`);
+    errors.push(`assets/css/yy-resume.css missing ${marker}`);
   }
 }
 
 const chromePath = path.join(ROOT, 'assets/js/yy-chrome.js');
 const chromeSource = fs.readFileSync(chromePath, 'utf8');
-if (!/var RESUME = ['"]resume\.html['"]/.test(chromeSource)) {
-  errors.push('yy-chrome.js Resume destination must be the first-party resume.html route');
+if (chromeSource.includes('resume.html')) {
+  errors.push('yy-chrome.js must not expose Resume as a standalone route');
 }
-if (/\{\s*href:\s*RESUME,\s*label:\s*['"]Resume['"],\s*ext:\s*true\s*\}/.test(chromeSource)) {
-  errors.push('yy-chrome.js Resume links must use same-tab first-party navigation');
+for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel']) {
+  if (!chromeSource.includes(marker)) {
+    errors.push(`yy-chrome.js missing embedded Resume integration marker ${marker}`);
+  }
+}
+
+const resumeJsPath = path.join(ROOT, 'assets/js/yy-resume.js');
+const resumeJs = fs.existsSync(resumeJsPath) ? fs.readFileSync(resumeJsPath, 'utf8') : '';
+for (const marker of [
+  "customElements.define('yy-resume-content'",
+  'attachShadow',
+  'resume-section',
+  'resume-card',
+  'data-resume-tabs'
+]) {
+  if (!resumeJs.includes(marker)) {
+    errors.push(`assets/js/yy-resume.js missing ${marker}`);
+  }
 }
 
 const requiredCaseStudyComponents = [
@@ -227,6 +227,9 @@ if (useDist) {
   if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
     errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
   }
+  if (fs.existsSync(path.join(distDir, 'resume.html'))) {
+    errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
+  }
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
   }
@@ -261,7 +264,7 @@ const optionalMissing = new Set(
 
 const knownGenerated = useDist
   ? new Set()
-  : new Set(['index.html', 'landing.html', 'resume.html']);
+  : new Set(['index.html', 'landing.html']);
 
 for (const file of htmlFiles) {
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
@@ -270,6 +273,7 @@ for (const file of htmlFiles) {
 const requiredAssets = [
   'assets/css/yy-tokens.css',
   'assets/css/yy-chrome.css',
+  'assets/css/yy-resume.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
