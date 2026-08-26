@@ -31,6 +31,24 @@
      page moved into a subdirectory keeps working. */
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-chrome\.js.*$/, '') : '';
 
+  function currentPage() {
+    var last = location.pathname.split('/').pop();
+    return (!last || last === 'index.html') ? 'index.html' : last;
+  }
+
+  /* Case + work-hub pages get the landing type/ink overlay. Not the homepage. */
+  var CASE_TYPE_PAGES = {
+    'projects.html': 1,
+    'ai-driven-product-design.html': 1,
+    'mckinseyecommerce.html': 1,
+    'larkdesign.html': 1,
+    'mifinance.html': 1,
+    'cummins-digitalization.html': 1,
+    'alzheimerdisease.html': 1,
+    'tiktok-research.html': 1,
+    'case-study-template.html': 1
+  };
+
   /* The shared navigation now owns three content surfaces. Their final content
      will arrive independently; keeping the panel keys here gives every Astro
      and legacy page the same shell and state machine today. */
@@ -83,6 +101,9 @@
      module and for the two `#w-node-…` grid-placement rules that target it.
      -------------------------------------------------------------------------- */
   HTML.className += ' yy-chrome';
+  if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
+    HTML.className += ' yy-case-type';
+  }
 
   var boot = document.createElement('style');
   boot.textContent =
@@ -108,6 +129,13 @@
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';
   (document.head || HTML).appendChild(sheet);
+
+  if (/\byy-case-type\b/.test(HTML.className) && !document.querySelector('link[href*="yy-case-type.css"]')) {
+    var typeSheet = document.createElement('link');
+    typeSheet.rel = 'stylesheet';
+    typeSheet.href = ROOT + 'assets/css/yy-case-type.css';
+    (document.head || HTML).appendChild(typeSheet);
+  }
 
   /* --------------------------------------------------------------------------
      Shadow-root CSS.
@@ -483,14 +511,6 @@
     '.credit{ margin: 0 0 0 auto; color: var(--yy-ink-dim); }',
     '@media (max-width: 560px){ .credit{ margin-left: 0; flex-basis: 100%; } }'
   ].join('\n');
-
-  /* --------------------------------------------------------------------------
-     Which page are we on? `index.html` ≡ `/` ≡ `''`.
-     -------------------------------------------------------------------------- */
-  function currentPage() {
-    var last = location.pathname.split('/').pop();
-    return (!last || last === 'index.html') ? 'index.html' : last;
-  }
 
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')

@@ -291,6 +291,7 @@ const requiredAssets = [
   'assets/css/yy-tokens.css',
   'assets/css/yy-chrome.css',
   'assets/css/yy-resume.css',
+  'assets/css/yy-case-type.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
@@ -324,6 +325,25 @@ if (!chromeJs.includes('.footer-section:not(:has(.four-column))')) {
 }
 if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #fff;')) {
   errors.push('yy-footer host must paint a light band so dark case pages match landing chrome');
+}
+
+if (!chromeJs.includes('yy-case-type.css')) {
+  errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
+}
+if (!chromeJs.includes('CASE_TYPE_PAGES')) {
+  errors.push('yy-chrome.js missing CASE_TYPE_PAGES for the landing type overlay');
+}
+
+const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
+const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
+if (!caseTypeCss.includes('--ink-2')) {
+  errors.push('yy-case-type.css must use landing ink tokens');
+}
+if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
+  errors.push('yy-case-type.css must restyle display, mid, and label headings');
+}
+if (caseTypeCss.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCss)) {
+  errors.push('yy-case-type.css must not change .section-layout1 horizontal padding');
 }
 
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');

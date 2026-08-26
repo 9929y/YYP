@@ -1,0 +1,184 @@
+/* ============================================================================
+   yy-case-type.css — case / projects type + ink overlay.
+
+   Landing tokens (yy-tokens.css) are the source: display / heading / body /
+   caption sizes, --lh-* leading, --ink / --ink-2 / --ink-3.
+
+   Out of scope (do not set here):
+     horizontal page gutters — .section-layout1, .page-padding-3,
+     .containerforimg2, .grid-9, .heading-medium-4.inside10 padding-left, etc.
+   ============================================================================ */
+
+html.yy-case-type {
+  background: var(--ground);
+}
+
+html.yy-case-type body,
+html.yy-case-type .body,
+html.yy-case-type .body.blk,
+html.yy-case-type .body.al {
+  background-color: var(--ground) !important;
+  color: var(--ink) !important;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- display (大标题) --------------------------------------------------- */
+html.yy-case-type .heading-xl,
+html.yy-case-type .heading-xl-2,
+html.yy-case-type .xxl-heading-2 {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: var(--t-40) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: var(--lh-tight) !important;
+  letter-spacing: -0.04em !important;
+  color: var(--ink) !important;
+  margin: 0 0 16px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html.yy-case-type .heading-xl.count4,
+html.yy-case-type .heading-xl-2.count4,
+html.yy-case-type .xxl-heading-2.count4 {
+  font-size: var(--t-48) !important;
+  line-height: var(--lh-display) !important;
+  margin: 0 0 8px !important;
+}
+
+/* ---- mid title (中标题) ------------------------------------------------- */
+html.yy-case-type .headingpt,
+html.yy-case-type .heading-medium-4,
+html.yy-case-type .heading-4,
+html.yy-case-type .xxl-heading-2.change {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: var(--t-25) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: var(--lh-heading) !important;
+  letter-spacing: -0.03em !important;
+  color: var(--ink) !important;
+  margin-top: 28px !important;
+  margin-bottom: 12px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ---- labels / small headings (eyebrow recipe) --------------------------- */
+html.yy-case-type .heading-medium-3 {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: var(--t-13) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: var(--lh-caption) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-3) !important;
+  margin: 0 0 10px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html.yy-case-type .heading-medium-3.counttext {
+  text-transform: none !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 500 !important;
+  color: var(--ink-2) !important;
+  margin: 0 !important;
+}
+
+/* ---- body copy ---------------------------------------------------------- */
+html.yy-case-type .paragraph,
+html.yy-case-type .paragraph.white,
+html.yy-case-type .paragraph.addpad,
+html.yy-case-type p.paragraph {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: var(--t-16) !important;
+  font-weight: 400 !important;
+  line-height: var(--lh-body) !important;
+  letter-spacing: 0 !important;
+  color: var(--ink-2) !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.15em !important;
+}
+
+html.yy-case-type .paragraph strong,
+html.yy-case-type .headingpt strong,
+html.yy-case-type .bold-text,
+html.yy-case-type .bold-text-10,
+html.yy-case-type .bold-text-11 {
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+}
+
+html.yy-case-type .body-display-2 {
+  font-size: var(--t-16) !important;
+  font-weight: 400 !important;
+  line-height: var(--lh-body) !important;
+  color: var(--ink-2) !important;
+}
+
+html.yy-case-type .body-display-2.light {
+  font-size: var(--t-13) !important;
+  line-height: var(--lh-caption) !important;
+  color: var(--ink-3) !important;
+}
+
+/* ---- projects hub cards ------------------------------------------------- */
+html.yy-case-type .text-gradient-name {
+  font-size: var(--t-20) !important;
+  font-weight: 600 !important;
+  line-height: var(--lh-heading) !important;
+  letter-spacing: -0.03em !important;
+  color: var(--ink) !important;
+}
+
+html.yy-case-type .text-gradient-class {
+  font-size: var(--t-13) !important;
+  font-weight: 500 !important;
+  line-height: var(--lh-caption) !important;
+  letter-spacing: 0 !important;
+  color: var(--ink-3) !important;
+}
+
+/* ---- in-page prev/next (content, not chrome) ---------------------------- */
+html.yy-case-type .footer-link,
+html.yy-case-type .footer-link._111,
+html.yy-case-type .text-block-19,
+html.yy-case-type .text-block-20 {
+  color: var(--ink) !important;
+  letter-spacing: -0.02em !important;
+  text-transform: none !important;
+  font-size: var(--t-13) !important;
+  font-weight: 600 !important;
+}
+
+html.yy-case-type .text-block-7,
+html.yy-case-type .circle-button-3,
+html.yy-case-type .text-block-21 {
+  color: var(--ink-3) !important;
+  letter-spacing: 0.08em !important;
+}
+
+html.yy-case-type .circle-button-3 {
+  font-size: var(--t-11) !important;
+}
+
+/* Catch remaining Webflow text colours (brand blue, pure black, white-on-black)
+   without painting media. */
+html.yy-case-type h1,
+html.yy-case-type h2,
+html.yy-case-type h3,
+html.yy-case-type h4 {
+  color: var(--ink);
+}
+
+html.yy-case-type .heading-medium,
+html.yy-case-type .heading-medium.title,
+html.yy-case-type .cmi,
+html.yy-case-type .display-sm {
+  color: var(--ink) !important;
+}
