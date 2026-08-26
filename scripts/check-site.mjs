@@ -263,8 +263,11 @@ if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #
 if (!chromeJs.includes('yy-case-type.css')) {
   errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
 }
-if (!chromeJs.includes('html.yy-case-type .body.blk') && !chromeJs.includes('html.yy-case-type,html.yy-case-type body')) {
-  errors.push('yy-chrome.js must inline a light ground on case-type pages so black Webflow shells cannot win');
+if (
+  /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
+  /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs)
+) {
+  errors.push('Opus and Alzheimer must keep Webflow black/white type — omit them from CASE_TYPE_PAGES');
 }
 
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');

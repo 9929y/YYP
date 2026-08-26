@@ -36,15 +36,14 @@
     return (!last || last === 'index.html') ? 'index.html' : last;
   }
 
-  /* Case + work-hub pages get the landing type/ink overlay. Not the homepage. */
+  /* Light case + work-hub pages get the landing type/ink overlay.
+     Opus and Alzheimer keep Webflow black/white; do not list them here. */
   var CASE_TYPE_PAGES = {
     'projects.html': 1,
-    'ai-driven-product-design.html': 1,
     'mckinseyecommerce.html': 1,
     'larkdesign.html': 1,
     'mifinance.html': 1,
     'cummins-digitalization.html': 1,
-    'alzheimerdisease.html': 1,
     'tiktok-research.html': 1,
     'case-study-template.html': 1
   };
@@ -98,8 +97,7 @@
     /* Inline so black Webflow shells cannot flash or win on specificity
        before yy-case-type.css arrives. */
     typeBoot =
-      'html.yy-case-type,html.yy-case-type body,html.yy-case-type .body.blk,html.yy-case-type .body.al,' +
-      'html.yy-case-type .grid-wrapper-5.mck.new,html.yy-case-type .grid-wrapper-5.mck.new.ai' +
+      'html.yy-case-type,html.yy-case-type body' +
       '{background-color:#fff!important;color:#1a1917!important}';
   }
 
