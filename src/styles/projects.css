@@ -64,21 +64,14 @@ html.yy-projects body {
   overflow: visible;
   touch-action: none;
   overscroll-behavior: none;
-  cursor: grab;
+  /* Keep the site cursor — do not force grab/grabbing. */
+  cursor: inherit;
   user-select: none;
   -webkit-user-select: none;
 }
 
-.yy-projects-carousel[data-settled='false'] {
-  cursor: default;
-}
-
 .yy-projects-carousel:active {
-  cursor: grabbing;
-}
-
-.yy-projects-carousel[data-settled='false']:active {
-  cursor: default;
+  cursor: inherit;
 }
 
 .yy-projects-carousel__stage {
@@ -194,13 +187,13 @@ html.yy-projects body {
   }
 }
 
-/* ---------- nav-matched glass cards (perspective sheen) ----------
-   Real backdrop-filter dies under 3D transforms (same reason yy-nav avoids
-   a transformed host). Simulate the capsule: frosted fill, inset hair,
-   indigo drop, plus a per-seat specular for perspective. */
+/* ---------- transparent tone + nav glass overlay (perspective sheen) ----------
+   Tone plate is translucent; frost/sheen stack on top for perspective.
+   backdrop-filter is best-effort under 3D transforms (yy-nav notes the same). */
 
 .yy-projects-card {
-  --tone: #2f6fed;
+  --tone: 47, 111, 237;
+  --tone-a: 0.32;
   --sheen-angle: 145deg;
   --sheen-x: 50%;
   position: relative;
@@ -225,24 +218,24 @@ html.yy-projects body {
   pointer-events: none;
 }
 
-/* Distinct tone bed — stays readable through the frost. */
+/* Transparent color wash — not opaque fill. */
 .yy-projects-card__plate {
-  background: var(--tone);
+  background: rgba(var(--tone), var(--tone-a));
   transform: translateZ(0);
-  box-shadow: 0 10px 28px -12px rgba(26, 25, 23, 0.28);
+  box-shadow: 0 10px 28px -14px rgba(26, 25, 23, 0.22);
 }
 
-/* Nav capsule glass recipe (yy-chrome .cap) — frost light enough for tone to read. */
+/* Nav capsule glass stacked over the tint for perspective frost. */
 .yy-projects-card__glass {
   background:
     linear-gradient(
       var(--sheen-angle),
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(255, 255, 255, 0.16) 34%,
-      rgba(255, 255, 255, 0.04) 62%,
-      rgba(255, 255, 255, 0) 82%
+      rgba(255, 255, 255, 0.58) 0%,
+      rgba(255, 255, 255, 0.18) 30%,
+      rgba(255, 255, 255, 0.05) 55%,
+      rgba(255, 255, 255, 0) 78%
     ),
-    rgba(255, 255, 255, 0.32);
+    rgba(255, 255, 255, 0.22);
   -webkit-backdrop-filter: blur(12px) saturate(1.6);
   backdrop-filter: blur(12px) saturate(1.6);
   box-shadow:
@@ -252,11 +245,10 @@ html.yy-projects body {
     0 1px 2px rgba(62, 65, 116, 0.07),
     0 2px 8px -2px rgba(62, 65, 116, 0.09),
     0 12px 36px -8px rgba(62, 65, 116, 0.2);
-  /* Slight lift so the frost reads as a front glass face in 3D. */
   transform: translateZ(1.5px);
 }
 
-/* Specular catch-light — position tracks seat index for perspective. */
+/* Specular catch-light — seat-indexed for perspective. */
 .yy-projects-card__glass::after {
   content: '';
   position: absolute;
@@ -277,25 +269,25 @@ html.yy-projects body {
 }
 
 .yy-projects-card[data-tone='0'] {
-  --tone: #2f6fed;
+  --tone: 47, 111, 237;
 }
 .yy-projects-card[data-tone='1'] {
-  --tone: #e4572e;
+  --tone: 228, 87, 46;
 }
 .yy-projects-card[data-tone='2'] {
-  --tone: #1f9d6a;
+  --tone: 31, 157, 106;
 }
 .yy-projects-card[data-tone='3'] {
-  --tone: #c9a227;
+  --tone: 201, 162, 39;
 }
 .yy-projects-card[data-tone='4'] {
-  --tone: #7c4dff;
+  --tone: 124, 77, 255;
 }
 .yy-projects-card[data-tone='5'] {
-  --tone: #0f766e;
+  --tone: 15, 118, 110;
 }
 .yy-projects-card[data-tone='6'] {
-  --tone: #db2777;
+  --tone: 219, 39, 119;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -303,11 +295,11 @@ html.yy-projects body {
     background:
       linear-gradient(
         var(--sheen-angle),
-        rgba(255, 255, 255, 0.72) 0%,
-        rgba(255, 255, 255, 0.28) 40%,
-        rgba(255, 255, 255, 0.1) 100%
+        rgba(255, 255, 255, 0.66) 0%,
+        rgba(255, 255, 255, 0.24) 40%,
+        rgba(255, 255, 255, 0.08) 100%
       ),
-      rgba(255, 255, 255, 0.88);
+      rgba(255, 255, 255, 0.28);
   }
 }
 
