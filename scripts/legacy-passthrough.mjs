@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = process.cwd();
 /** HTML emitted by Astro — never overwrite with a root passthrough copy. */
-const GENERATED_HTML = new Set(['index.html', 'landing.html']);
+const GENERATED_HTML = new Set(['index.html', 'landing.html', 'projects.html']);
 
 function mime(file) {
   return {
@@ -49,13 +49,15 @@ export default function legacyPassthrough() {
                     if (req.method !== 'GET' && req.method !== 'HEAD') return next();
                     const url = decodeURIComponent((req.url || '/').split('?')[0]);
 
-                    // Let Astro own the homepage and the /landing.html redirect stub.
+                    // Let Astro own the homepage, /landing.html redirect stub, and projects hub.
                     if (
                       url === '/' ||
                       url === '/index' ||
                       url === '/index.html' ||
                       url === '/landing' ||
-                      url === '/landing.html'
+                      url === '/landing.html' ||
+                      url === '/projects' ||
+                      url === '/projects.html'
                     ) {
                       return next();
                     }

@@ -11,7 +11,8 @@ it is a regression.
 | `/` / `index.html` | Live Astro homepage | Astro `src/pages/index.astro` |
 | `landing.html` | Redirect stub → `/` | Astro `src/pages/landing.astro` |
 | `index.webflow.html` | Archived Webflow homepage | passthrough |
-| `projects.html` | Work hub | passthrough |
+| `projects.html` | Work hub | Astro `src/pages/projects.astro` |
+| `projects.webflow.html` | Archived Webflow work hub | passthrough |
 | `aboutme.html` | About | passthrough |
 | `fashion.html` | Gallery | passthrough |
 | `ai-driven-product-design.html` | Opus Clip case | passthrough (Webflow) |
