@@ -2,8 +2,7 @@ import {
   animate,
   motion,
   useMotionValue,
-  useTransform,
-  type PanInfo
+  useTransform
 } from 'motion/react';
 import {
   memo,
@@ -62,14 +61,29 @@ export function useMediaQuery(
   return matches;
 }
 
-const SPRING = { type: 'spring' as const, stiffness: 100, damping: 30, mass: 0.1 };
-const SCROLL_GAIN = 0.065;
-const WHEEL_GAIN = 0.045;
+/*
+ * Layout/drag model follows the provided 3d-carousel (motion cylinder + spring
+ * settle). Faces are packed on a front remnant arc (not a closed 360° ring) so
+ * ≥5 cards stay in view with 6–7 projects — matching the denser look of the
+ * original demo (which used ~14 faces around a full cylinder).
+ */
+const ARC_DEG = 158;
+const SCROLL_GAIN = 0.05;
+const WHEEL_GAIN = 0.035;
 const DRAG_GAIN = 0.05;
 
 function staggerOffset(index: number): number {
   const magnitude = 8 + (index % 3) * 4; // 8 | 12 | 16
   return index % 2 === 0 ? magnitude : -magnitude;
+}
+
+function remnantStep(faceCount: number): number {
+  if (faceCount <= 1) return 0;
+  return ARC_DEG / (faceCount - 1);
+}
+
+function remnantAngle(index: number, faceCount: number): number {
+  return -ARC_DEG / 2 + index * remnantStep(faceCount);
 }
 
 function roundedRectPath(size: number, inset: number, radius: number): string {
@@ -90,12 +104,6 @@ function roundedRectPath(size: number, inset: number, radius: number): string {
     `A ${r} ${r} 0 0 1 ${x + r} ${y}`,
     'Z'
   ].join(' ');
-}
-
-function normalizeAngle(deg: number): number {
-  let a = ((deg % 360) + 360) % 360;
-  if (a > 180) a -= 360;
-  return a;
 }
 
 function CardPathText({
@@ -180,7 +188,6 @@ const CarouselFace = memo(function CarouselFace({
   faceCount,
   faceWidth,
   radius,
-  rotation,
   activeId,
   onSelect
 }: {
@@ -189,35 +196,17 @@ const CarouselFace = memo(function CarouselFace({
   faceCount: number;
   faceWidth: number;
   radius: number;
-  rotation: ReturnType<typeof useMotionValue<number>>;
   activeId: string | null;
   onSelect: (id: string) => void;
 }) {
   const [hovering, setHovering] = useState(false);
-  const step = 360 / faceCount;
   const staggerX = staggerOffset(index);
   const isActive = activeId === card.id;
-
-  const opacity = useTransform(rotation, (r) => {
-    const angle = normalizeAngle(index * step + r);
-    const c = Math.cos((angle * Math.PI) / 180);
-    if (c <= 0.02) return 0;
-    return Math.pow(c, 0.9);
-  });
-
-  const scale = useTransform(rotation, (r) => {
-    const angle = normalizeAngle(index * step + r);
-    const c = Math.max(0, Math.cos((angle * Math.PI) / 180));
-    return (isActive ? 1.05 : 1) * (0.8 + 0.2 * c);
-  });
-
-  const pointerEvents = useTransform(opacity, (o) =>
-    o < 0.08 ? 'none' : 'auto'
-  );
+  const angle = remnantAngle(index, faceCount);
 
   const slotStyle: CSSProperties = {
-    width: faceWidth,
-    transform: `rotateY(${index * step}deg) translateZ(${radius}px)`
+    width: `${faceWidth}px`,
+    transform: `rotateY(${angle}deg) translateZ(${radius}px) translateX(${staggerX}px)`
   };
 
   return (
@@ -227,10 +216,8 @@ const CarouselFace = memo(function CarouselFace({
         className="yy-projects-card"
         data-active={isActive ? 'true' : undefined}
         style={{
-          opacity,
-          scale,
-          x: staggerX,
-          pointerEvents
+          width: `${faceWidth}px`,
+          scale: isActive ? 1.04 : 1
         }}
         onClick={() => onSelect(card.id)}
         aria-pressed={isActive}
@@ -253,10 +240,16 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
+  // Same cylinder sizing approach as the provided 3d-carousel.
   const cylinderWidth = isScreenSizeSm ? 1100 : 1800;
   const faceCount = cards.length;
-  const faceWidth = cylinderWidth / Math.max(faceCount, 1);
+  // Remnant packs faces on ARC_DEG; size faces from chord length so ≥5 read clearly.
   const radius = cylinderWidth / (2 * Math.PI);
+  const stepRad = (remnantStep(faceCount) * Math.PI) / 180;
+  const faceWidth = Math.min(
+    isScreenSizeSm ? 220 : 268,
+    Math.max(160, 2 * radius * Math.sin(Math.max(stepRad, 0.01) / 2) * 1.92)
+  );
 
   const rotation = useMotionValue(0);
   const transform = useTransform(
@@ -267,25 +260,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const onSelect = useCallback((id: string) => {
     setActiveId((prev) => (prev === id ? null : id));
   }, []);
-
-  const onDragStart = useCallback(() => {
-    dragOrigin.current = rotation.get();
-  }, [rotation]);
-
-  const onDrag = useCallback(
-    (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-      rotation.set(dragOrigin.current + info.offset.x * DRAG_GAIN);
-    },
-    [rotation]
-  );
-
-  const onDragEnd = useCallback(
-    (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-      const target = rotation.get() + info.velocity.x * DRAG_GAIN;
-      animate(rotation, target, SPRING);
-    },
-    [rotation]
-  );
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -325,7 +299,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       const detail = (event as CustomEvent<{ velocity?: number; scroll?: number }>)
         .detail;
       if (typeof detail?.velocity === 'number') {
-        nudge(detail.velocity * 0.35);
+        nudge(detail.velocity * 0.3);
         return;
       }
       if (typeof detail?.scroll === 'number') {
@@ -354,21 +328,35 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       ref={stageRef}
       className="yy-projects-carousel"
       data-testid="projects-carousel"
+      data-face-count={faceCount}
     >
       <div className="yy-projects-carousel__stage">
         <motion.div
           className="yy-projects-carousel__cylinder"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.06}
+          dragElastic={0.04}
           style={{
             transform,
             width: cylinderWidth,
             transformStyle: 'preserve-3d'
           }}
-          onDragStart={onDragStart}
-          onDrag={onDrag}
-          onDragEnd={onDragEnd}
+          onDragStart={() => {
+            dragOrigin.current = rotation.get();
+          }}
+          onDrag={(_, info) => {
+            // Same gain as the provided carousel; origin-anchored so offset does not compound.
+            rotation.set(dragOrigin.current + info.offset.x * DRAG_GAIN);
+          }}
+          onDragEnd={(_, info) => {
+            const target = rotation.get() + info.velocity.x * DRAG_GAIN;
+            void animate(rotation, target, {
+              type: 'spring',
+              stiffness: 100,
+              damping: 30,
+              mass: 0.1
+            });
+          }}
         >
           {cards.map((card, index) => (
             <CarouselFace
@@ -378,7 +366,6 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
               faceCount={faceCount}
               faceWidth={faceWidth}
               radius={radius}
-              rotation={rotation}
               activeId={activeId}
               onSelect={onSelect}
             />
