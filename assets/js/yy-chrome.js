@@ -677,6 +677,10 @@
         closing = false;
         active = '';
         host.classList.remove('is-open');
+        host.classList.remove('is-fullpage');
+        HTML.classList.remove('yy-panel-fullpage');
+        setBackgroundInert(false);
+        panel.setAttribute('aria-modal', 'false');
         panel.classList.remove('is-expanded');
         expand.setAttribute('aria-label', 'Expand panel');
         expand.setAttribute('aria-pressed', 'false');
@@ -704,6 +708,7 @@
     }
 
     function toggleExpanded() {
+      if (closing) return;
       var before = panel.getBoundingClientRect();
       var expanded = !panel.classList.contains('is-expanded');
       panel.classList.toggle('is-expanded', expanded);
