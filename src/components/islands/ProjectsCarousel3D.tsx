@@ -68,8 +68,8 @@ const SLOT_COUNT = 8;
 const VISIBLE_CARDS = 5;
 /** Degrees between seats — open enough for gaps, outer faces still readable. */
 const ARC_STEP = 40;
-/** Face width as a fraction of seat arc length (~28% air between neighbors). */
-const FACE_GAP = 0.72;
+/** Face width as a fraction of seat arc length (~18% air between neighbors). */
+const FACE_GAP = 0.82;
 const DRAG_YAW = 0.28;
 const DRAG_PITCH = 0.16;
 const WHEEL_ZOOM = 0.00135;
