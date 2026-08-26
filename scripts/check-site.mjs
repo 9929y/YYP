@@ -251,12 +251,12 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
 
 const chromeJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-chrome.js'), 'utf8');
 for (const panelName of ['work', 'about', 'resume']) {
-  if (!chromeJs.includes(`data-panel-trigger="${panelName}"`)) {
-    errors.push(`yy-chrome.js missing ${panelName} panel trigger`);
+  if (!chromeJs.includes(`panel: '${panelName}'`)) {
+    errors.push(`yy-chrome.js missing ${panelName} panel configuration`);
   }
-  if (!chromeJs.includes(`data-panel-view="${panelName}"`)) {
-    errors.push(`yy-chrome.js missing ${panelName} panel view`);
-  }
+}
+if (!chromeJs.includes('data-panel-trigger="') || !chromeJs.includes('data-panel-view="')) {
+  errors.push('yy-chrome.js must generate panel triggers and views');
 }
 if (!chromeJs.includes('role="dialog"') || !chromeJs.includes('aria-modal="false"')) {
   errors.push('yy-chrome.js popup must expose a modeless dialog');
