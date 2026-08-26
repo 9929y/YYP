@@ -380,7 +380,8 @@ if (!chromeJs.includes('nav-orb.gif') ||
     !chromeJs.includes(':focus-within')) {
   errors.push('yy-chrome.js missing the hover/focus navigation orb');
 }
-if (!chromeJs.includes("host.classList.toggle('is-fullpage', expanded)") ||
+if ((!chromeJs.includes("host.classList.add('is-fullpage')") &&
+     !chromeJs.includes('host.classList.toggle(\'is-fullpage\'')) ||
     !chromeJs.includes(':host(.is-fullpage) .cap{') ||
     !chromeJs.includes('width: 36px; height: 36px;')) {
   errors.push('yy-chrome.js must limit the 36px navigation orb to fullpage state');
