@@ -97,6 +97,8 @@ const resumeCss = fs.existsSync(resumeCssPath) ? fs.readFileSync(resumeCssPath, 
 for (const marker of [
   'font-family: Caveat',
   '.resume__tabs',
+  '--resume-brand-red',
+  '.resume__contact a:hover',
   'backdrop-filter: blur(12px)',
   '.resume-section__body--grid'
 ]) {
@@ -325,6 +327,9 @@ if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
 if (!chromeJs.includes('yy:panel-state')) {
   errors.push('yy-chrome.js must announce expanded panel state');
 }
+if (!chromeJs.includes('yy-panel-open') || !chromeJs.includes('open: open')) {
+  errors.push('yy-chrome.js must lock the underlay for every open popup state');
+}
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
 }
@@ -379,6 +384,11 @@ if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('pane
 const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
 if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
   errors.push('yy-scroll.js must pause videos for expanded navigation panels');
+}
+if (!scrollJs.includes('panelOpen') ||
+    !scrollJs.includes('lenis.stop()') ||
+    !scrollJs.includes('lenis.start()')) {
+  errors.push('yy-scroll.js must pause Lenis while any popup is open');
 }
 
 const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
