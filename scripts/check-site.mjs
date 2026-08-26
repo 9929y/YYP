@@ -292,6 +292,15 @@ if (landingFeatured.length !== 4) {
   }
 }
 
+const hub = typeof projectsMod.hubProjects === 'function' ? projectsMod.hubProjects() : null;
+if (!hub) {
+  errors.push('projects.ts must export hubProjects() for the Astro projects hub');
+} else if (hub.length < 6 || hub.length > 7) {
+  errors.push(`hubProjects() must return 6–7 projects for the UI scaffold (got ${hub.length})`);
+} else if (hub.some((p) => !p.featuredOnProjects)) {
+  errors.push('hubProjects() must only include featuredOnProjects entries');
+}
+
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');
 if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 15 * 1024 * 1024) {
   errors.push('case-opusclip-marquee.mp4 exceeds the 15 MB homepage media budget');
