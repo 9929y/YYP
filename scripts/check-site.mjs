@@ -327,6 +327,9 @@ if (!caseLayoutCss.includes('.div-block-37') || !caseLayoutCss.includes('max-wid
 if (!caseLayoutCss.includes('.layout125_component.mck1.mck2:not(.b1)')) {
   errors.push('yy-case-layout.css must preserve two-column intro grids');
 }
+if (!caseLayoutCss.includes('.hero-intro-2.mck')) {
+  errors.push('yy-case-layout.css must stack McKinsey/Cummins heroes as one column');
+}
 
 const caseLayoutPages = [
   'ai-driven-product-design.html',
