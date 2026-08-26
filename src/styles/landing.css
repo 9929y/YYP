@@ -1,6 +1,6 @@
 /* landing.css — extracted from landing.html. Visual behaviour is unchanged.
    Motion tokens come from assets/css/yy-tokens.css (linked in <head>).
-   Entrance reveal is html.yy-reveal .rv in yy-chrome.css, not duplicated here.
+   Entrance recipes live in assets/css/yy-motion.css (html.yy-reveal + data-reveal).
 */
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -328,70 +328,15 @@
     visibility: hidden;
   }
 
-  /* ---------- opening intro reveal ---------- */
-  html.yy-landing [data-intro="meta"],
-  html.yy-landing [data-intro="headline"] {
-    opacity: 0;
-  }
-
-  html.yy-landing [data-intro="headline"] {
-    transform: translateY(14px);
-    clip-path: inset(0 0 100% 0);
-    overflow: hidden;
-  }
-
-  /* Spine: start collapsed; grow top → bottom after intro-ready. */
+  /* Spine: start collapsed; grow top → bottom after intro-ready.
+     Text intro recipes live in assets/css/yy-motion.css. */
   html.yy-landing .hero.row--ruled::before {
     transform: scaleY(0);
     transform-origin: top center;
   }
 
-  [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
-    animation: introFade 560ms cubic-bezier(.2, .8, .2, 1) both;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-intro="meta"] {
-    animation-delay: 160ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-intro="meta"] {
-    animation-delay: 240ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-intro="meta"] {
-    animation-delay: 200ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-    animation: introTextReveal 820ms cubic-bezier(.16, 1, .3, 1) 320ms both;
-  }
-
   [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
     animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
-  }
-
-  @keyframes introFade {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes introTextReveal {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      clip-path: inset(0 0 0 0);
-    }
   }
 
   @keyframes introLineGrowY {
@@ -410,16 +355,6 @@
     .yy-canvas__cover {
       transform: none;
       transition: opacity 240ms ease;
-    }
-    html.yy-landing [data-intro="meta"],
-    html.yy-landing [data-intro="headline"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="meta"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-      clip-path: none !important;
-      overflow: visible !important;
     }
     html.yy-landing .hero.row--ruled::before,
     [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
@@ -992,8 +927,7 @@
   }
 
 
-  /* Reveal motion itself lives in assets/css/yy-chrome.css under html.yy-reveal
-     (.rv and .yy-rv share one contract). Landing-only reduced-motion guards: */
+  /* Reveal motion lives in assets/css/yy-motion.css. Landing-only reduced-motion: */
   @media (prefers-reduced-motion: reduce) {
     .slot:hover img, .slot:hover video, .slot:hover .ph { transition: none; }
     #yy-cursor { display: none !important; }

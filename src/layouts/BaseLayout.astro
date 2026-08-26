@@ -38,6 +38,7 @@ const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astr
       href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     />
     <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/yy-motion.css" rel="stylesheet" type="text/css" />
     <slot name="head" />
     {chrome && <script is:inline src="/assets/js/yy-chrome.js"></script>}
     {reveal && <script is:inline src="/assets/js/yy-reveal.js"></script>}

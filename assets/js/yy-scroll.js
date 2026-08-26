@@ -150,7 +150,7 @@
      text reveal, so the two read as one system — only the shape of the motion
      differs, which is the point.
 
-     Applied by tagging the element; all the motion lives in yy-chrome.css.
+     Applied by tagging the element; motion lives in yy-motion.css.
      -------------------------------------------------------------------------- */
   function tagImages() {
     try {

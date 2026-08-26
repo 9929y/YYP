@@ -8,7 +8,7 @@ interface Props {
 const { id, eyebrow, title } = Astro.props;
 ---
 
-<section class="case-section rv" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+<section class="case-section rv" data-reveal="text" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
   {(eyebrow || title) && (
     <header class="case-section__header">
       {eyebrow && <p class="case-section__eyebrow">{eyebrow}</p>}

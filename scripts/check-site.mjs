@@ -187,6 +187,9 @@ if (useDist) {
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
   }
+  if (!fs.existsSync(path.join(distDir, 'assets/css/yy-motion.css'))) {
+    errors.push('dist/assets/css/yy-motion.css missing');
+  }
   const templatePath = path.join(distDir, 'case-study-template.html');
   if (!fs.existsSync(templatePath)) {
     errors.push('dist/case-study-template.html missing — Foundation needs a rendered review surface');
@@ -227,6 +230,7 @@ for (const file of htmlFiles) {
 const requiredAssets = [
   'assets/css/yy-tokens.css',
   'assets/css/yy-chrome.css',
+  'assets/css/yy-motion.css',
   'assets/css/yy-case-type.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
@@ -265,8 +269,45 @@ if (!chromeCss.includes('html.yy-chrome .paragraph') || !chromeCss.includes('max
   errors.push('yy-chrome.css must lift the 36em paragraph cap so case copy fills its cell');
 }
 
+if (!chromeJs.includes('yy-motion.css')) {
+  errors.push('yy-chrome.js must load yy-motion.css so Webflow pages share landing recipes');
+}
 if (!chromeJs.includes('yy-case-type.css')) {
   errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
+}
+
+const motionCssPath = path.join(ROOT, 'assets/css/yy-motion.css');
+const motionCss = fs.existsSync(motionCssPath) ? fs.readFileSync(motionCssPath, 'utf8') : '';
+const motionCssCode = motionCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!motionCss.includes('--reveal-text-distance') || !motionCss.includes('[data-reveal="text"]')) {
+  errors.push('yy-motion.css must define the default text recipe (--reveal-text-distance + data-reveal=text)');
+}
+if (!motionCss.includes('[data-reveal="intro-headline"]') || !motionCss.includes('[data-reveal="media"]')) {
+  errors.push('yy-motion.css must include intro-headline and media recipes');
+}
+if (/grid-template-columns/.test(motionCssCode)) {
+  errors.push('yy-motion.css must not set grid-template-columns');
+}
+if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(motionCssCode)) {
+  errors.push('yy-motion.css must not set horizontal padding or margin');
+}
+
+const baseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/BaseLayout.astro'), 'utf8');
+if (!baseLayout.includes('yy-motion.css')) {
+  errors.push('BaseLayout.astro must link yy-motion.css');
+}
+
+const caseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/CaseStudyLayout.astro'), 'utf8');
+if (!caseLayout.includes('data-reveal="text"')) {
+  errors.push('CaseStudyLayout.astro must mark titles with data-reveal=text');
+}
+
+const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf8');
+if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
+  errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
+}
+if (!revealJs.includes('intro-')) {
+  errors.push('yy-reveal.js must skip intro-* CSS-timeline recipes');
 }
 if (
   /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
@@ -311,6 +352,15 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
 const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'utf8');
 if (!indexAstro.includes('yy-canvas')) {
   errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
+}
+if (!indexAstro.includes('data-reveal="intro-headline"') || !indexAstro.includes('data-reveal="intro-meta"')) {
+  errors.push('src/pages/index.astro must use data-reveal intro recipes (not data-intro)');
+}
+if (indexAstro.includes('data-intro=')) {
+  errors.push('src/pages/index.astro still uses data-intro; migrate to data-reveal recipes');
+}
+if (indexAstro.includes('reveal={false}')) {
+  errors.push('src/pages/index.astro must load yy-reveal.js for below-fold recipes (explicit nodes only)');
 }
 if (indexAstro.includes('yy-flow.js')) {
   errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
