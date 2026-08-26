@@ -169,5 +169,6 @@ Implementation rule: pull sizes, weights, tracking, and ink from `yy-tokens.css`
 1. Visiting `/projects.html` shows the new Astro 3D remnant carousel, not the Webflow projects hub.
 2. Six to seven glass-framed placeholder cards read as a creative front-arc, not a closed ring or flat grid.
 3. Scroll and drag both affect rotation; hover shows frame path-text crawl with placeholders.
-4. Homepage featured work and case studies are unchanged.
-5. Site checks pass; reduced-motion and no-JS remain acceptable for content visibility.
+4. All visible text (eyebrow, names, path-text) matches existing landing type/ink recipes.
+5. Homepage featured work and case studies are unchanged.
+6. Site checks pass; reduced-motion and no-JS remain acceptable for content visibility.
