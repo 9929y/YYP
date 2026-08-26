@@ -699,21 +699,25 @@
   .slot:hover video,
   .slot:hover .ph { transform: scale(1.03); }
 
-  /* ---------- Opus Clip: frosted-glass card frame (Figma node 37:688) ----------
+  /* ---------- Opus Clip: frosted-glass card frame ----------
      A translucent mat sits behind the video and blurs whatever page background
-     shows through its edges; the video keeps its own sharp inset window. Values
-     are the exact export from Figma's dev-mode panel — not tokenized, since
-     nothing else on the page uses this treatment. */
+     shows through its edges; the video keeps its own sharp inset window.
+     Same recipe as the site's own nav capsule (assets/js/yy-chrome.js .cap) —
+     chosen over the heavier Figma node 37:688 export (200px blur, 15% white)
+     because it reads lighter/more consistent with the rest of the chrome. */
   .slot--glass {
-    --glass-inset: 16px;
+    --glass-inset: 14px;
     border-radius: 30px;
-    background: rgba(255, 255, 255, 0.15);
-    -webkit-backdrop-filter: blur(200px);
-    backdrop-filter: blur(200px);
+    background: rgba(255, 255, 255, 0.58);
+    -webkit-backdrop-filter: blur(12px) saturate(1.6);
+    backdrop-filter: blur(12px) saturate(1.6);
     box-shadow:
-      inset 0 15px 20px 0 rgba(255, 255, 255, 0.13),
-      inset 0 0 20px 10px rgba(255, 255, 255, 0.2),
-      0 5px 50px 5px rgba(0, 0, 0, 0.25);
+      inset 0 1px 0 rgba(255, 255, 255, 0.92),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+      inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+      0 1px 2px rgba(62, 65, 116, 0.07),
+      0 2px 8px -2px rgba(62, 65, 116, 0.09),
+      0 12px 36px -8px rgba(62, 65, 116, 0.2);
   }
 
   .slot--glass .slot__window {
