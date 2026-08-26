@@ -356,7 +356,7 @@ if (!chromeJs.includes('data-lenis-prevent') ||
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
 }
-for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel-height: calc(100vh - var(--yy-nav-zone) - 24px)']) {
+for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel-gap: 12px']) {
   if (!chromeJs.includes(marker)) {
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
@@ -397,10 +397,10 @@ if (!chromeJs.includes("host.classList.toggle('is-fullpage'") ||
 if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
   errors.push('yy-chrome.js fullpage glass missing its white inset border');
 }
-if (!chromeJs.includes('--yy-nav-zone: 72px') ||
-    !chromeJs.includes('var(--yy-panel-height)) / 2))') ||
-    chromeJs.includes('/ 2 - 56px)')) {
-  errors.push('yy-chrome.js normal panel must be vertically centered with equal gaps');
+if (!chromeJs.includes('--yy-cap-size: 56px') ||
+    !chromeJs.includes('bottom: calc(var(--yy-nav-zone) + var(--yy-panel-gap))') ||
+    !chromeJs.includes('top: var(--yy-panel-gap)')) {
+  errors.push('yy-chrome.js normal panel must use equal top/bottom gaps above the capsule');
 }
 if (!chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
   errors.push('yy-chrome.js capsule must carry the shared nav shadow');
