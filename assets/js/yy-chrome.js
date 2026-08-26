@@ -133,8 +133,9 @@
     '  --yy-panel-radius: 30px;',
     '  --yy-nav-zone: 72px;',
     '  --yy-panel-width: min(83.4vw, 1600px);',
-    '  --yy-panel-height: min(73.9vh, 798px);',
-    '  --yy-panel-height: min(73.9dvh, 798px);',
+    /* Taller card, equal gaps above the card and above the bottom capsule. */
+    '  --yy-panel-height: min(calc(100vh - var(--yy-nav-zone) - 24px), 880px);',
+    '  --yy-panel-height: min(calc(100dvh - var(--yy-nav-zone) - 24px), 880px);',
     '  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;',
     '  font-size: 16px;',
     '  line-height: 1.55;',
@@ -156,9 +157,8 @@
     '  justify-content: center;',
     '  pointer-events: none;',
     '}',
-    ':host(yy-nav) .panel-stack,',
     ':host(yy-nav) .panel,',
-    ':host(yy-nav) .top-bar,',
+    ':host(yy-nav) .expand,',
     ':host(yy-nav) .cap,',
     ':host(yy-nav) .skip{ pointer-events: auto; }',
     ':host(yy-footer){ display: block; }',
@@ -236,13 +236,13 @@
     '  background: transparent;',
     '  text-decoration: none;',
     '  white-space: nowrap;',
-    '  transition: color .2s var(--yy-ease), font-weight .2s var(--yy-ease);',
+    '  transition: color .2s var(--yy-ease), background-color .2s var(--yy-ease), font-weight .2s var(--yy-ease);',
     '}',
-    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: transparent; }',
+    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
     '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
-    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: transparent; font-weight: 600; }',
-    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: transparent; font-weight: 600; }',
-    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: transparent; }',
+    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }',
+    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }',
+    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: rgba(26,25,23,.075); }',
     '.cap-back{ display: inline-flex !important; align-items: center; justify-content: center; padding: 8px 12px !important; }',
     '.cap-back svg{ display: block; width: 16px; height: 16px; }',
 
@@ -261,46 +261,23 @@
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
-    /* ---- navigation panel + top action bar -----------------------------
-       Bottom .cap = filled frosted capsule.
-       Top .top-bar = outline pill with a white stroke so the two read as
-       separate chrome layers when the mid-size popup is open. */
+    /* ---- navigation panel ----------------------------------------------
+       Mid-size popup is a single card, vertically centered above the
+       capsule with equal top/bottom gaps. Expand lives inside the card. */
     '.panel-stack{',
     '  position: absolute; z-index: 1; left: 0; right: 0;',
-    '  top: max(16px, calc((100vh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2 - 56px));',
-    '  top: max(16px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2 - 56px));',
+    '  top: max(8px, calc((100vh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
+    '  top: max(8px, calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2));',
     '  width: var(--yy-panel-width);',
     '  margin-inline: auto;',
-    '  display: flex; flex-direction: column; align-items: center; gap: 14px;',
+    '  display: flex; flex-direction: column; align-items: stretch;',
     '  box-sizing: border-box;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
     '}',
     ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel-stack.is-expanded{',
     '  inset: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh;',
-    '  max-width: none; gap: 0;',
-    '}',
-    '.top-bar{',
-    '  position: relative; z-index: 3;',
-    '  display: flex; align-items: center; justify-content: flex-end;',
-    '  align-self: stretch;',
-    '  flex: none;',
-    '  pointer-events: auto;',
-    '}',
-    '.panel-stack.is-expanded .top-bar{ display: none !important; }',
-    '.top-bar-inner{',
-    '  position: relative;',
-    '  display: inline-flex; align-items: center; justify-content: center;',
-    '  padding: 6px;',
-    '  border-radius: 999px;',
-    '  color: var(--yy-ink);',
-    '  background: rgba(255,255,255,.42);',
-    '  -webkit-backdrop-filter: blur(10px) saturate(1.35);',
-    '  backdrop-filter: blur(10px) saturate(1.35);',
-    '  box-shadow:',
-    '    inset 0 0 0 1.5px #fff,',
-    '    0 0 0 1px rgba(255,255,255,.72),',
-    '    0 2px 10px -2px rgba(62,65,116,.14);',
+    '  max-width: none;',
     '}',
     '.panel{',
     '  position: relative; z-index: 1; left: auto; right: auto; bottom: auto; top: auto;',
@@ -347,8 +324,10 @@
     '}',
     '.panel-title{ margin: 0; font-size: clamp(32px,5vw,64px); line-height: 1; letter-spacing: -.04em; }',
     '.panel-note{ margin: 18px 0 0; max-width: 38rem; color: var(--yy-ink-dim); font-size: 14px; }',
+    /* Icon-only expand inside the card — no circle, no fill, no outer chrome. */
     '.expand{',
-    '  position: relative; display: inline-flex; align-items: center; justify-content: center;',
+    '  position: absolute; z-index: 4; top: 18px; right: 18px;',
+    '  display: inline-flex; align-items: center; justify-content: center;',
     '  width: 28px; height: 28px; min-height: 0; padding: 0; border: 0; border-radius: 0;',
     '  color: var(--yy-ink); background: transparent;',
     '  box-shadow: none;',
@@ -356,6 +335,7 @@
     '  font: inherit;',
     '  transition: color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out), transform var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
     '}',
+    '.panel.is-expanded .expand{ display: none !important; }',
     '.expand:hover{ color: var(--yy-ink); background: transparent; transform: none; }',
     '.expand:active{ transform: scale(.96); }',
     '.expand:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; }',
@@ -369,7 +349,6 @@
     '  opacity: 0; pointer-events: none;',
     '  transition: opacity var(--duration-fast,.25s) var(--ease-smooth-out,ease-out), color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
     '}',
-    '.top-bar-inner:hover .expand-label,',
     '.expand:hover .expand-label,',
     '.expand:focus-visible .expand-label{ opacity: 1; color: var(--yy-ink); }',
     '.expand-icon{',
@@ -431,29 +410,29 @@
     '  .panel-stack{',
     '    --yy-nav-zone: 64px;',
     '    width: calc(100vw - 24px);',
-    '    top: max(12px, calc((100vh - var(--yy-nav-zone) - min(78vh,720px)) / 2 - 52px));',
-    '    top: max(12px, calc((100dvh - var(--yy-nav-zone) - min(78dvh,720px)) / 2 - 52px));',
+    '    top: max(8px, calc((100vh - var(--yy-nav-zone) - min(calc(100vh - var(--yy-nav-zone) - 20px), 760px)) / 2));',
+    '    top: max(8px, calc((100dvh - var(--yy-nav-zone) - min(calc(100dvh - var(--yy-nav-zone) - 20px), 760px)) / 2));',
     '  }',
     '  .panel{',
-    '    height: min(78vh,720px); height: min(78dvh,720px);',
+    '    height: min(calc(100vh - var(--yy-nav-zone) - 20px), 760px);',
+    '    height: min(calc(100dvh - var(--yy-nav-zone) - 20px), 760px);',
     '    border-radius: 24px;',
     '  }',
     '  .panel-stack.is-expanded{ inset: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh; }',
     '  .panel.is-expanded{ border-radius: 0; height: 100%; }',
     '  .panel-view{ padding: 64px 24px 32px; }',
     '  .panel-view--resume{ padding: 0; }',
-    '  .top-bar-inner{ padding: 5px; }',
-    '  .expand{ width: 26px; height: 26px; }',
+    '  .expand{ top: 14px; right: 14px; width: 26px; height: 26px; }',
     '  .expand-label{ font-size: 11px; }',
     '}',
     '@media (max-height: 560px){',
     '  .panel-stack{ --yy-nav-zone: 72px; top: 8px; }',
-    '  .panel{ height: calc(100vh - 80px - 52px); height: calc(100dvh - 80px - 52px); }',
+    '  .panel{ height: calc(100vh - var(--yy-nav-zone) - 16px); height: calc(100dvh - var(--yy-nav-zone) - 16px); }',
     '  .panel-stack.is-expanded{ inset: 0; top: 0; height: 100vh; height: 100dvh; }',
     '  .panel.is-expanded{ height: 100%; }',
     '}',
     '@media (prefers-reduced-motion: reduce){',
-    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner, .top-bar-inner{ transition-duration: 1ms !important; }',
+    '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
     '}',
 
     /* ---- footer -------------------------------------------------------- */
@@ -991,13 +970,6 @@
 
     if (cap) cap.addEventListener('click', onCapClick);
     expand.addEventListener('click', expandToFullpage);
-    var topBarInner = root.querySelector('.top-bar-inner');
-    if (topBarInner) {
-      topBarInner.addEventListener('click', function (event) {
-        if (event.target.closest('.expand')) return;
-        expand.click();
-      });
-    }
     window.addEventListener('popstate', function (event) {
       var state = event.state;
       if (panel.classList.contains('is-expanded') && !(state && state.yyPanelFull)) {
@@ -1063,18 +1035,14 @@
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
       '<div class="panel-stack">' +
-        '<div class="top-bar" aria-label="Panel actions">' +
-          '<div class="top-bar-inner">' +
-            '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
-              '<span class="expand-label" aria-hidden="true">View full screen</span>' +
-              '<span class="expand-icon" aria-hidden="true">' +
-                '<span class="corner corner-nw"></span><span class="corner corner-ne"></span>' +
-                '<span class="corner corner-sw"></span><span class="corner corner-se"></span>' +
-              '</span>' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
         '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
+          '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
+            '<span class="expand-label" aria-hidden="true">View full screen</span>' +
+            '<span class="expand-icon" aria-hidden="true">' +
+              '<span class="corner corner-nw"></span><span class="corner corner-ne"></span>' +
+              '<span class="corner corner-sw"></span><span class="corner corner-se"></span>' +
+            '</span>' +
+          '</button>' +
           '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
         '</div>' +
       '</div>' +

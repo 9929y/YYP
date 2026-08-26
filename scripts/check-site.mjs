@@ -356,7 +356,7 @@ if (!chromeJs.includes('data-lenis-prevent') ||
 if (!chromeJs.includes('viewScroll') || !chromeJs.includes('restoreViewScroll')) {
   errors.push('yy-chrome.js must explicitly preserve each popup view scroll position');
 }
-for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '73.9vh']) {
+for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', 'calc(100vh - var(--yy-nav-zone) - 24px)']) {
   if (!chromeJs.includes(marker)) {
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
@@ -365,25 +365,25 @@ if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {
   errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
 }
-if (!chromeJs.includes('.panel-stack.is-expanded .top-bar{ display: none') ||
+if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
     !chromeJs.includes('leaveFullpageToOrigin') ||
     !chromeJs.includes('yyPanelFull') ||
     !chromeJs.includes('fullpageHash')) {
-  errors.push('yy-chrome.js expanded layer must hide the shrink control and exit via Go Back to the origin page');
+  errors.push('yy-chrome.js expanded layer must hide the expand control and exit via Go Back to the origin page');
 }
 if (!chromeJs.includes('View full screen') ||
     !chromeJs.includes('expand-label') ||
-    !chromeJs.includes('top-bar-inner') ||
+    !chromeJs.includes("top: 18px; right: 18px;") ||
     !chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)')) {
-  errors.push('yy-chrome.js popup must show a stroked top bar with View full screen above the panel');
+  errors.push('yy-chrome.js popup must keep View full screen as an icon inside the panel card');
 }
 if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
     !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
   errors.push('yy-chrome.js must keep main nav on Resume popup and enter section nav only on expand');
 }
-if (!chromeJs.includes('background: transparent') ||
-    chromeJs.includes(".cap button[aria-expanded=\"true\"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }")) {
-  errors.push('yy-chrome.js capsule items must be text-only by default (no gray chip fill)');
+if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }') ||
+    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }')) {
+  errors.push('yy-chrome.js capsule must show a selected pill for active nav items');
 }
 if (chromeJs.includes('width: 36px; height: 36px;') &&
     chromeJs.includes(':host(.is-fullpage) .cap{')) {
@@ -398,8 +398,9 @@ if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
   errors.push('yy-chrome.js fullpage glass missing its white inset border');
 }
 if (!chromeJs.includes('--yy-nav-zone: 72px') ||
-    !chromeJs.includes('var(--yy-panel-height)) / 2 - 56px)')) {
-  errors.push('yy-chrome.js normal panel must balance space above and below');
+    !chromeJs.includes('var(--yy-panel-height)) / 2))') ||
+    chromeJs.includes('/ 2 - 56px)')) {
+  errors.push('yy-chrome.js normal panel must be vertically centered with equal gaps');
 }
 if (!chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
   errors.push('yy-chrome.js capsule must carry the shared nav shadow');
