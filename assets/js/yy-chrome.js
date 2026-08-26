@@ -64,14 +64,13 @@
   /* Resume is NOT a social profile — it lives in the nav row above as text.
      Dropping it here also retires `icon-resume.webp`, the asset that on all
      seven case pages sits on an href pointing at Instagram. */
+  /* Stroke icons (Lucide-style) match the chrome's cap-back chevron and the
+     neutral #1a1917 palette — sourced from 21st hero-block / portfolio patterns. */
   var SOCIAL = [
-    { href: 'https://www.linkedin.com/in/yanice-yang', label: 'LinkedIn', img: 'icon-linkedin.webp' },
-    { href: 'mailto:yaniceydesign@gmail.com',          label: 'Email',    img: 'icon-email.webp' }
+    { href: 'https://www.linkedin.com/in/yanice-yang', label: 'LinkedIn',  icon: 'linkedin' },
+    { href: 'mailto:yaniceydesign@gmail.com',          label: 'Email',     icon: 'mail' },
+    { href: 'https://www.instagram.com/tycreated/',     label: 'Instagram', icon: 'instagram' }
   ];
-  /* Instagram exists on the seven case pages but only behind the mislabelled
-     resume icon, so nobody can find it. Kept as a text link: no new asset,
-     and the link stops lying about where it goes. */
-  var INSTAGRAM = 'https://www.instagram.com/tycreated/';
 
   /* --------------------------------------------------------------------------
      Step 1 — hide the legacy chrome from CSS parsed before <body> exists.
@@ -468,7 +467,9 @@
     '.ft a:hover,.ft button:hover{ color: var(--yy-ink); text-decoration: underline; text-underline-offset: 3px; }',
     '.ft a:focus-visible,.ft button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; border-radius: 2px; }',
     '.soc{ display: flex; align-items: center; gap: 16px; }',
-    '.soc img{ display: block; width: 18px; height: 18px; object-fit: contain; }',
+    '.soc a{ display: inline-flex; align-items: center; justify-content: center; color: var(--yy-ink-dim); transition: color .2s var(--yy-ease); }',
+    '.soc a:hover{ color: var(--yy-ink); }',
+    '.soc svg{ display: block; width: 18px; height: 18px; flex: none; }',
     '.credit{ margin: 0 0 0 auto; color: var(--yy-ink-dim); }',
     '@media (max-width: 560px){ .credit{ margin-left: 0; flex-basis: 100%; } }'
   ].join('\n');
@@ -513,6 +514,24 @@
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<path d="M15 18l-6-6 6-6"/>' +
       '</svg></button>';
+  }
+
+  function socialIcon(name) {
+    var paths = {
+      linkedin:
+        '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>' +
+        '<rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>',
+      mail:
+        '<rect width="20" height="16" x="2" y="4" rx="2"/>' +
+        '<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+      instagram:
+        '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>' +
+        '<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>' +
+        '<line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>'
+    };
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      (paths[name] || '') + '</svg>';
   }
 
   function panelView(item) {
@@ -1201,10 +1220,9 @@
             return '<a href="' + esc(s.href) + '"' +
               (/^https?:/.test(s.href) ? ' target="_blank" rel="noopener"' : '') +
               ' aria-label="' + esc(s.label) + '">' +
-              '<img src="' + esc(ROOT + 'assets/images/ui/' + s.img) + '" alt="" width="18" height="18">' +
+              socialIcon(s.icon) +
               '</a>';
           }).join('') +
-          '<a href="' + esc(INSTAGRAM) + '" target="_blank" rel="noopener">Instagram</a>' +
         '</div>' +
         '<p class="credit">© Yanice Yang 2026</p>' +
       '</footer>';
