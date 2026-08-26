@@ -559,7 +559,7 @@
       context.fillStyle = base;
       context.fillRect(0, 0, width, height);
 
-      context.globalCompositeOperation = 'screen';
+      context.globalCompositeOperation = 'source-over';
       var span = Math.max(width, height);
       blob(width * (.24 + .23 * Math.sin(t * .82)), height * (.28 + .20 * Math.cos(t)), span * .72, theme.colors[1]);
       blob(width * (.72 + .20 * Math.cos(t * .68)), height * (.68 + .22 * Math.sin(t * .91)), span * .68, theme.colors[2]);
