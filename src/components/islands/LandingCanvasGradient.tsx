@@ -11,8 +11,8 @@ const SCROLL_RESUME_MS = 1000;
 
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
-  const [animate, setAnimate] = useState<'on' | 'off'>('on');
-  const [uSpeed, setUSpeed] = useState(BASE_SPEED);
+  const [scrollPaused, setScrollPaused] = useState(false);
+  const [panelExpanded, setPanelExpanded] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -27,12 +27,10 @@ export default function LandingCanvasGradient() {
 
     let resumeTimer = 0;
     const pauseForScroll = () => {
-      setAnimate('off');
-      setUSpeed(0);
+      setScrollPaused(true);
       window.clearTimeout(resumeTimer);
       resumeTimer = window.setTimeout(() => {
-        setAnimate('on');
-        setUSpeed(BASE_SPEED);
+        setScrollPaused(false);
       }, SCROLL_RESUME_MS);
     };
 
@@ -50,7 +48,18 @@ export default function LandingCanvasGradient() {
     };
   }, [allowMotion]);
 
+  useEffect(() => {
+    const onPanelState = (event: Event) => {
+      setPanelExpanded(Boolean((event as CustomEvent<{ expanded?: boolean }>).detail?.expanded));
+    };
+
+    window.addEventListener('yy:panel-state', onPanelState);
+    return () => window.removeEventListener('yy:panel-state', onPanelState);
+  }, []);
+
   if (!allowMotion) return null;
+
+  const motionActive = !scrollPaused && !panelExpanded;
 
   return (
     <ShaderGradientCanvas
@@ -63,7 +72,7 @@ export default function LandingCanvasGradient() {
     >
       <ShaderGradient
         control="props"
-        animate={animate}
+        animate={motionActive ? 'on' : 'off'}
         brightness={1.2}
         cAzimuthAngle={200}
         cDistance={9.4}
@@ -92,7 +101,7 @@ export default function LandingCanvasGradient() {
         uAmplitude={0}
         uDensity={1.1}
         uFrequency={5.5}
-        uSpeed={uSpeed}
+        uSpeed={motionActive ? BASE_SPEED : 0}
         uStrength={2.5}
         uTime={3.48}
         wireframe={false}
