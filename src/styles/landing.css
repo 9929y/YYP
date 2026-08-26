@@ -1,6 +1,7 @@
 /* landing.css — extracted from landing.html. Visual behaviour is unchanged.
    Motion tokens come from assets/css/yy-tokens.css (linked in <head>).
-   Entrance reveal is html.yy-reveal .rv in yy-chrome.css, not duplicated here.
+   Case-page entrance reveal is html.yy-reveal .rv in yy-chrome.css.
+   Landing scroll entrance: masked-reveal.css (text) + .yy-clip-reveal (frames).
 */
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -994,10 +995,16 @@
      Free lane: clip-path only on the .slot / .panel frame. Media opacity/filter
      stay with yy-slots skeleton; media transform stays with hover. Gated on
      html.yy-clip-reveal so a dead script never leaves frames permanently clipped.
+     Closed state is `.is-clip-ready:not(.is-clip-in)` only — applied at the moment
+     of entrance so IntersectionObserver still sees an unclipped box beforehand.
      Timing matches yy-rv--wipe / MaskedTextReveal: 500ms + --ease-smooth-out. */
-  html.yy-clip-reveal .slot[data-clip-reveal],
-  html.yy-clip-reveal .panel[data-clip-reveal] {
+  html.yy-clip-reveal .slot[data-clip-reveal].is-clip-ready:not(.is-clip-in),
+  html.yy-clip-reveal .panel[data-clip-reveal].is-clip-ready:not(.is-clip-in) {
     clip-path: inset(100% 0 0 0);
+  }
+
+  html.yy-clip-reveal .slot[data-clip-reveal].is-clip-ready,
+  html.yy-clip-reveal .panel[data-clip-reveal].is-clip-ready {
     transition: clip-path var(--duration-very-slow) var(--ease-smooth-out);
     will-change: clip-path;
   }
