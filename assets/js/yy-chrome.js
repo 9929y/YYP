@@ -510,11 +510,13 @@
   function setupPanel(host) {
     var root = host.shadowRoot;
     var panel = root.querySelector('.panel');
+    var panelScroll = root.querySelector('.panel-scroll');
     var expand = root.querySelector('.expand');
     var triggers = Array.prototype.slice.call(root.querySelectorAll('[data-panel-trigger]'));
     var views = Array.prototype.slice.call(root.querySelectorAll('[data-panel-view]'));
     var active = '';
     var panelAnimation = null;
+    var viewScroll = {};
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function prepare(name) {
@@ -550,6 +552,18 @@
       for (var j = 0; j < views.length; j++) {
         views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
       }
+    }
+
+    function saveViewScroll(name) {
+      if (panelScroll && name) viewScroll[name] = panelScroll.scrollTop;
+    }
+
+    function restoreViewScroll(name) {
+      if (!panelScroll) return;
+      window.requestAnimationFrame(function () {
+        panelScroll.scrollTop = viewScroll[name] || 0;
+        panelScroll.dispatchEvent(new Event('scroll'));
+      });
     }
 
     function keyframesBetween(from, to, closing) {
@@ -594,6 +608,7 @@
       HTML.classList.remove('yy-panel-fullpage');
       panel.setAttribute('aria-modal', 'false');
       host.classList.add('is-open');
+      restoreViewScroll(name);
       var targetView = viewFor(name);
       var start = trigger.getBoundingClientRect();
       animatePanel(start, false, function () {
@@ -611,6 +626,7 @@
     function close(returnFocus) {
       if (!active) return;
       var former = active;
+      saveViewScroll(former);
       var wasExpanded = panel.classList.contains('is-expanded');
       if (wasExpanded) {
         host.classList.remove('is-fullpage');
@@ -634,9 +650,11 @@
     }
 
     function switchView(name) {
+      saveViewScroll(active);
       prepare(name);
       active = name;
       sync(name);
+      restoreViewScroll(name);
       var next = viewFor(name);
       if (next && !reduced && next.animate) {
         next.animate(
