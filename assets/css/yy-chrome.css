@@ -185,6 +185,36 @@ html.yy-reveal .yy-rv--wipe.in {
       元素（hero 的斜体词）上。我做的是 1.6px 加在**每一张图**上，是放大了 100 倍的
       自己的发明，不是量来的东西。删掉比修好。 */
 
+/* ---------------------------------------------------------------------------
+   7. Case copy measure
+
+   Phase 1 capped `.paragraph` / `.textblockp1` at 36em. In wide cells (Opus
+   Validation, 2-column case rows) that left a short text column and empty
+   space. Restore the authored cell width. Do not touch grid columns or
+   horizontal section padding.
+   --------------------------------------------------------------------------- */
+html.yy-chrome .paragraph,
+html.yy-chrome .textblockp1 {
+  max-width: none;
+}
+
+html.yy-chrome .div-block-40.grid {
+  align-items: stretch;
+}
+
+html.yy-chrome .div-block-40.grid > a,
+html.yy-chrome .div-block-40.grid > .w-inline-block {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+}
+
+html.yy-chrome .div-block-40.grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.yy-reveal .yy-rv--wipe {
     transform: none;
