@@ -32,16 +32,18 @@
 (function () {
   'use strict';
 
-  /* ---- the reference's parameters, unchanged ---- */
+  /* ---- landing ShaderGradient palette (waterPlane export) ----
+     Blues nudged ~8% toward black vs shader color1/color2 so the ASCII
+     reads a touch deeper on the bright canvas; gold stays color3. */
   var CHARS      = 'k@e$d%a&v*r(a';
   var CELL       = 8;
   var ALPHA_MIN  = 0.1;
   var INTENSITY  = 1.5;
   var MOMENTUM   = 40;
   var RADIUS     = 2;
-  var C_BASE     = [0x75, 0xFB, 0x4C];   /* #75FB4C */
-  var C_ALT      = [0x3F, 0xD3, 0x4E];   /* #3FD34E */
-  var C_IDLE     = [0xB4, 0xB2, 0xAD];   /* grey for the diffuse outer field */
+  var C_BASE     = [0xc8, 0xe8, 0xeb];   /* #c8e8eb cyan (was #d9fcff) */
+  var C_ALT      = [0xeb, 0xca, 0x71];   /* #ebca71 gold */
+  var C_IDLE     = [0xd5, 0xdf, 0xea];   /* #d5dfea soft blue (was #e7f3fe) */
 
   var cv = document.getElementById('yy-flow');
   if (!cv) return;
@@ -130,19 +132,19 @@
         var d = dens[k];
         if (d < ALPHA_MIN) continue;                  /* alphaThreshold */
         var t = Math.min(d, 1);
-        /* Direction picks between the two greens exactly as the reference maps
-           up/left to #3FD34E and down/right to #75FB4C. */
+        /* Direction picks between deepened cyan (#c8e8eb) and gold (#ebca71);
+           soft blue (#d5dfea) fills the diffuse edge. */
         var horiz = vx[k], vert = vy[k];
         var dir = (Math.abs(horiz) > Math.abs(vert))
           ? (horiz > 0 ? 1 : 0)
           : (vert > 0 ? 1 : 0);
         var target = dir ? C_BASE : C_ALT;
-        /* Grey at the diffuse edge, saturated green in the core. */
+        /* Soft blue at the diffuse edge, saturated chroma in the core. */
         var m = Math.pow(t, 1.5);
         var r = Math.round(C_IDLE[0] + (target[0] - C_IDLE[0]) * m);
         var g = Math.round(C_IDLE[1] + (target[1] - C_IDLE[1]) * m);
         var bl = Math.round(C_IDLE[2] + (target[2] - C_IDLE[2]) * m);
-        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + bl + ',' + (0.22 + t * 0.66).toFixed(3) + ')';
+        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + bl + ',' + (0.28 + t * 0.62).toFixed(3) + ')';
         ctx.fillText(CHARS.charAt(Math.min(ramp, Math.floor(t * ramp))), i * CELL, j * CELL);
       }
     }

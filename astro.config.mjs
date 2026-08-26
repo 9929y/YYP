@@ -13,7 +13,9 @@ export default defineConfig({
   devToolbar: { enabled: false },
   vite: {
     server: {
-      fs: { allow: ['.'] }
+      fs: { allow: ['.'] },
+      /* Cloudflare quick tunnels + local previews when port-forward fails. */
+      allowedHosts: ['.trycloudflare.com', 'localhost', '127.0.0.1']
     }
   }
 });
