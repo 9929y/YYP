@@ -228,8 +228,8 @@
     --canvas-x: 0px;
     --canvas-y: 0px;
     --canvas-opacity: 0.9;
-    /* Cover frost: geometry frozen; blur + fill drive per-case character. */
-    --cover-opacity: 0.9;
+    /* Cover frost: only blur + fill vary per case; opacity stays 1 until footer. */
+    --cover-opacity: 1;
     --cover-blur: 85px;
     --cover-fill: 0.16;
   }

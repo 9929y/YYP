@@ -3,7 +3,8 @@
 
    Progress is keyed to hero → each `.case` focus → page bottom (not a single
    linear fade). Canvas keeps opacity / scale / rotate / translate. Cover
-   geometry is frozen; frost character is coverOpacity + coverBlur + coverFill.
+   opacity / scale / rotate / translate stay frozen; only coverBlur + coverFill
+   change per stop (coverOpacity drops only at the footer clear).
    Shader playback is separate (LandingCanvasGradient keeps animate on).
    ============================================================================ */
 (function () {
@@ -22,13 +23,14 @@
 
   /*
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
-    - Hero: canvas scale 1.3; soft frost
-    - Opus: canvas 1.9 / 0.3; heavy frost (high blur + fill)
-    - Atlas Nova: canvas 2.8 / 0.4; clearest glass (low blur + fill)
+    - Hero: canvas scale 1.3; soft frost (blur + fill only)
+    - Opus: canvas 1.9 / 0.3; heavy frost
+    - Atlas Nova: canvas 2.8 / 0.4; clearest glass
     - McKinsey: canvas 2.8 / 0.3; medium frost
     - Lark: canvas 1.5 / 0.2; medium-heavy frost
     - Bottom / footer: canvas + cover → 0
-    Cover scale / rotate / translate stay frozen (identity).
+    Cover character = blur + fill. Cover opacity/scale/rotate/xy do not vary
+    across cases (opacity only fades at bottom clear).
     During projects, shader speed is marked 0.7× via data-motion-zone.
   */
   var HERO = {
@@ -37,7 +39,7 @@
     rotate: 0,
     x: 0,
     y: 0,
-    coverOpacity: 0.9,
+    coverOpacity: 1,
     coverBlur: 85,
     coverFill: 0.16
   };
