@@ -33,13 +33,13 @@
 
   var RESUME = 'https://302437672248143872.hello.cv/';
 
-  /* Capsule link set. Deliberately four items: any more and the capsule stops
-     being a capsule at 375px. `projects.html` is the hub — it links to all
-     eight content pages — so Work covers the whole case-study graph. */
+  /* The shared navigation now owns three content surfaces. Their final content
+     will arrive independently; keeping the panel keys here gives every Astro
+     and legacy page the same shell and state machine today. */
   var NAV = [
-    { href: 'projects.html', label: 'Work', homeHref: '#work' },
-    { href: 'aboutme.html',  label: 'About' },
-    { href: RESUME,          label: 'Resume', ext: true }
+    { panel: 'work',   label: 'Work' },
+    { panel: 'about',  label: 'About' },
+    { panel: 'resume', label: 'Resume' }
   ];
 
   /* Footer carries the tail. `fashion.html`'s only inbound link today is a
@@ -117,6 +117,10 @@
     '  --yy-fill: rgba(255,255,255,.58);',
     '  --yy-hair: rgba(255,255,255,.65);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
+    '  --yy-panel-radius: 30px;',
+    '  --yy-panel-bottom: 70px;',
+    '  --yy-panel-width: min(83.4vw, 1600px);',
+    '  --yy-panel-height: min(73.9dvh, 798px);',
     '  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;',
     '  font-size: 16px;',
     '  line-height: 1.55;',
@@ -130,6 +134,7 @@
     ':host(yy-nav){',
     '  position: fixed;',
     '  z-index: 9000;',
+    '  top: 0;',
     '  left: 0;',
     '  right: 0;',
     '  bottom: 16px;',
@@ -137,6 +142,7 @@
     '  justify-content: center;',
     '  pointer-events: none;',
     '}',
+    ':host(yy-nav) .panel,',
     ':host(yy-nav) .cap,',
     ':host(yy-nav) .skip{ pointer-events: auto; }',
     ':host(yy-footer){ display: block; }',
@@ -166,6 +172,8 @@
        inset hairlines, drop shadow, saturate so colour behind stays alive.
        -------------------------------------------------------------------- */
     '.cap{',
+    '  position: absolute; left: 50%; bottom: 0;',
+    '  transform: translateX(-50%);',
     '  display: flex; align-items: center; gap: 2px;',
     '  padding: 6px;',
     '  border-radius: 999px;',
@@ -186,8 +194,8 @@
     '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-hair: rgba(26,25,23,.10); }',
     '}',
 
-    '.cap a{',
-    '  display: block;',
+    '.cap a, .cap button{',
+    '  display: block; border: 0; margin: 0; font: inherit; cursor: pointer;',
     '  padding: 8px 14px;',
     '  border-radius: 999px;',
     '  font-size: 14px; font-weight: 500;',
@@ -197,9 +205,10 @@
     '  white-space: nowrap;',
     '  transition: color .2s var(--yy-ease), background-color .2s var(--yy-ease);',
     '}',
-    '.cap a:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
-    '.cap a:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
+    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
+    '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
     '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
+    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }',
 
     /* Handwritten wordmark — Caveat, same as the reference glass capsule.
        No grey chip: the wordmark sits in the glass fill. */
@@ -216,12 +225,82 @@
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
+    /* ---- navigation panel --------------------------------------------- */
+    '.panel{',
+    '  position: absolute; left: 0; right: 0; bottom: var(--yy-panel-bottom);',
+    '  width: var(--yy-panel-width); height: var(--yy-panel-height);',
+    '  margin-inline: auto; overflow: hidden;',
+    '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
+    '  color: var(--yy-ink); background: var(--yy-fill);',
+    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
+    '  backdrop-filter: blur(12px) saturate(1.6);',
+    '  box-shadow:',
+    '    inset 0 1px 0 rgba(255,255,255,.92),',
+    '    inset 0 0 0 1px var(--yy-hair),',
+    '    inset 0 -1px 0 rgba(26,25,23,.05),',
+    '    0 5px 50px 5px rgba(0,0,0,.18);',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '  transform-origin: center bottom; contain: layout paint;',
+    '}',
+    ':host(.is-open) .panel{ opacity: 1; visibility: visible; pointer-events: auto; }',
+    '.panel.is-expanded{',
+    '  top: 16px; bottom: var(--yy-panel-bottom);',
+    '  width: calc(100vw - 32px); height: auto; max-width: none;',
+    '}',
+    '.panel-scroll{',
+    '  height: 100%; overflow: auto; overscroll-behavior: contain;',
+    '  scrollbar-gutter: stable; box-sizing: border-box;',
+    '}',
+    '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
+    '.panel-view[hidden]{ display: none; }',
+    '.panel-kicker{',
+    '  margin: 0 0 10px; color: var(--yy-ink-dim);',
+    '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
+    '}',
+    '.panel-title{ margin: 0; font-size: clamp(32px,5vw,64px); line-height: 1; letter-spacing: -.04em; }',
+    '.panel-note{ margin: 18px 0 0; max-width: 38rem; color: var(--yy-ink-dim); font-size: 14px; }',
+    '.expand{',
+    '  position: absolute; z-index: 2; top: 18px; right: 18px;',
+    '  width: 38px; height: 38px; padding: 0; border: 0; border-radius: 999px;',
+    '  color: var(--yy-ink); background: rgba(255,255,255,.38);',
+    '  box-shadow: inset 0 0 0 1px rgba(255,255,255,.68), 0 3px 12px rgba(62,65,116,.12);',
+    '  cursor: pointer; transition: background-color var(--duration-fast,.25s) var(--ease-smooth-out,ease-out), transform var(--duration-fast,.25s) var(--ease-smooth-out,ease-out);',
+    '}',
+    '.expand:hover{ background: rgba(255,255,255,.62); transform: scale(1.06); }',
+    '.expand:active{ transform: scale(.94); }',
+    '.expand:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 2px; }',
+    '.expand-icon{ position: absolute; inset: 10px; }',
+    '.corner{ position: absolute; width: 6px; height: 6px; transition: transform var(--duration-slow,.4s) var(--m-overshoot,var(--ease-smooth-out,ease-out)); }',
+    '.corner-nw{ left: 0; top: 0; border-left: 1.5px solid; border-top: 1.5px solid; }',
+    '.corner-ne{ right: 0; top: 0; border-right: 1.5px solid; border-top: 1.5px solid; }',
+    '.corner-sw{ left: 0; bottom: 0; border-left: 1.5px solid; border-bottom: 1.5px solid; }',
+    '.corner-se{ right: 0; bottom: 0; border-right: 1.5px solid; border-bottom: 1.5px solid; }',
+    '.panel.is-expanded .corner-nw{ transform: translate(4px,4px) rotate(180deg); }',
+    '.panel.is-expanded .corner-ne{ transform: translate(-4px,4px) rotate(180deg); }',
+    '.panel.is-expanded .corner-sw{ transform: translate(4px,-4px) rotate(180deg); }',
+    '.panel.is-expanded .corner-se{ transform: translate(-4px,-4px) rotate(180deg); }',
+
     /* Below 560px the brand is the first thing to go: the four links are
        navigation, the brand is decoration that also links home. */
     '@media (max-width: 560px){',
     '  .brand, .rule{ display: none !important; }',
     '  .cap{ gap: 0; }',
-    '  .cap a{ padding: 8px 12px; font-size: 13px; }',
+    '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
+    '  .panel{',
+    '    --yy-panel-bottom: 66px;',
+    '    width: calc(100vw - 24px); height: min(78dvh,720px);',
+    '    border-radius: 24px;',
+    '  }',
+    '  .panel.is-expanded{ top: 12px; width: calc(100vw - 24px); height: auto; }',
+    '  .panel-view{ padding: 64px 24px 32px; }',
+    '  .expand{ top: 14px; right: 14px; }',
+    '}',
+    '@media (max-height: 560px){',
+    '  .panel{ --yy-panel-bottom: 58px; height: calc(100dvh - 74px); }',
+    '  .panel.is-expanded{ top: 8px; }',
+    '}',
+    '@media (prefers-reduced-motion: reduce){',
+    '  .expand, .corner{ transition-duration: 1ms !important; }',
     '}',
 
     /* ---- footer -------------------------------------------------------- */
@@ -264,6 +343,19 @@
     if (item.ext) attrs += ' target="_blank" rel="noopener"';
     if (!item.ext && item.href === here) attrs += ' aria-current="page"';
     return '<a ' + attrs + (item.ext ? ' class="ext"' : '') + '>' + esc(item.label) + '</a>';
+  }
+
+  function panelTrigger(item) {
+    return '<button type="button" data-panel-trigger="' + esc(item.panel) + '"' +
+      ' aria-controls="yy-nav-panel" aria-expanded="false">' + esc(item.label) + '</button>';
+  }
+
+  function panelView(item) {
+    return '<section class="panel-view" data-panel-view="' + esc(item.panel) + '" hidden>' +
+      '<p class="panel-kicker">Component shell</p>' +
+      '<h2 class="panel-title">' + esc(item.label) + '</h2>' +
+      '<p class="panel-note">This space is ready for the ' + esc(item.label) + ' interface.</p>' +
+    '</section>';
   }
 
   /* --------------------------------------------------------------------------
@@ -311,6 +403,160 @@
     return host;
   }
 
+  function setupPanel(host) {
+    var root = host.shadowRoot;
+    var panel = root.querySelector('.panel');
+    var expand = root.querySelector('.expand');
+    var triggers = Array.prototype.slice.call(root.querySelectorAll('[data-panel-trigger]'));
+    var views = Array.prototype.slice.call(root.querySelectorAll('[data-panel-view]'));
+    var active = '';
+    var panelAnimation = null;
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function viewFor(name) {
+      for (var i = 0; i < views.length; i++) {
+        if (views[i].getAttribute('data-panel-view') === name) return views[i];
+      }
+      return null;
+    }
+
+    function triggerFor(name) {
+      for (var i = 0; i < triggers.length; i++) {
+        if (triggers[i].getAttribute('data-panel-trigger') === name) return triggers[i];
+      }
+      return null;
+    }
+
+    function sync(name) {
+      for (var i = 0; i < triggers.length; i++) {
+        var selected = triggers[i].getAttribute('data-panel-trigger') === name;
+        triggers[i].setAttribute('aria-expanded', selected ? 'true' : 'false');
+      }
+      for (var j = 0; j < views.length; j++) {
+        views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
+      }
+    }
+
+    function keyframesBetween(from, to, closing) {
+      var scaleX = Math.max(from.width / to.width, .055);
+      var scaleY = Math.max(from.height / to.height, .055);
+      var dx = from.left + from.width / 2 - (to.left + to.width / 2);
+      var dy = from.top + from.height / 2 - (to.top + to.height / 2);
+      var small = {
+        opacity: 0,
+        transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scaleX + ',' + scaleY + ')',
+        borderRadius: '999px'
+      };
+      var large = { opacity: 1, transform: 'none', borderRadius: getComputedStyle(panel).borderRadius };
+      return closing ? [large, small] : [small, large];
+    }
+
+    function animatePanel(from, closing, done) {
+      if (panelAnimation) panelAnimation.cancel();
+      if (reduced || !panel.animate) {
+        done();
+        return;
+      }
+      var to = panel.getBoundingClientRect();
+      panelAnimation = panel.animate(keyframesBetween(from, to, closing), {
+        duration: closing ? 350 : 500,
+        easing: 'cubic-bezier(.22,1,.36,1)',
+        fill: 'both'
+      });
+      panelAnimation.onfinish = done;
+      panelAnimation.oncancel = null;
+    }
+
+    function open(name, trigger) {
+      active = name;
+      sync(name);
+      host.classList.add('is-open');
+      var targetView = viewFor(name);
+      var start = trigger.getBoundingClientRect();
+      animatePanel(start, false, function () {
+        panelAnimation = null;
+        if (targetView && !reduced && targetView.animate) {
+          targetView.animate(
+            [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 350, easing: 'cubic-bezier(.22,1,.36,1)' }
+          );
+        }
+        expand.focus({ preventScroll: true });
+      });
+    }
+
+    function close(returnFocus) {
+      if (!active) return;
+      var former = active;
+      var target = returnFocus || triggerFor(former);
+      var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
+      active = '';
+      for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
+      animatePanel(destination, true, function () {
+        panelAnimation = null;
+        host.classList.remove('is-open');
+        panel.classList.remove('is-expanded');
+        expand.setAttribute('aria-label', 'Expand panel');
+        expand.setAttribute('aria-pressed', 'false');
+        for (var j = 0; j < views.length; j++) views[j].hidden = true;
+        if (target) target.focus({ preventScroll: true });
+      });
+    }
+
+    function switchView(name) {
+      active = name;
+      sync(name);
+      var next = viewFor(name);
+      if (next && !reduced && next.animate) {
+        next.animate(
+          [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 250, easing: 'cubic-bezier(.22,1,.36,1)' }
+        );
+      }
+    }
+
+    function toggleExpanded() {
+      var before = panel.getBoundingClientRect();
+      var expanded = !panel.classList.contains('is-expanded');
+      panel.classList.toggle('is-expanded', expanded);
+      expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
+      expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
+      var after = panel.getBoundingClientRect();
+      if (!reduced && panel.animate) {
+        var dx = before.left - after.left;
+        var dy = before.top - after.top;
+        panel.animate([
+          {
+            transformOrigin: 'top left',
+            transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' +
+              (before.width / after.width) + ',' + (before.height / after.height) + ')'
+          },
+          { transformOrigin: 'top left', transform: 'none' }
+        ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+        expand.animate(
+          [{ transform: 'scale(.78)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }],
+          { duration: 400, easing: 'cubic-bezier(.34,1.36,.64,1)' }
+        );
+      }
+    }
+
+    for (var i = 0; i < triggers.length; i++) {
+      triggers[i].addEventListener('click', function (event) {
+        var name = event.currentTarget.getAttribute('data-panel-trigger');
+        if (!host.classList.contains('is-open')) open(name, event.currentTarget);
+        else if (active === name) close(event.currentTarget);
+        else switchView(name);
+      });
+    }
+    expand.addEventListener('click', toggleExpanded);
+    root.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && active) {
+        event.preventDefault();
+        close(triggerFor(active));
+      }
+    });
+  }
+
   function mount() {
     var here = currentPage();
     var target = skipTarget();
@@ -321,14 +567,25 @@
        renders identically, so only focus order catches it. */
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
+      '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
+        '<button class="expand" type="button" aria-label="Expand panel" aria-pressed="false">' +
+          '<span class="expand-icon" aria-hidden="true">' +
+            '<span class="corner corner-nw"></span><span class="corner corner-ne"></span>' +
+            '<span class="corner corner-sw"></span><span class="corner corner-se"></span>' +
+          '</span>' +
+        '</button>' +
+        '<div class="panel-scroll">' + NAV.map(panelView).join('') + '</div>' +
+      '</div>' +
       '<nav class="cap" aria-label="Main">' +
         '<a class="brand" href="index.html"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>Yanice Yang</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
-        NAV.map(function (i) { return link(i, here); }).join('') +
+        NAV.map(panelTrigger).join('') +
       '</nav>';
 
-    document.body.insertBefore(shadow('yy-nav', navHTML), document.body.firstChild);
+    var navHost = shadow('yy-nav', navHTML);
+    document.body.insertBefore(navHost, document.body.firstChild);
+    setupPanel(navHost);
 
     /* ---- footer ----
        One code path, three cases. Insert after `.footer-credit-wrapper` where
