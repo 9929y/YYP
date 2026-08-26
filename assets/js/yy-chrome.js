@@ -72,8 +72,8 @@
      sentence inside aboutme.html — the site graph must not depend on one
      page's prose, so the chrome links it explicitly. */
   var FOOT = [
-    { href: 'projects.html', label: 'Work' },
-    { href: 'aboutme.html',  label: 'About' },
+    { panel: 'work',         label: 'Work' },
+    { panel: 'about',        label: 'About' },
     { href: 'fashion.html',  label: 'Fashion' },
     { panel: 'resume',       label: 'Resume' }
   ];
@@ -402,8 +402,12 @@
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
-    '.panel-view--resume{ padding: 0; }',
-    'yy-resume-content{ display: block; min-height: 100%; }',
+    '.panel-view--resume,',
+    '.panel-view--about,',
+    '.panel-view--work{ padding: 0; }',
+    'yy-resume-content,',
+    'yy-about-content,',
+    'yy-work-content{ display: block; min-height: 100%; }',
     '.panel-view[hidden]{ display: none; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
@@ -565,6 +569,16 @@
         '<yy-resume-content aria-label="Yanice Yang resume"></yy-resume-content>' +
       '</section>';
     }
+    if (item.panel === 'about') {
+      return '<section class="panel-view panel-view--about" data-panel-view="about" hidden>' +
+        '<yy-about-content aria-label="About Yanice Yang"></yy-about-content>' +
+      '</section>';
+    }
+    if (item.panel === 'work') {
+      return '<section class="panel-view panel-view--work" data-panel-view="work" hidden>' +
+        '<yy-work-content aria-label="Selected projects"></yy-work-content>' +
+      '</section>';
+    }
     return '<section class="panel-view" data-panel-view="' + esc(item.panel) + '" hidden>' +
       '<p class="panel-kicker">Component shell</p>' +
       '<h2 class="panel-title">' + esc(item.label) + '</h2>' +
@@ -572,23 +586,34 @@
     '</section>';
   }
 
-  var resumeLoad = null;
-  function ensureResumeComponent() {
-    if (window.customElements && customElements.get('yy-resume-content')) {
+  function loadPanelScript(cacheKey, file, tagName, label) {
+    if (window.customElements && customElements.get(tagName)) {
       return Promise.resolve();
     }
-    if (resumeLoad) return resumeLoad;
-    resumeLoad = new Promise(function (resolve, reject) {
+    if (loadPanelScript[cacheKey]) return loadPanelScript[cacheKey];
+    loadPanelScript[cacheKey] = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
-      script.src = ROOT + 'assets/js/yy-resume.js';
+      script.src = ROOT + 'assets/js/' + file;
       script.onload = resolve;
       script.onerror = function () {
-        resumeLoad = null;
-        reject(new Error('Resume component failed to load'));
+        loadPanelScript[cacheKey] = null;
+        reject(new Error(label + ' component failed to load'));
       };
       (document.head || HTML).appendChild(script);
     });
-    return resumeLoad;
+    return loadPanelScript[cacheKey];
+  }
+
+  function ensureResumeComponent() {
+    return loadPanelScript('_resume', 'yy-resume.js', 'yy-resume-content', 'Resume');
+  }
+
+  function ensureAboutComponent() {
+    return loadPanelScript('_about', 'yy-about.js', 'yy-about-content', 'About');
+  }
+
+  function ensureWorkComponent() {
+    return loadPanelScript('_work', 'yy-work.js', 'yy-work-content', 'Work');
   }
 
   function footerItem(item, here) {
@@ -684,13 +709,19 @@
     }
 
     function prepare(name) {
-      if (name !== 'resume') return;
-      ensureResumeComponent().catch(function (error) {
-        var view = viewFor('resume');
+      var loaders = {
+        resume: [ensureResumeComponent, 'Resume'],
+        about: [ensureAboutComponent, 'About'],
+        work: [ensureWorkComponent, 'Work']
+      };
+      var spec = loaders[name];
+      if (!spec) return;
+      spec[0]().catch(function (error) {
+        var view = viewFor(name);
         if (view) {
-          view.innerHTML = '<p class="panel-note" role="alert">Resume could not load. Please try again.</p>';
+          view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
         }
-        if (window.console) console.error('[yy-chrome] resume load failed:', error);
+        if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
       });
     }
 

@@ -112,10 +112,13 @@ const chromeSource = fs.readFileSync(chromePath, 'utf8');
 if (chromeSource.includes('resume.html')) {
   errors.push('yy-chrome.js must not expose Resume as a standalone route');
 }
-for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
+for (const marker of ['<yy-resume-content', 'ensureResumeComponent', '<yy-about-content', 'ensureAboutComponent', '<yy-work-content', 'ensureWorkComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
   if (!chromeSource.includes(marker)) {
-    errors.push(`yy-chrome.js missing embedded Resume integration marker ${marker}`);
+    errors.push(`yy-chrome.js missing embedded panel integration marker ${marker}`);
   }
+}
+if (chromeSource.includes("{ href: 'projects.html'") || chromeSource.includes("{ href: 'aboutme.html'")) {
+  errors.push('yy-chrome.js footer Work/About must open panels, not navigate to standalone pages');
 }
 
 const resumeJsPath = path.join(ROOT, 'assets/js/yy-resume.js');
@@ -137,6 +140,27 @@ for (const marker of [
 }
 if (resumeJs.includes('data-resume-tabs') || resumeJs.includes('resume__tabs')) {
   errors.push('yy-resume.js must not render in-panel sticky tabs — section nav lives in the capsule');
+}
+
+const aboutJs = fs.existsSync(path.join(ROOT, 'assets/js/yy-about.js'))
+  ? fs.readFileSync(path.join(ROOT, 'assets/js/yy-about.js'), 'utf8')
+  : '';
+for (const marker of ["customElements.define('yy-about-content'", 'attachShadow', 'A little about me', 'fashion.html']) {
+  if (!aboutJs.includes(marker)) {
+    errors.push(`assets/js/yy-about.js missing ${marker}`);
+  }
+}
+
+const workJs = fs.existsSync(path.join(ROOT, 'assets/js/yy-work.js'))
+  ? fs.readFileSync(path.join(ROOT, 'assets/js/yy-work.js'), 'utf8')
+  : '';
+for (const marker of ["customElements.define('yy-work-content'", 'attachShadow', 'ai-driven-product-design.html', 'Lark Education Field Study']) {
+  if (!workJs.includes(marker)) {
+    errors.push(`assets/js/yy-work.js missing ${marker}`);
+  }
+}
+if (workJs.includes('inner-page-hero') || workJs.includes('xxl-heading')) {
+  errors.push('yy-work.js must not include the projects page title/banner');
 }
 
 const linkPreviewPath = path.join(ROOT, 'assets/js/yy-link-preview.js');
@@ -296,7 +320,8 @@ const requiredAssets = [
   'assets/css/yy-resume.css',
   'assets/css/yy-motion.css',
   'assets/css/yy-case-type.css',
-  'assets/css/yy-case-type.css',
+  'assets/css/yy-about.css',
+  'assets/css/yy-work.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
@@ -305,6 +330,8 @@ const requiredAssets = [
   'assets/js/yy-flow.js',
   'assets/images/ui/nav-orb.gif',
   'assets/js/yy-resume.js',
+  'assets/js/yy-about.js',
+  'assets/js/yy-work.js',
   'assets/js/yy-link-preview.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
