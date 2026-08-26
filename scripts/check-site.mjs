@@ -282,6 +282,9 @@ const motionCssCode = motionCss.replace(/\/\*[\s\S]*?\*\//g, '');
 if (!motionCss.includes('--reveal-text-distance') || !motionCss.includes('[data-reveal="text"]')) {
   errors.push('yy-motion.css must define the default text recipe (--reveal-text-distance + data-reveal=text)');
 }
+if (!motionCss.includes(':not(.in)') || !motionCss.includes('[data-reveal].in')) {
+  errors.push('yy-motion.css must hide with :not(.in) so .in can actually reveal data-reveal nodes');
+}
 if (!motionCss.includes('[data-reveal="intro-headline"]') || !motionCss.includes('[data-reveal="media"]')) {
   errors.push('yy-motion.css must include intro-headline and media recipes');
 }

@@ -50,7 +50,6 @@ html.yy-reveal [data-reveal="wipe"],
 html.yy-reveal [data-reveal="media"],
 html.yy-reveal [data-reveal="clip"],
 html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]) {
-  opacity: 0;
   transition-property: opacity, transform, filter, clip-path;
   transition-duration: var(--reveal-duration);
   transition-timing-function: var(--reveal-ease);
@@ -58,31 +57,34 @@ html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-
   will-change: opacity, transform, filter;
 }
 
-/* Default TEXT: 12px rise + fade + light blur, 500ms. */
-html.yy-reveal .yy-rv,
-html.yy-reveal .rv,
-html.yy-reveal [data-reveal="text"],
-html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="media"]):not([data-reveal="clip"]) {
+/* Hidden state is :not(.in) so adding .in cannot lose a specificity fight. */
+html.yy-reveal .yy-rv:not(.in),
+html.yy-reveal .rv:not(.in),
+html.yy-reveal [data-reveal="text"]:not(.in),
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="media"]):not([data-reveal="clip"]):not(.in) {
+  opacity: 0;
   transform: translateY(var(--reveal-distance));
   filter: blur(var(--reveal-blur));
 }
 
-html.yy-reveal [data-reveal="fade"] {
+html.yy-reveal [data-reveal="fade"]:not(.in) {
+  opacity: 0;
   transform: none;
   filter: none;
 }
 
-html.yy-reveal [data-reveal="clip"] {
+html.yy-reveal [data-reveal="clip"]:not(.in) {
+  opacity: 0;
   transform: translateY(var(--reveal-distance));
   filter: none;
   clip-path: inset(0 0 100% 0);
   overflow: hidden;
 }
 
-/* MEDIA / wipe: frame opens; no blur (muddies the edge). */
-html.yy-reveal .yy-rv--wipe,
-html.yy-reveal [data-reveal="wipe"],
-html.yy-reveal [data-reveal="media"] {
+html.yy-reveal .yy-rv--wipe:not(.in),
+html.yy-reveal [data-reveal="wipe"]:not(.in),
+html.yy-reveal [data-reveal="media"]:not(.in) {
+  opacity: 0;
   transform: scale(var(--reveal-media-scale));
   clip-path: inset(100% 0 0 0);
   filter: none;
