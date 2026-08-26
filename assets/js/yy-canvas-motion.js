@@ -2,9 +2,9 @@
    yy-canvas-motion.js — scroll-driven Canvas / CanvasCover on the landing.
 
    Progress is keyed to hero → each `.case` focus → page bottom (not a single
-   linear fade). Each stop sets opacity, scale, and translate together so the
-   background shifts with the four project bands. Shader playback is separate
-   (LandingCanvasGradient keeps animate on).
+   linear fade). Canvas keeps opacity / scale / rotate / translate. Cover
+   geometry is frozen; frost character is coverOpacity + coverBlur + coverFill.
+   Shader playback is separate (LandingCanvasGradient keeps animate on).
    ============================================================================ */
 (function () {
   'use strict';
@@ -22,12 +22,13 @@
 
   /*
     Keyframe stops (landing order: Opus → Atlas → McKinsey → Lark):
-    - Hero: scale 1.3, rotate 0
-    - Opus: scale 1.9, opacity 0.3, cover 0.7
-    - Atlas Nova: scale 2.8, canvas 0.4, cover 0.1, rotate 15deg CW
-    - McKinsey: scale 2.8, opacity 0.3, cover 0.5
-    - Lark: scale 1.5, opacity 0.2, cover 0.6, rotate 8deg CW
+    - Hero: canvas scale 1.3; soft frost
+    - Opus: canvas 1.9 / 0.3; heavy frost (high blur + fill)
+    - Atlas Nova: canvas 2.8 / 0.4; clearest glass (low blur + fill)
+    - McKinsey: canvas 2.8 / 0.3; medium frost
+    - Lark: canvas 1.5 / 0.2; medium-heavy frost
     - Bottom / footer: canvas + cover → 0
+    Cover scale / rotate / translate stay frozen (identity).
     During projects, shader speed is marked 0.7× via data-motion-zone.
   */
   var HERO = {
@@ -36,65 +37,55 @@
     rotate: 0,
     x: 0,
     y: 0,
-    coverOpacity: 0.25,
-    coverScale: 1,
-    coverRotate: 0,
-    coverX: 0,
-    coverY: 0
+    coverOpacity: 0.9,
+    coverBlur: 85,
+    coverFill: 0.16
   };
 
   var CASES = [
-    /* 0 Opus — cover 0.7 */
+    /* 0 Opus — heavy frost */
     {
       opacity: 0.3,
       scale: 1.9,
       rotate: 8,
       x: -20,
       y: 36,
-      coverOpacity: 0.7,
-      coverScale: 1.06,
-      coverRotate: 5,
-      coverX: 14,
-      coverY: 18
+      coverOpacity: 1,
+      coverBlur: 125,
+      coverFill: 0.42
     },
-    /* 1 Atlas Nova — cover 0.1 (clearest glass) */
+    /* 1 Atlas Nova — clearest glass */
     {
       opacity: 0.4,
       scale: 2.8,
       rotate: 15,
       x: -32,
       y: 44,
-      coverOpacity: 0.1,
-      coverScale: 1.12,
-      coverRotate: 10,
-      coverX: 22,
-      coverY: 26
+      coverOpacity: 1,
+      coverBlur: 28,
+      coverFill: 0.05
     },
-    /* 2 McKinsey — cover 0.5 */
+    /* 2 McKinsey — medium frost */
     {
       opacity: 0.3,
       scale: 2.8,
       rotate: 28,
       x: -10,
       y: 22,
-      coverOpacity: 0.5,
-      coverScale: 1.12,
-      coverRotate: 20,
-      coverX: 8,
-      coverY: 14
+      coverOpacity: 1,
+      coverBlur: 95,
+      coverFill: 0.28
     },
-    /* 3 Lark — cover 0.6 */
+    /* 3 Lark — medium-heavy frost */
     {
       opacity: 0.2,
       scale: 1.5,
       rotate: 8,
       x: -26,
       y: 40,
-      coverOpacity: 0.6,
-      coverScale: 1.05,
-      coverRotate: 5,
-      coverX: 18,
-      coverY: 24
+      coverOpacity: 1,
+      coverBlur: 115,
+      coverFill: 0.34
     }
   ];
 
@@ -105,10 +96,8 @@
     x: -12,
     y: 18,
     coverOpacity: 0,
-    coverScale: 1.02,
-    coverRotate: 5,
-    coverX: 6,
-    coverY: 10
+    coverBlur: 40,
+    coverFill: 0
   };
 
   var lastAppliedScroll = -1;
@@ -172,10 +161,8 @@
         x: 0,
         y: 0,
         coverOpacity: lerp(a.coverOpacity, b.coverOpacity, t),
-        coverScale: 1,
-        coverRotate: 0,
-        coverX: 0,
-        coverY: 0
+        coverBlur: lerp(a.coverBlur, b.coverBlur, t),
+        coverFill: lerp(a.coverFill, b.coverFill, t)
       };
     }
     return {
@@ -185,10 +172,8 @@
       x: lerp(a.x, b.x, t),
       y: lerp(a.y, b.y, t),
       coverOpacity: lerp(a.coverOpacity, b.coverOpacity, t),
-      coverScale: lerp(a.coverScale, b.coverScale, t),
-      coverRotate: lerp(a.coverRotate, b.coverRotate, t),
-      coverX: lerp(a.coverX, b.coverX, t),
-      coverY: lerp(a.coverY, b.coverY, t)
+      coverBlur: lerp(a.coverBlur, b.coverBlur, t),
+      coverFill: lerp(a.coverFill, b.coverFill, t)
     };
   }
 
@@ -218,11 +203,9 @@
     root.style.setProperty('--canvas-x', state.x.toFixed(2) + 'px');
     root.style.setProperty('--canvas-y', state.y.toFixed(2) + 'px');
     root.style.setProperty('--canvas-opacity', state.opacity.toFixed(3));
-    root.style.setProperty('--cover-scale', state.coverScale.toFixed(4));
-    root.style.setProperty('--cover-rotate', state.coverRotate.toFixed(2) + 'deg');
-    root.style.setProperty('--cover-x', state.coverX.toFixed(2) + 'px');
-    root.style.setProperty('--cover-y', state.coverY.toFixed(2) + 'px');
     root.style.setProperty('--cover-opacity', state.coverOpacity.toFixed(3));
+    root.style.setProperty('--cover-blur', state.coverBlur.toFixed(1) + 'px');
+    root.style.setProperty('--cover-fill', state.coverFill.toFixed(3));
     /* Hard-clear for footer readability once both layers are effectively gone. */
     var clear = state.opacity < 0.02 && state.coverOpacity < 0.02;
     root.setAttribute('data-canvas-clear', clear ? 'true' : 'false');

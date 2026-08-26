@@ -228,11 +228,10 @@
     --canvas-x: 0px;
     --canvas-y: 0px;
     --canvas-opacity: 0.9;
-    --cover-scale: 1;
-    --cover-rotate: 0deg;
-    --cover-x: 0px;
-    --cover-y: 0px;
-    --cover-opacity: 0.25;
+    /* Cover frost: geometry frozen; blur + fill drive per-case character. */
+    --cover-opacity: 0.9;
+    --cover-blur: 85px;
+    --cover-fill: 0.16;
   }
 
   /* Fixed background board — scroll content moves; canvas/cover stay pinned
@@ -278,21 +277,19 @@
   }
 
   /* Cover is a sibling fixed layer (not nested under canvas) so opacity
-     does not multiply with --canvas-opacity. */
+     does not multiply with --canvas-opacity. Geometry stays identity;
+     --cover-blur / --cover-fill / --cover-opacity set frost per stop. */
   .yy-canvas__cover {
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background: rgba(255, 250, 250, 0.2);
-    -webkit-backdrop-filter: blur(100px);
-    backdrop-filter: blur(100px);
-    transform-origin: center center;
-    will-change: transform, opacity;
+    background: rgba(255, 250, 250, var(--cover-fill));
+    -webkit-backdrop-filter: blur(var(--cover-blur));
+    backdrop-filter: blur(var(--cover-blur));
+    will-change: opacity, backdrop-filter, background-color;
     opacity: var(--cover-opacity);
-    transform: translate3d(var(--cover-x), var(--cover-y), 0)
-      rotate(var(--cover-rotate))
-      scale(var(--cover-scale));
+    transform: none;
   }
 
   [data-motion-root] > .wrap {
