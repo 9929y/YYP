@@ -13,6 +13,7 @@ const play = project.video?.play ?? 'scroll';
 const showMedia = project.kind !== 'panel' && !!(project.video || project.cover);
 /* Opus Clip only: frosted-glass card frame, Figma node 37:688. */
 const isGlass = project.slug === 'ai-driven-product-design';
+const videoType = (src: string) => (src.endsWith('.webm') ? 'video/webm' : 'video/mp4');
 ---
 
 {
@@ -39,7 +40,7 @@ const isGlass = project.slug === 'ai-driven-product-design';
             aria-label={project.video.label}
             data-play={play}
           >
-            <source src={publicUrl(project.video.src)} type="video/mp4" />
+            <source src={publicUrl(project.video.src)} type={videoType(project.video.src)} />
           </video>
         ) : (
           project.cover && (
@@ -73,7 +74,7 @@ const isGlass = project.slug === 'ai-driven-product-design';
           aria-label={project.video.label}
           data-play={play}
         >
-          <source src={publicUrl(project.video.src)} type="video/mp4" />
+          <source src={publicUrl(project.video.src)} type={videoType(project.video.src)} />
         </video>
       ) : (
         project.cover && (
