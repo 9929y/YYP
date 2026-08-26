@@ -58,16 +58,18 @@ export function useMediaQuery(
 
 /*
  * Open arc: size from an 8-slot ring (back ~3 seats empty), place 5 cards on the
- * front so all stay readable with clear yaw. OrbitControls-like drag/zoom.
- * No flat-grid SSR — first paint is already a 3D cluster that fans open.
+ * front. Wider spread + gaps; cylinder seat only (no local tilt); soft float;
+ * near-large/far-small scale; ground shadow under each plate.
  *
  * Intro + open MUST share the same transform function chain so Motion never
  * interpolates through an identity / planar frame.
  */
 const SLOT_COUNT = 8;
 const VISIBLE_CARDS = 5;
-/** Degrees between seats — tighter than 45° so ± outer cards are not edge-on. */
-const ARC_STEP = 36;
+/** Degrees between seats — open enough for gaps, outer faces still readable. */
+const ARC_STEP = 40;
+/** Face width as a fraction of seat arc length (~28% air between neighbors). */
+const FACE_GAP = 0.72;
 const DRAG_YAW = 0.28;
 const DRAG_PITCH = 0.16;
 const WHEEL_ZOOM = 0.00135;
@@ -82,9 +84,9 @@ const AUTO_SPEED = 0.35;
 const RUBBER = 0.32;
 const SPRING = {
   type: 'spring' as const,
-  stiffness: 120,
-  damping: 18,
-  mass: 0.35
+  stiffness: 100,
+  damping: 30,
+  mass: 0.1
 };
 const SPRING_SNAP = {
   type: 'spring' as const,
@@ -118,54 +120,41 @@ function faceAngle(index: number): number {
   return (index - mid) * ARC_STEP;
 }
 
-/** Shared chain: rotateY → translateZ → local yaw/pitch/roll → scale. */
+/** Near-large / far-small — center ~1, outer seats ~0.82–0.88. */
+function depthScale(index: number): number {
+  return 1 - (Math.abs(faceAngle(index)) / 90) * 0.28;
+}
+
+/**
+ * Shared chain: rotateY(seat) → translateZ → scale(depth * intro).
+ * No local pitch/roll/yaw tilt — faces stay upright on the cylinder.
+ */
 function cardTransform(
   index: number,
   radius: number,
   {
     yawScale,
     radiusScale,
-    localYawStep,
-    localPitchBase,
-    localPitchStep,
-    localRollStep,
     scale
   }: {
     yawScale: number;
     radiusScale: number;
-    localYawStep: number;
-    localPitchBase: number;
-    localPitchStep: number;
-    localRollStep: number;
     scale: number;
   }
 ): string {
-  const mid = (VISIBLE_CARDS - 1) / 2;
-  const offset = index - mid;
   const yaw = faceAngle(index) * yawScale;
-  const localYaw = offset * localYawStep;
-  const localPitch = localPitchBase + Math.abs(offset) * localPitchStep;
-  const localRoll = offset * localRollStep;
+  const s = depthScale(index) * scale;
   return [
     `rotateY(${yaw}deg)`,
     `translateZ(${radius * radiusScale}px)`,
-    `rotateY(${localYaw}deg)`,
-    `rotateX(${localPitch}deg)`,
-    `rotateZ(${localRoll}deg)`,
-    `scale(${scale})`
+    `scale(${s})`
   ].join(' ');
 }
 
-/** Final open pose — cylinder seat + clear per-card tilt (kept moderate so
- * neighboring plates do not intersect while dragging). */
 function openTransform(index: number, radius: number): string {
   return cardTransform(index, radius, {
     yawScale: 1,
     radiusScale: 1,
-    localYawStep: 5.5,
-    localPitchBase: -8,
-    localPitchStep: 1.8,
-    localRollStep: 2.6,
     scale: 1
   });
 }
@@ -178,10 +167,6 @@ function introTransform(index: number, radius: number): string {
   return cardTransform(index, radius, {
     yawScale: 0.38,
     radiusScale: 0.36,
-    localYawStep: 6,
-    localPitchBase: -14,
-    localPitchStep: 3,
-    localRollStep: 4,
     scale: 0.88
   });
 }
@@ -204,6 +189,7 @@ const CarouselFace = memo(function CarouselFace({
   const reduced = prefersReducedMotion();
   const from = introTransform(index, radius);
   const to = openTransform(index, radius);
+  const floatDelay = `${index * 0.55}s`;
 
   return (
     <motion.div
@@ -229,13 +215,26 @@ const CarouselFace = memo(function CarouselFace({
       }
     >
       <div
-        className="yy-projects-card"
-        data-tone={card.tone % 7}
-        style={{ width: `${faceWidth}px` }}
-        aria-hidden="true"
+        className="yy-projects-card-float"
+        style={{ animationDelay: floatDelay }}
       >
-        <div className="yy-projects-card__inner" />
+        <div
+          className="yy-projects-card"
+          data-tone={card.tone % 7}
+          style={{ width: `${faceWidth}px` }}
+          aria-hidden="true"
+        >
+          <div className="yy-projects-card__inner" />
+        </div>
       </div>
+      <div
+        className="yy-projects-card-shadow"
+        style={{
+          width: `${faceWidth * 0.78}px`,
+          animationDelay: floatDelay
+        }}
+        aria-hidden="true"
+      />
     </motion.div>
   );
 });
@@ -280,9 +279,10 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   }, []);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  // Face size from 8-slot ring math; 5 seats on the front arc, back open.
-  const cylinderWidth = isScreenSizeSm ? 1360 : 2280;
-  const faceWidth = cylinderWidth / SLOT_COUNT;
+  // Wider 8-slot ring; face width from seat arc so neighbors keep air.
+  const cylinderWidth = isScreenSizeSm ? 1560 : 2680;
+  const seatArc = (ARC_STEP / 360) * cylinderWidth;
+  const faceWidth = seatArc * FACE_GAP;
   const radius = cylinderWidth / (2 * Math.PI);
 
   const rotateY = useMotionValue(0);
