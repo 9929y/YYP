@@ -2,6 +2,7 @@ import {
   animate,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useTransform
 } from 'motion/react';
 import {
@@ -62,15 +63,25 @@ export function useMediaQuery(
 }
 
 /*
- * Layout/drag model follows the provided 3d-carousel (motion cylinder + spring
- * settle). Faces are packed on a front remnant arc (not a closed 360° ring) so
- * ≥5 cards stay in view with 6–7 projects — matching the denser look of the
- * original demo (which used ~14 faces around a full cylinder).
+ * Remnant cylinder (front arc) with snap-to-center focus + bottom Anchor.
+ * Drag/spring model follows the provided 3d-carousel.
  */
 const ARC_DEG = 158;
 const SCROLL_GAIN = 0.05;
 const WHEEL_GAIN = 0.035;
 const DRAG_GAIN = 0.05;
+const IDLE_SNAP_MS = 120;
+const SPRING = {
+  type: 'spring' as const,
+  stiffness: 100,
+  damping: 30,
+  mass: 0.1
+};
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 
 function staggerOffset(index: number): number {
   const magnitude = 8 + (index % 3) * 4; // 8 | 12 | 16
@@ -84,6 +95,34 @@ function remnantStep(faceCount: number): number {
 
 function remnantAngle(index: number, faceCount: number): number {
   return -ARC_DEG / 2 + index * remnantStep(faceCount);
+}
+
+/** Rotation that places face `index` at world angle 0 (center). */
+function rotationForIndex(index: number, faceCount: number): number {
+  return -remnantAngle(index, faceCount);
+}
+
+function nearestIndex(rotationDeg: number, faceCount: number): number {
+  if (faceCount <= 0) return 0;
+  let best = 0;
+  let bestAbs = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < faceCount; i++) {
+    const world = remnantAngle(i, faceCount) + rotationDeg;
+    const a = Math.abs(world);
+    if (a < bestAbs) {
+      bestAbs = a;
+      best = i;
+    }
+  }
+  return best;
+}
+
+function sideOpacity(index: number, focusedIndex: number, faceCount: number): number {
+  if (faceCount <= 1) return 1;
+  const step = remnantStep(faceCount);
+  const dist = Math.abs(index - focusedIndex) * step;
+  // ~0.55 at one step, ~0.35 at outer seats
+  return Math.max(0.32, 0.92 - dist / 90);
 }
 
 function roundedRectPath(size: number, inset: number, radius: number): string {
@@ -150,19 +189,21 @@ function CardPathText({
 
 function CardFaceContent({
   card,
-  active,
+  focused,
   hovering,
   onHoverChange
 }: {
   card: ProjectsCarouselCard;
-  active: boolean;
+  focused: boolean;
   hovering: boolean;
   onHoverChange: (next: boolean) => void;
 }) {
+  const showPath = hovering && focused;
+
   return (
     <div
       className="yy-projects-card__inner"
-      data-active={active ? 'true' : undefined}
+      data-focus={focused ? 'true' : undefined}
       data-hover={hovering ? 'true' : undefined}
       onMouseEnter={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
@@ -174,10 +215,16 @@ function CardFaceContent({
         draggable={false}
       />
       <div className="yy-projects-card__glass">
-        <p className="yy-projects-card__name">{card.title}</p>
-        <p className="yy-projects-card__scope">{card.scope}</p>
+        {focused ? (
+          <>
+            <p className="yy-projects-card__name">{card.title}</p>
+            <p className="yy-projects-card__scope">{card.scope}</p>
+          </>
+        ) : null}
       </div>
-      <CardPathText cardId={card.id} pathLabel={card.pathLabel} crawling={hovering} />
+      {focused ? (
+        <CardPathText cardId={card.id} pathLabel={card.pathLabel} crawling={showPath} />
+      ) : null}
     </div>
   );
 }
@@ -188,7 +235,7 @@ const CarouselFace = memo(function CarouselFace({
   faceCount,
   faceWidth,
   radius,
-  activeId,
+  focusedIndex,
   onSelect
 }: {
   card: ProjectsCarouselCard;
@@ -196,13 +243,14 @@ const CarouselFace = memo(function CarouselFace({
   faceCount: number;
   faceWidth: number;
   radius: number;
-  activeId: string | null;
-  onSelect: (id: string) => void;
+  focusedIndex: number;
+  onSelect: (index: number) => void;
 }) {
   const [hovering, setHovering] = useState(false);
   const staggerX = staggerOffset(index);
-  const isActive = activeId === card.id;
+  const focused = index === focusedIndex;
   const angle = remnantAngle(index, faceCount);
+  const opacity = sideOpacity(index, focusedIndex, faceCount);
 
   const slotStyle: CSSProperties = {
     width: `${faceWidth}px`,
@@ -214,18 +262,19 @@ const CarouselFace = memo(function CarouselFace({
       <motion.button
         type="button"
         className="yy-projects-card"
-        data-active={isActive ? 'true' : undefined}
+        data-focus={focused ? 'true' : undefined}
         style={{
           width: `${faceWidth}px`,
-          scale: isActive ? 1.04 : 1
+          opacity,
+          scale: focused ? 1.06 : 1
         }}
-        onClick={() => onSelect(card.id)}
-        aria-pressed={isActive}
+        onClick={() => onSelect(index)}
+        aria-current={focused ? 'true' : undefined}
         aria-label={card.title}
       >
         <CardFaceContent
           card={card}
-          active={isActive}
+          focused={focused}
           hovering={hovering}
           onHoverChange={setHovering}
         />
@@ -234,16 +283,55 @@ const CarouselFace = memo(function CarouselFace({
   );
 });
 
+function CarouselAnchor({
+  cards,
+  focusedIndex,
+  onSelect
+}: {
+  cards: ProjectsCarouselCard[];
+  focusedIndex: number;
+  onSelect: (index: number) => void;
+}) {
+  const focused = cards[focusedIndex] ?? cards[0];
+  if (!focused) return null;
+
+  return (
+    <div className="yy-projects-anchor">
+      <div className="yy-projects-anchor__tick" aria-hidden="true" />
+      <div className="yy-projects-anchor__dots" role="tablist" aria-label="Projects">
+        {cards.map((card, index) => {
+          const active = index === focusedIndex;
+          return (
+            <button
+              key={card.id}
+              type="button"
+              role="tab"
+              className="yy-projects-anchor__dot"
+              aria-selected={active}
+              aria-label={card.title}
+              data-active={active ? 'true' : undefined}
+              onClick={() => onSelect(index)}
+            />
+          );
+        })}
+      </div>
+      <div className="yy-projects-anchor__readout" aria-live="polite">
+        <p className="yy-projects-anchor__name">{focused.title}</p>
+        <p className="yy-projects-anchor__scope">{focused.scope}</p>
+      </div>
+    </div>
+  );
+}
+
 function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const dragOrigin = useRef(0);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragging = useRef(false);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  // Same cylinder sizing approach as the provided 3d-carousel.
   const cylinderWidth = isScreenSizeSm ? 1100 : 1800;
   const faceCount = cards.length;
-  // Remnant packs faces on ARC_DEG; size faces from chord length so ≥5 read clearly.
   const radius = cylinderWidth / (2 * Math.PI);
   const stepRad = (remnantStep(faceCount) * Math.PI) / 180;
   const faceWidth = Math.min(
@@ -251,15 +339,56 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     Math.max(160, 2 * radius * Math.sin(Math.max(stepRad, 0.01) / 2) * 1.92)
   );
 
-  const rotation = useMotionValue(0);
+  const initialIndex = Math.floor((faceCount - 1) / 2);
+  const [focusedIndex, setFocusedIndex] = useState(initialIndex);
+
+  const rotation = useMotionValue(rotationForIndex(initialIndex, faceCount));
   const transform = useTransform(
     rotation,
     (value) => `rotate3d(0, 1, 0, ${value}deg)`
   );
 
-  const onSelect = useCallback((id: string) => {
-    setActiveId((prev) => (prev === id ? null : id));
-  }, []);
+  const syncFocusFromRotation = useCallback(
+    (value: number) => {
+      setFocusedIndex(nearestIndex(value, faceCount));
+    },
+    [faceCount]
+  );
+
+  useMotionValueEvent(rotation, 'change', syncFocusFromRotation);
+
+  const snapToIndex = useCallback(
+    (index: number, spring = true) => {
+      const clamped = Math.max(0, Math.min(faceCount - 1, index));
+      const target = rotationForIndex(clamped, faceCount);
+      setFocusedIndex(clamped);
+      rotation.stop();
+      if (!spring || prefersReducedMotion()) {
+        rotation.set(target);
+        return;
+      }
+      void animate(rotation, target, SPRING);
+    },
+    [faceCount, rotation]
+  );
+
+  const snapToNearest = useCallback(() => {
+    snapToIndex(nearestIndex(rotation.get(), faceCount));
+  }, [faceCount, rotation, snapToIndex]);
+
+  const scheduleIdleSnap = useCallback(() => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => {
+      if (dragging.current) return;
+      snapToNearest();
+    }, IDLE_SNAP_MS);
+  }, [snapToNearest]);
+
+  // Mount: ensure middle card is centered (already set on motion value).
+  useEffect(() => {
+    setFocusedIndex(initialIndex);
+    rotation.set(rotationForIndex(initialIndex, faceCount));
+  }, [faceCount, initialIndex, rotation]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -279,6 +408,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
     const nudge = (delta: number) => {
       if (!inView || Math.abs(delta) < 0.2) return;
       rotation.set(rotation.get() + delta);
+      scheduleIdleSnap();
     };
 
     const onScroll = () => {
@@ -316,12 +446,13 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
     return () => {
       io.disconnect();
+      if (idleTimer.current) clearTimeout(idleTimer.current);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('lenis-scroll', onLenis as EventListener);
       document.removeEventListener('lenis-scroll', onLenis as EventListener);
     };
-  }, [rotation]);
+  }, [rotation, scheduleIdleSnap]);
 
   return (
     <div
@@ -329,6 +460,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       className="yy-projects-carousel"
       data-testid="projects-carousel"
       data-face-count={faceCount}
+      data-focused-index={focusedIndex}
     >
       <div className="yy-projects-carousel__stage">
         <motion.div
@@ -342,20 +474,19 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
             transformStyle: 'preserve-3d'
           }}
           onDragStart={() => {
+            dragging.current = true;
+            if (idleTimer.current) clearTimeout(idleTimer.current);
+            rotation.stop();
             dragOrigin.current = rotation.get();
           }}
           onDrag={(_, info) => {
-            // Same gain as the provided carousel; origin-anchored so offset does not compound.
             rotation.set(dragOrigin.current + info.offset.x * DRAG_GAIN);
           }}
           onDragEnd={(_, info) => {
-            const target = rotation.get() + info.velocity.x * DRAG_GAIN;
-            void animate(rotation, target, {
-              type: 'spring',
-              stiffness: 100,
-              damping: 30,
-              mass: 0.1
-            });
+            dragging.current = false;
+            const provisional = rotation.get() + info.velocity.x * DRAG_GAIN;
+            const index = nearestIndex(provisional, faceCount);
+            snapToIndex(index);
           }}
         >
           {cards.map((card, index) => (
@@ -366,65 +497,90 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
               faceCount={faceCount}
               faceWidth={faceWidth}
               radius={radius}
-              activeId={activeId}
-              onSelect={onSelect}
+              focusedIndex={focusedIndex}
+              onSelect={snapToIndex}
             />
           ))}
         </motion.div>
       </div>
+      <CarouselAnchor
+        cards={cards}
+        focusedIndex={focusedIndex}
+        onSelect={snapToIndex}
+      />
     </div>
   );
 }
 
 function ProjectsCarouselStatic({ cards }: { cards: ProjectsCarouselCard[] }) {
+  const [focusedIndex, setFocusedIndex] = useState(() =>
+    Math.floor((cards.length - 1) / 2)
+  );
+  const focused = cards[focusedIndex] ?? cards[0];
+
   return (
     <div
       className="yy-projects-carousel yy-projects-carousel--static"
       data-testid="projects-carousel-static"
     >
       <ul className="yy-projects-carousel__grid">
-        {cards.map((card) => (
-          <li key={card.id} className="yy-projects-card-slot">
-            <div className="yy-projects-card" data-static="true">
-              <div className="yy-projects-card__inner">
-                <img
-                  className="yy-projects-card__media"
-                  src={card.imageSrc}
-                  alt=""
-                  draggable={false}
-                />
-                <div className="yy-projects-card__glass">
-                  <p className="yy-projects-card__name">{card.title}</p>
-                  <p className="yy-projects-card__scope">{card.scope}</p>
+        {cards.map((card, index) => {
+          const isFocus = index === focusedIndex;
+          return (
+            <li key={card.id} className="yy-projects-card-slot">
+              <button
+                type="button"
+                className="yy-projects-card"
+                data-static="true"
+                data-focus={isFocus ? 'true' : undefined}
+                aria-current={isFocus ? 'true' : undefined}
+                aria-label={card.title}
+                onClick={() => setFocusedIndex(index)}
+              >
+                <div className="yy-projects-card__inner" data-focus={isFocus ? 'true' : undefined}>
+                  <img
+                    className="yy-projects-card__media"
+                    src={card.imageSrc}
+                    alt=""
+                    draggable={false}
+                  />
+                  <div className="yy-projects-card__glass">
+                    {isFocus ? (
+                      <>
+                        <p className="yy-projects-card__name">{card.title}</p>
+                        <p className="yy-projects-card__scope">{card.scope}</p>
+                      </>
+                    ) : null}
+                  </div>
                 </div>
-                <svg
-                  className="yy-projects-card__path yy-projects-card__path--static"
-                  viewBox="0 0 100 100"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <defs>
-                    <path
-                      id={`yy-projects-path-static-${card.id}`}
-                      d={roundedRectPath(100, 4, 9)}
-                      fill="none"
-                    />
-                  </defs>
-                  <text className="yy-projects-card__path-text">
-                    <textPath
-                      href={`#yy-projects-path-static-${card.id}`}
-                      xlinkHref={`#yy-projects-path-static-${card.id}`}
-                      startOffset="0%"
-                    >
-                      {card.pathLabel}
-                    </textPath>
-                  </text>
-                </svg>
-              </div>
-            </div>
-          </li>
-        ))}
+              </button>
+            </li>
+          );
+        })}
       </ul>
+      {focused ? (
+        <div className="yy-projects-anchor">
+          <div className="yy-projects-anchor__tick" aria-hidden="true" />
+          <div className="yy-projects-anchor__dots" role="tablist" aria-label="Projects">
+            {cards.map((card, index) => (
+              <button
+                key={card.id}
+                type="button"
+                role="tab"
+                className="yy-projects-anchor__dot"
+                aria-selected={index === focusedIndex}
+                aria-label={card.title}
+                data-active={index === focusedIndex ? 'true' : undefined}
+                onClick={() => setFocusedIndex(index)}
+              />
+            ))}
+          </div>
+          <div className="yy-projects-anchor__readout" aria-live="polite">
+            <p className="yy-projects-anchor__name">{focused.title}</p>
+            <p className="yy-projects-anchor__scope">{focused.scope}</p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

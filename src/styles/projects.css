@@ -51,9 +51,11 @@ html.yy-projects body {
 
 .yy-projects-carousel {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-height: min(72vh, 680px);
-  height: min(72vh, 680px);
+  height: auto;
   overflow: visible;
   touch-action: pan-y;
 }
@@ -63,7 +65,8 @@ html.yy-projects body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: min(58vh, 560px);
+  min-height: min(58vh, 560px);
   perspective: 1000px;
   transform-style: preserve-3d;
   will-change: transform;
@@ -140,17 +143,27 @@ html.yy-projects body {
   overflow: hidden;
   background: color-mix(in srgb, var(--slot, #efece8) 70%, transparent);
   transition: transform var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
-    filter var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
+    filter var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity var(--m-dur, 0.32s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.yy-projects-card[data-active='true'] .yy-projects-card__inner,
-.yy-projects-card__inner[data-active='true'] {
-  transform: translateZ(12px);
-  filter: brightness(1.04);
+/* Focus hierarchy: center card is primary; sides stay muted shells. */
+.yy-projects-card[data-focus='true'] .yy-projects-card__inner,
+.yy-projects-card__inner[data-focus='true'] {
+  transform: translateZ(18px);
+  filter: brightness(1.05);
+}
+
+.yy-projects-card:not([data-focus='true']) .yy-projects-card__inner {
+  filter: brightness(0.96) saturate(0.92);
 }
 
 .yy-projects-card__inner[data-hover='true'] {
   filter: brightness(1.03);
+}
+
+.yy-projects-card[data-focus='true'] .yy-projects-card__inner[data-hover='true'] {
+  filter: brightness(1.06);
 }
 
 .yy-projects-card__media {
@@ -188,6 +201,14 @@ html.yy-projects body {
     0 2px 8px -2px rgba(62, 65, 116, 0.09),
     0 12px 36px -8px rgba(62, 65, 116, 0.2);
   pointer-events: none;
+}
+
+.yy-projects-card[data-focus='true'] .yy-projects-card__glass {
+  background: color-mix(in srgb, var(--ground, #fff) 72%, transparent);
+}
+
+.yy-projects-card:not([data-focus='true']) .yy-projects-card__glass {
+  background: color-mix(in srgb, var(--ground, #fff) 40%, transparent);
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -235,7 +256,7 @@ html.yy-projects body {
   transition: opacity var(--m-dur-sm, 0.24s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-.yy-projects-card__inner[data-hover='true'] .yy-projects-card__path,
+.yy-projects-card__inner[data-hover='true'][data-focus='true'] .yy-projects-card__path,
 .yy-projects-card__path--static {
   opacity: 1;
 }
@@ -247,6 +268,93 @@ html.yy-projects body {
   line-height: var(--lh-caption, 1.45);
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* ---------- bottom Anchor (center tick + dots + primary readout) ---------- */
+
+.yy-projects-anchor {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(100%, var(--frame-spine, 1260px));
+  margin: -8px auto 0;
+  padding: 8px var(--edge, 24px) 0;
+  box-sizing: border-box;
+  text-align: center;
+  pointer-events: none;
+}
+
+.yy-projects-anchor__tick {
+  width: 28px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ink);
+  opacity: 0.85;
+}
+
+.yy-projects-anchor__dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.yy-projects-anchor__dot {
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--ink-3);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background var(--m-dur-sm, 0.24s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    border-color var(--m-dur-sm, 0.24s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    transform var(--m-dur-sm, 0.24s) var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.yy-projects-anchor__dot[data-active='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.15);
+}
+
+.yy-projects-anchor__dot:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.yy-projects-anchor__readout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 22em;
+}
+
+.yy-projects-anchor__name {
+  margin: 0;
+  font-size: var(--t-20);
+  font-weight: 600;
+  line-height: var(--lh-heading, 1.25);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.yy-projects-anchor__scope {
+  margin: 0;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption, 1.45);
+  color: var(--ink-3);
 }
 
 /* ---------- static / reduced-motion fallback ---------- */
@@ -263,7 +371,7 @@ html.yy-projects body {
   gap: clamp(16px, 3vw, 28px);
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0  var(--edge, 24px);
 }
 
 .yy-projects-carousel--static .yy-projects-card-slot {
@@ -277,26 +385,34 @@ html.yy-projects body {
 .yy-projects-carousel--static .yy-projects-card {
   max-width: none;
   width: 100%;
-  cursor: default;
 }
 
 .yy-projects-carousel--static .yy-projects-card__path {
   opacity: 0.85;
 }
 
+.yy-projects-carousel--static .yy-projects-anchor {
+  margin-top: 28px;
+}
+
 @media (max-width: 640px) {
-  .yy-projects-carousel {
-    height: min(64vh, 560px);
-    min-height: min(64vh, 560px);
+  .yy-projects-carousel__stage {
+    height: min(52vh, 480px);
+    min-height: min(52vh, 480px);
   }
 
   .projects-hero {
     padding-inline: var(--edge, 24px);
   }
+
+  .yy-projects-anchor {
+    gap: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .yy-projects-card__inner {
+  .yy-projects-card__inner,
+  .yy-projects-anchor__dot {
     transition: none;
   }
 
