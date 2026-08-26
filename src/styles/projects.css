@@ -124,6 +124,7 @@ html.yy-projects body {
   z-index: 1;
   transform-style: preserve-3d;
   will-change: transform;
+  pointer-events: none;
 }
 
 .yy-projects-card-float.is-floating {

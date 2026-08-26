@@ -70,15 +70,15 @@ const VISIBLE_CARDS = 5;
 const ARC_STEP = 40;
 /** Face width as a fraction of seat arc length (~18% air between neighbors). */
 const FACE_GAP = 0.82;
-const DRAG_YAW = 0.28;
-const DRAG_PITCH = 0.16;
-const WHEEL_ZOOM = 0.00135;
-const ROTATE_X_SOFT = 16;
-const ROTATE_X_HARD = 28;
-const ZOOM_MIN = 0.78;
-const ZOOM_MAX = 1.35;
-const ZOOM_SOFT_MIN = 0.68;
-const ZOOM_SOFT_MAX = 1.48;
+const DRAG_YAW = 0.32;
+const DRAG_PITCH = 0.2;
+const WHEEL_ZOOM = 0.0024;
+const ROTATE_X_SOFT = 18;
+const ROTATE_X_HARD = 32;
+const ZOOM_MIN = 0.72;
+const ZOOM_MAX = 1.45;
+const ZOOM_SOFT_MIN = 0.62;
+const ZOOM_SOFT_MAX = 1.58;
 const AUTO_AMP = 28;
 const AUTO_SPEED = 0.35;
 const RUBBER = 0.32;
@@ -257,30 +257,32 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
   const autoPausedUntil = useRef(0);
   const autoWasPaused = useRef(false);
   const zoomIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const settledRef = useRef(false);
+  const pinchDist = useRef<number | null>(null);
 
   // SSR + first client paint: compact 3D wedge. Hold briefly, then fan open.
   // Never mount a flat-grid fallback (that was the one-frame planar flash).
   const [spread, setSpread] = useState(() => prefersReducedMotion());
   const [settled, setSettled] = useState(() => prefersReducedMotion());
+  settledRef.current = settled;
 
   const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (prefersReducedMotion()) {
       setSpread(true);
       setSettled(true);
+      settledRef.current = true;
       return;
     }
-    autoPausedUntil.current = performance.now() + 2600;
-    let openTimer = 0;
-    let doneTimer = 0;
-    // Paint cluster for a beat, then fan — avoids skipping straight through midposes.
-    const raf = requestAnimationFrame(() => {
-      openTimer = window.setTimeout(() => setSpread(true), 90);
-      doneTimer = window.setTimeout(() => setSettled(true), 1500);
-    });
+    // Timers only (no nested rAF) so Strict Mode remounts still settle reliably.
+    autoPausedUntil.current = performance.now() + 2200;
+    const openTimer = window.setTimeout(() => setSpread(true), 100);
+    const doneTimer = window.setTimeout(() => {
+      setSettled(true);
+      settledRef.current = true;
+    }, 1400);
     return () => {
-      cancelAnimationFrame(raf);
       window.clearTimeout(openTimer);
       window.clearTimeout(doneTimer);
     };
@@ -326,15 +328,16 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!settled) return;
+      // Allow orbit as soon as the island is live (do not wait on settle gate).
       if (event.button !== 0) return;
       dragging.current = true;
       stopOrbit();
       velocity.current = { x: 0, y: 0 };
       lastPointer.current = { x: event.clientX, y: event.clientY };
+      autoPausedUntil.current = Number.POSITIVE_INFINITY;
       event.currentTarget.setPointerCapture(event.pointerId);
     },
-    [settled, stopOrbit]
+    [stopOrbit]
   );
 
   const onPointerMove = useCallback(
@@ -354,9 +357,10 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       );
       rotateX.set(clamp(nextPitch, -ROTATE_X_HARD, ROTATE_X_HARD));
 
-      if (Math.abs(dy) > Math.abs(dx) * 0.85) {
+      // Vertical drag also dollies zoom (OrbitControls-like).
+      if (Math.abs(dy) > Math.abs(dx) * 0.55) {
         const zNext = rubberBand(
-          zoom.get() - dy * 0.0018,
+          zoom.get() - dy * 0.0026,
           ZOOM_MIN,
           ZOOM_MAX
         );
@@ -405,7 +409,9 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       last = now;
 
       const paused =
-        dragging.current || now < autoPausedUntil.current || !settled;
+        dragging.current ||
+        now < autoPausedUntil.current ||
+        !settledRef.current;
       if (paused) {
         autoWasPaused.current = true;
       } else {
@@ -423,53 +429,67 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [rotateY, settled]);
+  }, [rotateY]);
 
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const onWheel = (event: WheelEvent) => {
-      if (!settled) {
-        event.preventDefault();
-        return;
-      }
-      event.preventDefault();
+    const applyZoomDelta = (delta: number) => {
       stopOrbit();
       autoPausedUntil.current = performance.now() + 1100;
-
-      if (event.shiftKey) {
-        const next = rotateY.get() + (event.deltaY + event.deltaX) * 0.12;
-        rotateY.set(next);
-        baseYaw.current = next;
-        return;
-      }
-
-      const zNext = rubberBand(
-        zoom.get() - event.deltaY * WHEEL_ZOOM,
-        ZOOM_MIN,
-        ZOOM_MAX
-      );
+      const zNext = rubberBand(zoom.get() - delta, ZOOM_MIN, ZOOM_MAX);
       zoom.set(clamp(zNext, ZOOM_SOFT_MIN, ZOOM_SOFT_MAX));
-
       if (zoomIdle.current) clearTimeout(zoomIdle.current);
       zoomIdle.current = setTimeout(() => {
         settleElastic();
       }, 140);
     };
 
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      // Trackpad pinch arrives as ctrl+wheel; treat as zoom too.
+      if (event.shiftKey) {
+        stopOrbit();
+        autoPausedUntil.current = performance.now() + 1100;
+        const next = rotateY.get() + (event.deltaY + event.deltaX) * 0.14;
+        rotateY.set(next);
+        baseYaw.current = next;
+        return;
+      }
+      applyZoomDelta(event.deltaY * WHEEL_ZOOM);
+    };
+
     const onTouchMove = (event: TouchEvent) => {
-      if (dragging.current) event.preventDefault();
+      if (dragging.current || event.touches.length === 2) {
+        event.preventDefault();
+      }
+      if (event.touches.length === 2) {
+        const a = event.touches[0];
+        const b = event.touches[1];
+        const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        const prev = pinchDist.current;
+        pinchDist.current = dist;
+        if (prev != null) applyZoomDelta((prev - dist) * 0.012);
+      }
+    };
+
+    const onTouchEnd = () => {
+      pinchDist.current = null;
     };
 
     stage.addEventListener('wheel', onWheel, { passive: false });
     stage.addEventListener('touchmove', onTouchMove, { passive: false });
+    stage.addEventListener('touchend', onTouchEnd);
+    stage.addEventListener('touchcancel', onTouchEnd);
     return () => {
       if (zoomIdle.current) clearTimeout(zoomIdle.current);
       stage.removeEventListener('wheel', onWheel);
       stage.removeEventListener('touchmove', onTouchMove);
+      stage.removeEventListener('touchend', onTouchEnd);
+      stage.removeEventListener('touchcancel', onTouchEnd);
     };
-  }, [rotateY, settleElastic, settled, stopOrbit, zoom]);
+  }, [rotateY, settleElastic, stopOrbit, zoom]);
 
   return (
     <div
