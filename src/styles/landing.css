@@ -603,8 +603,8 @@
     padding: 48px 0 120px;
   }
 
-  /* One case ≈ one viewport, with air between bands so Lenis settle
-     lands on a single project rather than two overlapping. */
+  /* One case ≈ one viewport, with air between bands. Soft snap is handled in
+     yy-scroll.js (Lenis) — CSS scroll-snap fights Lenis and feels sticky. */
   .case {
     min-height: 100svh;
     min-height: 100vh;
@@ -613,12 +613,6 @@
     margin-bottom: clamp(64px, 18vh, 200px);
     padding-block: clamp(48px, 8vh, 96px);
     box-sizing: border-box;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
-  }
-
-  html.yy-landing {
-    scroll-snap-type: y proximity;
   }
 
   /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
@@ -717,7 +711,9 @@
     }
   }
 
-  /* Media fills the column past the spine — larger than the old 823 cap. */
+  /* Media fills the column past the spine — larger than the old 823 cap.
+     Shadow mirrors the nav capsule (inset hair + soft indigo drop) on all
+     four sides so the thumb lifts off the canvas/cover. */
   .slot {
     display: block;
     position: relative;
@@ -728,9 +724,17 @@
     overflow: hidden;
     background: var(--slot);
     text-decoration: none;
-    /* Must not be center — that floats media off the left info baseline
-       once the aspect-ratio height shrinks below the label stack. */
     align-self: end;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .72),
+      inset 0 0 0 1px rgba(26, 25, 23, .06),
+      inset 0 -1px 0 rgba(26, 25, 23, .04),
+      0 1px 2px rgba(62, 65, 116, .07),
+      0 2px 8px -2px rgba(62, 65, 116, .10),
+      0 12px 36px -8px rgba(62, 65, 116, .22),
+      0 -6px 20px -10px rgba(62, 65, 116, .12),
+      8px 0 28px -12px rgba(62, 65, 116, .16),
+      -8px 0 28px -12px rgba(62, 65, 116, .16);
   }
 
   .case .panel {

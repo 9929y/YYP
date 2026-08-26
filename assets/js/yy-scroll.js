@@ -44,12 +44,16 @@
 
   var RM = matchMedia('(prefers-reduced-motion: reduce)');
   var lenis = null;
+  var isLanding = html.classList.contains('yy-landing');
+  var snapTimer = 0;
+  var snapping = false;
 
   function start() {
     if (lenis || RM.matches) return;
     try {
       lenis = new Lenis({
-        duration: 1.05,          /* measured off kedavra: ~1s settle */
+        /* Landing: slightly longer settle so soft case-snap doesn't fight the wheel. */
+        duration: isLanding ? 1.2 : 1.05,
         smoothWheel: true,
         smoothTouch: false,      /* touch keeps native momentum — syncTouch is
                                     unstable below iOS 16 and native already
@@ -66,6 +70,10 @@
   }
 
   function stop() {
+    if (snapTimer) {
+      clearTimeout(snapTimer);
+      snapTimer = 0;
+    }
     if (!lenis) return;
     try { lenis.destroy(); } catch (e) { /* ignore */ }
     lenis = null;
@@ -76,6 +84,62 @@
   if (RM.addEventListener) RM.addEventListener('change', function () { RM.matches ? stop() : start(); });
   else if (RM.addListener) RM.addListener(function () { RM.matches ? stop() : start(); });
 
+  /* --------------------------------------------------------------------------
+     Landing soft snap — after the wheel settles, ease to the nearest .case
+     center via Lenis. Avoids CSS scroll-snap (janky with Lenis smoothing).
+     -------------------------------------------------------------------------- */
+  if (isLanding && !RM.matches) {
+    function nearestCaseScrollY() {
+      var cases = document.querySelectorAll('.case');
+      if (!cases.length) return null;
+      var vh = window.innerHeight || 1;
+      var mid = (window.scrollY || window.pageYOffset || 0) + vh * 0.5;
+      var bestY = null;
+      var bestDist = Infinity;
+      for (var i = 0; i < cases.length; i++) {
+        var rect = cases[i].getBoundingClientRect();
+        var center = rect.top + (window.scrollY || 0) + rect.height * 0.5;
+        var dist = Math.abs(center - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestY = center - vh * 0.5;
+        }
+      }
+      if (bestY == null) return null;
+      if (bestY < 0) bestY = 0;
+      return { y: bestY, dist: bestDist };
+    }
+
+    function scheduleSoftSnap() {
+      if (!lenis || snapping) return;
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(function () {
+        snapTimer = 0;
+        if (!lenis || snapping) return;
+        var next = nearestCaseScrollY();
+        if (!next) return;
+        /* Only pull when already near a case — don't yank from hero/footer. */
+        if (next.dist > (window.innerHeight || 1) * 0.38) return;
+        var cur = window.scrollY || window.pageYOffset || 0;
+        if (Math.abs(next.y - cur) < 10) return;
+        snapping = true;
+        try {
+          lenis.scrollTo(next.y, {
+            duration: 0.95,
+            onComplete: function () { snapping = false; }
+          });
+        } catch (e) {
+          snapping = false;
+        }
+        /* Fallback if onComplete missing in this Lenis build. */
+        setTimeout(function () { snapping = false; }, 1100);
+      }, 160);
+    }
+
+    window.addEventListener('scroll', scheduleSoftSnap, { passive: true });
+    window.addEventListener('wheel', scheduleSoftSnap, { passive: true });
+    window.addEventListener('touchend', scheduleSoftSnap, { passive: true });
+  }
   /* --------------------------------------------------------------------------
      Effect 1 — filmic image reveal.
 
