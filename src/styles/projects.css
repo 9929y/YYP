@@ -28,6 +28,7 @@ html.yy-projects body {
   padding: clamp(48px, 8vh, 96px) 0 80px;
   box-sizing: border-box;
   overflow-x: clip;
+  overflow-y: visible;
 }
 
 .projects-hero {
@@ -49,7 +50,8 @@ html.yy-projects body {
 .projects-stage {
   max-width: none;
   margin: 0 auto;
-  padding: 0;
+  padding: 48px 0;
+  overflow: visible;
 }
 
 /* ---------- carousel stage ---------- */
@@ -57,9 +59,9 @@ html.yy-projects body {
 .yy-projects-carousel {
   position: relative;
   width: 100%;
-  height: 500px;
-  min-height: 500px;
-  overflow: hidden;
+  height: min(72vh, 640px);
+  min-height: 560px;
+  overflow: visible;
   touch-action: none;
   overscroll-behavior: none;
   cursor: grab;
@@ -122,28 +124,6 @@ html.yy-projects body {
   background: transparent;
   transform-style: preserve-3d;
   pointer-events: none;
-  will-change: transform;
-}
-
-.yy-projects-card--float {
-  animation: yy-projects-card-float var(--float-dur, 6s) ease-in-out infinite;
-  animation-delay: var(--float-delay, 0s);
-}
-
-@keyframes yy-projects-card-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotateZ(0deg);
-  }
-  20% {
-    transform: translate3d(5px, -7px, 0) rotateZ(1.4deg);
-  }
-  45% {
-    transform: translate3d(-4px, 3px, 0) rotateZ(-1.1deg);
-  }
-  70% {
-    transform: translate3d(6px, 5px, 0) rotateZ(0.8deg);
-  }
 }
 
 .yy-projects-card__inner {
@@ -212,17 +192,15 @@ html.yy-projects body {
 
 @media (max-width: 640px) {
   .yy-projects-carousel {
-    height: 420px;
-    min-height: 420px;
+    height: min(64vh, 520px);
+    min-height: 440px;
   }
 
   .projects-hero {
     padding-inline: var(--edge, 24px);
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .yy-projects-card--float {
-    animation: none;
+  .projects-stage {
+    padding: 32px 0;
   }
 }

@@ -70,9 +70,9 @@ const WHEEL_ZOOM = 0.00135;
 const ROTATE_X_SOFT = 16;
 const ROTATE_X_HARD = 28;
 const ZOOM_MIN = 0.78;
-const ZOOM_MAX = 1.55;
+const ZOOM_MAX = 1.35;
 const ZOOM_SOFT_MIN = 0.68;
-const ZOOM_SOFT_MAX = 1.72;
+const ZOOM_SOFT_MAX = 1.48;
 const AUTO_AMP = 28;
 const AUTO_SPEED = 0.35;
 const RUBBER = 0.32;
@@ -111,14 +111,6 @@ function faceAngle(index: number): number {
   return (index - mid) * step;
 }
 
-const FLOAT_META = [
-  { dur: '5.6s', delay: '0s' },
-  { dur: '6.4s', delay: '-1.2s' },
-  { dur: '7.1s', delay: '-2.4s' },
-  { dur: '5.9s', delay: '-0.6s' },
-  { dur: '6.8s', delay: '-3.1s' }
-] as const;
-
 const CarouselFace = memo(function CarouselFace({
   card,
   index,
@@ -131,7 +123,6 @@ const CarouselFace = memo(function CarouselFace({
   radius: number;
 }) {
   const angle = faceAngle(index);
-  const float = FLOAT_META[index % FLOAT_META.length];
 
   const slotStyle: CSSProperties = {
     width: `${faceWidth}px`,
@@ -141,15 +132,9 @@ const CarouselFace = memo(function CarouselFace({
   return (
     <div className="yy-projects-card-slot" style={slotStyle}>
       <div
-        className="yy-projects-card yy-projects-card--float"
+        className="yy-projects-card"
         data-tone={card.tone % 7}
-        style={
-          {
-            width: `${faceWidth}px`,
-            '--float-dur': float.dur,
-            '--float-delay': float.delay
-          } as CSSProperties
-        }
+        style={{ width: `${faceWidth}px` }}
         aria-hidden="true"
       >
         <div className="yy-projects-card__inner" />
