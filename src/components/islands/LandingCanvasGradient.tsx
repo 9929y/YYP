@@ -6,13 +6,40 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
  * Plays continuously; scroll does not pause or scrub the shader.
  * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
  * In the project band, uSpeed drops to 0.7× base (data-motion-zone=projects).
+ *
+ * Entry: still image paints immediately; WebGL mounts after first paint / idle,
+ * then crossfades in once the first frame is ready (avoids refresh hitch).
  */
 const BASE_SPEED = 0.1;
 const PROJECT_SPEED = BASE_SPEED * 0.7;
+/** Let CSS intro / first paint settle before compiling WebGL. */
+const MOUNT_DELAY_MS = 320;
+
+function scheduleIdle(cb: () => void, timeout = 1200): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const w = window as Window & {
+    requestIdleCallback?: (fn: () => void, opts?: { timeout: number }) => number;
+    cancelIdleCallback?: (id: number) => void;
+  };
+  if (typeof w.requestIdleCallback === 'function') {
+    const id = w.requestIdleCallback(cb, { timeout });
+    return () => w.cancelIdleCallback?.(id);
+  }
+  const id = window.setTimeout(cb, 0);
+  return () => window.clearTimeout(id);
+}
+
+function markCanvasLive(live: boolean) {
+  const layer = document.querySelector('.yy-canvas');
+  if (!layer) return;
+  layer.setAttribute('data-canvas-live', live ? 'true' : 'false');
+}
 
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
+  const [mountCanvas, setMountCanvas] = useState(false);
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
+  const [pixelDensity, setPixelDensity] = useState(1);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -21,6 +48,73 @@ export default function LandingCanvasGradient() {
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
+
+  /* Cap DPR on high-density / small screens — cheaper first compile. */
+  useEffect(() => {
+    if (!allowMotion) return;
+    const dpr = window.devicePixelRatio || 1;
+    const narrow = window.matchMedia('(max-width: 900px)').matches;
+    setPixelDensity(narrow || dpr >= 2 ? 0.75 : 1);
+  }, [allowMotion]);
+
+  /* Defer WebGL until after intro/first paint so refresh doesn't hitch. */
+  useEffect(() => {
+    if (!allowMotion) {
+      markCanvasLive(false);
+      setMountCanvas(false);
+      return;
+    }
+
+    let cancelled = false;
+    let cancelIdle = () => {};
+    const delayId = window.setTimeout(() => {
+      cancelIdle = scheduleIdle(() => {
+        if (!cancelled) setMountCanvas(true);
+      });
+    }, MOUNT_DELAY_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(delayId);
+      cancelIdle();
+    };
+  }, [allowMotion]);
+
+  /* Crossfade once the R3F canvas has a real buffer (first draw). */
+  useEffect(() => {
+    if (!mountCanvas) {
+      markCanvasLive(false);
+      return;
+    }
+
+    let cancelled = false;
+    let tries = 0;
+    const layer = document.querySelector('.yy-canvas');
+
+    const tick = () => {
+      if (cancelled) return;
+      const canvas = layer?.querySelector('canvas');
+      if (canvas && canvas.width > 0 && canvas.height > 0) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (!cancelled) markCanvasLive(true);
+          });
+        });
+        return;
+      }
+      if (tries++ < 180) {
+        requestAnimationFrame(tick);
+        return;
+      }
+      /* Fail-open: still shows underneath if WebGL never reports size. */
+      if (!cancelled) markCanvasLive(true);
+    };
+
+    tick();
+    return () => {
+      cancelled = true;
+    };
+  }, [mountCanvas]);
 
   useEffect(() => {
     if (!allowMotion) return;
@@ -38,16 +132,17 @@ export default function LandingCanvasGradient() {
     return () => mo.disconnect();
   }, [allowMotion]);
 
-  if (!allowMotion) return null;
+  if (!allowMotion || !mountCanvas) return null;
 
   return (
     <ShaderGradientCanvas
       className="yy-canvas__gradient"
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-      pixelDensity={1}
+      pixelDensity={pixelDensity}
       fov={20}
       pointerEvents="none"
       lazyLoad={false}
+      powerPreference="high-performance"
     >
       <ShaderGradient
         control="props"

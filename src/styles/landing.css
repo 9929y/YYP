@@ -268,12 +268,26 @@
     width: 100% !important;
     height: 100% !important;
     display: block;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 560ms ease;
   }
 
-  /* Still image is the reduced-motion / no-JS fallback under the live gradient. */
+  /* Still is the instant LCP stand-in; WebGL crossfades over it when ready. */
   .yy-canvas__media--still {
-    display: none;
+    display: block;
     z-index: 0;
+    opacity: 1;
+    transition: opacity 520ms ease;
+  }
+
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__gradient,
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__gradient canvas {
+    opacity: 1;
+  }
+
+  .yy-canvas[data-canvas-live="true"] .yy-canvas__media--still {
+    opacity: 0;
   }
 
   /* Cover is a sibling fixed layer (not nested under canvas) so opacity
@@ -287,7 +301,6 @@
     background: rgba(255, 250, 250, var(--cover-fill));
     -webkit-backdrop-filter: blur(var(--cover-blur));
     backdrop-filter: blur(var(--cover-blur));
-    will-change: opacity, backdrop-filter, background-color;
     opacity: var(--cover-opacity);
     transform: none;
   }
@@ -377,7 +390,11 @@
 
   @media (prefers-reduced-motion: reduce) {
     .yy-canvas__gradient { display: none !important; }
-    .yy-canvas__media--still { display: block; }
+    .yy-canvas__media--still {
+      display: block;
+      opacity: 1 !important;
+      transition: none;
+    }
     .yy-canvas,
     .yy-canvas__cover {
       transform: none;
