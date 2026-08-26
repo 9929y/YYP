@@ -293,6 +293,14 @@ if (!chromeJs.includes(':host(.is-fullpage) .cap:hover') ||
 if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
   errors.push('yy-chrome.js fullpage glass missing its white inset border');
 }
+if (!chromeJs.includes('--yy-nav-zone: 72px') ||
+    !chromeJs.includes('calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2)')) {
+  errors.push('yy-chrome.js normal panel must balance space above and below');
+}
+if (!chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)') ||
+    !chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
+  errors.push('yy-chrome.js Orbit must carry a visible glass edge and nav shadow');
+}
 if (chromeJs.includes("borderRadius: '999px'")) {
   errors.push('yy-chrome.js panel animation must not tween through an elliptical radius');
 }
