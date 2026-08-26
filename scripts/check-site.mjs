@@ -318,11 +318,14 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
 }
 
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
-if (!caseLayoutCss.includes('.paragraph') || !caseLayoutCss.includes('max-width: none')) {
-  errors.push('yy-case-layout.css must lift .paragraph max-width');
+if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
+  errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
 }
-if (!caseLayoutCss.includes('.textblockp1') || !caseLayoutCss.includes('max-width: none')) {
-  errors.push('yy-case-layout.css must lift .textblockp1 max-width');
+if (!caseLayoutCss.includes('.div-block-37') || !caseLayoutCss.includes('max-width: none')) {
+  errors.push('yy-case-layout.css must make one-column case text full width');
+}
+if (!caseLayoutCss.includes('.layout125_component.mck1.mck2:not(.b1)')) {
+  errors.push('yy-case-layout.css must preserve two-column intro grids');
 }
 
 const caseLayoutPages = [

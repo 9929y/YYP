@@ -1,53 +1,103 @@
 /* ============================================================================
-   yy-case-layout.css — project-page text width
+   yy-case-layout.css — project pages: one-column vs two-column
 
    Linked only from Webflow case-study HTML (not About, Projects, or Landing).
    Do not add these rules to the 19k-line Webflow sheet.
 
-   Symptom: body copy on full-bleed sections sits in a left column with a large
-   empty gutter. Cause: `.paragraph` and `.textblockp1` both set `max-width: 36em`
-   (~576px at 1rem). In a two-column grid that is already narrower than 36em,
-   the cap is a no-op. In a single-column section (Introduction, Challenge,
-   research notes, TikTok/MiFinance/Alzheimer text blocks) it crops the line.
+   The landing homepage uses a two-track spine (label column | content column).
+   That is not the project-page layout. Case studies have two authored patterns:
 
-   This sheet only lifts that cap and the extra paragraph-level side padding
-   that further shrinks the same blocks. Parent gutters (layout125 padding,
-   div-block-37 10%, paragraph2.ai 5%) stay as authored.
+     TWO-COLUMN  Overview | Role, Industry/Role/Timeline meta, label|copy grids.
+     ONE-COLUMN  Introduction, Challenge, research notes, Cummins `.b1` chapters.
+
+   One-column blocks were still sitting in a half-width measure (`max-width: 36em`
+   plus leftover two-track padding), so a full-width section looked like an empty
+   second column. This sheet keeps the two-column grids and makes one-column
+   sections a single stacked line: heading, copy, then media, all the same width.
    ============================================================================ */
 
-.paragraph,
-.paragraph.white,
-.paragraph.white._1,
-.textblockp1,
-.textblockp1.wt,
-.textblockp1.white,
-.textblockp1.xm {
+/* ---------- two-column: keep the original grids on desktop ---------- */
+@media screen and (min-width: 992px) {
+  .layout125_component:not(.b1):not(.live) {
+    display: grid;
+  }
+
+  .layout125_component.mck1.mck2:not(.b1) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .layout125_component.mck1:not(.mck2) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .layout125_component:not(.mck1):not(.b1):not(.live) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .layout125_component:not(.b1) .paragraph,
+  .layout125_component:not(.b1) .textblockp1 {
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ---------- one-column: a single stacked line, full well width ---------- */
+.div-block-37,
+.layout125_component.b1,
+.layout125_component.live {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: none;
+}
+
+.div-block-37 .layout125_content,
+.layout125_component.b1 .layout125_content,
+.layout125_component.live .layout125_content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.div-block-37 .paragraph,
+.div-block-37 .paragraph.white,
+.div-block-37 .paragraph.white._1,
+.layout125_component.b1 .paragraph,
+.layout125_component.live .paragraph,
+.paragraph2 .paragraph,
+.paragraph2 .paragraph.white,
+.paragraph2 .paragraph.white._1,
+.div-block-3text2 .textblockp1,
+.div-block-3text2 .paragraph {
   max-width: none;
   width: 100%;
   box-sizing: border-box;
 }
 
-.layout125_content {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-
-/* Challenge / follow-on copy used `_1` to add a second inset on top of the
-   section padding. That reads as a cropped column once max-width is gone. */
-.paragraph.white._1 {
+.div-block-37 .paragraph.white._1,
+.paragraph2 .paragraph.white._1 {
   padding-left: 0;
   padding-right: 0;
 }
 
-@media screen and (min-width: 1280px) {
-  .paragraph.white {
-    padding-right: 0;
-  }
+.div-block-37 img,
+.layout125_component.b1 img,
+.layout125_component.live img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
-/* Tablet sheet sets overflow:hidden on McKinsey body copy. That can clip
-   descenders and wrapped lines once the text uses the full column. */
 .paragraph2.mck {
   overflow: visible;
+}
+
+@media screen and (min-width: 1280px) {
+  .div-block-37 .paragraph.white {
+    padding-right: 0;
+  }
 }
