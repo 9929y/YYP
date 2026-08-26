@@ -366,32 +366,23 @@ if (!chromeJs.includes('function expandToFullpage()') ||
   errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
 }
 if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
-    !chromeJs.includes('requestExitFullpage') ||
+    !chromeJs.includes('leaveFullpageToOrigin') ||
     !chromeJs.includes('yyPanelFull') ||
     !chromeJs.includes('fullpageHash')) {
-  errors.push('yy-chrome.js expanded layer must hide the shrink control and exit via Back/history');
+  errors.push('yy-chrome.js expanded layer must hide the shrink control and exit via Go Back to the origin page');
 }
 if (!chromeJs.includes('background: transparent') ||
     chromeJs.includes(".cap button[aria-expanded=\"true\"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); }")) {
   errors.push('yy-chrome.js capsule items must be text-only by default (no gray chip fill)');
 }
-if (!chromeJs.includes('nav-orb.gif') ||
-    !chromeJs.includes('@media (hover: hover) and (pointer: fine)') ||
-    !chromeJs.includes(':focus-within')) {
-  errors.push('yy-chrome.js missing the hover/focus navigation orb');
+if (chromeJs.includes('width: 36px; height: 36px;') &&
+    chromeJs.includes(':host(.is-fullpage) .cap{')) {
+  errors.push('yy-chrome.js must not shrink the capsule into a 36px Orbit on fullpage');
 }
-if ((!chromeJs.includes("host.classList.add('is-fullpage')") &&
-     !chromeJs.includes('host.classList.toggle(\'is-fullpage\'')) ||
-    !chromeJs.includes(':host(.is-fullpage) .cap{') ||
-    !chromeJs.includes('width: 36px; height: 36px;')) {
-  errors.push('yy-chrome.js must limit the 36px navigation orb to fullpage state');
-}
-if (!chromeJs.includes(':host(.is-fullpage) .cap::before{ opacity: .80; }')) {
-  errors.push('yy-chrome.js fullpage Orbit GIF must render at 80% opacity');
-}
-if (!chromeJs.includes(':host(.is-fullpage) .cap:hover') ||
-    !chromeJs.includes('680ms')) {
-  errors.push('yy-chrome.js fullpage orbit must expand on hover with a slow cross-fade');
+if (!chromeJs.includes("host.classList.add('is-fullpage')") ||
+    !chromeJs.includes('is-resume-nav') ||
+    !chromeJs.includes('Go Back')) {
+  errors.push('yy-chrome.js fullpage Resume must keep the navigation bar with Go Back');
 }
 if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
   errors.push('yy-chrome.js fullpage glass missing its white inset border');
@@ -400,9 +391,8 @@ if (!chromeJs.includes('--yy-nav-zone: 72px') ||
     !chromeJs.includes('calc((100dvh - var(--yy-nav-zone) - var(--yy-panel-height)) / 2)')) {
   errors.push('yy-chrome.js normal panel must balance space above and below');
 }
-if (!chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)') ||
-    !chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
-  errors.push('yy-chrome.js Orbit must carry a visible glass edge and nav shadow');
+if (!chromeJs.includes('0 12px 36px -8px rgba(62,65,116,.20)')) {
+  errors.push('yy-chrome.js capsule must carry the shared nav shadow');
 }
 if (chromeJs.includes("borderRadius: '999px'")) {
   errors.push('yy-chrome.js panel animation must not tween through an elliptical radius');

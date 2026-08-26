@@ -332,8 +332,8 @@
     '.panel.is-expanded .corner-sw{ transform: translate(4px,-4px) rotate(180deg); }',
     '.panel.is-expanded .corner-se{ transform: translate(-4px,-4px) rotate(180deg); }',
 
-    /* The full navigation is the default everywhere. Only an expanded panel
-       earns the quiet Orbit state; touch never depends on hover to reveal nav. */
+    /* Capsule stays a full navigation bar everywhere — including fullpage.
+       Orbit compact (36px orb) is retired for now; may be removed entirely later. */
     '@media (hover: hover) and (pointer: fine) and (min-width: 561px){',
     '  .cap{',
     '    width: 377px; height: 56px;',
@@ -352,53 +352,18 @@
     '    opacity: 1; pointer-events: auto; transform: none;',
     '    transition: opacity 420ms var(--ease-smooth-out,ease-out), transform 520ms var(--yy-orbit-ease);',
     '  }',
-    '  :host(.is-fullpage) .cap{',
-    '    width: 36px; height: 36px; padding: 3px;',
-    '    box-shadow:',
-    '      inset 0 1px 0 rgba(255,255,255,.98),',
-    '      inset 0 0 0 1.5px rgba(255,255,255,.96),',
-    '      inset 0 -1px 0 rgba(26,25,23,.05),',
-    '      0 1px 2px rgba(62,65,116,.07),',
-    '      0 2px 8px -2px rgba(62,65,116,.09),',
-    '      0 12px 36px -8px rgba(62,65,116,.20);',
-    '  }',
-    '  :host(.is-fullpage) .cap::before{ opacity: .80; }',
-    '  :host(.is-fullpage) .cap::after{ opacity: 1; }',
-    '  :host(.is-fullpage) .cap > *{ opacity: 0; pointer-events: none; transform: translateY(2px) scale(.90); }',
-    '  :host(.is-fullpage) .cap:hover, :host(.is-fullpage) .cap:focus-within{',
-    '    width: 377px; height: 56px; padding: 6px;',
-    '  }',
-    '  :host(.is-fullpage) .cap:hover::before, :host(.is-fullpage) .cap:focus-within::before{ opacity: .08; }',
-    '  :host(.is-fullpage) .cap:hover::after, :host(.is-fullpage) .cap:focus-within::after{ opacity: .10; }',
-    '  :host(.is-fullpage) .cap:hover > *, :host(.is-fullpage) .cap:focus-within > *{',
-    '    opacity: 1; pointer-events: auto; transform: none;',
-    '  }',
-    '  /* Resume section nav must stay readable — Orbit compact would hide jumps. */',
-    '  :host(.is-fullpage.is-resume-nav) .cap,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:hover,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within{',
-    '    width: max-content; max-width: calc(100vw - 24px); height: 56px; padding: 6px;',
-    '  }',
-    '  :host(.is-fullpage.is-resume-nav) .cap::before,',
-    '  :host(.is-fullpage.is-resume-nav) .cap::after,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:hover::before,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within::before,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:hover::after,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within::after{ opacity: 0; }',
-    '  :host(.is-fullpage.is-resume-nav) .cap > *,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:hover > *,',
-    '  :host(.is-fullpage.is-resume-nav) .cap:focus-within > *{',
-    '    opacity: 1; pointer-events: auto; transform: none;',
-    '  }',
-    '  :host(.is-resume-nav) .cap{',
+    '  :host(.is-resume-nav) .cap,',
+    '  :host(.is-fullpage.is-resume-nav) .cap{',
     '    width: max-content; max-width: calc(100vw - 24px);',
     '  }',
     '}',
 
-    /* Below 560px the brand is the first thing to go: the four links are
-       navigation, the brand is decoration that also links home. */
+    /* Below 560px the brand is the first thing to go on the main capsule.
+       Resume fullpage keeps the wordmark + Go Back so the bar stays complete. */
     '@media (max-width: 560px){',
     '  .brand, .rule{ display: none !important; }',
+    '  :host(.is-resume-nav) .brand{ display: block !important; }',
+    '  :host(.is-resume-nav) .rule{ display: block !important; }',
     '  .cap{ gap: 0; }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  :host(.is-resume-nav) .cap{',
@@ -480,7 +445,7 @@
   }
 
   function resumeBackControl() {
-    return '<button type="button" class="cap-back" data-resume-back aria-label="Back">' +
+    return '<button type="button" class="cap-back" data-resume-back aria-label="Go Back">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<path d="M15 18l-6-6 6-6"/>' +
@@ -870,39 +835,33 @@
 
     function applyExitFullpageUI() {
       if (!panel.classList.contains('is-expanded')) return;
-      var before = panel.getBoundingClientRect();
       panel.classList.remove('is-expanded');
       host.classList.remove('is-fullpage');
       HTML.classList.remove('yy-panel-fullpage');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
-      announcePanelState(false, true);
       expand.hidden = false;
       expand.setAttribute('aria-label', 'Expand panel');
       expand.setAttribute('aria-pressed', 'false');
       fullHistoryPushed = false;
-      var after = panel.getBoundingClientRect();
-      if (!reduced && panel.animate) {
-        var scale = Math.min(before.width / Math.max(after.width, 1), before.height / Math.max(after.height, 1));
-        var dx = before.left + before.width / 2 - (after.left + after.width / 2);
-        var dy = before.top + before.height / 2 - (after.top + after.height / 2);
-        panel.animate([
-          {
-            transformOrigin: 'center',
-            transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')'
-          },
-          { transformOrigin: 'center', transform: 'none' }
-        ], { duration: 500, easing: 'cubic-bezier(.22,1,.36,1)' });
+    }
+
+    /* Back from the fullpage URL layer returns to the pre-expand page —
+       the underlying site with the panel fully closed — not the mid-size popup. */
+    function leaveFullpageToOrigin() {
+      if (!panel.classList.contains('is-expanded')) return;
+      if (fullHistoryPushed) {
+        fullHistoryPushed = false;
+        if (location.hash.indexOf('#/') === 0) {
+          history.replaceState(null, '', location.pathname + location.search);
+        }
       }
+      applyExitFullpageUI();
+      close();
     }
 
     function requestExitFullpage() {
-      if (!panel.classList.contains('is-expanded')) return;
-      if (fullHistoryPushed) {
-        history.back();
-        return;
-      }
-      applyExitFullpageUI();
+      leaveFullpageToOrigin();
     }
 
     function expandToFullpage() {
@@ -917,6 +876,7 @@
       announcePanelState(true, true);
       expand.hidden = true;
       expand.setAttribute('aria-pressed', 'true');
+      if (active === 'resume') enterResumeNav();
       history.pushState(
         { yyPanelFull: true, panel: active },
         '',
@@ -941,9 +901,8 @@
     function onCapClick(event) {
       var back = event.target.closest('[data-resume-back]');
       if (back && cap.contains(back)) {
-        /* Fullpage is its own URL layer — Back returns to the previous page layer. */
         if (panel.classList.contains('is-expanded')) {
-          requestExitFullpage();
+          leaveFullpageToOrigin();
           return;
         }
         leaveResumeNav();
@@ -970,7 +929,9 @@
     window.addEventListener('popstate', function (event) {
       var state = event.state;
       if (panel.classList.contains('is-expanded') && !(state && state.yyPanelFull)) {
+        fullHistoryPushed = false;
         applyExitFullpageUI();
+        if (active) close();
       }
     });
     window.addEventListener('yy:open-panel', function (event) {
@@ -1000,7 +961,7 @@
       if (event.key === 'Escape' && active) {
         event.preventDefault();
         if (panel.classList.contains('is-expanded')) {
-          requestExitFullpage();
+          leaveFullpageToOrigin();
           return;
         }
         close();
