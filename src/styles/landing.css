@@ -159,53 +159,8 @@
     html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
   }
 
-  /* Soft diffusion wake behind the disc — sibling so mix-blend-mode on
-     #yy-cursor does not tint the trail. Nav-like indigo frost, not ASCII. */
-  #yy-cursor-wake {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2136;
-    opacity: 0;
-    transition: opacity .35s ease;
-  }
-  html.yy-cursor-live #yy-cursor-wake { opacity: 1; }
-  html.yy-cursor-live #yy-cursor-wake.is-fading { opacity: 0; }
-
-  #yy-cursor-wake i {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: var(--wake-size, 36px);
-    height: var(--wake-size, 36px);
-    margin: 0;
-    border-radius: 999px;
-    pointer-events: none;
-    will-change: transform, opacity;
-    background:
-      radial-gradient(
-        circle at 50% 42%,
-        rgba(255, 255, 255, .7) 0%,
-        rgba(62, 65, 116, .28) 40%,
-        rgba(62, 65, 116, .1) 64%,
-        transparent 78%
-      );
-    -webkit-filter: blur(var(--wake-blur, 14px));
-    filter: blur(var(--wake-blur, 14px));
-    opacity: var(--wake-opacity, .35);
-    transform: translate3d(var(--wx, -200px), var(--wy, -200px), 0) translate(-50%, -50%)
-      scale(var(--wake-scale, 1));
-  }
-
-  /* Bloom while the view disc is open — driven by html.yy-cursor-bloom. */
-  html.yy-cursor-bloom #yy-cursor-wake i {
-    --wake-size: 52px;
-    --wake-blur: 18px;
-  }
-
   @media (max-width: 991px), (hover: none), (pointer: coarse) {
     #yy-cursor { display: none !important; }
-    #yy-cursor-wake { display: none !important; }
   }
 
   a { color: inherit; }
@@ -230,20 +185,24 @@
     border-radius: 2px;
   }
 
-  /* ---------- the ASCII diffusion field (optional; landing no longer mounts it) ----------
-     Kept for pages that still load yy-flow.js. Landing uses .yy-canvas instead. */
+  /* ---------- the ASCII diffusion field (cursor wake; landing + optional pages) ---------- */
   #yy-flow {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: 2;
     pointer-events: none;
     display: block;
+  }
+  /* Above frosted cover, under page copy. */
+  html.yy-landing [data-motion-root] > .wrap {
+    position: relative;
+    z-index: 3;
   }
   @media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
     #yy-flow { display: none !important; }
   }
 
-  /* ---------- hero canvas (Figma GIF + frosted cover; replaces yy-flow) ---------- */
+  /* ---------- hero canvas (ShaderGradient + frosted cover) ---------- */
   /* Landing-only type scale (~12.5% under the shared tokens) so Webflow
      case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
@@ -1000,7 +959,6 @@
   @media (prefers-reduced-motion: reduce) {
     .slot:hover img, .slot:hover video, .slot:hover .ph { transition: none; }
     #yy-cursor { display: none !important; }
-    #yy-cursor-wake { display: none !important; }
     html.yy-cursor-live, html.yy-cursor-live * { cursor: auto; }
     html { scroll-behavior: auto; }
   }
