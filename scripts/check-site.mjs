@@ -263,8 +263,8 @@ if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #
 if (!chromeJs.includes('yy-case-type.css')) {
   errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
 }
-if (!chromeJs.includes('CASE_TYPE_PAGES')) {
-  errors.push('yy-chrome.js missing CASE_TYPE_PAGES for the landing type overlay');
+if (!chromeJs.includes('html.yy-case-type .body.blk') && !chromeJs.includes('html.yy-case-type,html.yy-case-type body')) {
+  errors.push('yy-chrome.js must inline a light ground on case-type pages so black Webflow shells cannot win');
 }
 
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
