@@ -31,8 +31,6 @@
      page moved into a subdirectory keeps working. */
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-chrome\.js.*$/, '') : '';
 
-  var RESUME = 'https://302437672248143872.hello.cv/';
-
   /* The shared navigation now owns three content surfaces. Their final content
      will arrive independently; keeping the panel keys here gives every Astro
      and legacy page the same shell and state machine today. */
@@ -49,7 +47,7 @@
     { href: 'projects.html', label: 'Work' },
     { href: 'aboutme.html',  label: 'About' },
     { href: 'fashion.html',  label: 'Fashion' },
-    { href: RESUME,          label: 'Resume' }
+    { panel: 'resume',       label: 'Resume' }
   ];
 
   /* Resume is NOT a social profile — it lives in the nav row above as text.
@@ -78,7 +76,8 @@
   var boot = document.createElement('style');
   boot.textContent =
     'html.yy-chrome .navbar.w-nav{display:none}' +
-    'html.yy-chrome .footer-credit-wrapper{display:none}';
+    'html.yy-chrome .footer-credit-wrapper{display:none}' +
+    'html.yy-panel-fullpage,html.yy-panel-fullpage body{overflow:hidden!important}';
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
@@ -280,6 +279,8 @@
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
+    '.panel-view--resume{ padding: 0; }',
+    'yy-resume-content{ display: block; min-height: 100%; }',
     '.panel-view[hidden]{ display: none; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
@@ -364,6 +365,7 @@
     '  }',
     '  .panel.is-expanded{ inset: 0; width: 100vw; height: 100dvh; border-radius: 0; }',
     '  .panel-view{ padding: 64px 24px 32px; }',
+    '  .panel-view--resume{ padding: 0; }',
     '  .expand{ top: 14px; right: 14px; }',
     '}',
     '@media (max-height: 560px){',
@@ -383,9 +385,9 @@
     '  font-size: 13px;',
     '}',
     '.ft nav{ display: flex; flex-wrap: wrap; gap: 4px 18px; }',
-    '.ft a{ color: var(--yy-ink-dim); text-decoration: none; transition: color .2s var(--yy-ease); }',
-    '.ft a:hover{ color: var(--yy-ink); text-decoration: underline; text-underline-offset: 3px; }',
-    '.ft a:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; border-radius: 2px; }',
+    '.ft a,.ft button{ margin:0; padding:0; border:0; background:none; color: var(--yy-ink-dim); font:inherit; text-decoration: none; cursor:pointer; transition: color .2s var(--yy-ease); }',
+    '.ft a:hover,.ft button:hover{ color: var(--yy-ink); text-decoration: underline; text-underline-offset: 3px; }',
+    '.ft a:focus-visible,.ft button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; border-radius: 2px; }',
     '.soc{ display: flex; align-items: center; gap: 16px; }',
     '.soc img{ display: block; width: 18px; height: 18px; object-fit: contain; }',
     '.credit{ margin: 0 0 0 auto; color: var(--yy-ink-dim); }',
@@ -422,11 +424,42 @@
   }
 
   function panelView(item) {
+    if (item.panel === 'resume') {
+      return '<section class="panel-view panel-view--resume" data-panel-view="resume" hidden>' +
+        '<yy-resume-content aria-label="Yanice Yang resume"></yy-resume-content>' +
+      '</section>';
+    }
     return '<section class="panel-view" data-panel-view="' + esc(item.panel) + '" hidden>' +
       '<p class="panel-kicker">Component shell</p>' +
       '<h2 class="panel-title">' + esc(item.label) + '</h2>' +
       '<p class="panel-note">This space is ready for the ' + esc(item.label) + ' interface.</p>' +
     '</section>';
+  }
+
+  var resumeLoad = null;
+  function ensureResumeComponent() {
+    if (window.customElements && customElements.get('yy-resume-content')) {
+      return Promise.resolve();
+    }
+    if (resumeLoad) return resumeLoad;
+    resumeLoad = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = ROOT + 'assets/js/yy-resume.js';
+      script.onload = resolve;
+      script.onerror = function () {
+        resumeLoad = null;
+        reject(new Error('Resume component failed to load'));
+      };
+      (document.head || HTML).appendChild(script);
+    });
+    return resumeLoad;
+  }
+
+  function footerItem(item, here) {
+    if (item.panel) {
+      return '<button type="button" data-open-panel="' + esc(item.panel) + '">' + esc(item.label) + '</button>';
+    }
+    return link(item, here);
   }
 
   /* --------------------------------------------------------------------------
@@ -483,6 +516,17 @@
     var active = '';
     var panelAnimation = null;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function prepare(name) {
+      if (name !== 'resume') return;
+      ensureResumeComponent().catch(function (error) {
+        var view = viewFor('resume');
+        if (view) {
+          view.innerHTML = '<p class="panel-note" role="alert">Resume could not load. Please try again.</p>';
+        }
+        if (window.console) console.error('[yy-chrome] resume load failed:', error);
+      });
+    }
 
     function viewFor(name) {
       for (var i = 0; i < views.length; i++) {
@@ -543,9 +587,12 @@
     }
 
     function open(name, trigger) {
+      prepare(name);
       active = name;
       sync(name);
       host.classList.remove('is-fullpage');
+      HTML.classList.remove('yy-panel-fullpage');
+      panel.setAttribute('aria-modal', 'false');
       host.classList.add('is-open');
       var targetView = viewFor(name);
       var start = trigger.getBoundingClientRect();
@@ -565,7 +612,11 @@
       if (!active) return;
       var former = active;
       var wasExpanded = panel.classList.contains('is-expanded');
-      if (wasExpanded) host.classList.remove('is-fullpage');
+      if (wasExpanded) {
+        host.classList.remove('is-fullpage');
+        HTML.classList.remove('yy-panel-fullpage');
+        panel.setAttribute('aria-modal', 'false');
+      }
       var target = returnFocus || triggerFor(former);
       var destination = target ? target.getBoundingClientRect() : panel.getBoundingClientRect();
       active = '';
@@ -583,6 +634,7 @@
     }
 
     function switchView(name) {
+      prepare(name);
       active = name;
       sync(name);
       var next = viewFor(name);
@@ -599,6 +651,8 @@
       var expanded = !panel.classList.contains('is-expanded');
       panel.classList.toggle('is-expanded', expanded);
       host.classList.toggle('is-fullpage', expanded);
+      HTML.classList.toggle('yy-panel-fullpage', expanded);
+      panel.setAttribute('aria-modal', expanded ? 'true' : 'false');
       announcePanelState(expanded);
       expand.setAttribute('aria-label', expanded ? 'Restore panel size' : 'Expand panel');
       expand.setAttribute('aria-pressed', expanded ? 'true' : 'false');
@@ -630,12 +684,30 @@
       });
     }
     expand.addEventListener('click', toggleExpanded);
+    window.addEventListener('yy:open-panel', function (event) {
+      var name = event.detail && event.detail.name;
+      var trigger = triggerFor(name);
+      if (!trigger) return;
+      if (!host.classList.contains('is-open')) open(name, trigger);
+      else if (active !== name) switchView(name);
+    });
     root.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && active) {
         event.preventDefault();
         close(triggerFor(active));
       }
     });
+  }
+
+  function setupFooterPanelTriggers(host) {
+    var buttons = host.shadowRoot.querySelectorAll('[data-open-panel]');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function (event) {
+        window.dispatchEvent(new CustomEvent('yy:open-panel', {
+          detail: { name: event.currentTarget.getAttribute('data-open-panel') }
+        }));
+      });
+    }
   }
 
   function mount() {
@@ -679,7 +751,7 @@
     var footHTML =
       '<footer class="ft">' +
         '<nav aria-label="Footer">' +
-          FOOT.map(function (i) { return link(i, here); }).join('') +
+          FOOT.map(function (i) { return footerItem(i, here); }).join('') +
         '</nav>' +
         '<div class="soc">' +
           SOCIAL.map(function (s) {
@@ -695,6 +767,7 @@
       '</footer>';
 
     var host = shadow('yy-footer', footHTML);
+    setupFooterPanelTriggers(host);
     var credit = document.querySelector('.footer-credit-wrapper');
     if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
     else document.body.appendChild(host);
