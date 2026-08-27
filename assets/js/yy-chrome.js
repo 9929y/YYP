@@ -45,10 +45,9 @@
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
-  /* Only Lark + Opus Clip use the dark nav capsule. Every other page — including
-     McKinsey, Alzheimer, homepage, and Work hub — stays light glass. */
+  /* Only Opus Clip uses the dark nav capsule. Lark, McKinsey, Alzheimer,
+     homepage, and Work hub stay light glass. Popups are always light. */
   var DARK_NAV_PAGES = {
-    'larkdesign.html': true,
     'ai-driven-product-design.html': true
   };
 

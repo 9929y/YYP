@@ -354,8 +354,11 @@ if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
   errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
 }
-if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'larkdesign.html'")) {
-  errors.push('yy-chrome.js must whitelist only Lark + Opus for dark nav (DARK_NAV_PAGES)');
+if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'ai-driven-product-design.html'")) {
+  errors.push('yy-chrome.js must whitelist only Opus for dark nav (DARK_NAV_PAGES)');
+}
+if (chromeJs.includes("'larkdesign.html'") && /DARK_NAV_PAGES[\s\S]{0,120}'larkdesign\.html'/.test(chromeJs)) {
+  errors.push('yy-chrome.js must not use dark nav on Lark (light nav only)');
 }
 if (!chromeJs.includes('Popups always light')) {
   errors.push('yy-chrome.js must keep navigation popups on light tokens (panel-stack --yy-ink)');
