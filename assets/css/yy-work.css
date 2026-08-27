@@ -93,9 +93,10 @@
 .card__title {
   margin: 0;
   width: 100%;
-  color: #101828;
+  color: inherit;
   font-size: 0.8125rem;
-  font-weight: 700;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   line-height: 1.4;
   text-align: center;
 }
