@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { islandTiming, breakpoints } from '../../data/motion';
+
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
  * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
@@ -14,7 +16,7 @@ import { useEffect, useState } from 'react';
 const BASE_SPEED = 0.1;
 const PROJECT_SPEED = BASE_SPEED * 0.7;
 /** Let CSS intro / first paint settle before compiling WebGL. */
-const MOUNT_DELAY_MS = 320;
+const MOUNT_DELAY_MS = islandTiming.canvasMountDelayMs;
 
 function scheduleIdle(cb: () => void, timeout = 1200): () => void {
   if (typeof window === 'undefined') return () => {};
@@ -39,7 +41,7 @@ function markCanvasLive(live: boolean) {
 function prefersLightCanvas(): boolean {
   if (typeof window === 'undefined') return true;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-  if (window.matchMedia('(max-width: 900px)').matches) return true;
+  if (window.matchMedia(`(max-width: ${breakpoints.canvasLight}px)`).matches) return true;
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (conn?.saveData) return true;
   return false;
@@ -72,7 +74,7 @@ export default function LandingCanvasGradient() {
   useEffect(() => {
     if (!allowMotion) return;
     const dpr = window.devicePixelRatio || 1;
-    const narrow = window.matchMedia('(max-width: 900px)').matches;
+    const narrow = window.matchMedia(`(max-width: ${breakpoints.canvasLight}px)`).matches;
     setPixelDensity(narrow || dpr >= 2 ? 0.75 : 1);
   }, [allowMotion]);
 

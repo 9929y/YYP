@@ -126,7 +126,7 @@
     display: block;
     z-index: 1;
     opacity: 0;
-    transition: opacity 560ms ease;
+    transition: opacity var(--duration-very-slow) var(--ease-out);
   }
 
   /* Still is the instant LCP stand-in; WebGL crossfades over it when ready. */
@@ -134,7 +134,7 @@
     display: block;
     z-index: 0;
     opacity: 1;
-    transition: opacity 520ms ease;
+    transition: opacity var(--duration-very-slow) var(--ease-out);
   }
 
   .yy-canvas[data-canvas-live="true"] .yy-canvas__gradient,
@@ -199,7 +199,7 @@
     .yy-canvas,
     .yy-canvas__cover {
       transform: none;
-      transition: opacity 240ms ease;
+      transition: opacity var(--duration-fast) var(--ease-out);
     }
     html.yy-landing .hero.row--ruled::before,
     [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before,
@@ -410,7 +410,6 @@
     inset: 0;
     display: block;
     width: 100%;
-    will-change: filter, opacity;
   }
 
   .morph-statement__filters {
@@ -538,22 +537,31 @@
     white-space: pre;
     opacity: 0;
     filter: blur(4px);
+  }
+
+  .case__note:hover,
+  .case:has(.slot:hover) .case__note {
     will-change: filter, opacity;
   }
 
+  /* Static note for touch devices ≥768px. Below that the card layout is too
+     tight; above it the copy earns its space. Hover-capable pointers get the
+     animated version from CaseNoteGenerate instead. */
+  .case__note--static { display: none; }
+
   @media (hover: none), (pointer: coarse) {
-    /* No hover hardware: keep the note permanently hidden (meta still informs). */
     .case__note .text-generate__word {
       opacity: 0 !important;
       filter: blur(4px) !important;
     }
+
+    @media (min-width: 768px) {
+      .case__note--static { display: block; opacity: 1; filter: none; }
+    }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .case__note .text-generate__word {
-      transition: none !important;
-      filter: none;
-    }
+  @media (hover: hover) and (pointer: fine) {
+    .case__note--static { display: none; }
   }
 
   /* Media fills the column past the spine. Drop shadow lives on `.slot`

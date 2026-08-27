@@ -25,7 +25,7 @@
   letter-spacing: -.64px;
   pointer-events: none;
   z-index: 9800;
-  will-change: transform;
+  will-change: transform, width, height;
   transform: translate3d(var(--cx, -200px), var(--cy, -200px), 0) translate(-50%, -50%);
   transition-property: transform, width, height, background-color, color;
   transition-duration: .08s,
