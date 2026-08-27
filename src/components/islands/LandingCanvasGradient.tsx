@@ -146,11 +146,8 @@ export default function LandingCanvasGradient() {
   }, []);
 
   useEffect(() => {
-    const hoverMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     const slots = Array.from(document.querySelectorAll('.slot'));
-    const onEnter = () => {
-      if (hoverMq.matches) setSlotHover(true);
-    };
+    const onEnter = () => setSlotHover(true);
     const onLeave = () => setSlotHover(false);
     slots.forEach((slot) => {
       slot.addEventListener('pointerenter', onEnter);
