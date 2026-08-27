@@ -19,14 +19,16 @@ html.yy-case body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Case studies use the same ink scale as the landing (warm dark grey, not
+   pure black, not inverted white-on-black). data-theme is kept for markup. */
 .cs[data-theme="dark"] {
-  --ink: #f4f1ea;
-  --ink-2: #c8c2b6;
-  --ink-3: #9a9488;
-  --ground: #11110f;
-  --hair: #2a2824;
-  --slot: #1c1b18;
-  --rule: #2a2824;
+  --ink: #1a1917;
+  --ink-2: #55534e;
+  --ink-3: #6d6a63;
+  --ground: #fff;
+  --hair: #e4e1dc;
+  --slot: #efece8;
+  --rule: #e9e9e9;
 }
 
 .cs__hero {
@@ -153,6 +155,18 @@ html.yy-case body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  align-items: stretch;
+}
+
+.media-pair__grid > .media {
+  min-height: 0;
+  height: 100%;
+}
+
+.media-pair__grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .case-quote {

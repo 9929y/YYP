@@ -15,15 +15,15 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
 
 {
   project.kind === 'panel' ? (
-    <div class="panel rv" style="counter-reset: act">
+    <div class="panel" style="counter-reset: act">
       <ul class="panel__acts">
         {project.acts?.map((act) => <li>{act}</li>)}
       </ul>
       {project.panelFoot && <p class="panel__foot">{project.panelFoot}</p>}
     </div>
   ) : showMedia && href ? (
-    <a class="slot rv" href={href} aria-label={label} data-cursor-label="view">
-      <span class="slot__media">
+    <a class="slot" href={href} aria-label={label} data-cursor-label="view">
+      <span class="slot__media" data-reveal="media">
         {project.video ? (
           <video
             class="slot__v"
@@ -31,7 +31,8 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
             muted
             loop
             playsinline
-            preload={play === 'hover' ? 'metadata' : 'none'}
+            autoplay={play === 'auto'}
+            preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
             width={project.video.width}
             height={project.video.height}
             aria-label={project.video.label}
@@ -50,22 +51,22 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
             />
           )
         )}
-        <span class="ph">
-          <span class="ph__file">{project.placeholderFile}</span>
-          <span class="ph__spec">{project.placeholderSpec}</span>
-        </span>
+      </span>
+      <span class="ph">
+        <span class="ph__file">{project.placeholderFile}</span>
+        <span class="ph__spec">{project.placeholderSpec}</span>
       </span>
     </a>
   ) : showMedia ? (
     <div
-      class:list={['slot', 'slot--static', 'rv']}
+      class:list={['slot', 'slot--static']}
       role="group"
       aria-label={project.title}
       data-cursor-label={project.status === 'in-progress' ? 'on progress' : undefined}
       data-cursor-chip={project.status === 'in-progress' ? 'true' : undefined}
       data-status={project.status}
     >
-      <span class="slot__media">
+      <span class="slot__media" data-reveal="media">
         {project.video ? (
           <video
             class="slot__v"
@@ -73,7 +74,8 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
             muted
             loop
             playsinline
-            preload={play === 'hover' ? 'metadata' : 'none'}
+            autoplay={play === 'auto'}
+            preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
             width={project.video.width}
             height={project.video.height}
             aria-label={project.video.label}
@@ -92,10 +94,10 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
             />
           )
         )}
-        <span class="ph">
-          <span class="ph__file">{project.placeholderFile}</span>
-          <span class="ph__spec">{project.placeholderSpec}</span>
-        </span>
+      </span>
+      <span class="ph">
+        <span class="ph__file">{project.placeholderFile}</span>
+        <span class="ph__spec">{project.placeholderSpec}</span>
       </span>
     </div>
   ) : null

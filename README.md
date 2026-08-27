@@ -59,6 +59,9 @@ npm test           # project schema + asset/link checks (no dist required)
 npm run check      # astro check + the same site checks against dist/
 ```
 
+Agents must not record or screenshot this project. Review in-progress work on the
+Cloudflare quick tunnel to port 4800 (see `AGENTS.md` and `.cursor/rules/preview-only.mdc`).
+
 How to add pages, case studies, motion, and React islands: `docs/EXTENDING.md`.
 Pre-migration URL/script baseline: `docs/BASELINE.md`.
 

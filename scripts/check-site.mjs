@@ -112,10 +112,13 @@ const chromeSource = fs.readFileSync(chromePath, 'utf8');
 if (chromeSource.includes('resume.html')) {
   errors.push('yy-chrome.js must not expose Resume as a standalone route');
 }
-for (const marker of ['<yy-resume-content', 'ensureResumeComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
+for (const marker of ['<yy-resume-content', 'ensureResumeComponent', '<yy-about-content', 'ensureAboutComponent', '<yy-work-content', 'ensureWorkComponent', 'yy:open-panel', 'RESUME_SECTIONS', 'data-resume-back', 'is-resume-nav', 'yy:resume-navigate', 'data-lenis-prevent']) {
   if (!chromeSource.includes(marker)) {
-    errors.push(`yy-chrome.js missing embedded Resume integration marker ${marker}`);
+    errors.push(`yy-chrome.js missing embedded panel integration marker ${marker}`);
   }
+}
+if (chromeSource.includes("{ href: 'projects.html'") || chromeSource.includes("{ href: 'aboutme.html'")) {
+  errors.push('yy-chrome.js footer Work/About must open panels, not navigate to standalone pages');
 }
 
 const resumeJsPath = path.join(ROOT, 'assets/js/yy-resume.js');
@@ -137,6 +140,27 @@ for (const marker of [
 }
 if (resumeJs.includes('data-resume-tabs') || resumeJs.includes('resume__tabs')) {
   errors.push('yy-resume.js must not render in-panel sticky tabs — section nav lives in the capsule');
+}
+
+const aboutJs = fs.existsSync(path.join(ROOT, 'assets/js/yy-about.js'))
+  ? fs.readFileSync(path.join(ROOT, 'assets/js/yy-about.js'), 'utf8')
+  : '';
+for (const marker of ["customElements.define('yy-about-content'", 'attachShadow', 'A little about me', 'fashion.html']) {
+  if (!aboutJs.includes(marker)) {
+    errors.push(`assets/js/yy-about.js missing ${marker}`);
+  }
+}
+
+const workJs = fs.existsSync(path.join(ROOT, 'assets/js/yy-work.js'))
+  ? fs.readFileSync(path.join(ROOT, 'assets/js/yy-work.js'), 'utf8')
+  : '';
+for (const marker of ["customElements.define('yy-work-content'", 'attachShadow', 'ai-driven-product-design.html', 'Lark Education Field Study']) {
+  if (!workJs.includes(marker)) {
+    errors.push(`assets/js/yy-work.js missing ${marker}`);
+  }
+}
+if (workJs.includes('inner-page-hero') || workJs.includes('xxl-heading')) {
+  errors.push('yy-work.js must not include the projects page title/banner');
 }
 
 const linkPreviewPath = path.join(ROOT, 'assets/js/yy-link-preview.js');
@@ -250,6 +274,9 @@ if (useDist) {
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
   }
+  if (!fs.existsSync(path.join(distDir, 'assets/css/yy-motion.css'))) {
+    errors.push('dist/assets/css/yy-motion.css missing');
+  }
   const templatePath = path.join(distDir, 'case-study-template.html');
   if (!fs.existsSync(templatePath)) {
     errors.push('dist/case-study-template.html missing — Foundation needs a rendered review surface');
@@ -292,6 +319,11 @@ const requiredAssets = [
   'assets/css/yy-case-layout.css',
   'assets/css/yy-chrome.css',
   'assets/css/yy-resume.css',
+  'assets/css/yy-motion.css',
+  'assets/css/yy-case-type.css',
+  'assets/css/yy-about.css',
+  'assets/css/yy-work.css',
+  'assets/css/yy-cursor.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
@@ -300,6 +332,8 @@ const requiredAssets = [
   'assets/js/yy-flow.js',
   'assets/images/ui/nav-orb.gif',
   'assets/js/yy-resume.js',
+  'assets/js/yy-about.js',
+  'assets/js/yy-work.js',
   'assets/js/yy-link-preview.js',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
@@ -307,6 +341,135 @@ const requiredAssets = [
 for (const asset of requiredAssets) {
   const here = path.join(ROOT, asset);
   if (!fs.existsSync(here)) errors.push(`missing ${asset}`);
+}
+
+const chromeJsPath = path.join(ROOT, 'assets/js/yy-chrome.js');
+const chromeJs = fs.readFileSync(chromeJsPath, 'utf8');
+if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
+  errors.push('yy-chrome.js must hide the legacy Webflow navbar');
+}
+if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
+  errors.push('yy-chrome.js must load the shared cursor sheet and script on every page');
+}
+if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
+  errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
+}
+if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
+  errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
+}
+if (!chromeJs.includes("document.body.appendChild(host)") || !chromeJs.includes("setupFooterPanelTriggers(host)")) {
+  errors.push('yy-chrome.js must append the shared footer to document.body and wire footer panel triggers');
+}
+if (chromeJs.includes('insertBefore(host, credit')) {
+  errors.push('yy-chrome.js must not nest the shared footer next to .footer-credit-wrapper');
+}
+if (!chromeJs.includes('.footer-section:not(:has(.four-column))')) {
+  errors.push('yy-chrome.js must hide credit-only Webflow footer shells');
+}
+if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #fff;')) {
+  errors.push('yy-footer host must paint a light band so dark case pages match landing chrome');
+}
+
+const chromeCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCss.includes('html.yy-chrome .paragraph') || !chromeCss.includes('max-width: none')) {
+  errors.push('yy-chrome.css must lift the 36em paragraph cap so case copy fills its cell');
+}
+
+if (!chromeJs.includes('yy-motion.css')) {
+  errors.push('yy-chrome.js must load yy-motion.css so Webflow pages share landing recipes');
+}
+if (!chromeJs.includes('yy-case-type.css')) {
+  errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
+}
+
+const motionCssPath = path.join(ROOT, 'assets/css/yy-motion.css');
+const motionCss = fs.existsSync(motionCssPath) ? fs.readFileSync(motionCssPath, 'utf8') : '';
+const motionCssCode = motionCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!motionCss.includes('--reveal-text-distance') || !motionCss.includes('[data-reveal="text"]')) {
+  errors.push('yy-motion.css must define the default text recipe (--reveal-text-distance + data-reveal=text)');
+}
+if (!motionCss.includes('--page-fade-out') || !motionCss.includes('--page-fade-in') || !motionCss.includes('@view-transition')) {
+  errors.push('yy-motion.css must define MPA page fades (@view-transition + --page-fade-out/in)');
+}
+if (!motionCss.includes('view-transition-name: yy-nav') || !motionCss.includes('view-transition-name: yy-footer')) {
+  errors.push('yy-motion.css must name yy-nav and yy-footer for view transitions');
+}
+if (!motionCss.includes('view-transition-name: yy-cursor')) {
+  errors.push('yy-motion.css must name #yy-cursor so the disc does not snap to the system arrow on MPA fades');
+}
+if (!motionCss.includes(':not(.in)') || !motionCss.includes('[data-reveal].in')) {
+  errors.push('yy-motion.css must hide with :not(.in) so .in can actually reveal data-reveal nodes');
+}
+if (!motionCss.includes('[data-reveal="intro-headline"]') || !motionCss.includes('[data-reveal="media"]')) {
+  errors.push('yy-motion.css must include intro-headline and media recipes');
+}
+if (/grid-template-columns/.test(motionCssCode)) {
+  errors.push('yy-motion.css must not set grid-template-columns');
+}
+if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(motionCssCode)) {
+  errors.push('yy-motion.css must not set horizontal padding or margin');
+}
+
+const baseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/BaseLayout.astro'), 'utf8');
+if (!baseLayout.includes('yy-motion.css')) {
+  errors.push('BaseLayout.astro must link yy-motion.css');
+}
+
+const caseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/CaseStudyLayout.astro'), 'utf8');
+if (!caseLayout.includes('data-reveal="text"')) {
+  errors.push('CaseStudyLayout.astro must mark titles with data-reveal=text');
+}
+
+const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf8');
+if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
+  errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
+}
+if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
+  errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
+}
+if (!revealJs.includes('data-reveal-sync') || !fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8').includes('data-reveal-sync="case"')) {
+  errors.push('landing case rows must share one reveal (data-reveal-sync) so text and cards enter together');
+}
+if (!revealJs.includes('intro-')) {
+  errors.push('yy-reveal.js must skip intro-* CSS-timeline recipes');
+}
+const cursorJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-cursor.js'), 'utf8');
+if (cursorJs.includes('moves === 0') && cursorJs.includes('standDown()')) {
+  errors.push('yy-cursor.js must not stand down the disc when the pointer is idle');
+}
+if (!cursorJs.includes('yy-cursor-ready')) {
+  errors.push('yy-cursor.js must set html.yy-cursor-ready so the system arrow stays hidden before the first move');
+}
+if (
+  /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
+  /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs)
+) {
+  errors.push('Opus and Alzheimer must keep Webflow black/white type — omit them from CASE_TYPE_PAGES');
+}
+
+const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
+const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
+const caseTypeCssCode = caseTypeCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!caseTypeCss.includes('--ink-2')) {
+  errors.push('yy-case-type.css must use landing ink tokens');
+}
+if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
+  errors.push('yy-case-type.css must restyle display, mid, and label headings');
+}
+if (caseTypeCssCode.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not change .section-layout1 horizontal padding');
+}
+if (/grid-template-columns/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not set grid-template-columns (keep authored 2-column layout)');
+}
+if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not set horizontal padding or margin (fonts + vertical spacing only)');
+}
+if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
+  errors.push('yy-case-type.css must not use margin shorthand that zeros left/right');
+}
+if (!caseTypeCssCode.includes('object-fit: contain') || !caseTypeCssCode.includes('.grid-2-2')) {
+  errors.push('yy-case-type.css must equalize .grid-2-2 paired image cell heights');
 }
 
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
@@ -319,27 +482,6 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
 
 if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
   errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
-}
-
-const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
-if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
-  errors.push('landing .slot must not use left/right directional shadows that square the corners');
-}
-if (!landingCss.includes('.slot__media')) {
-  errors.push('landing .slot must clip media in .slot__media so drop shadows are not squared');
-}
-if (!/\.slot\s*\{[^}]*overflow:\s*visible/.test(landingCss)) {
-  errors.push('landing .slot must use overflow: visible so shadows follow the radius');
-}
-if (
-  !landingCss.includes('caseRuleDraw') ||
-  !landingCss.includes('animation-timeline: view()') ||
-  !landingCss.includes('--rule-draw')
-) {
-  errors.push('landing case spine must reveal with scroll (view timeline + --rule-draw)');
-}
-if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
-  errors.push('hero spine must stay on the intro grow, not the case progressor');
 }
 
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
@@ -425,13 +567,6 @@ for (const name of caseLayoutPages) {
   }
 }
 
-const chromeJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-chrome.js'), 'utf8');
-if (
-  !chromeJs.includes("querySelector('.footer-section')") ||
-  !chromeJs.includes('insertBefore(host, section.nextSibling)')
-) {
-  errors.push('yy-chrome.js must mount the site footer outside .footer-section');
-}
 for (const panelName of ['work', 'about', 'resume']) {
   if (!chromeJs.includes(`panel: '${panelName}'`)) {
     errors.push(`yy-chrome.js missing ${panelName} panel configuration`);
@@ -549,6 +684,9 @@ if (
 }
 
 const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
+if (scrollJs.includes('yy-rv--wipe') || scrollJs.includes('function tagImages')) {
+  errors.push('yy-scroll.js must not tag images with yy-rv--wipe; default enter lives in yy-motion.css');
+}
 if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
   errors.push('yy-scroll.js must pause videos for expanded navigation panels');
 }
@@ -568,8 +706,49 @@ const indexAstro = fs.readFileSync(path.join(ROOT, 'src/pages/index.astro'), 'ut
 if (!indexAstro.includes('yy-canvas')) {
   errors.push('src/pages/index.astro missing the Figma GIF canvas stack');
 }
+if (!indexAstro.includes('data-reveal="intro-headline"') || !indexAstro.includes('data-reveal="intro-meta"')) {
+  errors.push('src/pages/index.astro must use data-reveal intro recipes (not data-intro)');
+}
+if (indexAstro.includes('data-intro=')) {
+  errors.push('src/pages/index.astro still uses data-intro; migrate to data-reveal recipes');
+}
+if (indexAstro.includes('reveal={false}')) {
+  errors.push('src/pages/index.astro must load yy-reveal.js for below-fold recipes (explicit nodes only)');
+}
 if (indexAstro.includes('yy-flow.js')) {
   errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+}
+
+const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
+  errors.push('landing .slot must not use left/right directional shadows that square the corners');
+}
+if (!landingCss.includes('.slot__media')) {
+  errors.push('landing .slot must clip media in .slot__media so drop shadows are not squared');
+}
+if (!/\.slot\s*\{[^}]*overflow:\s*visible/.test(landingCss)) {
+  errors.push('landing .slot must use overflow: visible so shadows follow the radius');
+}
+if (
+  !landingCss.includes('caseRuleDraw') ||
+  !landingCss.includes('animation-timeline: view()') ||
+  !landingCss.includes('--rule-draw')
+) {
+  errors.push('landing case spine must reveal with scroll (view timeline + --rule-draw)');
+}
+if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
+  errors.push('hero spine must stay on the intro grow, not the case progressor');
+}
+if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
+  errors.push('landing.css must not hide slot media with opacity:0; reveal owns enter, placeholder is load-fail only');
+}
+
+const slotAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectSlot.astro'), 'utf8');
+if (/<a class="slot"[^>]*data-reveal/.test(slotAstro) || /class:list=\{\['slot'[\s\S]*?data-reveal="media"/.test(slotAstro.split('slot__media')[0])) {
+  errors.push('ProjectSlot.astro must put data-reveal on inner media, not the slot chrome');
+}
+if (!slotAstro.includes('slot__media') || !slotAstro.includes('data-reveal="media"')) {
+  errors.push('ProjectSlot.astro must wrap img/video in .slot__media with data-reveal=media');
 }
 
 const landingFeatured = projectsMod.landingProjects();

@@ -1,0 +1,251 @@
+/* ============================================================================
+   yy-motion.css — named enter/exit recipes for landing, Astro pages, and
+   Webflow case gaps (what IX2 does not own).
+
+   ONE-SHOT default enter: edit the :root --reveal-text-* block below.
+   Media inherits those tokens. Page fades are --page-fade-*.
+
+   Per-node override (no new recipe):
+     style="--reveal-delay: 120ms; --reveal-distance: 8px;
+            --reveal-duration: 400ms; --reveal-blur: 0px"
+
+   Named recipes: text | fade | wipe | media | clip | intro-meta | intro-headline
+   Homepage cases use data-reveal-sync="case" so the label and media start together.
+
+   HARD RULE: default enter animates opacity + transform only.
+   clip-path stays on optional wipe/clip recipes. Do not set grid, padding, or color.
+   IX2 ([data-w-id]) is a different writer — do not target those nodes here.
+   ============================================================================ */
+
+:root {
+  /* ---- default TEXT enter (change these to restyle the whole site) ---- */
+  --reveal-text-distance: var(--distance-base);
+  --reveal-text-blur: 0px;
+  --reveal-text-duration: var(--duration-fast);
+  --reveal-text-ease: var(--ease-smooth-out);
+
+  /* ---- MEDIA inherits text; override these to restyle images only ---- */
+  --reveal-media-distance: var(--reveal-text-distance);
+  --reveal-media-duration: var(--reveal-text-duration);
+  --reveal-media-ease: var(--reveal-text-ease);
+  --reveal-media-scale: 1;
+
+  /* ---- MPA page fade (View Transitions API) ---- */
+  --page-fade-out: 180ms;
+  --page-fade-in: 220ms;
+  --page-fade-ease: var(--ease-smooth-out);
+
+  /* Per-element knobs (inherit; set on a node to customize) */
+  --reveal-distance: var(--reveal-text-distance);
+  --reveal-blur: var(--reveal-text-blur);
+  --reveal-duration: var(--reveal-text-duration);
+  --reveal-ease: var(--reveal-text-ease);
+  --reveal-delay: var(--d, 0s);
+}
+
+/* ---------------------------------------------------------------------------
+   Cross-document page fade. Unsupported browsers keep instant navigation.
+   Nav/footer keep their own snapshot so the capsule does not fade with copy.
+   --------------------------------------------------------------------------- */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: yy-page-out var(--page-fade-out) var(--page-fade-ease) both;
+}
+
+::view-transition-new(root) {
+  animation: yy-page-in var(--page-fade-in) var(--page-fade-ease) both;
+}
+
+@keyframes yy-page-out {
+  to { opacity: 0; }
+}
+
+@keyframes yy-page-in {
+  from { opacity: 0; }
+}
+
+yy-nav {
+  view-transition-name: yy-nav;
+}
+
+yy-footer {
+  view-transition-name: yy-footer;
+}
+
+#yy-cursor {
+  view-transition-name: yy-cursor;
+}
+
+/* ---------------------------------------------------------------------------
+   Gate: html.yy-reveal is set by yy-reveal.js only. JS off → visible content.
+   --------------------------------------------------------------------------- */
+
+html.yy-reveal .yy-rv,
+html.yy-reveal .rv,
+html.yy-reveal [data-reveal="text"],
+html.yy-reveal [data-reveal="fade"],
+html.yy-reveal [data-reveal="wipe"],
+html.yy-reveal [data-reveal="media"],
+html.yy-reveal [data-reveal="clip"],
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]) {
+  transition-property: opacity, transform;
+  transition-duration: var(--reveal-duration);
+  transition-timing-function: var(--reveal-ease);
+  transition-delay: var(--reveal-delay);
+  will-change: opacity, transform;
+}
+
+html.yy-reveal [data-reveal="wipe"],
+html.yy-reveal [data-reveal="clip"],
+html.yy-reveal .yy-rv--wipe {
+  transition-property: opacity, transform, clip-path;
+}
+
+/* Hidden state is :not(.in) so adding .in cannot lose a specificity fight. */
+html.yy-reveal .yy-rv:not(.in),
+html.yy-reveal .rv:not(.in),
+html.yy-reveal [data-reveal="text"]:not(.in),
+html.yy-reveal [data-reveal="media"]:not(.in),
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="clip"]):not(.in) {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance));
+}
+
+html.yy-reveal [data-reveal="media"] {
+  --reveal-distance: var(--reveal-media-distance);
+  --reveal-duration: var(--reveal-media-duration);
+  --reveal-ease: var(--reveal-media-ease);
+}
+
+html.yy-reveal [data-reveal="fade"]:not(.in) {
+  opacity: 0;
+  transform: none;
+}
+
+html.yy-reveal [data-reveal="clip"]:not(.in) {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance));
+  clip-path: inset(0 0 100% 0);
+  overflow: hidden;
+}
+
+html.yy-reveal .yy-rv--wipe:not(.in),
+html.yy-reveal [data-reveal="wipe"]:not(.in) {
+  opacity: 0;
+  transform: scale(var(--reveal-media-scale));
+  clip-path: inset(100% 0 0 0);
+}
+
+html.yy-reveal .yy-rv.in,
+html.yy-reveal .rv.in,
+html.yy-reveal [data-reveal].in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+html.yy-reveal .yy-rv--wipe.in,
+html.yy-reveal [data-reveal="wipe"].in,
+html.yy-reveal [data-reveal="clip"].in {
+  clip-path: inset(0 0 0 0);
+}
+
+html.yy-reveal [data-reveal="none"] {
+  opacity: 1;
+  transform: none;
+  clip-path: none;
+  transition: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Landing hero intro — CSS timeline, not IntersectionObserver.
+   Same 250ms fade-up as the default enter recipe.
+   --------------------------------------------------------------------------- */
+
+html.yy-landing [data-reveal="intro-meta"],
+html.yy-landing [data-reveal="intro-headline"] {
+  opacity: 0;
+}
+
+html.yy-landing [data-reveal="intro-headline"] {
+  transform: translateY(var(--reveal-text-distance));
+}
+
+[data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"] {
+  animation: yy-intro-fade var(--reveal-text-duration) var(--reveal-text-ease) both;
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-reveal="intro-meta"] {
+  animation-delay: var(--duration-stagger);
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-reveal="intro-meta"] {
+  animation-delay: calc(var(--duration-stagger) * 2);
+}
+
+[data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-reveal="intro-meta"] {
+  animation-delay: var(--duration-stagger);
+}
+
+[data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
+  animation: yy-intro-text var(--reveal-text-duration) var(--reveal-text-ease) calc(var(--duration-stagger) * 3) both;
+}
+
+@keyframes yy-intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-text-distance));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes yy-intro-text {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-text-distance));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.yy-reveal .yy-rv,
+  html.yy-reveal .rv,
+  html.yy-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: none;
+    transition: none;
+  }
+
+  html.yy-landing [data-reveal="intro-meta"],
+  html.yy-landing [data-reveal="intro-headline"],
+  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"],
+  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    overflow: visible !important;
+  }
+
+  @view-transition {
+    navigation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
