@@ -138,6 +138,8 @@
     'html.yy-chrome .footer-section:not(:has(.four-column)){display:none}' +
     'html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)){display:none}' +
     'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}' +
+    /* Kill Webflow page preloaders before IX2 can flash display:flex. */
+    '.preloader-lark{display:none!important}' +
     typeBoot;
   (document.head || HTML).appendChild(boot);
 
