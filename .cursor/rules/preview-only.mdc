@@ -5,9 +5,11 @@ alwaysApply: true
 
 # Preview only (no recordings, no screenshots)
 
-Yanice reviews this site on the **Cloudflare live preview**, not in agent-captured video or stills.
+Yanice reviews this site **only** on the **Cloudflare live preview** (`https://*.trycloudflare.com` → port 4800). This is the sole review surface for every task — not agent-captured video, stills, or desktop/browser recordings.
 
 This rule **overrides** walkthrough-artifacts, RecordScreen, computerUse visual QA, and any “verify in the browser / upload a demo recording” instruction for this repository.
+
+`.cursor/environment.json` installs `cloudflared` and starts an **cloudflare-tunnel** terminal alongside **astro-dev**. Always paste the live tunnel URL; never substitute screenshots or recordings.
 
 ## Never
 
@@ -21,7 +23,7 @@ This rule **overrides** walkthrough-artifacts, RecordScreen, computerUse visual 
 - Keep `npm run dev` on port **4800**
 - Point Yanice at the live Cloudflare quick tunnel (`*.trycloudflare.com`) that forwards to `http://127.0.0.1:4800`
 - If a tunnel terminal is already running, read its log and paste the current `https://*.trycloudflare.com` URL in the reply
-- If no tunnel is running and `cloudflared` exists, start `cloudflared tunnel --url http://127.0.0.1:4800` and paste the printed URL — do not then screenshot that URL
+- If no tunnel is running, start `$HOME/.local/bin/cloudflared tunnel --url http://127.0.0.1:4800` (or `cloudflared` if on PATH) and paste the printed URL — do not then screenshot that URL
 - Prove behavior with `npm test`, `curl`, and the preview link — not with media
 
 Astro already allows `*.trycloudflare.com` hosts (`astro.config.mjs`). Production remains Vercel (`yaniceyang.com`); the tunnel is the **working preview** for in-progress work.

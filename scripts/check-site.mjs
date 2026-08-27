@@ -351,8 +351,46 @@ if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
 if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
   errors.push('yy-chrome.js must load the shared cursor sheet and script on every page');
 }
+if (!chromeJs.includes('FLOW_PALETTES') || !chromeJs.includes('loadFlow') || !chromeJs.includes('data-yy-base')) {
+  errors.push('yy-chrome.js must inject #yy-flow with per-project ASCII palettes (FLOW_PALETTES)');
+}
+for (const [flowPage, swatch] of [
+  ['larkdesign.html', '#2a73e2'],
+  ['mckinseyecommerce.html', '#e03400'],
+  ['ai-driven-product-design.html', '#d4c8ff'],
+  ['mifinance.html', '#e8710a'],
+  ['cummins-digitalization.html', '#980000'],
+  ['alzheimerdisease.html', '#8eb0f0'],
+  ['tiktok-research.html', '#3d5a6c']
+]) {
+  if (!chromeJs.includes("'" + flowPage + "'") || !chromeJs.includes("'" + swatch + "'")) {
+    errors.push(`yy-chrome.js FLOW_PALETTES must map ${flowPage} to base ${swatch}`);
+  }
+}
+
+const flowJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-flow.js'), 'utf8');
+if (!flowJs.includes('data-yy-base') || !flowJs.includes('hexToRgb')) {
+  errors.push('yy-flow.js must read case palettes from data-yy-base/alt/idle');
+}
+
+const chromeCssFlow = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCssFlow.includes('yy-flow-case') || !chromeCssFlow.includes('#yy-flow')) {
+  errors.push('yy-chrome.css must position #yy-flow under case content (yy-flow-case)');
+}
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
   errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
+}
+if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'ai-driven-product-design.html'")) {
+  errors.push('yy-chrome.js must whitelist only Opus for dark nav (DARK_NAV_PAGES)');
+}
+if (chromeJs.includes("'larkdesign.html'") && /DARK_NAV_PAGES[\s\S]{0,120}'larkdesign\.html'/.test(chromeJs)) {
+  errors.push('yy-chrome.js must not use dark nav on Lark (light nav only)');
+}
+if (!chromeJs.includes('Popups always light')) {
+  errors.push('yy-chrome.js must keep navigation popups on light tokens (panel-stack --yy-ink)');
+}
+if (/\.panel\.is-work[\s\S]{0,200}background:\s*transparent/.test(chromeJs)) {
+  errors.push('yy-chrome.js Work panel must use a light glass fill, not a transparent backdrop');
 }
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
@@ -373,7 +411,10 @@ if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #
   errors.push('yy-footer host must paint a light band by default so light pages match landing chrome');
 }
 if (!chromeJs.includes(':host(yy-footer.is-dark)') || !chromeJs.includes('DARK_FOOTER')) {
-  errors.push('yy-footer must support is-dark / DARK_FOOTER for Opus Clip and McKinsey');
+  errors.push('yy-footer must support is-dark / DARK_FOOTER for Opus Clip and Alzheimer');
+}
+if (/DARK_FOOTER[\s\S]{0,200}mckinseyecommerce\.html/.test(chromeJs)) {
+  errors.push('yy-chrome.js must not mark McKinsey as a dark footer page (McKinsey is light)');
 }
 
 const chromeCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
@@ -430,6 +471,9 @@ const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
 }
+if (!revealJs.includes("'inout'") || !/defaultMode[\s\S]{0,80}inout/.test(revealJs)) {
+  errors.push('yy-reveal.js must default project pages to data-reveal-mode inout (enter + exit)');
+}
 if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
   errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
 }
@@ -448,19 +492,29 @@ if (!cursorJs.includes('yy-cursor-ready')) {
 }
 if (
   /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
-  /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs)
+  /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs) ||
+  /CASE_TYPE_PAGES[\s\S]*mckinseyecommerce\.html/.test(chromeJs)
 ) {
-  errors.push('Opus and Alzheimer must keep Webflow black/white type — omit them from CASE_TYPE_PAGES');
+  errors.push('Opus, Alzheimer, and McKinsey must keep Webflow black/white type — omit them from CASE_TYPE_PAGES');
+}
+if (!/brand-orb[\s\S]{0,120}36px/.test(chromeJs)) {
+  errors.push('yy-chrome.js Orbit brand-orb must be 36px');
 }
 
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
 const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
 const caseTypeCssCode = caseTypeCss.replace(/\/\*[\s\S]*?\*\//g, '');
-if (!caseTypeCss.includes('--ink-2')) {
-  errors.push('yy-case-type.css must use landing ink tokens');
+if (!caseTypeCss.includes('--t-16') || !caseTypeCss.includes('--lh-body')) {
+  errors.push('yy-case-type.css must use landing typography tokens');
 }
 if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
   errors.push('yy-case-type.css must restyle display, mid, and label headings');
+}
+if (caseTypeCssCode.includes('background-color: var(--ground)') || caseTypeCssCode.includes('color: var(--ink)')) {
+  errors.push('yy-case-type.css must not override authored page colors or backgrounds');
+}
+if (caseTypeCssCode.includes('aspect-ratio') || caseTypeCssCode.includes('object-fit')) {
+  errors.push('yy-case-type.css must not resize or crop case-study images');
 }
 if (caseTypeCssCode.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not change .section-layout1 horizontal padding');
@@ -473,9 +527,6 @@ if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(c
 }
 if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not use margin shorthand that zeros left/right');
-}
-if (!caseTypeCssCode.includes('object-fit: contain') || !caseTypeCssCode.includes('.grid-2-2')) {
-  errors.push('yy-case-type.css must equalize .grid-2-2 paired image cell heights');
 }
 
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
@@ -520,7 +571,10 @@ if (
   !caseLayoutCss.includes('.step-card-2') ||
   !caseLayoutCss.includes('backdrop-filter: blur(16px)')
 ) {
-  errors.push('yy-case-layout.css must frost HTML cards so they read as glass');
+  errors.push('yy-case-layout.css must frost shadow-card as white glass');
+}
+if (/\.step-card-2\s*\{[^}]*backdrop-filter:\s*blur/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not blur Lark step-card-2 — radius only, keep blue wash visible');
 }
 if (!caseLayoutCss.includes('.section7') || !caseLayoutCss.includes('overflow: visible')) {
   errors.push('yy-case-layout.css must not let .section7 clip McKinsey glass backdrops');
@@ -544,14 +598,17 @@ if (
 ) {
   errors.push('yy-case-layout.css must keep --case-radius on HTML cards only');
 }
-if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('border-radius: 0')) {
-  errors.push('yy-case-layout.css must not round exported images including .grid-img');
+if (caseLayoutCss.includes('.grid-img') && /grid-img[\s\S]{0,120}border-radius:\s*0/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not override Webflow .grid-img corners');
 }
-if (!caseLayoutCss.includes('.image-57') || !caseLayoutCss.includes('border-radius: 20px')) {
-  errors.push('yy-case-layout.css must soften McKinsey flow-board radius and shadow');
+if (caseLayoutCss.includes('.body.blk .shadow-card') && caseLayoutCss.includes('rgba(16, 16, 14')) {
+  errors.push('yy-case-layout.css must not force dark glass cards on .body.blk / .body.al pages');
 }
-if (!caseLayoutCss.includes('overflow: visible')) {
-  errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
+if (caseLayoutCss.includes('.image-57') && /image-57[\s\S]{0,200}border-radius/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not override Webflow .image-57 corners or shadow');
+}
+if (!caseLayoutCss.includes('.body.blk yy-footer') || !caseLayoutCss.includes('background-color: transparent')) {
+  errors.push('yy-case-layout.css must not force a white yy-footer band on dark case pages');
 }
 if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
   errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
@@ -571,6 +628,11 @@ for (const name of caseLayoutPages) {
   if (!html.includes('yy-case-layout.css')) {
     errors.push(`${name}: missing yy-case-layout.css link`);
   }
+}
+
+const mckHtml = fs.readFileSync(path.join(ROOT, 'mckinseyecommerce.html'), 'utf8');
+if (/<body[^>]*\bblk\b/.test(mckHtml)) {
+  errors.push('mckinseyecommerce.html must be a light page — do not use body.blk (black ground + black .paragraph)');
 }
 
 for (const panelName of ['work', 'about', 'resume']) {
@@ -637,8 +699,8 @@ if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
     !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
   errors.push('yy-chrome.js must keep main nav on Resume popup and enter section nav only on expand');
 }
-if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }') ||
-    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }')) {
+if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }') ||
+    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }')) {
   errors.push('yy-chrome.js capsule must show a selected pill for active nav items');
 }
 if (chromeJs.includes('width: 36px; height: 36px;') &&
@@ -721,11 +783,14 @@ if (indexAstro.includes('data-intro=')) {
 if (indexAstro.includes('reveal={false}')) {
   errors.push('src/pages/index.astro must load yy-reveal.js for below-fold recipes (explicit nodes only)');
 }
-if (indexAstro.includes('yy-flow.js')) {
-  errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+if (!indexAstro.includes('id="yy-flow"') || !indexAstro.includes('yy-flow.js')) {
+  errors.push('src/pages/index.astro must mount #yy-flow and load yy-flow.js for ASCII cursor wake');
 }
 
 const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (!/html\.yy-landing[\s\S]{0,240}background:\s*var\(--ground\)/.test(landingCss)) {
+  errors.push('landing.css must set html.yy-landing background to var(--ground) for light nav chrome');
+}
 if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
   errors.push('landing .slot must not use left/right directional shadows that square the corners');
 }
@@ -750,10 +815,12 @@ if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
 }
 
 const slotAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectSlot.astro'), 'utf8');
+const slotMediaAstro = fs.readFileSync(path.join(ROOT, 'src/components/SlotMedia.astro'), 'utf8');
+const slotMarkup = slotAstro + slotMediaAstro;
 if (/<a class="slot"[^>]*data-reveal/.test(slotAstro) || /class:list=\{\['slot'[\s\S]*?data-reveal="media"/.test(slotAstro.split('slot__media')[0])) {
   errors.push('ProjectSlot.astro must put data-reveal on inner media, not the slot chrome');
 }
-if (!slotAstro.includes('slot__media') || !slotAstro.includes('data-reveal="wipe"')) {
+if (!slotMarkup.includes('slot__media') || !slotMarkup.includes('data-reveal="wipe"')) {
   errors.push('ProjectSlot.astro must wrap img/video in .slot__media with data-reveal=wipe');
 }
 

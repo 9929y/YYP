@@ -1,10 +1,14 @@
 {
   "name": "Yanice Yang Portfolio",
-  "install": "npm ci",
+  "install": "npm ci && mkdir -p \"$HOME/.local/bin\" && (test -x \"$HOME/.local/bin/cloudflared\" || (curl -fsSL -o \"$HOME/.local/bin/cloudflared\" https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x \"$HOME/.local/bin/cloudflared\"))",
   "terminals": [
     {
       "name": "astro-dev",
       "command": "npm run dev"
+    },
+    {
+      "name": "cloudflare-tunnel",
+      "command": "$HOME/.local/bin/cloudflared tunnel --url http://127.0.0.1:4800"
     }
   ]
 }

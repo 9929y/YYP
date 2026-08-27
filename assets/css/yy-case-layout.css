@@ -196,8 +196,8 @@
 .body.al yy-footer {
   display: block;
   width: 100%;
-  background-color: #fff;
-  color: #1a1917;
+  background-color: transparent;
+  color: inherit;
 }
 
 .body.al .ural .headingpt.al:not(.white):not(.new) {
@@ -209,29 +209,38 @@
 }
 
 /* ---------- HTML glass cards ----------
-   Same frost as the nav capsule. Fill stays translucent so Lark's blue wash
-   still reads through 01–06. McKinsey sits on white, so a top specular
-   layer plus saturate keeps the glass from collapsing into a solid tile.
+   `--case-radius` is for inner HTML cards only. Lark 01–06 stay transparent
+   so `.backgroundcolor` / `.thechallenge.lark` washes show through. McKinsey
+   `.shadow-card` keeps a stronger white frost on the white Takeaways section.
+   Bitmaps keep Webflow corners and shadows — never round those here.
    `.section7` clips on desktop and would flatten the backdrop. */
 .shadow-card,
 .step-card-2 {
   box-sizing: border-box;
   position: relative;
   border-radius: var(--case-radius);
+}
+
+.shadow-card > *,
+.step-card-2 > * {
+  position: relative;
+  z-index: 1;
+}
+
+.shadow-card {
   background: rgba(255, 255, 255, 0.42);
   -webkit-backdrop-filter: blur(16px) saturate(1.8);
   backdrop-filter: blur(16px) saturate(1.8);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.92),
     inset 0 0 0 1px rgba(255, 255, 255, 0.65),
-    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    inset 0 -1px 0 rgba(36, 34, 32, 0.05),
     0 1px 2px rgba(62, 65, 116, 0.07),
     0 2px 8px -2px rgba(62, 65, 116, 0.09),
     0 12px 36px -8px rgba(62, 65, 116, 0.20);
 }
 
-.shadow-card::before,
-.step-card-2::before {
+.shadow-card::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -245,15 +254,15 @@
   );
 }
 
-.shadow-card > *,
-.step-card-2 > * {
-  position: relative;
-  z-index: 1;
+.step-card-2 {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .shadow-card,
-  .step-card-2 {
+  .shadow-card {
     background: rgba(255, 255, 255, 0.88);
   }
 }
@@ -341,34 +350,14 @@
   grid-row-gap: 16px;
 }
 
-/* Background / composite images: no site radius. `.grid-img` is 20px in
-   Webflow; that still clips the painted canvas, so force 0. */
-.lightbox-link-4,
-.lightbox-link-4 img,
-.containerforimg img,
-.containerforimg2 img,
-.showroom img,
-.div-block-37 img,
-.layout125_component img,
-.image-15,
-.image-17,
-.image-18,
-.grid-img {
-  border-radius: 0;
-  overflow: visible;
-  background: transparent;
+/* Lark Final Design screenshot grid — keep Webflow's gray tray and cell gutters.
+   Do not flatten, round, or glass these bitmap tiles. */
+.rotate-grid:not(.mck) {
+  background-color: #e9e9e9;
 }
 
-/* McKinsey flow boards (`.image-57`) used a hard 5px/10px offset shadow
-   with square corners — that is the right-angle umbra. Soft dual drop,
-   20px radius (not the 36px HTML card token), overflow visible. */
-.lightbox-link-4 img.image-57,
-.image-57 {
-  display: block;
-  border-radius: 20px;
-  overflow: visible;
-  background: transparent;
-  box-shadow:
-    0 4px 14px rgba(20, 20, 20, 0.08),
-    0 14px 36px -10px rgba(20, 20, 20, 0.16);
-}
+/* ---------- McKinsey light shell ----------
+   Webflow exported McKinsey as `body.blk` (black ground) while `.paragraph`
+   stays `color: black`. That made body copy invisible and washed captions.
+   HTML drops `blk`; hero keeps its own navy `.grid-wrapper-5`. Do not re-add
+   body.blk or dark ink overrides here. */

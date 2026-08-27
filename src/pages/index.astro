@@ -44,6 +44,8 @@ const cases = landingProjects();
       aria-hidden="true"
     ></div>
 
+    <canvas id="yy-flow" aria-hidden="true"></canvas>
+
     <main class="wrap">
       <section class="hero row row--ruled" data-section="hero">
         <div class="hero__col hero__col--lead">
@@ -76,6 +78,7 @@ const cases = landingProjects();
   </div>
 
   <Fragment slot="scripts">
+    <script is:inline src="/assets/js/yy-flow.js"></script>
     <script is:inline src="/assets/js/yy-slots.js"></script>
     <script is:inline src="/assets/js/yy-canvas-motion.js"></script>
   </Fragment>
