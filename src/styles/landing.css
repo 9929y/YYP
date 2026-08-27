@@ -612,6 +612,15 @@
     display: block;
   }
 
+  /* Eager poster under the first-case video so LCP paints before media bytes. */
+  .slot__poster {
+    z-index: 0;
+  }
+
+  .slot__v {
+    z-index: 1;
+  }
+
   /* Placeholder only when there is no file or the load failed. */
   .slot .ph {
     opacity: 0;

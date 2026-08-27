@@ -836,8 +836,42 @@ if (landingFeatured.length !== 4) {
 }
 
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');
-if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 15 * 1024 * 1024) {
-  errors.push('case-opusclip-marquee.mp4 exceeds the 15 MB homepage media budget');
+if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 5.5 * 1024 * 1024) {
+  errors.push('case-opusclip-marquee.mp4 exceeds the 5.5 MB homepage thumbnail budget');
+}
+
+const landingVideoBudget = 5.5 * 1024 * 1024;
+for (const project of landingFeatured) {
+  if (!project.video?.src) {
+    errors.push(`${project.slug}: landing case must use a video thumbnail`);
+    continue;
+  }
+  const videoPath = path.join(ROOT, toDisk(project.video.src));
+  if (fs.existsSync(videoPath) && fs.statSync(videoPath).size > landingVideoBudget) {
+    errors.push(`${project.slug}: landing video exceeds 5.5 MB thumbnail budget`);
+  }
+  if (!project.video.poster || !/assets\/images\/home\/case-[a-z0-9-]+\.jpe?g$/i.test(project.video.poster)) {
+    errors.push(`${project.slug}: landing poster must be a case-*.jpg frame from the video`);
+  }
+  if (project.video.poster && /hero-.*-card-cover/.test(project.video.poster)) {
+    errors.push(`${project.slug}: landing poster must not use legacy hero-*-card-cover thumbnails`);
+  }
+}
+
+if (!slotMediaAstro.includes('priority') || !slotMediaAstro.includes("priority || play === 'hover' ? 'metadata'")) {
+  errors.push('SlotMedia.astro must preload metadata only for the priority (first) case');
+}
+if (!slotMediaAstro.includes('slot__poster') || !slotMediaAstro.includes('fetchpriority')) {
+  errors.push('SlotMedia.astro must render a priority poster <img> for the first landing case');
+}
+
+const projectIndexAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8');
+if (!projectIndexAstro.includes('priority={index === 0}')) {
+  errors.push('ProjectIndex.astro must mark the first case SlotMedia as priority');
+}
+
+if (!indexAstro.includes('rel="preload"') || !indexAstro.includes('as="image"')) {
+  errors.push('index.astro must preload the first case poster image');
 }
 
 const canvasGif = path.join(ROOT, 'assets/images/home/landing-canvas.gif');

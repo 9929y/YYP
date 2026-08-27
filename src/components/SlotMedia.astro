@@ -5,29 +5,48 @@ import { publicUrl } from '../data/projects';
 interface Props {
   project: Project;
   play: 'hover' | 'scroll' | 'auto';
+  /** First above-the-fold case: eager poster + metadata preload. */
+  priority?: boolean;
 }
 
-const { project, play } = Astro.props;
+const { project, play, priority = false } = Astro.props;
+const posterUrl = project.video?.poster ? publicUrl(project.video.poster) : undefined;
+const preload =
+  priority || play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none';
 ---
 
 <span class="slot__media" data-reveal="wipe">
   {
     project.video ? (
-      <video
-        class="slot__v"
-        poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
-        muted
-        loop
-        playsinline
-        autoplay={play === 'auto'}
-        preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
-        width={project.video.width}
-        height={project.video.height}
-        aria-label={project.video.label}
-        data-play={play}
-      >
-        <source src={publicUrl(project.video.src)} type="video/mp4" />
-      </video>
+      <>
+        {priority && posterUrl && (
+          <img
+            class="slot__poster"
+            src={posterUrl}
+            alt=""
+            width={project.video.width}
+            height={project.video.height}
+            decoding="async"
+            fetchpriority="high"
+            loading="eager"
+          />
+        )}
+        <video
+          class="slot__v"
+          poster={priority ? undefined : posterUrl}
+          muted
+          loop
+          playsinline
+          autoplay={play === 'auto'}
+          preload={preload}
+          width={project.video.width}
+          height={project.video.height}
+          aria-label={project.video.label}
+          data-play={play}
+        >
+          <source src={publicUrl(project.video.src)} type="video/mp4" />
+        </video>
+      </>
     ) : (
       project.cover && (
         <img

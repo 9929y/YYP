@@ -7,6 +7,7 @@ import { landingProjects } from '../data/projects';
 import '../styles/landing.css';
 
 const cases = landingProjects();
+const firstPoster = cases[0]?.video?.poster ? `/${cases[0].video.poster}` : null;
 ---
 
 <!--
@@ -24,6 +25,9 @@ const cases = landingProjects();
   lenis={true}
   chrome={true}
 >
+  {firstPoster && (
+    <link slot="head" rel="preload" as="image" href={firstPoster} fetchpriority="high" />
+  )}
   <div data-motion-root>
     <div class="yy-canvas" data-motion-layer="canvas" data-canvas-live="false" aria-hidden="true">
       <!-- Still paints immediately; WebGL hydrates on idle and crossfades in. -->

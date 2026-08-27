@@ -36,7 +36,7 @@ const { projects } = Astro.props;
           <p class="case__scope">{project.scope}</p>
         </div>
       </div>
-      <ProjectSlot project={project} />
+      <ProjectSlot project={project} priority={index === 0} />
     </article>
   ))
 }

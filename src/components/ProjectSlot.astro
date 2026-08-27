@@ -5,9 +5,11 @@ import SlotMedia from './SlotMedia.astro';
 
 interface Props {
   project: Project;
+  /** First landing case: eager poster + video preload=metadata. */
+  priority?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, priority = false } = Astro.props;
 const href = project.href ? publicUrl(project.href) : undefined;
 const label = `${project.title} case study`;
 const play = project.video?.play ?? 'scroll';
@@ -24,7 +26,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
     </div>
   ) : showMedia && href ? (
     <a class="slot" href={href} aria-label={label} data-cursor-label="view">
-      <SlotMedia project={project} play={play} />
+      <SlotMedia project={project} play={play} priority={priority} />
     </a>
   ) : showMedia ? (
     <div
@@ -35,7 +37,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       data-cursor-chip={project.status === 'in-progress' ? 'true' : undefined}
       data-status={project.status}
     >
-      <SlotMedia project={project} play={play} />
+      <SlotMedia project={project} play={play} priority={priority} />
     </div>
   ) : null
 }
