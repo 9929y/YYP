@@ -128,11 +128,13 @@
   var typeBoot = '';
   if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
     HTML.className += ' yy-case-type';
-    /* Inline so black Webflow shells cannot flash or win on specificity
-       before yy-case-type.css arrives. */
-    typeBoot =
-      'html.yy-case-type,html.yy-case-type body' +
-      '{background-color:#fff!important;color:#1a1917!important}';
+    /* Work hub only: inline white ground before CSS loads. Case studies keep
+       Webflow-authored page colors (Lark blue wash, etc.). */
+    if (currentPage() === 'projects.html') {
+      typeBoot =
+        'html.yy-case-type,html.yy-case-type body' +
+        '{background-color:#fff!important;color:#1a1917!important}';
+    }
   }
 
   var boot = document.createElement('style');

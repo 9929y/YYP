@@ -460,11 +460,17 @@ if (!/brand-orb[\s\S]{0,120}36px/.test(chromeJs)) {
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
 const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
 const caseTypeCssCode = caseTypeCss.replace(/\/\*[\s\S]*?\*\//g, '');
-if (!caseTypeCss.includes('--ink-2')) {
-  errors.push('yy-case-type.css must use landing ink tokens');
+if (!caseTypeCss.includes('--t-16') || !caseTypeCss.includes('--lh-body')) {
+  errors.push('yy-case-type.css must use landing typography tokens');
 }
 if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
   errors.push('yy-case-type.css must restyle display, mid, and label headings');
+}
+if (caseTypeCssCode.includes('background-color: var(--ground)') || caseTypeCssCode.includes('color: var(--ink)')) {
+  errors.push('yy-case-type.css must not override authored page colors or backgrounds');
+}
+if (caseTypeCssCode.includes('aspect-ratio') || caseTypeCssCode.includes('object-fit')) {
+  errors.push('yy-case-type.css must not resize or crop case-study images');
 }
 if (caseTypeCssCode.includes('.section-layout1') && /section-layout1[^{]*\{[^}]*padding-left/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not change .section-layout1 horizontal padding');
@@ -477,9 +483,6 @@ if (/\bpadding-left\b|\bpadding-right\b|\bmargin-left\b|\bmargin-right\b/.test(c
 }
 if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not use margin shorthand that zeros left/right');
-}
-if (!caseTypeCssCode.includes('object-fit: contain') || !caseTypeCssCode.includes('.grid-2-2')) {
-  errors.push('yy-case-type.css must equalize .grid-2-2 paired image cell heights');
 }
 
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
@@ -522,9 +525,10 @@ if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
 if (
   !caseLayoutCss.includes('.shadow-card') ||
   !caseLayoutCss.includes('.step-card-2') ||
-  !caseLayoutCss.includes('backdrop-filter: blur(16px)')
+  !caseLayoutCss.includes('backdrop-filter: blur(16px)') ||
+  !caseLayoutCss.includes('backdrop-filter: blur(12px)')
 ) {
-  errors.push('yy-case-layout.css must frost HTML cards so they read as glass');
+  errors.push('yy-case-layout.css must frost shadow-card and step-card-2 as separate glass recipes');
 }
 if (!caseLayoutCss.includes('.section7') || !caseLayoutCss.includes('overflow: visible')) {
   errors.push('yy-case-layout.css must not let .section7 clip McKinsey glass backdrops');
@@ -548,23 +552,17 @@ if (
 ) {
   errors.push('yy-case-layout.css must keep --case-radius on HTML cards only');
 }
-if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('border-radius: 0')) {
-  errors.push('yy-case-layout.css must not round exported images including .grid-img');
+if (caseLayoutCss.includes('.grid-img') && /grid-img[\s\S]{0,120}border-radius:\s*0/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not override Webflow .grid-img corners');
 }
-if (
-  !caseLayoutCss.includes('.body.blk .shadow-card') ||
-  !caseLayoutCss.includes('rgba(16, 16, 14')
-) {
-  errors.push('yy-case-layout.css must use dark glass cards on .body.blk / .body.al pages');
+if (caseLayoutCss.includes('.body.blk .shadow-card') && caseLayoutCss.includes('rgba(16, 16, 14')) {
+  errors.push('yy-case-layout.css must not force dark glass cards on .body.blk / .body.al pages');
+}
+if (caseLayoutCss.includes('.image-57') && /image-57[\s\S]{0,200}border-radius/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not override Webflow .image-57 corners or shadow');
 }
 if (!caseLayoutCss.includes('.body.blk yy-footer') || !caseLayoutCss.includes('background-color: transparent')) {
   errors.push('yy-case-layout.css must not force a white yy-footer band on dark case pages');
-}
-if (!caseLayoutCss.includes('.image-57') || !caseLayoutCss.includes('border-radius: 20px')) {
-  errors.push('yy-case-layout.css must soften McKinsey flow-board radius and shadow');
-}
-if (!caseLayoutCss.includes('overflow: visible')) {
-  errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
 }
 if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
   errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
