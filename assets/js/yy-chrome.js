@@ -340,8 +340,8 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 22px; height: 22px;',
-    '  border-radius: 50%; object-fit: cover;',
+    '  display: block; width: 16px; height: 16px;',
+    '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
@@ -496,7 +496,7 @@
     '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
-    '  .brand-orb{ width: 34px; height: 34px; }',
+    '  .brand-orb{ width: 16px; height: 16px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',
@@ -1266,7 +1266,7 @@
         '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
           '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
-            '" alt="" width="22" height="22" decoding="async">' +
+            '" alt="" width="16" height="16" decoding="async">' +
         '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
