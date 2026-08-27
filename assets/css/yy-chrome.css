@@ -158,6 +158,10 @@ html.yy-reveal .slot.rv.in .slot__media {
     filter: none;
     transition: none;
   }
+  html.yy-reveal .slot.rv .slot__media {
+    filter: none;
+    transition: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
