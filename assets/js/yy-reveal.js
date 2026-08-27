@@ -138,22 +138,6 @@
     revealList(onScreenItems(items), null);
   }
 
-  /** Landing cases + index head: show immediately, no scroll enter animation. */
-  function landingInstantReveal(items) {
-    var remaining = [];
-    for (var i = 0; i < items.length; i++) {
-      var el = items[i];
-      if (el.closest && el.closest('.case, .index__head')) {
-        el.style.setProperty('--reveal-duration', '0ms');
-        el.style.setProperty('--d', '0ms');
-        el.classList.add('in');
-      } else {
-        remaining.push(el);
-      }
-    }
-    return remaining;
-  }
-
   try {
     if (!('IntersectionObserver' in window)) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -163,7 +147,6 @@
         var isLanding = /\byy-landing\b/.test(html.className);
         var explicit = collectExplicit();
         var items = (isLanding || explicit.length) ? explicit : collectAuto();
-        if (isLanding) items = landingInstantReveal(items);
         if (!items.length) return;
 
         if (!explicit.length && !isLanding) {
@@ -205,14 +188,12 @@
             }
           }
         };
-        if (!isLanding) {
-          var sweepTimer = null;
-          window.addEventListener('scroll', function () {
-            clearTimeout(sweepTimer);
-            sweepTimer = setTimeout(sweep, 400);
-          }, { passive: true });
-          setTimeout(sweep, 2500);
-        }
+        var sweepTimer = null;
+        window.addEventListener('scroll', function () {
+          clearTimeout(sweepTimer);
+          sweepTimer = setTimeout(sweep, isLanding ? 200 : 400);
+        }, { passive: true });
+        setTimeout(sweep, isLanding ? 900 : 2500);
 
         requestAnimationFrame(function () {
           revealList(onScreenItems(items), io);
