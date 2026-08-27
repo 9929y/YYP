@@ -186,10 +186,51 @@
         canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
       } catch (e) { canHover = false; }
 
+      /* Lazy cases ship without <source>; attach bytes only when near/in view. */
+      function ensureSource(v) {
+        if (v.dataset.yySrcReady === '1') return Promise.resolve();
+        var src = v.getAttribute('data-src');
+        var webm = v.getAttribute('data-webm');
+        if (!src && !webm) {
+          v.dataset.yySrcReady = '1';
+          return Promise.resolve();
+        }
+        if (webm) {
+          var webmSource = document.createElement('source');
+          webmSource.src = webm;
+          webmSource.type = 'video/webm';
+          v.appendChild(webmSource);
+          v.removeAttribute('data-webm');
+        }
+        if (src) {
+          var source = document.createElement('source');
+          source.src = src;
+          source.type = 'video/mp4';
+          v.appendChild(source);
+          v.removeAttribute('data-src');
+        }
+        v.dataset.yySrcReady = '1';
+        if (v.preload === 'none') v.preload = 'metadata';
+        try { v.load(); } catch (err) { /* ignore */ }
+        if (v.readyState >= 2) return Promise.resolve();
+        return new Promise(function (resolve) {
+          var done = function () {
+            v.removeEventListener('loadeddata', done);
+            v.removeEventListener('error', done);
+            resolve();
+          };
+          v.addEventListener('loadeddata', done, { once: true });
+          v.addEventListener('error', done, { once: true });
+        });
+      }
+
       function tryPlay(v) {
         if (panelExpanded || !v || typeof v.play !== 'function') return;
-        var pr = v.play();
-        if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
+        ensureSource(v).then(function () {
+          if (panelExpanded || !v || typeof v.play !== 'function') return;
+          var pr = v.play();
+          if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
+        });
       }
 
       function wireHover(v) {
@@ -205,9 +246,6 @@
         };
         slot.addEventListener('pointerenter', enter);
         slot.addEventListener('pointerleave', leave);
-        /* Warm the first frame so hover does not wait on cold start. */
-        if (v.preload === 'none') v.preload = 'metadata';
-        try { v.load(); } catch (e) { /* ignore */ }
       }
 
       function classifyVideo(v) {

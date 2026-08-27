@@ -373,19 +373,47 @@ if (!chromeCssFlow.includes('yy-flow-case') || !chromeCssFlow.includes('#yy-flow
   errors.push('yy-chrome.css must position #yy-flow under case content (yy-flow-case)');
 }
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
-  errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
+  errors.push('yy-chrome.js must mark Opus pages (yy-chrome-on-dark / on-dark)');
 }
 if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'ai-driven-product-design.html'")) {
-  errors.push('yy-chrome.js must whitelist only Opus for dark nav (DARK_NAV_PAGES)');
+  errors.push('yy-chrome.js must whitelist only Opus for Opus nav blur (DARK_NAV_PAGES)');
 }
 if (chromeJs.includes("'larkdesign.html'") && /DARK_NAV_PAGES[\s\S]{0,120}'larkdesign\.html'/.test(chromeJs)) {
   errors.push('yy-chrome.js must not use dark nav on Lark (light nav only)');
+}
+if (/:host\(yy-nav\.on-dark\)[\s\S]{0,120}--yy-ink:/.test(chromeJs)) {
+  errors.push('yy-chrome.js Opus nav must keep default ink (no on-dark text color override)');
+}
+if (!/:host\(yy-nav\.on-dark\)[\s\S]{0,200}blur\(100px\)/.test(chromeJs)) {
+  errors.push('yy-chrome.js Opus nav capsule must use backdrop blur 100px');
 }
 if (!chromeJs.includes('Popups always light')) {
   errors.push('yy-chrome.js must keep navigation popups on light tokens (panel-stack --yy-ink)');
 }
 if (/\.panel\.is-work[\s\S]{0,200}background:\s*transparent/.test(chromeJs)) {
   errors.push('yy-chrome.js Work panel must use a light glass fill, not a transparent backdrop');
+}
+/* Figma glass popup / Canvas Cover / YyNav — light glass for all three popups */
+if (!chromeJs.includes('--yy-panel-fill: rgba(255,255,255,.70)') || !chromeJs.includes('--yy-panel-blur: 200px')) {
+  errors.push('yy-chrome.js must use Figma glass fill (.70) and blur 200px');
+}
+if (!chromeJs.includes('--yy-page-cover-fill: rgba(255,250,250,.20)') || !chromeJs.includes('--yy-page-cover-blur: 100px')) {
+  errors.push('yy-chrome.js must keep Figma Canvas Cover tokens');
+}
+if (!chromeJs.includes('--yy-fill: rgba(255,255,255,.72)') || !chromeJs.includes('blur(8px) saturate(1.6)')) {
+  errors.push('yy-chrome.js nav capsule must use Figma YyNav fill (.72) and blur 8px');
+}
+if (/:host\(yy-nav\.on-dark\)[\s\S]{0,200}--yy-fill:\s*rgba\(16,16,14/.test(chromeJs)) {
+  errors.push('yy-chrome.js must not dark-fill the nav capsule on Opus (text color only)');
+}
+if (!chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)') || !chromeJs.includes('0 5px 40px 2px rgba(0,0,0,.15)')) {
+  errors.push('yy-chrome.js panel must use Figma glass inset + drop shadow');
+}
+/* Shadow DOM cannot sample page backdrop — frost must live in light DOM */
+const chromeCssFrost = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCssFrost.includes('html.yy-panel-open body::before') ||
+    !chromeCssFrost.includes('backdrop-filter: blur(200px)')) {
+  errors.push('yy-chrome.css must frost the page in light DOM while popups are open (blur 200)');
 }
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
@@ -647,7 +675,7 @@ if (!chromeJs.includes('class="expand"')) {
 if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
   errors.push('yy-chrome.js popup missing reduced-motion fallback');
 }
-if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.92)') ||
+if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.78)') ||
     !chromeJs.includes('.panel.is-expanded{') ||
     !chromeJs.includes('.panel-stack.is-expanded{')) {
   errors.push('yy-chrome.js expanded panel must fully cover the viewport with a glass fill');
@@ -674,6 +702,31 @@ for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
 }
+if (!chromeJs.includes(':host(.is-ready.is-open) .panel-stack') ||
+    !chromeJs.includes("host.classList.add('is-ready')") ||
+    !chromeJs.includes("classList.toggle('is-active'") ||
+    !chromeJs.includes('[data-panel-view].is-active') ||
+    !chromeJs.includes('void panel.offsetHeight') ||
+    !chromeJs.includes('armPanelOpen') ||
+    !chromeJs.includes(':not(:defined)') ||
+    !chromeJs.includes('data-yy-pending') ||
+    !chromeJs.includes('waitContentReady') ||
+    !chromeJs.includes('__yyStylesReady')) {
+  errors.push('yy-chrome.js must gate panel visibility on is-ready+is-open and sync is-active views');
+}
+for (const [file, label] of [
+  ['assets/js/yy-work.js', 'Work'],
+  ['assets/js/yy-about.js', 'About'],
+  ['assets/js/yy-resume.js', 'Resume']
+]) {
+  const src = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  if (!src.includes('data-yy-pending') || !src.includes('__yyStylesReady')) {
+    errors.push(`${label} panel CE must hide until stylesheet ready (__yyStylesReady / data-yy-pending)`);
+  }
+  if (!src.includes('Paint markup only after CSS')) {
+    errors.push(`${label} panel CE must defer HTML until stylesheet load (no unstyled FOUC)`);
+  }
+}
 if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {
   errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
@@ -687,7 +740,7 @@ if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
 if (!chromeJs.includes('View full screen') ||
     !chromeJs.includes('expand-label') ||
     !chromeJs.includes("top: 18px; right: 18px;") ||
-    !chromeJs.includes('inset 0 0 0 1.5px rgba(255,255,255,.96)')) {
+    !chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)')) {
   errors.push('yy-chrome.js popup must keep View full screen as an icon inside the panel card');
 }
 if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
@@ -716,8 +769,8 @@ if (!chromeJs.includes("host.classList.toggle('is-fullpage'") ||
     !chromeJs.includes('Go Back')) {
   errors.push('yy-chrome.js fullpage Resume must keep the navigation bar with Go Back');
 }
-if (!chromeJs.includes('inset 0 0 0 1px rgba(255,255,255,.88)')) {
-  errors.push('yy-chrome.js fullpage glass missing its white inset border');
+if (!chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)')) {
+  errors.push('yy-chrome.js fullpage glass missing Figma Glass-canva inset glow');
 }
 if (!chromeJs.includes('--yy-cap-size: 56px') ||
     !chromeJs.includes('bottom: calc(var(--yy-nav-zone) + var(--yy-panel-gap))') ||
@@ -786,6 +839,21 @@ const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'u
 if (!/html\.yy-landing[\s\S]{0,240}background:\s*var\(--ground\)/.test(landingCss)) {
   errors.push('landing.css must set html.yy-landing background to var(--ground) for light nav chrome');
 }
+/* Case title: centered in label column; hover note 24px under title; small = 2-col header */
+if (!landingCss.includes('top: calc(100% + 24px)') || !landingCss.includes('.case__copy')) {
+  errors.push('landing.css must center case title and hang hover note 24px below (.case__copy)');
+}
+if (!landingCss.includes('justify-content: center') || !/align-items:\s*stretch/.test(landingCss)) {
+  errors.push('landing.css case label must vertically center the title against stretched media');
+}
+if (!landingCss.includes('grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)')) {
+  errors.push('landing.css small screens must keep title | note as a 2-column header');
+}
+const projectIndexAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8');
+if (!projectIndexAstro.includes('case__copy') ||
+    !/<div class="case__copy">[\s\S]*?case__meta[\s\S]*?CaseNoteGenerate/.test(projectIndexAstro)) {
+  errors.push('ProjectIndex.astro must render title block before CaseNoteGenerate inside .case__copy');
+}
 if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
   errors.push('landing .slot must not use left/right directional shadows that square the corners');
 }
@@ -804,6 +872,14 @@ if (
 }
 if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
   errors.push('hero spine must stay on the intro grow, not the case progressor');
+}
+if (!landingCss.includes('introLineGrowX') ||
+    !landingCss.includes('transform-origin: left center') ||
+    !landingCss.includes('transform-origin: right center')) {
+  errors.push('landing.css hero hairlines must grow from left/right toward center with introLineGrowX');
+}
+if (!landingCss.includes('.hero__zone--meta::after') || !landingCss.includes('.hero__title::before')) {
+  errors.push('landing.css must draw hero hairlines as ::after/::before (not static borders only)');
 }
 if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
   errors.push('landing.css must not hide slot media with opacity:0; reveal owns enter, placeholder is load-fail only');
@@ -831,8 +907,47 @@ if (landingFeatured.length !== 4) {
 }
 
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');
-if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 15 * 1024 * 1024) {
-  errors.push('case-opusclip-marquee.mp4 exceeds the 15 MB homepage media budget');
+if (fs.existsSync(opusMarquee) && fs.statSync(opusMarquee).size > 5.5 * 1024 * 1024) {
+  errors.push('case-opusclip-marquee.mp4 exceeds the 5.5 MB homepage thumbnail budget');
+}
+
+const landingVideoBudget = 5.5 * 1024 * 1024;
+for (const project of landingFeatured) {
+  if (!project.video?.src) {
+    errors.push(`${project.slug}: landing case must use a video thumbnail`);
+    continue;
+  }
+  const videoPath = path.join(ROOT, toDisk(project.video.src));
+  if (fs.existsSync(videoPath) && fs.statSync(videoPath).size > landingVideoBudget) {
+    errors.push(`${project.slug}: landing video exceeds 5.5 MB thumbnail budget`);
+  }
+  if (!project.video.poster || !/assets\/images\/home\/case-[a-z0-9-]+-frame\.jpe?g$/i.test(project.video.poster)) {
+    errors.push(`${project.slug}: landing poster must be a case-*-frame.jpg extracted from the video`);
+  }
+  if (project.video.poster && /hero-.*-card-cover/.test(project.video.poster)) {
+    errors.push(`${project.slug}: landing poster must not use legacy hero-*-card-cover thumbnails`);
+  }
+}
+
+if (!slotMediaAstro.includes('priority') || !slotMediaAstro.includes("priority ? 'metadata'")) {
+  errors.push('SlotMedia.astro must preload metadata only for the priority (first) case');
+}
+if (!slotMediaAstro.includes('slot__poster') || !slotMediaAstro.includes('fetchpriority')) {
+  errors.push('SlotMedia.astro must render a poster <img> (eager for first case)');
+}
+if (!slotMediaAstro.includes('data-src') || !/priority \? undefined : videoUrl/.test(slotMediaAstro)) {
+  errors.push('SlotMedia.astro must defer non-first case video src via data-src until scroll');
+}
+if (!scrollJs.includes('ensureSource') || !scrollJs.includes("getAttribute('data-src')")) {
+  errors.push('yy-scroll.js must attach deferred video sources on scroll/play');
+}
+
+if (!projectIndexAstro.includes('priority={index === 0}')) {
+  errors.push('ProjectIndex.astro must mark the first case SlotMedia as priority');
+}
+
+if (!indexAstro.includes('rel="preload"') || !indexAstro.includes('as="image"')) {
+  errors.push('index.astro must preload the first case poster image');
 }
 
 const canvasGif = path.join(ROOT, 'assets/images/home/landing-canvas.gif');

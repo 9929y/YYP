@@ -113,10 +113,24 @@
     var sheet = document.createElement('link');
     sheet.rel = 'stylesheet';
     sheet.href = ROOT + 'assets/css/yy-about.css';
-    shadow.appendChild(sheet);
-    var shell = document.createElement('div');
-    shell.innerHTML = render();
-    while (shell.firstChild) shadow.appendChild(shell.firstChild);
+    self.setAttribute('data-yy-pending', '');
+    self.__yyStylesReady = new Promise(function (resolve) {
+      var settled = false;
+      function done() {
+        if (settled) return;
+        settled = true;
+        /* Paint markup only after CSS applies — never show unstyled HTML. */
+        var shell = document.createElement('div');
+        shell.innerHTML = render();
+        while (shell.firstChild) shadow.appendChild(shell.firstChild);
+        self.removeAttribute('data-yy-pending');
+        resolve();
+      }
+      sheet.addEventListener('load', done);
+      sheet.addEventListener('error', done);
+      shadow.appendChild(sheet);
+      try { if (sheet.sheet) done(); } catch (err) {}
+    });
     return self;
   }
 

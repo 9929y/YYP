@@ -5,44 +5,52 @@ import { publicUrl } from '../data/projects';
 interface Props {
   project: Project;
   play: 'hover' | 'scroll' | 'auto';
-  index?: number;
+  /** First above-the-fold case: eager poster + metadata preload + source in HTML. */
+  priority?: boolean;
 }
 
-const { project, play, index = 0 } = Astro.props;
-const lazyVideo = index > 0 && !!project.video && !!project.video.poster;
+const { project, play, priority = false } = Astro.props;
+const posterUrl = project.video?.poster ? publicUrl(project.video.poster) : undefined;
+const videoUrl = project.video ? publicUrl(project.video.src) : undefined;
+const webmUrl = project.video?.webm ? publicUrl(project.video.webm) : undefined;
+/* First case may fetch metadata early. Others keep no <source> until scroll. */
+const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
 ---
 
 <span class="slot__media" data-reveal="wipe">
   {
-    project.video && lazyVideo ? (
-      <img
-        src={publicUrl(project.video.poster)}
-        alt={project.video.label}
-        loading="lazy"
-        decoding="async"
-        width={project.video.width}
-        height={project.video.height}
-        data-video-src={publicUrl(project.video.src)}
-        data-video-webm={project.video.webm ? publicUrl(project.video.webm) : undefined}
-        data-play={play}
-      />
-    ) : project.video ? (
-      <video
-        class="slot__v"
-        poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
-        muted
-        loop
-        playsinline
-        autoplay={play === 'auto'}
-        preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
-        width={project.video.width}
-        height={project.video.height}
-        aria-label={project.video.label}
-        data-play={play}
-      >
-        {project.video.webm && <source src={publicUrl(project.video.webm)} type="video/webm" />}
-        <source src={publicUrl(project.video.src)} type="video/mp4" />
-      </video>
+    project.video ? (
+      <>
+        {posterUrl && (
+          <img
+            class="slot__poster"
+            src={posterUrl}
+            alt=""
+            width={project.video.width}
+            height={project.video.height}
+            decoding="async"
+            fetchpriority={priority ? 'high' : 'auto'}
+            loading={priority ? 'eager' : 'lazy'}
+          />
+        )}
+        <video
+          class="slot__v"
+          muted
+          loop
+          playsinline
+          autoplay={play === 'auto'}
+          preload={preload}
+          width={project.video.width}
+          height={project.video.height}
+          aria-label={project.video.label}
+          data-play={play}
+          data-src={priority ? undefined : videoUrl}
+          data-webm={priority ? undefined : webmUrl}
+        >
+          {priority && webmUrl ? <source src={webmUrl} type="video/webm" /> : null}
+          {priority && videoUrl ? <source src={videoUrl} type="video/mp4" /> : null}
+        </video>
+      </>
     ) : (
       project.cover && (
         <img

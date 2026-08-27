@@ -229,10 +229,24 @@
     var sheet = document.createElement('link');
     sheet.rel = 'stylesheet';
     sheet.href = ROOT + 'assets/css/yy-resume.css';
-    shadow.appendChild(sheet);
-    var shell = document.createElement('div');
-    shell.innerHTML = render();
-    while (shell.firstChild) shadow.appendChild(shell.firstChild);
+    self.setAttribute('data-yy-pending', '');
+    self.__yyStylesReady = new Promise(function (resolve) {
+      var settled = false;
+      function done() {
+        if (settled) return;
+        settled = true;
+        /* Paint markup only after CSS applies — never show unstyled HTML. */
+        var shell = document.createElement('div');
+        shell.innerHTML = render();
+        while (shell.firstChild) shadow.appendChild(shell.firstChild);
+        self.removeAttribute('data-yy-pending');
+        resolve();
+      }
+      sheet.addEventListener('load', done);
+      sheet.addEventListener('error', done);
+      shadow.appendChild(sheet);
+      try { if (sheet.sheet) done(); } catch (err) {}
+    });
     return self;
   }
 
@@ -242,11 +256,13 @@
 
   YYResumeContent.prototype.connectedCallback = function () {
     if (this.__yyReady) return;
-    this.__yyReady = true;
-
     var host = this;
-    var shadow = this.shadowRoot;
-    var scroller = this.closest('.panel-scroll');
+    function start() {
+      if (host.__yyReady) return;
+      host.__yyReady = true;
+
+    var shadow = host.shadowRoot;
+    var scroller = host.closest('.panel-scroll');
     var sections = Array.prototype.slice.call(shadow.querySelectorAll('.resume-section[id]'));
     var queued = false;
     var raf = 0;
@@ -314,10 +330,10 @@
     if (scroller) scroller.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
     window.addEventListener('yy:resume-navigate', onNavigate);
-    this.__yyScroller = scroller;
-    this.__yyRequestUpdate = requestUpdate;
-    this.__yyOnNavigate = onNavigate;
-    this.__yyRaf = function () { return raf; };
+    host.__yyScroller = scroller;
+    host.__yyRequestUpdate = requestUpdate;
+    host.__yyOnNavigate = onNavigate;
+    host.__yyRaf = function () { return raf; };
 
     ensureLinkPreview().then(function (api) {
       if (api && api.enhance) api.enhance(shadow);
@@ -326,6 +342,10 @@
     });
 
     update();
+    }
+
+    if (this.__yyStylesReady) this.__yyStylesReady.then(start);
+    else start();
   };
 
   YYResumeContent.prototype.disconnectedCallback = function () {

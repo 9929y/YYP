@@ -45,8 +45,8 @@
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
-  /* Only Opus Clip uses the dark nav capsule. Lark, McKinsey, Alzheimer,
-     homepage, and Work hub stay light glass. Popups are always light. */
+  /* Nav + popups are always light glass (Figma). Opus only raises capsule
+     blur to 100px — ink stays the default dark text. */
   var DARK_NAV_PAGES = {
     'ai-driven-product-design.html': true
   };
@@ -199,6 +199,16 @@
     (document.head || HTML).appendChild(cursorSheet);
   }
 
+  /* Warm panel CE stylesheets so first Work/About/Resume open is not a CSS race. */
+  ['yy-work.css', 'yy-about.css', 'yy-resume.css'].forEach(function (file) {
+    if (document.querySelector('link[href*="' + file + '"][rel="preload"]')) return;
+    var preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'style';
+    preload.href = ROOT + 'assets/css/' + file;
+    (document.head || HTML).appendChild(preload);
+  });
+
   if (!document.querySelector('link[href*="yy-chrome.css"]')) {
     var sheet = document.createElement('link');
     sheet.rel = 'stylesheet';
@@ -234,10 +244,19 @@
     '  all: initial;',
     '  --yy-ink: #242220;',
     '  --yy-ink-dim: #5b5a56;',
-    '  --yy-fill: rgba(255,255,255,.58);',
+    /* Figma YyNav: rgba(255,255,255,0.72) + blur 8px */
+    '  --yy-fill: rgba(255,255,255,.72);',
+    /* Glass popup (Figma inspect): rgba(255,255,255,0.7) + blur 200 */
     '  --yy-panel-fill: rgba(255,255,255,.70);',
     '  --yy-hair: rgba(255,255,255,.65);',
-    '  --yy-panel-full-fill: rgba(255,255,255,.92);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.78);',
+    /* Figma Canvas Cover behind open popup */
+    '  --yy-page-cover-fill: rgba(255,250,250,.20);',
+    '  --yy-page-cover-blur: 100px;',
+    '  --yy-panel-blur: 200px;',
+    /* Glass shadows: inset 0 15 20 / drop 0 5 40 2 */
+    '  --yy-panel-inset: inset 0 15px 20px 0 rgba(255,255,255,.13);',
+    '  --yy-panel-drop: 0 5px 40px 2px rgba(0,0,0,.15);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
     '  --yy-orbit-ease: cubic-bezier(.22,1.08,.36,1);',
     '  --yy-panel-ease: cubic-bezier(.22,1,.36,1);',
@@ -254,20 +273,11 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
+    /* Opus: stronger capsule blur only — keep default ink / hover. */
     ':host(yy-nav.on-dark) .cap{',
-    '  --yy-ink: #f3f2ef;',
-    '  --yy-ink-dim: rgba(243,242,239,.74);',
-    '  --yy-fill: rgba(16,16,14,.58);',
-    '  --yy-hair: rgba(255,255,255,.22);',
+    '  -webkit-backdrop-filter: blur(100px) saturate(1.6);',
+    '  backdrop-filter: blur(100px) saturate(1.6);',
     '}',
-    ':host(yy-nav.on-dark) .cap a:hover,',
-    ':host(yy-nav.on-dark) .cap button:hover{ background: rgba(255,255,255,.1); }',
-    ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
-    ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
-    ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(255,255,255,.14); }',
-    ':host(yy-nav.on-dark) .cap .brand:hover,',
-    ':host(yy-nav.on-dark) .cap .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
-    ':host(yy-nav.on-dark) .cap .rule{ background: rgba(255,255,255,.22); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
@@ -342,8 +352,8 @@
     '  box-sizing: border-box;',
     '  border-radius: 999px;',
     '  background: var(--yy-fill);',
-    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
-    '  backdrop-filter: blur(12px) saturate(1.6);',
+    '  -webkit-backdrop-filter: blur(8px) saturate(1.6);',
+    '  backdrop-filter: blur(8px) saturate(1.6);',
     '  box-shadow:',
     '    inset 0 1px 0 rgba(255,255,255,.92),',
     '    inset 0 0 0 1px var(--yy-hair),',
@@ -434,8 +444,9 @@
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
     /* ---- navigation panel ----------------------------------------------
-       Mid-size popup fills the space above the capsule with equal gaps
-       (top and above the nav). Expand lives inside the card. */
+       Figma: Canvas Cover (page frost in light DOM via yy-chrome.css) +
+       glass panel fill. Shadow DOM backdrop-filter cannot sample the page,
+       so blur lives on html.yy-panel-open body::before; panel keeps fill. */
     '.panel-backdrop{',
     '  position: absolute; z-index: 0; inset: 0;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
@@ -443,6 +454,10 @@
     '}',
     ':host(.is-open:not(.is-fullpage)) .panel-backdrop{',
     '  opacity: 1; visibility: visible; pointer-events: auto;',
+    '}',
+    /* Hidden until host is both ready (wired) and open — no flash of unstyled views. */
+    '.panel-stack,.panel,.panel-scroll{',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
     '}',
     '.panel-stack{',
     '  position: absolute; z-index: 1; left: 0; right: 0;',
@@ -453,46 +468,39 @@
     '  margin-inline: auto;',
     '  display: flex; flex-direction: column; align-items: stretch;',
     '  box-sizing: border-box;',
-    '  opacity: 0; visibility: hidden; pointer-events: none;',
     '  /* Popups always light — never inherit the dark nav capsule tokens. */',
     '  --yy-ink: #1a1917;',
     '  --yy-ink-dim: #5b5a56;',
-    '  --yy-fill: rgba(255,255,255,.58);',
-    '  --yy-panel-full-fill: rgba(255,255,255,.92);',
+    '  --yy-fill: rgba(255,255,255,.72);',
+    '  --yy-panel-fill: rgba(255,255,255,.70);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.78);',
     '  color: var(--yy-ink);',
     '}',
-    ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
+    ':host(.is-ready.is-open) .panel-stack,',
+    ':host(.is-ready.is-open) .panel,',
+    ':host(.is-ready.is-open) .panel-scroll{',
+    '  opacity: 1; visibility: visible; pointer-events: auto;',
+    '}',
     '.panel-stack.is-expanded{',
     '  inset: 0; top: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh;',
     '  max-width: none;',
     '}',
+    /* Glass fill + shadows; page blur is light-DOM body::before (see yy-chrome.css). */
     '.panel{',
     '  position: relative; z-index: 1; left: auto; right: auto; bottom: auto; top: auto;',
     '  flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;',
     '  margin-inline: 0; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
     '  color: var(--yy-ink); background: var(--yy-panel-fill);',
-    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
-    '  backdrop-filter: blur(12px) saturate(1.6);',
-    '  box-shadow:',
-    '    inset 0 1px 0 rgba(255,255,255,.92),',
-    '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
-    '    inset 0 -1px 0 rgba(36,34,32,.05),',
-    '    0 5px 50px 5px rgba(0,0,0,.18);',
-    '  transform-origin: center bottom; contain: layout paint;',
-    '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out), backdrop-filter 680ms var(--ease-smooth-out,ease-out);',
+    '  box-shadow: var(--yy-panel-inset), var(--yy-panel-drop);',
+    '  transform-origin: center bottom;',
+    '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out);',
     '}',
     '.panel.is-expanded{',
     '  flex: 1 1 auto;',
     '  width: 100%; height: 100%; max-width: none;',
     '  border-radius: 0; background: var(--yy-panel-full-fill);',
-    '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
-    '  backdrop-filter: blur(20px) saturate(1.35);',
-    '  box-shadow:',
-    '    inset 0 0 0 1.5px rgba(255,255,255,.96),',
-    '    inset 0 0 0 1px rgba(255,255,255,.88),',
-    '    inset 0 1px 0 rgba(255,255,255,.96),',
-    '    inset 0 -18px 42px rgba(255,255,255,.18);',
+    '  box-shadow: var(--yy-panel-inset);',
     '}',
     '.panel-scroll{',
     '  height: 100%; overflow: auto; overflow-y: auto;',
@@ -501,29 +509,34 @@
     '  -webkit-overflow-scrolling: touch;',
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
+    '[data-panel-view]{ display: none; }',
+    '[data-panel-view].is-active{ display: block; }',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
     '.panel-view--resume,',
     '.panel-view--about,',
     '.panel-view--work{ padding: 0; height: 100%; }',
+    /* Work uses the same glass fill as About / Resume */
     '.panel.is-work{',
-    '  background: var(--yy-fill);',
-    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
-    '  backdrop-filter: blur(12px) saturate(1.6);',
-    '  box-shadow:',
-    '    inset 0 1px 0 rgba(255,255,255,.92),',
-    '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
-    '    inset 0 -1px 0 rgba(26,25,23,.05),',
-    '    0 5px 50px 5px rgba(0,0,0,.18);',
+    '  background: var(--yy-panel-fill);',
+    '  box-shadow: var(--yy-panel-inset), var(--yy-panel-drop);',
     '}',
     '.panel.is-work.is-expanded{',
     '  background: var(--yy-panel-full-fill);',
-    '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
-    '  backdrop-filter: blur(20px) saturate(1.35);',
     '}',
     'yy-resume-content,',
     'yy-about-content,',
     'yy-work-content{ display: block; height: 100%; min-height: 100%; }',
-    '.panel-view[hidden]{ display: none; }',
+    /* Avoid FOUC / “source-like” flash before panel CE scripts upgrade. */
+    'yy-resume-content:not(:defined),',
+    'yy-about-content:not(:defined),',
+    'yy-work-content:not(:defined),',
+    'yy-resume-content[data-yy-pending],',
+    'yy-about-content[data-yy-pending],',
+    'yy-work-content[data-yy-pending]{',
+    '  visibility: hidden;',
+    '  opacity: 0;',
+    '  pointer-events: none;',
+    '}',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
     '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
@@ -706,6 +719,13 @@
     return loadPanelScript[cacheKey];
   }
 
+  function panelContentTag(name) {
+    if (name === 'work') return 'yy-work-content';
+    if (name === 'about') return 'yy-about-content';
+    if (name === 'resume') return 'yy-resume-content';
+    return '';
+  }
+
   function ensureResumeComponent() {
     return loadPanelScript('_resume', 'yy-resume.js', 'yy-resume-content', 'Resume');
   }
@@ -782,6 +802,7 @@
     var resumeNavMode = false;
     var fullHistoryPushed = false;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var openSeq = 0;
 
     if (panelScroll) panelScroll.setAttribute('data-lenis-prevent', '');
 
@@ -804,6 +825,18 @@
       }
     }
 
+    function waitContentReady(name) {
+      var tag = panelContentTag(name);
+      if (!tag || !window.customElements) return Promise.resolve();
+      return customElements.whenDefined(tag).then(function () {
+        var view = viewFor(name);
+        var el = view && view.querySelector(tag);
+        if (!el) return;
+        if (typeof customElements.upgrade === 'function') customElements.upgrade(el);
+        return el.__yyStylesReady || Promise.resolve();
+      });
+    }
+
     function prepare(name) {
       var loaders = {
         resume: [ensureResumeComponent, 'Resume'],
@@ -811,14 +844,16 @@
         work: [ensureWorkComponent, 'Work']
       };
       var spec = loaders[name];
-      if (!spec) return;
-      spec[0]().catch(function (error) {
-        var view = viewFor(name);
-        if (view) {
-          view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
-        }
-        if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
-      });
+      if (!spec) return Promise.resolve();
+      return spec[0]()
+        .then(function () { return waitContentReady(name); })
+        .catch(function (error) {
+          var view = viewFor(name);
+          if (view) {
+            view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
+          }
+          if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
+        });
     }
 
     function viewFor(name) {
@@ -921,7 +956,9 @@
         triggers[i].setAttribute('aria-expanded', selected ? 'true' : 'false');
       }
       for (var j = 0; j < views.length; j++) {
-        views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
+        var on = views[j].getAttribute('data-panel-view') === name;
+        views[j].classList.toggle('is-active', on);
+        views[j].hidden = !on;
       }
       panel.classList.toggle('is-work', name === 'work');
     }
@@ -1009,10 +1046,27 @@
       panelAnimation.oncancel = null;
     }
 
+    /* Arm open keyframes while still invisible so the first painted frame
+       after .is-open is the scaled/transparent start — not a full-opacity flash. */
+    function armPanelOpen(from) {
+      clearPanelAnimation();
+      if (reduced || !panel.animate) return null;
+      var to = panel.getBoundingClientRect();
+      panelAnimation = panel.animate(keyframesBetween(from, to, false), {
+        duration: PANEL_MOTION_MS,
+        easing: PANEL_MOTION_EASE,
+        fill: 'both'
+      });
+      panelAnimation.pause();
+      panelAnimation.currentTime = 0;
+      return panelAnimation;
+    }
+
     function finishClose(target) {
       closing = false;
       active = '';
       host.classList.remove('is-open');
+      /* Keep .is-ready so the next open does not flash unstyled content. */
       setExpandedChrome(false);
       HTML.classList.remove('yy-panel-open');
       setBackgroundInert(false);
@@ -1020,7 +1074,10 @@
       expand.hidden = false;
       expand.setAttribute('aria-label', 'View full screen');
       expand.setAttribute('aria-pressed', 'false');
-      for (var j = 0; j < views.length; j++) views[j].hidden = true;
+      for (var j = 0; j < views.length; j++) {
+        views[j].classList.remove('is-active');
+        views[j].hidden = true;
+      }
       for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
       if (target && target.focus) target.focus({ preventScroll: true });
     }
@@ -1028,32 +1085,53 @@
     function open(name, trigger, opener) {
       closing = false;
       lastOpener = opener || trigger || lastOpener;
-      prepare(name);
-      active = name;
-      sync(name);
-      var start = trigger.getBoundingClientRect();
-      /* Popup always keeps main Navigation; section nav only after expand. */
-      leaveResumeNav();
-      clearFullpageUrl();
-      setExpandedChrome(false);
-      HTML.classList.add('yy-panel-open');
-      setBackgroundInert(false);
-      panel.setAttribute('aria-modal', 'false');
-      expand.hidden = false;
-      expand.setAttribute('aria-label', 'View full screen');
-      expand.setAttribute('aria-pressed', 'false');
-      announcePanelState(false, true);
-      host.classList.add('is-open');
-      restoreViewScroll(name);
-      var targetView = viewFor(name);
-      animatePanel(start, false, function () {
-        if (targetView && !reduced && targetView.animate) {
-          targetView.animate(
-            [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
-            { duration: 350, easing: PANEL_MOTION_EASE }
-          );
+      var seq = ++openSeq;
+      prepare(name).then(function () {
+        if (seq !== openSeq || closing) return;
+        active = name;
+        sync(name);
+        var start = trigger.getBoundingClientRect();
+        /* Popup always keeps main Navigation; section nav only after expand. */
+        leaveResumeNav();
+        clearFullpageUrl();
+        setExpandedChrome(false);
+        setBackgroundInert(false);
+        panel.setAttribute('aria-modal', 'false');
+        expand.hidden = false;
+        expand.setAttribute('aria-label', 'View full screen');
+        expand.setAttribute('aria-pressed', 'false');
+        if (panelScroll) {
+          panelScroll.scrollTop = viewScroll[name] || 0;
         }
-        if (!expand.hidden) expand.focus({ preventScroll: true });
+        /* Force layout after view/aria prep — only then reveal the panel. */
+        void panel.offsetHeight;
+        var opening = armPanelOpen(start);
+        HTML.classList.add('yy-panel-open');
+        host.classList.add('is-open');
+        announcePanelState(false, true);
+        if (panelScroll) {
+          panelScroll.dispatchEvent(new Event('scroll'));
+        }
+        var targetView = viewFor(name);
+        function afterOpen() {
+          if (targetView && !reduced && targetView.animate) {
+            targetView.animate(
+              [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+              { duration: 350, easing: PANEL_MOTION_EASE }
+            );
+          }
+          if (!expand.hidden) expand.focus({ preventScroll: true });
+        }
+        if (opening) {
+          opening.onfinish = function () {
+            clearPanelAnimation();
+            afterOpen();
+          };
+          opening.oncancel = null;
+          opening.play();
+        } else {
+          afterOpen();
+        }
       });
     }
 
@@ -1084,36 +1162,39 @@
       clearPanelAnimation();
       if (opener) lastOpener = opener;
       saveViewScroll(active);
-      prepare(name);
-      active = name;
-      sync(name);
-      if (panel.classList.contains('is-expanded') && name === 'resume') {
-        enterResumeNav();
-        history.replaceState(
-          { yyPanelFull: true, panel: name },
-          '',
-          location.pathname + location.search + fullpageHash(name)
-        );
-        fullHistoryPushed = true;
-      } else {
-        leaveResumeNav();
-        if (panel.classList.contains('is-expanded')) {
+      var seq = ++openSeq;
+      prepare(name).then(function () {
+        if (seq !== openSeq || closing) return;
+        active = name;
+        sync(name);
+        if (panel.classList.contains('is-expanded') && name === 'resume') {
+          enterResumeNav();
           history.replaceState(
             { yyPanelFull: true, panel: name },
             '',
             location.pathname + location.search + fullpageHash(name)
           );
           fullHistoryPushed = true;
+        } else {
+          leaveResumeNav();
+          if (panel.classList.contains('is-expanded')) {
+            history.replaceState(
+              { yyPanelFull: true, panel: name },
+              '',
+              location.pathname + location.search + fullpageHash(name)
+            );
+            fullHistoryPushed = true;
+          }
         }
-      }
-      restoreViewScroll(name);
-      var next = viewFor(name);
-      if (next && !reduced && next.animate) {
-        next.animate(
-          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 320, easing: PANEL_MOTION_EASE }
-        );
-      }
+        restoreViewScroll(name);
+        var next = viewFor(name);
+        if (next && !reduced && next.animate) {
+          next.animate(
+            [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 320, easing: PANEL_MOTION_EASE }
+          );
+        }
+      });
     }
 
     function applyExitFullpageUI() {
@@ -1310,6 +1391,8 @@
       }
       close();
     });
+
+    host.classList.add('is-ready');
   }
 
   function mount() {

@@ -188,19 +188,50 @@
   }
 
   /* Spine: start collapsed; grow top → bottom after intro-ready.
+     Side hairlines grow outer → center at the same time.
      Text intro recipes live in assets/css/yy-motion.css. */
   html.yy-landing .hero.row--ruled::before {
     transform: scaleY(0);
     transform-origin: top center;
   }
 
+  /* Left hairline grows left→center; right hairline grows right→center. */
+  html.yy-landing .hero__zone--meta::after {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  html.yy-landing .hero__title::before {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before,
+  [data-motion-root][data-intro-ready="true"] .hero__zone--meta::after,
+  [data-motion-root][data-intro-ready="true"] .hero__title::before {
+    animation-duration: 720ms;
+    animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+    animation-delay: 420ms;
+    animation-fill-mode: both;
+  }
+
   [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
-    animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
+    animation-name: introLineGrowY;
+  }
+
+  [data-motion-root][data-intro-ready="true"] .hero__zone--meta::after,
+  [data-motion-root][data-intro-ready="true"] .hero__title::before {
+    animation-name: introLineGrowX;
   }
 
   @keyframes introLineGrowY {
     from { transform: scaleY(0); }
     to { transform: scaleY(1); }
+  }
+
+  @keyframes introLineGrowX {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -217,6 +248,10 @@
     }
     html.yy-landing .hero.row--ruled::before,
     [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before,
+    html.yy-landing .hero__zone--meta::after,
+    html.yy-landing .hero__title::before,
+    [data-motion-root][data-intro-ready="true"] .hero__zone--meta::after,
+    [data-motion-root][data-intro-ready="true"] .hero__title::before,
     html.yy-landing .case.row--ruled::before {
       animation: none !important;
       transform: none !important;
@@ -263,8 +298,8 @@
     grid-template-columns: var(--col-label-case) minmax(0, 1fr);
     column-gap: var(--col-gap);
     row-gap: 20px;
-    /* Shared bottom edge: left info stack + media (any viewport width). */
-    align-items: end;
+    /* Stretch so the label column matches media height and can vertically center. */
+    align-items: stretch;
   }
 
   /* 首屏内容列仍卡在 492 measure；外框与竖线轴线与 case 共用。 */
@@ -349,10 +384,21 @@
   }
 
   .hero__zone--meta {
+    position: relative;
     flex: 0 0 clamp(96px, 14vh, 195px);
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #939393;
+  }
+
+  .hero__zone--meta::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: #939393;
+    pointer-events: none;
   }
 
   .hero__zone--foot {
@@ -372,15 +418,26 @@
 
   /* Hero H1: scaled landing --t-64 (56). Width still overflows the content col. */
   .hero__title {
+    position: relative;
     margin: 0;
     padding-top: 1px;
-    border-top: 1px solid #939393;
     font-size: clamp(var(--t-32), 3.9vw, var(--t-64));
     line-height: 1;
     letter-spacing: -0.04em;
     font-weight: 600;
     width: min(1123px, calc(100vw - var(--col-label) - var(--col-gap) - 2 * var(--edge)));
     max-width: none;
+  }
+
+  .hero__title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: #939393;
+    pointer-events: none;
   }
 
   @media (min-width: 1160px) {
@@ -472,15 +529,24 @@
     box-sizing: border-box;
   }
 
-  /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
+  /* Label column: title block vertically centered against media; hover note
+     hangs 24px under the title without shifting its center (absolute). */
   .case__label {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    gap: 36px;
+    justify-content: center;
+    align-items: stretch;
     min-height: 0;
-    padding-bottom: 4px;
+    height: 100%;
+    padding-bottom: 0;
     box-sizing: border-box;
+    overflow: visible;
+  }
+
+  .case__copy {
+    position: relative;
+    width: 100%;
+    flex: 0 0 auto;
   }
 
   .case__meta {
@@ -520,12 +586,14 @@
     max-width: 16em;
   }
 
-  /* Supporting line under the hover note area: one step below the title.
-     Title stays --t-20 / 600; scope stays --t-13 / ink-3. */
+  /* Hover note: 24px under .case__meta. Absolute so title stays column-centered. */
   .case__note {
     display: block;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 24px);
     margin: 0;
-    padding-top: 14px;
+    padding-top: 0;
     max-width: 18em;
     width: 100%;
     font-size: var(--t-16);
@@ -594,7 +662,8 @@
     overflow: visible;
     background: transparent;
     text-decoration: none;
-    align-self: end;
+    align-self: stretch;
+    justify-self: stretch;
     box-shadow:
       0 1px 2px rgba(62, 65, 116, .07),
       0 2px 8px -2px rgba(62, 65, 116, .10),
@@ -632,6 +701,15 @@
     height: calc(100% + 12px);
     object-fit: cover;
     display: block;
+  }
+
+  /* Eager poster under the first-case video so LCP paints before media bytes. */
+  .slot__poster {
+    z-index: 0;
+  }
+
+  .slot__v {
+    z-index: 1;
   }
 
   /* Placeholder only when there is no file or the load failed. */
@@ -750,24 +828,47 @@
     }
   }
 
-  /* Below the frame, the label column collapses and the content column goes
-     full width. The 4:3 slot keeps its ratio at every size, so the images
-     Yanice exports never need a second crop.
+  /* Below the frame: case header becomes title | note (2-col), media full width
+     underneath (small-screen reference). Hero still stacks to one column.
      829 + 2 x 24 edge = 877. */
   @media (max-width: 877px) {
-    .row,
-    .case.row { grid-template-columns: 1fr; gap: 20px; }
+    .row { grid-template-columns: 1fr; gap: 20px; }
+    .case.row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
     .case__label {
-      justify-content: flex-start;
+      display: block;
       min-height: 0;
       height: auto;
       max-height: none;
       padding-bottom: 0;
-      gap: 24px;
       order: -1;
+    }
+    .case__copy {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: clamp(16px, 4vw, 32px);
+      align-items: start;
+    }
+    .case__meta {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .case__note {
+      position: static;
+      grid-column: 2;
+      grid-row: 1;
+      top: auto;
+      max-width: none;
+      padding-top: 0;
+      align-self: start;
     }
     .case .slot {
       align-self: stretch;
+      width: 100%;
+      max-width: none;
     }
     .hero {
       min-height: 0;
