@@ -196,6 +196,7 @@
     '  --yy-ink: #1a1917;',
     '  --yy-ink-dim: #5b5a56;',
     '  --yy-fill: rgba(255,255,255,.58);',
+    '  --yy-panel-fill: rgba(255,255,255,.74);',
     '  --yy-hair: rgba(255,255,255,.65);',
     '  --yy-panel-full-fill: rgba(255,255,255,.92);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
@@ -218,6 +219,7 @@
     '  --yy-ink: #f3f2ef;',
     '  --yy-ink-dim: rgba(243,242,239,.74);',
     '  --yy-fill: rgba(16,16,14,.58);',
+    '  --yy-panel-fill: rgba(16,16,14,.74);',
     '  --yy-hair: rgba(255,255,255,.22);',
     '}',
     ':host(yy-nav.on-dark) .cap a:hover,',
@@ -337,7 +339,7 @@
     /* Where backdrop-filter is unsupported OR silently dead (an ancestor
        forming a backdrop root), the fill alone must carry legibility. */
     '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){',
-    '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-hair: rgba(26,25,23,.10); }',
+    '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-panel-fill: rgba(255,255,255,.96); --yy-hair: rgba(26,25,23,.10); }',
     '}',
 
     '.cap a, .cap button{',
@@ -394,6 +396,14 @@
     /* ---- navigation panel ----------------------------------------------
        Mid-size popup fills the space above the capsule with equal gaps
        (top and above the nav). Expand lives inside the card. */
+    '.panel-backdrop{',
+    '  position: absolute; z-index: 0; inset: 0;',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '  background: transparent;',
+    '}',
+    ':host(.is-open:not(.is-fullpage)) .panel-backdrop{',
+    '  opacity: 1; visibility: visible; pointer-events: auto;',
+    '}',
     '.panel-stack{',
     '  position: absolute; z-index: 1; left: 0; right: 0;',
     '  top: var(--yy-panel-gap);',
@@ -415,7 +425,7 @@
     '  flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;',
     '  margin-inline: 0; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
-    '  color: var(--yy-ink); background: var(--yy-fill);',
+    '  color: var(--yy-ink); background: var(--yy-panel-fill);',
     '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
     '  backdrop-filter: blur(12px) saturate(1.6);',
     '  box-shadow:',
@@ -710,6 +720,7 @@
 
   function setupPanel(host) {
     var root = host.shadowRoot;
+    var panelBackdrop = root.querySelector('.panel-backdrop');
     var panelStack = root.querySelector('.panel-stack');
     var panel = root.querySelector('.panel');
     var panelScroll = root.querySelector('.panel-scroll');
@@ -1211,6 +1222,12 @@
     }
 
     if (cap) cap.addEventListener('click', onCapClick);
+    if (panelBackdrop) {
+      panelBackdrop.addEventListener('click', function () {
+        if (!active || closing || panel.classList.contains('is-expanded')) return;
+        close();
+      });
+    }
     expand.addEventListener('click', expandToFullpage);
     window.addEventListener('popstate', function (event) {
       var state = event.state;
@@ -1260,6 +1277,7 @@
        renders identically, so only focus order catches it. */
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
+      '<div class="panel-backdrop" aria-hidden="true"></div>' +
       '<div class="panel-stack">' +
         '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
           '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
