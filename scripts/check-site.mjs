@@ -389,6 +389,9 @@ if (
 if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('border-radius: 0')) {
   errors.push('yy-case-layout.css must not round exported images including .grid-img');
 }
+if (!caseLayoutCss.includes('.image-57') || !caseLayoutCss.includes('border-radius: 20px')) {
+  errors.push('yy-case-layout.css must soften McKinsey flow-board radius and shadow');
+}
 if (!caseLayoutCss.includes('overflow: visible')) {
   errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
 }

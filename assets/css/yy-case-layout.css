@@ -346,3 +346,17 @@
   overflow: visible;
   background: transparent;
 }
+
+/* McKinsey flow boards (`.image-57`) used a hard 5px/10px offset shadow
+   with square corners — that is the right-angle umbra. Soft dual drop,
+   20px radius (not the 36px HTML card token), overflow visible. */
+.lightbox-link-4 img.image-57,
+.image-57 {
+  display: block;
+  border-radius: 20px;
+  overflow: visible;
+  background: transparent;
+  box-shadow:
+    0 4px 14px rgba(20, 20, 20, 0.08),
+    0 14px 36px -10px rgba(20, 20, 20, 0.16);
+}
