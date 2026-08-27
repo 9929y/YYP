@@ -69,6 +69,38 @@
     (document.head || document.body || HTML).appendChild(s);
   }
 
+  /* ASCII cursor wake on case studies. Landing keeps its own #yy-flow + palette
+     in index.astro. Colors chosen for page-ground readability (deep accents on
+     light pages; luminous pastels on Opus/Medical dark grounds). */
+  var FLOW_PALETTES = {
+    'larkdesign.html':               { base: '#2a73e2', alt: '#9aa3ad', idle: '#e6e8eb' },
+    'mckinseyecommerce.html':        { base: '#e03400', alt: '#a89a94', idle: '#ebe7e4' },
+    'ai-driven-product-design.html': { base: '#d4c8ff', alt: '#e8e6f2', idle: '#c5c0d4' },
+    'mifinance.html':                { base: '#e8710a', alt: '#9a958e', idle: '#ebe8e4' },
+    'cummins-digitalization.html':   { base: '#980000', alt: '#9a9290', idle: '#ebe7e6' },
+    'alzheimerdisease.html':         { base: '#8eb0f0', alt: '#d8dce4', idle: '#b0b4bc' },
+    'tiktok-research.html':          { base: '#3d5a6c', alt: '#9aa3ad', idle: '#e6e8eb' }
+  };
+
+  function loadFlow() {
+    var pal = FLOW_PALETTES[currentPage()];
+    if (!pal) return;
+    if (document.getElementById('yy-flow')) return;
+    HTML.classList.add('yy-flow-case');
+    var cv = document.createElement('canvas');
+    cv.id = 'yy-flow';
+    cv.setAttribute('aria-hidden', 'true');
+    cv.setAttribute('data-yy-base', pal.base);
+    cv.setAttribute('data-yy-alt', pal.alt);
+    cv.setAttribute('data-yy-idle', pal.idle);
+    document.body.insertBefore(cv, document.body.firstChild);
+    if (document.querySelector('script[src*="yy-flow.js"]')) return;
+    var s = document.createElement('script');
+    s.src = ROOT + 'assets/js/yy-flow.js';
+    s.async = false;
+    (document.head || document.body || HTML).appendChild(s);
+  }
+
   /* Dark case pages keep a black ground through the credit row.
      Whitelist by filename — Opus + Alzheimer only. McKinsey is a light page
      (body.blk was black-on-black with .paragraph = black). */
@@ -1336,6 +1368,7 @@
     try {
       mount();
       loadCursor();
+      loadFlow();
     } catch (e) {
       /* Hand the page back to its own chrome, intact, within a frame. */
       HTML.classList.remove('yy-chrome');

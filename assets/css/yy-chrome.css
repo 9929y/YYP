@@ -122,6 +122,30 @@ html.yy-chrome .div-block-40.grid img {
   object-fit: cover;
 }
 
+/* ---------------------------------------------------------------------------
+   8. ASCII cursor wake (#yy-flow)
+
+   Landing owns its own rules in landing.css. Case pages get the canvas from
+   yy-chrome.js (html.yy-flow-case). Field sits under page content; nav /
+   footer / disc keep their own higher z-index and are excluded from the lift.
+   --------------------------------------------------------------------------- */
+#yy-flow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+}
+
+html.yy-flow-case body > *:not(#yy-flow):not(yy-nav):not(yy-footer):not(#yy-cursor) {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #yy-flow { display: none !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.lenis-smooth img { filter: none; }
 }

@@ -351,6 +351,32 @@ if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
 if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
   errors.push('yy-chrome.js must load the shared cursor sheet and script on every page');
 }
+if (!chromeJs.includes('FLOW_PALETTES') || !chromeJs.includes('loadFlow') || !chromeJs.includes('data-yy-base')) {
+  errors.push('yy-chrome.js must inject #yy-flow with per-project ASCII palettes (FLOW_PALETTES)');
+}
+for (const [flowPage, swatch] of [
+  ['larkdesign.html', '#2a73e2'],
+  ['mckinseyecommerce.html', '#e03400'],
+  ['ai-driven-product-design.html', '#d4c8ff'],
+  ['mifinance.html', '#e8710a'],
+  ['cummins-digitalization.html', '#980000'],
+  ['alzheimerdisease.html', '#8eb0f0'],
+  ['tiktok-research.html', '#3d5a6c']
+]) {
+  if (!chromeJs.includes("'" + flowPage + "'") || !chromeJs.includes("'" + swatch + "'")) {
+    errors.push(`yy-chrome.js FLOW_PALETTES must map ${flowPage} to base ${swatch}`);
+  }
+}
+
+const flowJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-flow.js'), 'utf8');
+if (!flowJs.includes('data-yy-base') || !flowJs.includes('hexToRgb')) {
+  errors.push('yy-flow.js must read case palettes from data-yy-base/alt/idle');
+}
+
+const chromeCssFlow = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCssFlow.includes('yy-flow-case') || !chromeCssFlow.includes('#yy-flow')) {
+  errors.push('yy-chrome.css must position #yy-flow under case content (yy-flow-case)');
+}
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
   errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
 }
