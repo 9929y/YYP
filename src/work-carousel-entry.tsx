@@ -1,6 +1,6 @@
 import { createRoot, type Root } from 'react-dom/client';
 import { ProjectsCarousel3D } from './components/islands/ProjectsCarousel3D';
-import { hubProjects } from './data/projects';
+import { hubProjects, publicUrl } from './data/projects';
 import projectsCss from './styles/projects.css?inline';
 import workCss from '../assets/css/yy-work.css?inline';
 
@@ -16,12 +16,17 @@ function ensureStyles(host: HTMLElement) {
 }
 
 function cardsFromHub() {
-  return hubProjects().map((project, index) => ({
-    id: project.slug,
-    title: project.title,
-    scope: project.scope,
-    tone: index
-  }));
+  return hubProjects().map((project, index) => {
+    const coverSrc = project.cover?.src ?? project.video?.poster;
+    return {
+      id: project.slug,
+      title: project.title,
+      scope: project.scope,
+      tone: index,
+      coverSrc: coverSrc ? publicUrl(coverSrc) : undefined,
+      coverAlt: project.cover?.alt ?? project.title
+    };
+  });
 }
 
 function mountCarousel(host: HostElement) {

@@ -445,9 +445,10 @@
     '  -webkit-overflow-scrolling: touch;',
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
-    /* Work carousel owns gestures — no panel scroll fight. */
+    /* Work carousel owns gestures — no panel scroll fight.
+       visible so drum depth / lean is not clipped by the scroller. */
     '.panel-scroll.is-work{',
-    '  overflow: hidden;',
+    '  overflow: visible;',
     '  touch-action: none;',
     '  scrollbar-gutter: auto;',
     '}',
@@ -471,7 +472,7 @@
     '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
     '    0 5px 50px 5px rgba(0,0,0,.18);',
     '  contain: none;',
-    '  overflow: hidden;',
+    '  overflow: visible;',
     '}',
     '.panel.is-work.is-expanded{',
     '  background: rgba(255,255,255,.88);',

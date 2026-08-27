@@ -86,10 +86,16 @@ html.yy-projects body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  perspective: 1100px;
+  /* Stronger FOV than flat CSS default — drum projection read. */
+  perspective: 780px;
   transform-style: preserve-3d;
   will-change: transform;
   background: transparent;
+  overflow: visible;
+}
+
+.yy-projects-carousel[data-embed='panel'] .yy-projects-carousel__stage {
+  perspective: 720px;
 }
 
 .yy-projects-carousel__cylinder {
@@ -193,18 +199,19 @@ html.yy-projects body {
   }
 }
 
-/* ---------- white frosted glass (nav capsule), no color wash ---------- */
+/* ---------- capsule photo faces + frost overlay ---------- */
 
 .yy-projects-card {
   --sheen-angle: 145deg;
   --sheen-x: 50%;
+  --card-radius: 36%;
   position: relative;
   display: block;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 18px;
+  border-radius: var(--card-radius);
   box-sizing: border-box;
   background: transparent;
   transform-style: preserve-3d;
@@ -212,23 +219,56 @@ html.yy-projects body {
 }
 
 .yy-projects-card__plate,
-.yy-projects-card__glass {
+.yy-projects-card__glass,
+.yy-projects-card__cover {
   position: absolute;
   inset: 0;
-  border-radius: 16px;
+  border-radius: inherit;
   box-sizing: border-box;
   pointer-events: none;
 }
 
-/* Quiet white bed — keeps the frost readable without a color cast. */
+/* Quiet white bed — keeps frost readable when no cover. */
 .yy-projects-card__plate {
   background: rgba(255, 255, 255, 0.42);
   transform: translateZ(0);
   box-shadow: 0 10px 28px -14px rgba(26, 25, 23, 0.2);
+  overflow: hidden;
 }
 
-/* yy-nav .cap frosted white glass + perspective sheen. */
+.yy-projects-card__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: translateZ(0.5px);
+}
+
+/* Frost overlay — lighter when a cover is present so imagery reads. */
 .yy-projects-card__glass {
+  background:
+    linear-gradient(
+      var(--sheen-angle),
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.22) 38%,
+      rgba(255, 255, 255, 0.1) 68%,
+      rgba(255, 255, 255, 0.06) 100%
+    ),
+    rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(6px) saturate(1.35);
+  backdrop-filter: blur(6px) saturate(1.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.2);
+  transform: translateZ(1.5px);
+}
+
+.yy-projects-card[data-has-cover='false'] .yy-projects-card__glass {
   background:
     linear-gradient(
       var(--sheen-angle),
@@ -240,14 +280,6 @@ html.yy-projects body {
     rgba(255, 255, 255, 0.78);
   -webkit-backdrop-filter: blur(12px) saturate(1.6);
   backdrop-filter: blur(12px) saturate(1.6);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
-    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
-    0 1px 2px rgba(62, 65, 116, 0.07),
-    0 2px 8px -2px rgba(62, 65, 116, 0.09),
-    0 12px 36px -8px rgba(62, 65, 116, 0.2);
-  transform: translateZ(1.5px);
 }
 
 .yy-projects-card__glass::after {
@@ -261,8 +293,8 @@ html.yy-projects body {
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(255, 255, 255, 0.14) 45%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.12) 45%,
     rgba(255, 255, 255, 0) 72%
   );
   pointer-events: none;
@@ -271,6 +303,17 @@ html.yy-projects body {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .yy-projects-card__glass {
+    background:
+      linear-gradient(
+        var(--sheen-angle),
+        rgba(255, 255, 255, 0.7) 0%,
+        rgba(255, 255, 255, 0.4) 45%,
+        rgba(255, 255, 255, 0.28) 100%
+      ),
+      rgba(255, 255, 255, 0.45);
+  }
+
+  .yy-projects-card[data-has-cover='false'] .yy-projects-card__glass {
     background:
       linear-gradient(
         var(--sheen-angle),

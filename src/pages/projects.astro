@@ -1,16 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { ProjectsCarousel3D } from '../components/islands/ProjectsCarousel3D';
-import { hubProjects } from '../data/projects';
+import { hubProjects, publicUrl } from '../data/projects';
 import '../styles/projects.css';
 
 const projects = hubProjects();
-const cards = projects.map((p, i) => ({
-  id: p.slug,
-  title: p.title,
-  scope: p.scope,
-  tone: i
-}));
+const cards = projects.map((p, i) => {
+  const coverSrc = p.cover?.src ?? p.video?.poster;
+  return {
+    id: p.slug,
+    title: p.title,
+    scope: p.scope,
+    tone: i,
+    coverSrc: coverSrc ? publicUrl(coverSrc) : undefined,
+    coverAlt: p.cover?.alt ?? p.title
+  };
+});
 ---
 
 <BaseLayout

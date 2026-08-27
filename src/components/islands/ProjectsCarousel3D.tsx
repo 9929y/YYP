@@ -17,6 +17,9 @@ export type ProjectsCarouselCard = {
   scope: string;
   /** Solid placeholder color index 0..n-1 (CSS data-tone). */
   tone: number;
+  /** Optional project cover / poster for capsule photo faces. */
+  coverSrc?: string;
+  coverAlt?: string;
 };
 
 export const useIsomorphicLayoutEffect =
@@ -59,8 +62,8 @@ export function useMediaQuery(
 
 /*
  * Open arc: size from an 8-slot ring (back ~3 seats empty), place 5 cards on the
- * front. Wider spread + gaps; cylinder seat only (no local tilt); soft float;
- * near-large/far-small scale; ground shadow under each plate.
+ * front. Drum optics: stronger FOV, depth fade, resting lean, capsule covers,
+ * continuous idle yaw. Cylinder seat only (no local tilt); soft float.
  *
  * Intro + open MUST share the same transform function chain so Motion never
  * interpolates through an identity / planar frame.
@@ -76,12 +79,14 @@ const DRAG_PITCH = 0.2;
 const WHEEL_ZOOM = 0.0024;
 const ROTATE_X_SOFT = 18;
 const ROTATE_X_HARD = 32;
+/** Resting drum lean — posed in space before pointer pitch. */
+const REST_LEAN = 9;
 const ZOOM_MIN = 0.72;
 const ZOOM_MAX = 1.45;
 const ZOOM_SOFT_MIN = 0.62;
 const ZOOM_SOFT_MAX = 1.58;
-const AUTO_AMP = 28;
-const AUTO_SPEED = 0.35;
+/** Continuous idle spin (deg/sec) — Flow-like ambient turn. */
+const AUTO_SPIN = 7.5;
 const RUBBER = 0.32;
 const SPRING = {
   type: 'spring' as const,
@@ -121,9 +126,25 @@ function faceAngle(index: number): number {
   return (index - mid) * ARC_STEP;
 }
 
-/** Near-large / far-small — center ~1, outer seats ~0.82–0.88. */
+/**
+ * Near-large / far-small — stronger falloff than plain CSS perspective alone.
+ * Center ~1.02, outer seats ~0.62 (MotionView-ish depth size).
+ */
 function depthScale(index: number): number {
-  return 1 - (Math.abs(faceAngle(index)) / 90) * 0.28;
+  const t = Math.abs(faceAngle(index)) / 90;
+  return clamp(1.05 - t * 0.55, 0.55, 1.05);
+}
+
+/** Edge fade by seat yaw — far faces recede (drum `fade`). */
+function depthOpacity(index: number): number {
+  const t = Math.abs(faceAngle(index)) / 90;
+  return clamp(1 - t * 0.58, 0.42, 1);
+}
+
+/** Soft brightness falloff so outer plates feel less “present”. */
+function depthBrightness(index: number): number {
+  const t = Math.abs(faceAngle(index)) / 90;
+  return clamp(1 - t * 0.28, 0.72, 1);
 }
 
 /**
@@ -191,17 +212,20 @@ const CarouselFace = memo(function CarouselFace({
   const from = introTransform(index, radius);
   const to = openTransform(index, radius);
   const floatDelay = `${index * 0.55}s`;
+  const opacity = depthOpacity(index);
+  const brightness = depthBrightness(index);
 
   return (
     <motion.div
       className="yy-projects-card-slot"
       style={{
         width: `${faceWidth}px`,
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        filter: `brightness(${brightness})`
       }}
       initial={false}
       animate={{
-        opacity: 1,
+        opacity,
         transform: reduced || spread ? to : from
       }}
       transition={
@@ -226,6 +250,7 @@ const CarouselFace = memo(function CarouselFace({
         <div
           className="yy-projects-card"
           data-tone={card.tone % 7}
+          data-has-cover={card.coverSrc ? 'true' : 'false'}
           style={
             {
               width: `${faceWidth}px`,
@@ -235,7 +260,18 @@ const CarouselFace = memo(function CarouselFace({
           }
           aria-hidden="true"
         >
-          <div className="yy-projects-card__plate" />
+          <div className="yy-projects-card__plate">
+            {card.coverSrc ? (
+              <img
+                className="yy-projects-card__cover"
+                src={card.coverSrc}
+                alt=""
+                draggable={false}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : null}
+          </div>
           <div className="yy-projects-card__glass" />
         </div>
       </div>
@@ -317,7 +353,7 @@ function ProjectsCarouselMotion({
   const radius = cylinderWidth / (2 * Math.PI);
 
   const rotateY = useMotionValue(0);
-  const rotateX = useMotionValue(0);
+  const rotateX = useMotionValue(REST_LEAN);
   const zoom = useMotionValue(1);
   const transform = useTransform(
     [rotateY, rotateX, zoom],
@@ -333,14 +369,19 @@ function ProjectsCarouselMotion({
 
   const settleElastic = useCallback(() => {
     if (prefersReducedMotion()) {
-      rotateX.set(clamp(rotateX.get(), -ROTATE_X_SOFT, ROTATE_X_SOFT));
+      rotateX.set(
+        clamp(rotateX.get(), REST_LEAN - ROTATE_X_SOFT, REST_LEAN + ROTATE_X_SOFT)
+      );
       zoom.set(clamp(zoom.get(), ZOOM_MIN, ZOOM_MAX));
       return;
     }
 
     const pitch = rotateX.get();
+    // Snap toward resting drum lean (not flat 0°).
     const pitchTarget =
-      Math.abs(pitch) < 3 ? 0 : clamp(pitch, -ROTATE_X_SOFT, ROTATE_X_SOFT);
+      Math.abs(pitch - REST_LEAN) < 3
+        ? REST_LEAN
+        : clamp(pitch, REST_LEAN - ROTATE_X_SOFT, REST_LEAN + ROTATE_X_SOFT);
     void animate(rotateX, pitchTarget, SPRING_SNAP);
 
     const z = zoom.get();
@@ -373,10 +414,12 @@ function ProjectsCarouselMotion({
 
       const nextPitch = rubberBand(
         rotateX.get() - dy * DRAG_PITCH,
-        -ROTATE_X_SOFT,
-        ROTATE_X_SOFT
+        REST_LEAN - ROTATE_X_SOFT,
+        REST_LEAN + ROTATE_X_SOFT
       );
-      rotateX.set(clamp(nextPitch, -ROTATE_X_HARD, ROTATE_X_HARD));
+      rotateX.set(
+        clamp(nextPitch, REST_LEAN - ROTATE_X_HARD, REST_LEAN + ROTATE_X_HARD)
+      );
 
       // Vertical drag also dollies zoom (OrbitControls-like).
       if (Math.abs(dy) > Math.abs(dx) * 0.55) {
@@ -389,6 +432,7 @@ function ProjectsCarouselMotion({
       }
 
       baseYaw.current = rotateY.get();
+      autoPhase.current = 0;
     },
     [rotateX, rotateY, zoom]
   );
@@ -407,12 +451,14 @@ function ProjectsCarouselMotion({
 
       if (prefersReducedMotion()) {
         baseYaw.current = rotateY.get();
+        autoPhase.current = 0;
         settleElastic();
         return;
       }
 
       const coastY = rotateY.get() + velocity.current.x * DRAG_YAW * 7;
       baseYaw.current = coastY;
+      autoPhase.current = 0;
       void animate(rotateY, coastY, SPRING);
       settleElastic();
     },
@@ -441,8 +487,9 @@ function ProjectsCarouselMotion({
           autoPhase.current = 0;
           autoWasPaused.current = false;
         }
-        autoPhase.current += dt * AUTO_SPEED;
-        rotateY.set(baseYaw.current + Math.sin(autoPhase.current) * AUTO_AMP);
+        // Continuous Flow-like spin (overridable by drag).
+        autoPhase.current += dt * AUTO_SPIN;
+        rotateY.set(baseYaw.current + autoPhase.current);
       }
 
       raf = requestAnimationFrame(tick);
@@ -476,6 +523,7 @@ function ProjectsCarouselMotion({
         const next = rotateY.get() + (event.deltaY + event.deltaX) * 0.14;
         rotateY.set(next);
         baseYaw.current = next;
+        autoPhase.current = 0;
         return;
       }
       applyZoomDelta(event.deltaY * WHEEL_ZOOM);
