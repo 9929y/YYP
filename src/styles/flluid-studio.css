@@ -1,0 +1,176 @@
+/* Flluid Studio — tryable experiment page. Tokens come from yy-tokens.css. */
+
+html.yy-flluid body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.fs {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--frame-index);
+  margin: 0 auto;
+  padding: 120px var(--edge) 160px;
+}
+
+.fs__hero {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 40px;
+}
+
+.fs__eyebrow {
+  margin: 0 0 10px;
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fs__title {
+  margin: 0;
+  font-size: var(--t-40);
+  line-height: var(--lh-display);
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+
+.fs__note {
+  margin: 12px 0 0;
+  font-size: var(--t-16);
+  line-height: var(--lh-heading);
+  color: var(--ink-2);
+  max-width: 36em;
+}
+
+.fs__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--slot-radius);
+  overflow: hidden;
+  background: #121110;
+  box-shadow: inset 0 0 0 1px rgba(36, 34, 32, 0.08);
+}
+
+.fs__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.fs__hint {
+  position: absolute;
+  inset: auto 24px 24px 24px;
+  margin: 0;
+  pointer-events: none;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+  color: rgba(251, 250, 249, 0.62);
+  opacity: 1;
+  transition: opacity var(--duration-slow) var(--ease-smooth-out);
+}
+
+.fs__stage.is-drawn .fs__hint {
+  opacity: 0;
+}
+
+.fs__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 28px;
+  margin-top: 20px;
+}
+
+.fs__group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fs__label {
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.fs__swatches {
+  display: flex;
+  gap: 8px;
+}
+
+.fs__swatch {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgba(36, 34, 32, 0.16);
+  cursor: pointer;
+}
+
+.fs__swatch[aria-pressed="true"] {
+  box-shadow:
+    inset 0 0 0 1px rgba(36, 34, 32, 0.16),
+    0 0 0 2px var(--ground),
+    0 0 0 4px var(--ink);
+}
+
+.fs__range {
+  width: 140px;
+  accent-color: var(--ink);
+}
+
+.fs__clear {
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--t-13);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.fs__clear:hover {
+  opacity: 0.64;
+}
+
+.fs__foot {
+  margin: 28px 0 0;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+  color: var(--ink-3);
+}
+
+@media (max-width: 877px) {
+  .fs { padding: 104px var(--edge) 96px; }
+  .fs__stage { aspect-ratio: 4 / 3; }
+}
+
+@media (max-width: 560px) {
+  .fs__title { font-size: var(--t-32); }
+  .fs__toolbar { align-items: flex-start; }
+  .fs__clear { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs__hint { transition: none; }
+}

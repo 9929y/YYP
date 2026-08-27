@@ -59,6 +59,8 @@ export interface Project {
   /** Explicit Webflow footer neighbours. New Astro pages may omit these. */
   prevSlug?: string;
   nextSlug?: string;
+  /** When true, `src/pages/<slug>.astro` owns the route instead of `[slug].astro`. */
+  dedicatedPage?: boolean;
 }
 
 export const projects: Project[] = [
@@ -301,6 +303,24 @@ export const projects: Project[] = [
     featuredOnIndex: false,
     featuredOnProjects: false,
     landingOrder: 90
+  },
+  {
+    slug: 'flluid-studio',
+    title: 'Flluid Studio',
+    headline: 'Flluid Studio',
+    href: 'flluid-studio.html',
+    scope: 'Interactive experiment',
+    note: 'A vibe-coded fluid studio you can try in the browser.',
+    description: 'Flluid Studio is an in-browser fluid painting experiment. Draw in the field and watch color, viscosity, and motion respond.',
+    status: 'published',
+    engine: 'astro',
+    kind: 'slot',
+    theme: 'light',
+    featuredOnLanding: false,
+    featuredOnIndex: false,
+    featuredOnProjects: false,
+    landingOrder: 70,
+    dedicatedPage: true
   }
 ];
 
@@ -327,7 +347,9 @@ export function landingProjects(): Project[] {
 }
 
 export function astroCaseStudies(): Project[] {
-  return projects.filter((p) => p.engine === 'astro' && p.status === 'published' && p.href);
+  return projects.filter(
+    (p) => p.engine === 'astro' && p.status === 'published' && p.href && !p.dedicatedPage
+  );
 }
 
 export function neighbors(slug: string): { prev?: Project; next?: Project } {

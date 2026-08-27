@@ -328,6 +328,7 @@ const requiredAssets = [
   'assets/js/yy-about.js',
   'assets/js/yy-work.js',
   'assets/js/yy-link-preview.js',
+  'assets/js/yy-flluid.js',
   'assets/fonts/plus-jakarta-sans-400.woff2',
   'assets/fonts/plus-jakarta-sans-600.woff2',
   'assets/fonts/caveat-500.woff2',
@@ -948,6 +949,71 @@ if (!projectIndexAstro.includes('priority={index === 0}')) {
 
 if (!indexAstro.includes('rel="preload"') || !indexAstro.includes('as="image"')) {
   errors.push('index.astro must preload the first case poster image');
+}
+
+const flluidPagePath = path.join(ROOT, 'src/pages/flluid-studio.astro');
+if (!fs.existsSync(flluidPagePath)) {
+  errors.push('src/pages/flluid-studio.astro missing — Flluid Studio must ship as a dedicated Astro page');
+} else {
+  const flluidPage = fs.readFileSync(flluidPagePath, 'utf8');
+  for (const marker of ['flluid-stage', 'yy-flluid.js', 'Flluid Studio']) {
+    if (!flluidPage.includes(marker)) {
+      errors.push(`src/pages/flluid-studio.astro missing ${marker}`);
+    }
+  }
+}
+
+const flluidProject = projectsMod.getProject('flluid-studio');
+if (!flluidProject) {
+  errors.push('projects.ts missing flluid-studio');
+} else {
+  if (flluidProject.href !== 'flluid-studio.html') {
+    errors.push('flluid-studio href must be flluid-studio.html');
+  }
+  if (flluidProject.status !== 'published') {
+    errors.push('flluid-studio must be published so the HTML route ships');
+  }
+  if (flluidProject.featuredOnLanding) {
+    errors.push('flluid-studio must not be featured on landing yet');
+  }
+  if (flluidProject.engine !== 'astro') {
+    errors.push('flluid-studio must be an Astro page, not a Webflow passthrough');
+  }
+}
+
+const flluidJsPath = path.join(ROOT, 'assets/js/yy-flluid.js');
+const flluidJs = fs.existsSync(flluidJsPath) ? fs.readFileSync(flluidJsPath, 'utf8') : '';
+for (const marker of [
+  "getElementById('flluid-stage')",
+  'prefers-reduced-motion',
+  'pointer',
+  'data-flluid-color',
+  'data-flluid-clear'
+]) {
+  if (!flluidJs.includes(marker)) {
+    errors.push(`assets/js/yy-flluid.js missing ${marker}`);
+  }
+}
+
+if (useDist) {
+  const flluidDist = path.join(distDir, 'flluid-studio.html');
+  if (!fs.existsSync(flluidDist)) {
+    errors.push('dist/flluid-studio.html missing — Astro must emit the tryable studio page');
+  } else {
+    const flluidHtml = fs.readFileSync(flluidDist, 'utf8');
+    if (!flluidHtml.includes('yy-tokens.css')) {
+      errors.push('flluid-studio.html missing yy-tokens.css');
+    }
+    if (!flluidHtml.includes('id="flluid-stage"') && !flluidHtml.includes("id='flluid-stage'")) {
+      errors.push('flluid-studio.html missing #flluid-stage canvas');
+    }
+    if (!flluidHtml.includes('yy-flluid.js')) {
+      errors.push('flluid-studio.html missing yy-flluid.js');
+    }
+    if (!flluidHtml.includes('Flluid Studio')) {
+      errors.push('flluid-studio.html missing Flluid Studio title copy');
+    }
+  }
 }
 
 const canvasGif = path.join(ROOT, 'assets/images/home/landing-canvas.gif');

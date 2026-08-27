@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/flluid-studio.css';
+---
+
+<BaseLayout
+  title="Flluid Studio — Yanice Yang"
+  description="Flluid Studio is an in-browser fluid painting experiment. Draw in the field and watch color, viscosity, and motion respond."
+  htmlClass="yy-flluid"
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <main class="fs">
+    <header class="fs__hero">
+      <p class="fs__eyebrow rv" data-reveal="text">Experiment</p>
+      <div>
+        <h1 class="fs__title rv" data-reveal="text">Flluid Studio</h1>
+        <p class="fs__note rv" data-reveal="text">
+          A vibe-coded studio for playing with fluid motion. Draw in the field —
+          color, viscosity, and wake respond to your pointer.
+        </p>
+      </div>
+    </header>
+
+    <div class="fs__stage rv" data-reveal="media">
+      <canvas id="flluid-stage" class="fs__canvas" aria-label="Flluid Studio painting surface"></canvas>
+      <p class="fs__hint">Press and drag to paint</p>
+    </div>
+
+    <div class="fs__toolbar rv" data-reveal="text">
+      <div class="fs__group">
+        <span class="fs__label">Color</span>
+        <div class="fs__swatches" role="group" aria-label="Ink color">
+          <button type="button" class="fs__swatch" style="--swatch:#7ee8f2" data-flluid-color="cyan" aria-label="Cyan" aria-pressed="true"></button>
+          <button type="button" class="fs__swatch" style="--swatch:#ebca71" data-flluid-color="gold" aria-label="Gold" aria-pressed="false"></button>
+          <button type="button" class="fs__swatch" style="--swatch:#e8a0c8" data-flluid-color="blossom" aria-label="Blossom" aria-pressed="false"></button>
+          <button type="button" class="fs__swatch" style="--swatch:#f4f1ea" data-flluid-color="ink" aria-label="Cream" aria-pressed="false"></button>
+        </div>
+      </div>
+      <div class="fs__group">
+        <label class="fs__label" for="flluid-viscosity">Viscosity</label>
+        <input id="flluid-viscosity" class="fs__range" type="range" min="8" max="92" value="42" data-flluid-viscosity />
+      </div>
+      <button type="button" class="fs__clear" data-flluid-clear>Clear</button>
+    </div>
+
+    <p class="fs__foot rv" data-reveal="text">
+      Prototype for the portfolio. Open this page to try it — a fuller case write-up can come later.
+    </p>
+  </main>
+
+  <Fragment slot="scripts">
+    <script is:inline src="/assets/js/yy-flluid.js"></script>
+  </Fragment>
+</BaseLayout>
