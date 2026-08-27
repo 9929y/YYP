@@ -96,6 +96,8 @@
     --edge: 24px;
     --rule: #e9e9e9;
     --slot-radius: 36px;
+    /* Case cards + case media share the landing slot radius. */
+    --case-radius: var(--slot-radius);
     --slot-w: 823px;
     --slot-h: 617px;
 

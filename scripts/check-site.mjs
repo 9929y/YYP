@@ -317,6 +317,10 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
 }
 
+if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
+  errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
+}
+
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
 if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
   errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
@@ -341,6 +345,19 @@ if (!caseLayoutCss.includes('.ural .headingpt.al')) {
 }
 if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
   errors.push('yy-case-layout.css must lighten Opus impact captions on black');
+}
+if (
+  !caseLayoutCss.includes('.shadow-card') ||
+  !caseLayoutCss.includes('.step-card-2') ||
+  !caseLayoutCss.includes('backdrop-filter')
+) {
+  errors.push('yy-case-layout.css must glass-style McKinsey and Lark cards');
+}
+if (
+  !caseLayoutCss.includes('border-radius: var(--case-radius)') ||
+  !caseLayoutCss.includes('.grid-img')
+) {
+  errors.push('yy-case-layout.css must clip case media to --case-radius');
 }
 
 const caseLayoutPages = [

@@ -195,3 +195,100 @@
 .body.blk .heading-medium-3.counttext {
   color: #d4d4d4;
 }
+
+/* ---------- glass cards + shared media radius ----------
+   One radius (`--case-radius` = landing `--slot-radius` 36px) for case cards
+   and content images. Glass fill/blur/shadow matches the nav capsule `.cap`
+   in yy-chrome.js; cards stay 36px, not pills. Bitmaps get radius only. */
+.shadow-card,
+.step-card-2 {
+  box-sizing: border-box;
+  border-radius: var(--case-radius);
+  background: rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.20);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shadow-card,
+  .step-card-2 {
+    background: rgba(255, 255, 255, 0.94);
+  }
+}
+
+.step-card-2,
+.step-card-2.end {
+  padding: 24px 28px 28px;
+}
+
+.highlight-grid .about-content-2 {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+}
+
+.lightbox-link-4,
+.lightbox-link-4 img,
+.grid-img,
+.containerforimg img,
+.containerforimg2 img,
+.div-block-37 img,
+.layout125_component img,
+.video-wrapper,
+.image-17,
+.image-18,
+.image-22,
+.image22,
+.image-23,
+.image-29,
+.image-33,
+.image-35,
+.image-36,
+.image-37,
+.image-38,
+.image-39,
+.image-76,
+.image-84,
+.image-85,
+.image-86,
+.image-888,
+.imagecutin,
+.imagebig,
+.image-13,
+._70,
+.shadow {
+  border-radius: var(--case-radius);
+}
+
+.lightbox-link-4,
+.video-wrapper,
+.grid-img,
+.containerforimg img,
+.containerforimg2 img,
+.div-block-37 img,
+.layout125_component img {
+  overflow: hidden;
+}
+
+.inner-page-hero-2 img,
+.hero-intro-2 img,
+.hero-intro-2.mck > img,
+.bg img,
+.image-5,
+.image-6,
+.image-19,
+.image-20,
+.image-69,
+.image-13.mck,
+.arrow,
+.social-icon-image,
+.image-68 {
+  border-radius: 0;
+  overflow: visible;
+}
