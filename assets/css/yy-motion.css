@@ -23,12 +23,13 @@
   --reveal-text-blur: 0px;
   --reveal-text-duration: var(--duration-fast);
   --reveal-text-ease: var(--ease-smooth-out);
+  --reveal-text-scale: var(--scale-small);
 
-  /* ---- MEDIA inherits text; override these to restyle images only ---- */
+  /* ---- MEDIA inherits text timing; scale uses --scale-medium (dropdown open) ---- */
   --reveal-media-distance: var(--reveal-text-distance);
   --reveal-media-duration: var(--reveal-text-duration);
   --reveal-media-ease: var(--reveal-text-ease);
-  --reveal-media-scale: 1;
+  --reveal-media-scale: var(--scale-medium);
 
   /* ---- MPA page fade (View Transitions API) ---- */
   --page-fade-out: 180ms;
@@ -41,6 +42,7 @@
   --reveal-duration: var(--reveal-text-duration);
   --reveal-ease: var(--reveal-text-ease);
   --reveal-delay: var(--d, 0s);
+  --reveal-scale: var(--reveal-text-scale);
 }
 
 /* ---------------------------------------------------------------------------
@@ -109,16 +111,21 @@ html.yy-reveal .yy-rv--wipe {
 html.yy-reveal .yy-rv:not(.in),
 html.yy-reveal .rv:not(.in),
 html.yy-reveal [data-reveal="text"]:not(.in),
-html.yy-reveal [data-reveal="media"]:not(.in),
-html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="clip"]):not(.in) {
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="clip"]):not([data-reveal="media"]):not(.in) {
   opacity: 0;
-  transform: translateY(var(--reveal-distance));
+  transform: translateY(var(--reveal-distance)) scale(var(--reveal-scale));
+}
+
+html.yy-reveal [data-reveal="media"]:not(.in) {
+  opacity: 0;
+  transform: translateY(var(--reveal-media-distance)) scale(var(--reveal-media-scale));
 }
 
 html.yy-reveal [data-reveal="media"] {
   --reveal-distance: var(--reveal-media-distance);
   --reveal-duration: var(--reveal-media-duration);
   --reveal-ease: var(--reveal-media-ease);
+  --reveal-scale: var(--reveal-media-scale);
 }
 
 html.yy-reveal [data-reveal="fade"]:not(.in) {
@@ -128,7 +135,7 @@ html.yy-reveal [data-reveal="fade"]:not(.in) {
 
 html.yy-reveal [data-reveal="clip"]:not(.in) {
   opacity: 0;
-  transform: translateY(var(--reveal-distance));
+  transform: translateY(var(--reveal-distance)) scale(var(--reveal-scale));
   clip-path: inset(0 0 100% 0);
   overflow: hidden;
 }
@@ -172,7 +179,7 @@ html.yy-landing [data-reveal="intro-headline"] {
 }
 
 html.yy-landing [data-reveal="intro-headline"] {
-  transform: translateY(var(--reveal-text-distance));
+  transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
 }
 
 [data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"] {
@@ -198,22 +205,22 @@ html.yy-landing [data-reveal="intro-headline"] {
 @keyframes yy-intro-fade {
   from {
     opacity: 0;
-    transform: translateY(var(--reveal-text-distance));
+    transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes yy-intro-text {
   from {
     opacity: 0;
-    transform: translateY(var(--reveal-text-distance));
+    transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 

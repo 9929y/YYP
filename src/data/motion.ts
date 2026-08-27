@@ -27,10 +27,10 @@ export const motionOwnership = {
 
 /** Named recipes in yy-motion.css. `text` is the site default for copy. */
 export const revealRecipes = {
-  text: 'Default copy enter: fade + 8px rise, 250ms, no blur',
+  text: 'Default copy enter: fade + 8px rise + scale-small (0.98), 250ms',
   fade: 'Opacity only',
   wipe: 'Optional clip wipe (unused by default)',
-  media: 'Same rise as text (inherits --reveal-text-* via --reveal-media-*)',
+  media: 'Fade + 8px rise + scale-medium (0.97); syncs with case label via data-reveal-sync',
   clip: 'Headline-style clip-path open',
   'intro-meta': 'Landing hero meta (CSS timeline, not IntersectionObserver)',
   'intro-headline': 'Landing hero headline (CSS timeline, same 250ms fade-up)',
