@@ -378,13 +378,19 @@ if (!chromeCssFlow.includes('yy-flow-case') || !chromeCssFlow.includes('#yy-flow
   errors.push('yy-chrome.css must position #yy-flow under case content (yy-flow-case)');
 }
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
-  errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
+  errors.push('yy-chrome.js must mark Opus pages (yy-chrome-on-dark / on-dark)');
 }
 if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'ai-driven-product-design.html'")) {
-  errors.push('yy-chrome.js must whitelist only Opus for dark nav (DARK_NAV_PAGES)');
+  errors.push('yy-chrome.js must whitelist only Opus for Opus nav blur (DARK_NAV_PAGES)');
 }
 if (chromeJs.includes("'larkdesign.html'") && /DARK_NAV_PAGES[\s\S]{0,120}'larkdesign\.html'/.test(chromeJs)) {
   errors.push('yy-chrome.js must not use dark nav on Lark (light nav only)');
+}
+if (/:host\(yy-nav\.on-dark\)[\s\S]{0,120}--yy-ink:/.test(chromeJs)) {
+  errors.push('yy-chrome.js Opus nav must keep default ink (no on-dark text color override)');
+}
+if (!/:host\(yy-nav\.on-dark\)[\s\S]{0,200}blur\(100px\)/.test(chromeJs)) {
+  errors.push('yy-chrome.js Opus nav capsule must use backdrop blur 100px');
 }
 if (!chromeJs.includes('Popups always light')) {
   errors.push('yy-chrome.js must keep navigation popups on light tokens (panel-stack --yy-ink)');
@@ -831,6 +837,14 @@ if (
 }
 if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
   errors.push('hero spine must stay on the intro grow, not the case progressor');
+}
+if (!landingCss.includes('introLineGrowX') ||
+    !landingCss.includes('transform-origin: left center') ||
+    !landingCss.includes('transform-origin: right center')) {
+  errors.push('landing.css hero hairlines must grow from left/right toward center with introLineGrowX');
+}
+if (!landingCss.includes('.hero__zone--meta::after') || !landingCss.includes('.hero__title::before')) {
+  errors.push('landing.css must draw hero hairlines as ::after/::before (not static borders only)');
 }
 if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
   errors.push('landing.css must not hide slot media with opacity:0; reveal owns enter, placeholder is load-fail only');

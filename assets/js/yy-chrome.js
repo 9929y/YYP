@@ -45,8 +45,8 @@
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
-  /* Nav + popups are always light glass (Figma). Opus only flips capsule
-     ink to light text so type stays readable over the dark project ground. */
+  /* Nav + popups are always light glass (Figma). Opus only raises capsule
+     blur to 100px — ink stays the default dark text. */
   var DARK_NAV_PAGES = {
     'ai-driven-product-design.html': true
   };
@@ -261,20 +261,11 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
-    /* Opus only: light ink on the still-light glass capsule — never dark fill. */
+    /* Opus: stronger capsule blur only — keep default ink / hover. */
     ':host(yy-nav.on-dark) .cap{',
-    '  --yy-ink: #f3f2ef;',
-    '  --yy-ink-dim: rgba(243,242,239,.74);',
-    '  --yy-hair: rgba(255,255,255,.55);',
+    '  -webkit-backdrop-filter: blur(100px) saturate(1.6);',
+    '  backdrop-filter: blur(100px) saturate(1.6);',
     '}',
-    ':host(yy-nav.on-dark) .cap a:hover,',
-    ':host(yy-nav.on-dark) .cap button:hover{ background: rgba(36,34,32,.08); }',
-    ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
-    ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
-    ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(36,34,32,.10); }',
-    ':host(yy-nav.on-dark) .cap .brand:hover,',
-    ':host(yy-nav.on-dark) .cap .brand:focus-visible{ background: rgba(36,34,32,.08) !important; }',
-    ':host(yy-nav.on-dark) .cap .rule{ background: rgba(243,242,239,.35); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
