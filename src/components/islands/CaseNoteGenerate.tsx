@@ -8,6 +8,8 @@ interface Props {
 /**
  * Case note: TextGenerateEffect blur→clear only while the case media (.slot)
  * is hovered on a fine pointer. Leaves fade out together (no exit stagger).
+ * Desktop: positioned 24px under the centered title block.
+ * Small screens: sits in the right column beside the title.
  * Does not run on scroll-into-view or on coarse/touch pointers.
  */
 export default function CaseNoteGenerate({ text }: Props) {

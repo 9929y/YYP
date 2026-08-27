@@ -791,6 +791,21 @@ const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'u
 if (!/html\.yy-landing[\s\S]{0,240}background:\s*var\(--ground\)/.test(landingCss)) {
   errors.push('landing.css must set html.yy-landing background to var(--ground) for light nav chrome');
 }
+/* Case title: centered in label column; hover note 24px under title; small = 2-col header */
+if (!landingCss.includes('top: calc(100% + 24px)') || !landingCss.includes('.case__copy')) {
+  errors.push('landing.css must center case title and hang hover note 24px below (.case__copy)');
+}
+if (!landingCss.includes('justify-content: center') || !/align-items:\s*stretch/.test(landingCss)) {
+  errors.push('landing.css case label must vertically center the title against stretched media');
+}
+if (!landingCss.includes('grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)')) {
+  errors.push('landing.css small screens must keep title | note as a 2-column header');
+}
+const projectIndexAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8');
+if (!projectIndexAstro.includes('case__copy') ||
+    !/<div class="case__copy">[\s\S]*?case__meta[\s\S]*?CaseNoteGenerate/.test(projectIndexAstro)) {
+  errors.push('ProjectIndex.astro must render title block before CaseNoteGenerate inside .case__copy');
+}
 if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
   errors.push('landing .slot must not use left/right directional shadows that square the corners');
 }
