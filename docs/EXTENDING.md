@@ -36,9 +36,11 @@ as `index.webflow.html`.
 1. Append a record to `src/data/projects.ts`.
    - `engine: 'astro'` and `status: 'published'` with `href: 'your-slug.html'`
      makes `src/pages/[slug].astro` emit the page.
-   - `featuredOnLanding` / `featuredOnIndex` / `featuredOnProjects` control
-     listings. Keep those flags honest; the three surfaces currently disagree
-     on purpose (see `docs/BASELINE.md`).
+   - `featuredOnLanding` controls the live homepage (`src/pages/index.astro`).
+     `featuredOnIndex` and `featuredOnProjects` are schema placeholders for
+     future Astro listings — only `featuredOnLanding` is read in code today.
+     Keep flags honest; legacy surfaces still disagree on purpose (see
+     `docs/BASELINE.md`).
 2. Put the narrative in the `[slug].astro` slot, using `MediaFigure` for images.
 3. Cover images live under `assets/images/<slug>/` plus a 4:3 card at
    `assets/images/home/`. Update `assets/images/manifest.json` when you add files.

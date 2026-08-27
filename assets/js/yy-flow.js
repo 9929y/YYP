@@ -34,7 +34,8 @@
 
   /* ---- landing ShaderGradient palette (waterPlane export) ----
      Blues nudged ~8% toward black vs shader color1/color2 so the ASCII
-     reads a touch deeper on the bright canvas; gold stays color3. */
+     reads a touch deeper on the bright canvas; gold stays color3.
+     Case pages override via data-yy-base / data-yy-alt / data-yy-idle on #yy-flow. */
   var CHARS      = 'k@e$d%a&v*r(a';
   var CELL       = 8;
   var ALPHA_MIN  = 0.1;
@@ -47,6 +48,21 @@
 
   var cv = document.getElementById('yy-flow');
   if (!cv) return;
+
+  function hexToRgb(hex) {
+    if (!hex) return null;
+    var h = String(hex).replace(/^#/, '').trim();
+    if (h.length === 3) h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
+    if (h.length !== 6 || /[^0-9a-fA-F]/.test(h)) return null;
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+
+  var fromBase = hexToRgb(cv.getAttribute('data-yy-base'));
+  var fromAlt = hexToRgb(cv.getAttribute('data-yy-alt'));
+  var fromIdle = hexToRgb(cv.getAttribute('data-yy-idle'));
+  if (fromBase) C_BASE = fromBase;
+  if (fromAlt) C_ALT = fromAlt;
+  if (fromIdle) C_IDLE = fromIdle;
 
   /* Desktop with a real pointer only, and never when motion is reduced —
      a full-viewport animated field is exactly what that preference is about. */

@@ -64,6 +64,9 @@
         autoRaf: true,
         respectReducedMotion: true
       });
+      lenis.on('scroll', function () {
+        window.dispatchEvent(new CustomEvent('yy:scroll'));
+      });
     } catch (e) {
       lenis = null;
       if (window.console) console.error('[yy-scroll] Lenis off, native scroll active:', e);
