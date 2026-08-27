@@ -617,7 +617,7 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--duration-slow) var(--ease-in-out),
-                transform var(--duration-fast) var(--ease-bounce-strong);
+                transform var(--duration-fast) var(--ease-smooth-out);
   }
   .slot.is-placeholder .ph {
     opacity: 1;
@@ -663,14 +663,6 @@
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: var(--t-13);
     color: var(--ink-2);
-  }
-
-  .ph__spec {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: var(--t-11);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--ink-3);
   }
 
   /* ---------- closing ---------- */

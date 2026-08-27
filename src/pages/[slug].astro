@@ -36,7 +36,6 @@ if (!project) {
         label={project.video.label}
         width={project.video.width}
         height={project.video.height}
-        caption={project.placeholderSpec}
       />
     ) : project.cover ? (
       <MediaFigure
@@ -44,7 +43,6 @@ if (!project) {
         alt={project.cover.alt}
         width={project.cover.width}
         height={project.cover.height}
-        caption={project.placeholderSpec}
       />
     ) : (
       <p>Add the project’s strongest evidence artifact here.</p>

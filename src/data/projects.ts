@@ -52,8 +52,6 @@ export interface Project {
   logo?: ProjectLogo;
   cover?: ProjectCover;
   video?: ProjectVideo;
-  placeholderFile?: string;
-  placeholderSpec?: string;
   acts?: string[];
   panelFoot?: string;
   /** Explicit Webflow footer neighbours. New Astro pages may omit these. */
@@ -92,8 +90,6 @@ export const projects: Project[] = [
       label: 'Opus Clip marquee preview',
       play: 'scroll'
     },
-    placeholderFile: 'videos/case-opusclip-marquee.mp4',
-    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'alzheimerdisease',
     nextSlug: 'mckinseyecommerce'
   },
@@ -126,8 +122,6 @@ export const projects: Project[] = [
       label: 'AtlasNova brand kit input cover',
       play: 'scroll'
     },
-    placeholderFile: 'videos/case-atlasnova.mp4',
-    placeholderSpec: '4:3 · plays in view'
   },
   {
     slug: 'mckinseyecommerce',
@@ -164,8 +158,6 @@ export const projects: Project[] = [
       label: 'McKinsey orbit preview',
       play: 'scroll'
     },
-    placeholderFile: 'videos/case-mckinsey.mp4',
-    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'ai-driven-product-design',
     nextSlug: 'larkdesign'
   },
@@ -204,8 +196,6 @@ export const projects: Project[] = [
       label: 'Lark Design carousel preview',
       play: 'scroll'
     },
-    placeholderFile: 'videos/case-lark.mp4',
-    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'mckinseyecommerce',
     nextSlug: 'cummins-digitalization'
   },
@@ -229,8 +219,6 @@ export const projects: Project[] = [
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/hero-mi-finance-account-card-cover.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'cummins-digitalization',
     nextSlug: 'alzheimerdisease'
   },
@@ -254,8 +242,6 @@ export const projects: Project[] = [
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/hero-cummins-guidanz-card-cover.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'larkdesign',
     nextSlug: 'mifinance'
   },
@@ -279,8 +265,6 @@ export const projects: Project[] = [
       width: 492,
       height: 369
     },
-    placeholderFile: 'home/hero-alzheimer-care-wearable-card-cover.webp',
-    placeholderSpec: '4:3 · export 984 × 738',
     prevSlug: 'mifinance',
     nextSlug: 'ai-driven-product-design'
   },

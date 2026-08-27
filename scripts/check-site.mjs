@@ -298,13 +298,7 @@ if (useDist) {
 }
 
 const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
-const optionalMissing = new Set(
-  projectsMod.projects.flatMap((p) => {
-    const out = [];
-    if (p.placeholderFile && p.cover) out.push(toDisk(p.cover.src));
-    return out;
-  })
-);
+const optionalMissing = new Set();
 
 const knownGenerated = useDist
   ? new Set()
@@ -846,7 +840,7 @@ if (fs.existsSync(canvasGif) && fs.statSync(canvasGif).size > 4 * 1024 * 1024) {
 }
 
 for (const project of projectsMod.projects) {
-  if (project.cover && !project.placeholderFile) {
+  if (project.cover) {
     const p = path.join(ROOT, toDisk(project.cover.src));
     if (!fs.existsSync(p)) errors.push(`${project.slug}: missing cover ${project.cover.src}`);
   }
