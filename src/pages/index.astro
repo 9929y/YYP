@@ -11,7 +11,8 @@ const cases = landingProjects();
 
 <!--
   Live homepage at /. Layout matched to Figma Landing Page node 1:2.
-  Case-study pages stay Webflow passthrough. Shared chrome = yy-chrome footer/nav.
+  Case-study pages stay Webflow passthrough. Shared chrome (nav + footer) is
+  yy-chrome on every page, including cases; case body padding is unchanged.
   Hero canvas: ShaderGradient React island + still fallback for reduced motion.
   Motion: yy-canvas-motion.js drives fixed canvas/cover CSS vars + intro reveal.
 -->
@@ -19,7 +20,7 @@ const cases = landingProjects();
   title="Yanice Yang — Product Designer"
   description="Product designer. Selected work in research, consumer product, enterprise and health."
   htmlClass="yy-landing"
-  reveal={false}
+  reveal={true}
   lenis={true}
   chrome={true}
 >
@@ -47,18 +48,18 @@ const cases = landingProjects();
       <section class="hero row row--ruled" data-section="hero">
         <div class="hero__col hero__col--lead">
           <div class="hero__zone hero__zone--top">
-            <p class="eyebrow" data-intro="meta">Yanice Yang</p>
+            <p class="eyebrow" data-reveal="intro-meta">Yanice Yang</p>
           </div>
           <div class="hero__zone hero__zone--meta">
-            <p class="hero__meta" data-intro="meta">Product Designer<br />Bay Area, US</p>
+            <p class="hero__meta" data-reveal="intro-meta">Product Designer<br />Bay Area, US</p>
           </div>
           <div class="hero__zone hero__zone--foot" aria-hidden="true"></div>
         </div>
         <div class="hero__col hero__col--statement">
           <div class="hero__zone hero__zone--top">
-            <p class="eyebrow" data-intro="meta">Portfolio</p>
+            <p class="eyebrow" data-reveal="intro-meta">Portfolio</p>
           </div>
-          <h1 class="hero__title" data-intro="headline">
+          <h1 class="hero__title" data-reveal="intro-headline">
             <MorphingStatement client:load />
           </h1>
           <div class="hero__zone hero__zone--after" aria-hidden="true"></div>
@@ -67,17 +68,14 @@ const cases = landingProjects();
 
       <section class="index" id="work" data-section="projects" aria-labelledby="featured-projects-label">
         <header class="index__head">
-          <p class="eyebrow" id="featured-projects-label">Featured projects</p>
+          <p class="eyebrow" id="featured-projects-label" data-reveal="text">Featured projects</p>
         </header>
         <ProjectIndex projects={cases} />
       </section>
     </main>
   </div>
 
-  <div id="yy-cursor" aria-hidden="true"><span class="yy-cursor__t">view</span></div>
-
   <Fragment slot="scripts">
-    <script is:inline src="/assets/js/yy-cursor.js"></script>
     <script is:inline src="/assets/js/yy-slots.js"></script>
     <script is:inline src="/assets/js/yy-canvas-motion.js"></script>
   </Fragment>

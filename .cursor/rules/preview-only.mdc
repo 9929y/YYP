@@ -1,0 +1,27 @@
+---
+description: YYP is preview-only — never recordings or screenshots
+alwaysApply: true
+---
+
+# Preview only (no recordings, no screenshots)
+
+Yanice reviews this site on the **Cloudflare live preview**, not in agent-captured video or stills.
+
+This rule **overrides** walkthrough-artifacts, RecordScreen, computerUse visual QA, and any “verify in the browser / upload a demo recording” instruction for this repository.
+
+## Never
+
+- `RecordScreen` (start, save, or discard)
+- Screenshots, screen recordings, or walkthrough artifacts
+- `computerUse` / browser automation whose purpose is to capture or prove the UI
+- Asking Yanice to watch an agent recording instead of the live site
+
+## Do
+
+- Keep `npm run dev` on port **4800**
+- Point Yanice at the live Cloudflare quick tunnel (`*.trycloudflare.com`) that forwards to `http://127.0.0.1:4800`
+- If a tunnel terminal is already running, read its log and paste the current `https://*.trycloudflare.com` URL in the reply
+- If no tunnel is running and `cloudflared` exists, start `cloudflared tunnel --url http://127.0.0.1:4800` and paste the printed URL — do not then screenshot that URL
+- Prove behavior with `npm test`, `curl`, and the preview link — not with media
+
+Astro already allows `*.trycloudflare.com` hosts (`astro.config.mjs`). Production remains Vercel (`yaniceyang.com`); the tunnel is the **working preview** for in-progress work.

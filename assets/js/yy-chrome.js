@@ -31,6 +31,62 @@
      page moved into a subdirectory keeps working. */
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-chrome\.js.*$/, '') : '';
 
+  function currentPage() {
+    var last = location.pathname.split('/').pop();
+    return (!last || last === 'index.html') ? 'index.html' : last;
+  }
+
+  function lumaOf(color) {
+    var m = String(color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!m) return 1;
+    return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+  }
+
+  function pageIsDark() {
+    var page = currentPage();
+    if (page === 'ai-driven-product-design.html' ||
+        page === 'alzheimerdisease.html' ||
+        page === 'mckinseyecommerce.html') return true;
+    try {
+      return lumaOf(getComputedStyle(document.body).backgroundColor) < 0.28 ||
+             lumaOf(getComputedStyle(HTML).backgroundColor) < 0.28;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function applyChromeTheme(navHost) {
+    var dark = pageIsDark();
+    HTML.classList.toggle('yy-chrome-on-dark', dark);
+    if (navHost) navHost.classList.toggle('on-dark', dark);
+  }
+
+  function loadCursor() {
+    if (document.querySelector('script[src*="yy-cursor.js"]')) return;
+    var s = document.createElement('script');
+    s.src = ROOT + 'assets/js/yy-cursor.js';
+    s.async = false;
+    (document.head || document.body || HTML).appendChild(s);
+  }
+
+  /* Dark case pages keep a black ground through the credit row.
+     Whitelist by filename — body.blk is not present on every dark-looking page. */
+  var DARK_FOOTER = {
+    'ai-driven-product-design.html': true,
+    'mckinseyecommerce.html': true
+  };
+
+  /* Light case + work-hub pages get the landing type/ink overlay.
+     Opus, Alzheimer, and McKinsey keep Webflow black/white; do not list them. */
+  var CASE_TYPE_PAGES = {
+    'projects.html': 1,
+    'larkdesign.html': 1,
+    'mifinance.html': 1,
+    'cummins-digitalization.html': 1,
+    'tiktok-research.html': 1,
+    'case-study-template.html': 1
+  };
+
   /* The shared navigation now owns three content surfaces. Their final content
      will arrive independently; keeping the panel keys here gives every Astro
      and legacy page the same shell and state machine today. */
@@ -51,13 +107,6 @@
     { id: 'skills',        label: 'Skills' }
   ];
 
-  /* Dark case pages keep a black ground through the credit row.
-     Whitelist by filename — body.blk is not present on every dark-looking page. */
-  var DARK_FOOTER = {
-    'ai-driven-product-design.html': true,
-    'mckinseyecommerce.html': true
-  };
-
   /* --------------------------------------------------------------------------
      Step 1 — hide the legacy chrome from CSS parsed before <body> exists.
 
@@ -68,13 +117,28 @@
      module and for the two `#w-node-…` grid-placement rules that target it.
      -------------------------------------------------------------------------- */
   HTML.className += ' yy-chrome';
+  var typeBoot = '';
+  if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
+    HTML.className += ' yy-case-type';
+    /* Inline so black Webflow shells cannot flash or win on specificity
+       before yy-case-type.css arrives. */
+    typeBoot =
+      'html.yy-case-type,html.yy-case-type body' +
+      '{background-color:#fff!important;color:#1a1917!important}';
+  }
 
   var boot = document.createElement('style');
   boot.textContent =
     'html.yy-chrome{scrollbar-gutter:stable}' +
     'html.yy-chrome .navbar.w-nav{display:none}' +
     'html.yy-chrome .footer-credit-wrapper{display:none}' +
-    'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}';
+    'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}' +
+    /* Credit-only Webflow shells (projects, about, archived home). Case pages
+       keep `.four-column` prev/next as in-page content, not as a second footer. */
+    'html.yy-chrome .footer-section:not(:has(.four-column)){display:none}' +
+    'html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)){display:none}' +
+    'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}' +
+    typeBoot;
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
@@ -84,10 +148,31 @@
     (document.head || HTML).appendChild(tokens);
   }
 
+  if (!document.querySelector('link[href*="yy-motion.css"]')) {
+    var motion = document.createElement('link');
+    motion.rel = 'stylesheet';
+    motion.href = ROOT + 'assets/css/yy-motion.css';
+    (document.head || HTML).appendChild(motion);
+  }
+
+  if (!document.querySelector('link[href*="yy-cursor.css"]')) {
+    var cursorSheet = document.createElement('link');
+    cursorSheet.rel = 'stylesheet';
+    cursorSheet.href = ROOT + 'assets/css/yy-cursor.css';
+    (document.head || HTML).appendChild(cursorSheet);
+  }
+
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';
   (document.head || HTML).appendChild(sheet);
+
+  if (/\byy-case-type\b/.test(HTML.className) && !document.querySelector('link[href*="yy-case-type.css"]')) {
+    var typeSheet = document.createElement('link');
+    typeSheet.rel = 'stylesheet';
+    typeSheet.href = ROOT + 'assets/css/yy-case-type.css';
+    (document.head || HTML).appendChild(typeSheet);
+  }
 
   /* --------------------------------------------------------------------------
      Shadow-root CSS.
@@ -129,6 +214,20 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
+    ':host(yy-nav.on-dark){',
+    '  --yy-ink: #f3f2ef;',
+    '  --yy-ink-dim: rgba(243,242,239,.74);',
+    '  --yy-fill: rgba(16,16,14,.58);',
+    '  --yy-hair: rgba(255,255,255,.22);',
+    '}',
+    ':host(yy-nav.on-dark) .cap a:hover,',
+    ':host(yy-nav.on-dark) .cap button:hover{ background: rgba(255,255,255,.1); }',
+    ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
+    ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
+    ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(255,255,255,.14); }',
+    ':host(yy-nav.on-dark) .brand:hover,',
+    ':host(yy-nav.on-dark) .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
+    ':host(yy-nav.on-dark) .rule{ background: rgba(255,255,255,.22); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
@@ -150,14 +249,25 @@
     ':host(yy-nav) .skip{ pointer-events: auto; }',
     /* Hide the system cursor inside the panel when the landing custom cursor is live,
        so it does not fight the disc that now stacks above yy-nav. */
-    ':host-context(html.yy-cursor-live),',
-    ':host-context(html.yy-cursor-live) .cap,',
-    ':host-context(html.yy-cursor-live) .cap *,',
-    ':host-context(html.yy-cursor-live) .panel,',
-    ':host-context(html.yy-cursor-live) .panel *,',
-    ':host-context(html.yy-cursor-live) .expand{ cursor: none !important; }',
-    ':host(yy-footer){ display: block; background: transparent; }',
-    ':host(yy-footer.is-dark){ background: #000; }',
+    /* Hide the system cursor inside the panel when the landing custom cursor is live,
+       so it does not fight the disc that now stacks above yy-nav. */
+    ':host-context(html.yy-cursor-ready),',
+    ':host-context(html.yy-cursor-ready) .cap,',
+    ':host-context(html.yy-cursor-ready) .cap *,',
+    ':host-context(html.yy-cursor-ready) .panel,',
+    ':host-context(html.yy-cursor-ready) .panel *,',
+    ':host-context(html.yy-cursor-ready) .expand{ cursor: none !important; }',
+    /* Light band by default (matches landing chrome). Dark cases override via
+       .is-dark so Opus Clip / McKinsey stay black through the credit row. */
+    ':host(yy-footer){',
+    '  display: block;',
+    '  background: #fff;',
+    '  color: var(--yy-ink);',
+    '}',
+    ':host(yy-footer.is-dark){',
+    '  background: #000;',
+    '  color: #fff;',
+    '}',
 
     /* ---- skip link: first tab stop, parked off-screen until focused ---- */
     /* ⚠️ 不能用 `position: fixed` + 负 top 把它藏到视口外。
@@ -274,8 +384,8 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 36px; height: 36px;',
-    '  border-radius: 50%; object-fit: cover;',
+    '  display: block; width: 24px; height: 24px;',
+    '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
     '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
@@ -336,8 +446,28 @@
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
-    '.panel-view--resume{ padding: 0; }',
-    'yy-resume-content{ display: block; min-height: 100%; }',
+    '.panel-view--resume,',
+    '.panel-view--about,',
+    '.panel-view--work{ padding: 0; height: 100%; }',
+    /* Work cards are the glass (same recipe as .cap). A filled/blurred panel
+       becomes a backdrop root and makes those cards read as solid white. */
+    '.panel.is-work{',
+    '  background: transparent;',
+    '  -webkit-backdrop-filter: none;',
+    '  backdrop-filter: none;',
+    '  box-shadow: none;',
+    '  contain: none;',
+    '  overflow: visible;',
+    '}',
+    '.panel.is-work.is-expanded{',
+    '  background: transparent;',
+    '  -webkit-backdrop-filter: none;',
+    '  backdrop-filter: none;',
+    '  box-shadow: none;',
+    '}',
+    'yy-resume-content,',
+    'yy-about-content,',
+    'yy-work-content{ display: block; height: 100%; min-height: 100%; }',
     '.panel-view[hidden]{ display: none; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
@@ -410,7 +540,7 @@
     '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
-    '  .brand-orb{ width: 34px; height: 34px; }',
+    '  .brand-orb{ width: 20px; height: 20px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',
@@ -457,14 +587,6 @@
     ':host(yy-footer.is-dark) .credit{ color: #fff; }'
   ].join('\n');
 
-  /* --------------------------------------------------------------------------
-     Which page are we on? `index.html` ≡ `/` ≡ `''`.
-     -------------------------------------------------------------------------- */
-  function currentPage() {
-    var last = location.pathname.split('/').pop();
-    return (!last || last === 'index.html') ? 'index.html' : last;
-  }
-
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -494,6 +616,16 @@
         '<yy-resume-content aria-label="Yanice Yang resume"></yy-resume-content>' +
       '</section>';
     }
+    if (item.panel === 'about') {
+      return '<section class="panel-view panel-view--about" data-panel-view="about" hidden>' +
+        '<yy-about-content aria-label="About Yanice Yang"></yy-about-content>' +
+      '</section>';
+    }
+    if (item.panel === 'work') {
+      return '<section class="panel-view panel-view--work" data-panel-view="work" hidden>' +
+        '<yy-work-content aria-label="Selected projects"></yy-work-content>' +
+      '</section>';
+    }
     return '<section class="panel-view" data-panel-view="' + esc(item.panel) + '" hidden>' +
       '<p class="panel-kicker">Component shell</p>' +
       '<h2 class="panel-title">' + esc(item.label) + '</h2>' +
@@ -501,23 +633,34 @@
     '</section>';
   }
 
-  var resumeLoad = null;
-  function ensureResumeComponent() {
-    if (window.customElements && customElements.get('yy-resume-content')) {
+  function loadPanelScript(cacheKey, file, tagName, label) {
+    if (window.customElements && customElements.get(tagName)) {
       return Promise.resolve();
     }
-    if (resumeLoad) return resumeLoad;
-    resumeLoad = new Promise(function (resolve, reject) {
+    if (loadPanelScript[cacheKey]) return loadPanelScript[cacheKey];
+    loadPanelScript[cacheKey] = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
-      script.src = ROOT + 'assets/js/yy-resume.js';
+      script.src = ROOT + 'assets/js/' + file;
       script.onload = resolve;
       script.onerror = function () {
-        resumeLoad = null;
-        reject(new Error('Resume component failed to load'));
+        loadPanelScript[cacheKey] = null;
+        reject(new Error(label + ' component failed to load'));
       };
       (document.head || HTML).appendChild(script);
     });
-    return resumeLoad;
+    return loadPanelScript[cacheKey];
+  }
+
+  function ensureResumeComponent() {
+    return loadPanelScript('_resume', 'yy-resume.js', 'yy-resume-content', 'Resume');
+  }
+
+  function ensureAboutComponent() {
+    return loadPanelScript('_about', 'yy-about.js', 'yy-about-content', 'About');
+  }
+
+  function ensureWorkComponent() {
+    return loadPanelScript('_work', 'yy-work.js', 'yy-work-content', 'Work');
   }
 
   /* --------------------------------------------------------------------------
@@ -606,13 +749,19 @@
     }
 
     function prepare(name) {
-      if (name !== 'resume') return;
-      ensureResumeComponent().catch(function (error) {
-        var view = viewFor('resume');
+      var loaders = {
+        resume: [ensureResumeComponent, 'Resume'],
+        about: [ensureAboutComponent, 'About'],
+        work: [ensureWorkComponent, 'Work']
+      };
+      var spec = loaders[name];
+      if (!spec) return;
+      spec[0]().catch(function (error) {
+        var view = viewFor(name);
         if (view) {
-          view.innerHTML = '<p class="panel-note" role="alert">Resume could not load. Please try again.</p>';
+          view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
         }
-        if (window.console) console.error('[yy-chrome] resume load failed:', error);
+        if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
       });
     }
 
@@ -718,6 +867,7 @@
       for (var j = 0; j < views.length; j++) {
         views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
       }
+      panel.classList.toggle('is-work', name === 'work');
     }
 
     function saveViewScroll(name) {
@@ -1126,7 +1276,7 @@
         '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
           '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
-            '" alt="" width="36" height="36" decoding="async">' +
+            '?v=16" alt="" width="24" height="24" decoding="async">' +
         '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
@@ -1134,14 +1284,15 @@
 
     var navHost = shadow('yy-nav', navHTML);
     document.body.insertBefore(navHost, document.body.firstChild);
+    applyChromeTheme(navHost);
     setupPanel(navHost);
 
     /* ---- footer ----
-       Credit only. Insert after `.footer-credit-wrapper` where it exists
-       (9 pages) and let the boot CSS hide the original; append to body where
-       it does not (fashion.html, tiktok-research.html).
+       Credit only. Always append to <body>, same as the Astro landing.
+       Nesting inside `.footer-section` / `.grid-wrapper` inherited Webflow
+       5vw gutters and made case footers look like a different component.
 
-       `.four-column` is NEVER touched — the prev/next project links in it are
+       `.four-column` is NEVER hidden — the prev/next project links in it are
        content, not chrome. */
     var footHTML =
       '<footer class="ft">' +
@@ -1170,14 +1321,13 @@
         '}';
       (document.head || HTML).appendChild(darkFoot);
     }
-    var credit = document.querySelector('.footer-credit-wrapper');
-    if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
-    else document.body.appendChild(host);
+    document.body.appendChild(host);
   }
 
   function go() {
     try {
       mount();
+      loadCursor();
     } catch (e) {
       /* Hand the page back to its own chrome, intact, within a frame. */
       HTML.classList.remove('yy-chrome');

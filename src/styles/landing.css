@@ -1,6 +1,6 @@
 /* landing.css — extracted from landing.html. Visual behaviour is unchanged.
    Motion tokens come from assets/css/yy-tokens.css (linked in <head>).
-   Entrance reveal is html.yy-reveal .rv in yy-chrome.css, not duplicated here.
+   Entrance recipes live in assets/css/yy-motion.css (html.yy-reveal + data-reveal).
 */
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -16,163 +16,6 @@
     line-height: var(--lh-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* ---------- custom cursor — transcribed from the reference's own source ----------
-     Source: kedavra-me-design-system/raw/kedavra-inline-animation.js and
-     kedavra-site-full.css. Previous attempts measured computed styles and then
-     guessed at the mechanism; this is the mechanism.
-
-       initialState = { width: 12, height: 12, background: "white",
-                        mixBlendMode: "difference", color: "white" }
-       hoverState   = { width: 80, height: 80, background: "rgba(255,255,255,.48)",
-                        backdropFilter: "blur(12px)", mixBlendMode: "unset",
-                        color: "black" }
-
-     ⭐ mix-blend-mode: difference is the part I had never guessed, and it is the
-     answer to a question I had answered wrongly twice. A WHITE 12px dot is
-     visible on a white page because difference inverts it to black — and on a
-     black hero it stays white. One dot, correct on every background. My previous
-     fix made the dot dark to "solve" visibility, which is a worse solution to a
-     problem this mechanism does not have.
-
-     Timings, also from source (not inferred):
-       follow      gsap.to(duration: .16, ease: "power3.out")
-       first show  scale 0 -> 1, duration .32, ease: "back.out(1.7)"
-       hover in    disc .24 power3.out; text opacity .32 power2.inOut
-       hover out   text opacity .08 power2.out; disc .3 power2.out
-     My earlier 114px trail came from using .32s on an overshoot curve
-     (y2 = 2.56) for the follow — twice the duration, plus overshoot. The
-     reference never overshoots the position.
-
-     Anchoring: measured centre offset is (0,0) at BOTH 12px and 80px, so the
-     disc is centred on the hotspot at any size. A trailing translate(-50%,-50%)
-     resolves against the element's own box, so it re-centres as width animates
-     — no per-size margin needed.
-
-     Enabled only above 991px, matching `if (window.innerWidth > 991)` in the
-     source, and additionally gated on a fine pointer so a touch laptop keeps
-     its own cursor. */
-  #yy-cursor {
-    position: fixed;
-    top: 0; left: 0;
-    /* The disc always has a real 12px box. Two earlier attempts gave it a
-       zero-size or zero-scale starting state and animated up from there; both
-       left it with no size at all in some environments, which is the whole
-       reason nothing was ever visible.
-
-       The entrance is `opacity`, which is deliberately NOT in the transition
-       list — presence is binary and instant, size is the thing that animates on
-       hover. That is one fewer animated property to get pinned.
-
-       `mix-blend-mode: difference` has to stay on THIS element, a direct child
-       of <body>. It cannot move to an inner wrapper: this element carries
-       `transform`, which makes it a stacking context, which would isolate an
-       inner element's blending into a no-op against the page. */
-    width: 12px; height: 12px;
-    border-radius: 2137px;
-    background: #fff;
-    color: #fff;
-    mix-blend-mode: difference;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    line-height: 22px;
-    letter-spacing: -.64px;
-    pointer-events: none;
-    /* Above yy-nav panel (9000) and link preview (9500); below preloader (10000). */
-    z-index: 9800;
-    will-change: transform;
-    /* translate(-50%,-50%) trails the position translate, so it resolves against
-       the element's own box and re-centres automatically as width animates —
-       measured centre offset (0,0) at both 12px and 80px on the reference. */
-    transform: translate3d(var(--cx, -200px), var(--cy, -200px), 0) translate(-50%, -50%);
-    transition-property: transform, width, height, background-color, color;
-    /* Source declares .16s for the follow tween. Transcribing that literally
-       measured a 23px worst-case trail against the reference's own 11px under an
-       identical probe — GSAP restarting a tween per mousemove event follows
-       tighter than a CSS transition restarting on the same events. Copying the
-       BEHAVIOUR, which is what was asked for, means .12s here: measured 13px
-       against the reference's 11px. The declared number and the observed one
-       disagree, and the observed one is the spec that matters. */
-    /* The follow (.08s) is deliberately NOT tokenised: transitions-polish has no
-       "cursor follow" usage, and its rule is explicit — if a value's usage matches
-       no token, leave it. 80ms here is a measured follow, not a mis-tuned tooltip
-       delay.
-
-       The size/colour lane IS tokenised. The disc growing 12px to 80px is a
-       surface open, so it maps to --duration-fast — and the CLOSE is split out on
-       the .on rule below, per the open/close asymmetry rule. This base rule now
-       carries the close. */
-    transition-duration: .08s,
-                         var(--duration-quick), var(--duration-quick),
-                         var(--duration-quick), var(--duration-quick);
-    transition-timing-function:
-      cubic-bezier(.165, .84, .44, 1),        /* follow — power3.out, off-token by design */
-      var(--ease-bounce), var(--ease-bounce), /* size — badge pop open */
-      var(--ease-smooth-out), var(--ease-smooth-out);
-    /* Not transitioned. Opacity is a hard on/off so a zero-width disc is never
-       a faint smudge — presence is binary, size is what animates. */
-    opacity: 0;
-  }
-  html.yy-cursor-live #yy-cursor { opacity: 1; }
-
-  /* hoverState */
-  /* hoverState.
-     Open/close asymmetry, per transitions-polish: "dropdown/modal open 250ms →
-     close 150ms. Opening is an invitation; closing should get out of the way."
-     Both directions were 240ms. The base rule carries the CLOSE
-     (--duration-quick); this one overrides with the OPEN (--duration-fast), so
-     the disc blooms deliberately and snaps back out of the way. */
-  #yy-cursor.on {
-    transition-duration: .08s,
-                         var(--duration-fast), var(--duration-fast),
-                         var(--duration-fast), var(--duration-fast);
-    width: 80px; height: 80px;
-    background: rgba(255, 255, 255, .48);
-    color: #000;
-    mix-blend-mode: normal;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-  }
-
-  /* In-progress (Atlas): same glass as .on, reshaped to a status chip. */
-  #yy-cursor.on.is-chip {
-    width: 124px;
-    height: 40px;
-    padding: 0 16px;
-    border-radius: 999px;
-    font-size: 13px;
-    letter-spacing: -.02em;
-    font-weight: 500;
-  }
-
-  .yy-cursor__t {
-    opacity: 0;
-    white-space: nowrap;
-    pointer-events: none;
-    /* Intent delay, per transitions.dev's 17-tooltip: --duration-micro (80ms)
-       before the label appears, so a pointer sweeping across a row of cards does
-       not flash "view" at every one it crosses. The skill is precise about when a
-       delay is legitimate — "to filter accidental triggers", not to pad a slow
-       animation — and a hover label is exactly that case. */
-    transition: opacity .32s cubic-bezier(.45, 0, .55, 1) var(--duration-micro);
-  }
-  #yy-cursor.on .yy-cursor__t { opacity: 1; }
-  /* Never delay a dismissal. Out is .08s with zero delay — the reference uses
-     .08s here too, and transitions-polish: "dismissal must feel instant". */
-  #yy-cursor:not(.on) .yy-cursor__t {
-    transition-duration: .08s;
-    transition-delay: 0s;
-  }
-
-  @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
-    html.yy-cursor-live, html.yy-cursor-live * { cursor: none; }
-  }
-
-  @media (max-width: 991px), (hover: none), (pointer: coarse) {
-    #yy-cursor { display: none !important; }
   }
 
   a { color: inherit; }
@@ -329,70 +172,15 @@
     visibility: hidden;
   }
 
-  /* ---------- opening intro reveal ---------- */
-  html.yy-landing [data-intro="meta"],
-  html.yy-landing [data-intro="headline"] {
-    opacity: 0;
-  }
-
-  html.yy-landing [data-intro="headline"] {
-    transform: translateY(14px);
-    clip-path: inset(0 0 100% 0);
-    overflow: hidden;
-  }
-
-  /* Spine: start collapsed; grow top → bottom after intro-ready. */
+  /* Spine: start collapsed; grow top → bottom after intro-ready.
+     Text intro recipes live in assets/css/yy-motion.css. */
   html.yy-landing .hero.row--ruled::before {
     transform: scaleY(0);
     transform-origin: top center;
   }
 
-  [data-motion-root][data-intro-ready="true"] [data-intro="meta"] {
-    animation: introFade 560ms cubic-bezier(.2, .8, .2, 1) both;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-intro="meta"] {
-    animation-delay: 160ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-intro="meta"] {
-    animation-delay: 240ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-intro="meta"] {
-    animation-delay: 200ms;
-  }
-
-  [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-    animation: introTextReveal 820ms cubic-bezier(.16, 1, .3, 1) 320ms both;
-  }
-
   [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
     animation: introLineGrowY 720ms cubic-bezier(.16, 1, .3, 1) 420ms both;
-  }
-
-  @keyframes introFade {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes introTextReveal {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      clip-path: inset(0 0 0 0);
-    }
   }
 
   @keyframes introLineGrowY {
@@ -411,16 +199,6 @@
     .yy-canvas__cover {
       transform: none;
       transition: opacity 240ms ease;
-    }
-    html.yy-landing [data-intro="meta"],
-    html.yy-landing [data-intro="headline"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="meta"],
-    [data-motion-root][data-intro-ready="true"] [data-intro="headline"] {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-      clip-path: none !important;
-      overflow: visible !important;
     }
     html.yy-landing .hero.row--ruled::before,
     [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
@@ -784,20 +562,13 @@
     align-self: end;
   }
 
-  /* Cross-fade + cross-blur from placeholder to real image, per
-     transitions.dev's 14-skeleton-reveal. Its reveal parameters land exactly on
-     the token scale — 400ms = --duration-slow ("skeleton content reveal"),
-     2px = --blur-small, ease-in-out — so they are referenced, not restated.
-
-     ⚠️ Only HALF the recipe is used, on purpose. The recipe also pulses the
-     skeleton while data loads. These slots are not loading — they are *not yet
-     supplied*. A pulse would promise an image is on its way, which would be a
-     lie until Yanice exports one. The reveal half is honest and is the part that
-     matters: drop a file into assets/images/home/ and it fades in over the
-     placeholder with no code change.
-
-     The image starts at opacity 0, so a 404 shows nothing rather than a broken
-     icon — JS only reveals it after a successful load. */
+  /* Media fill. Enter motion is on .slot__media (yy-reveal), not opacity here.
+     Hover scale is on the inner img/video so it does not fight reveal transform. */
+  .slot__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
   /* ~6px overscan clips export hairlines (AtlasNova top ~4 source px ≈ 2.3
      CSS px under cover) inside overflow:hidden + radius. */
   .slot img,
@@ -809,50 +580,38 @@
     height: calc(100% + 12px);
     object-fit: cover;
     display: block;
-    opacity: 0;
-    filter: blur(var(--blur-small));
-    transition: opacity var(--duration-slow) var(--ease-in-out),
-                filter var(--duration-slow) var(--ease-in-out);
   }
 
-  .slot.is-revealed img,
-  .slot.is-revealed video {
-    opacity: 1;
-    filter: none;
-  }
-
-  /* The skeleton leaves as the content arrives — a cross-fade, not a swap. */
+  /* Placeholder only when there is no file or the load failed. */
   .slot .ph {
+    opacity: 0;
+    pointer-events: none;
     transition: opacity var(--duration-slow) var(--ease-in-out),
-                transform var(--m-dur) var(--ease-bounce-strong);
+                transform var(--duration-fast) var(--ease-bounce-strong);
   }
-  .slot.is-revealed .ph { opacity: 0; }
+  .slot.is-placeholder .ph {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slot.is-placeholder img,
+  .slot.is-placeholder video {
+    visibility: hidden;
+  }
 
   /* Hover in/out split, per transitions.dev's 11-avatar-group-hover.
-     Before, BOTH directions shared the overshoot curve. transitions-polish is
-     explicit that overshoot belongs to entrances only and that hover-out is the
-     one place where the return should be MORE elaborate than the arrival:
-
-       In:  quick and direct — --duration-fast-or-less with --ease-smooth-out
-       Out: softer and springier — --ease-bounce-strong, so it settles
-            instead of snapping
-
-     Duration stays 320ms: that is both kedavra's measured hover value and the
-     avatar recipe's own live tuning (--avatar-dur: 320ms). Two independent
-     sources landing on the same number, so there is nothing to align.
-
      The base rule carries the OUT transition; :hover overrides it with the IN. */
-  .slot:hover img,
-  .slot:hover video,
-  .slot:hover .ph {
-    transition: transform var(--m-dur) var(--ease-smooth-out);
+  @media (hover: hover) and (pointer: fine) {
+    .slot img,
+    .slot video {
+      transition: transform var(--duration-fast) var(--ease-bounce-strong);
+    }
+    .slot:hover img,
+    .slot:hover video,
+    .slot:hover .ph {
+      transition-timing-function: var(--ease-smooth-out);
+      transform: scale(1.03);
+    }
   }
-  /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
-     1.018, which is not perceptible — one of the three things Yanice correctly
-     called out as "no hover effect". */
-  .slot:hover img,
-  .slot:hover video,
-  .slot:hover .ph { transform: scale(1.03); }
 
   /* ---------- placeholder ----------
      Prints the exact export spec it is waiting for, so the requirement cannot
@@ -993,12 +752,9 @@
   }
 
 
-  /* Reveal motion itself lives in assets/css/yy-chrome.css under html.yy-reveal
-     (.rv and .yy-rv share one contract). Landing-only reduced-motion guards: */
+  /* Reveal motion lives in assets/css/yy-motion.css. Landing-only reduced-motion: */
   @media (prefers-reduced-motion: reduce) {
     .slot:hover img, .slot:hover video, .slot:hover .ph { transition: none; }
-    #yy-cursor { display: none !important; }
-    html.yy-cursor-live, html.yy-cursor-live * { cursor: auto; }
     html { scroll-behavior: auto; }
   }
 

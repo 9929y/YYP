@@ -11,7 +11,7 @@ const { prev, next } = Astro.props;
 ---
 
 {(prev || next) && (
-  <nav class="cs__nav" aria-label="Adjacent case studies">
+  <nav class="cs__nav" aria-label="Adjacent case studies" data-reveal="text">
     {prev?.href ? (
       <a href={publicUrl(prev.href)}>
         <span class="cs__nav-dir">Previous</span>
