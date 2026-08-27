@@ -754,10 +754,12 @@
     }
   }
 
-  /* Media fills the column past the spine. Shadow matches the nav capsule:
-     inset hair plus a single downward indigo drop. Extra left/right/up copies
-     (offset along one axis each) meet at the corners as a square notch —
-     they do not follow `--slot-radius`. The capsule never used those layers. */
+  /* Media fills the column past the spine. Drop shadow lives on `.slot`
+     (overflow: visible) so the blur follows `--slot-radius`. Clip + inset
+     hair live on `.slot__media` — overflow:hidden on the same node as a
+     drop shadow squares the umbra, which is why the old card looked like
+     a right angle had trapped the glow. Nav `.cap` is small enough that
+     the same pairing is less obvious. */
   .slot {
     display: block;
     position: relative;
@@ -765,17 +767,27 @@
     max-width: 960px;
     aspect-ratio: 4 / 3;
     border-radius: var(--slot-radius);
-    overflow: hidden;
-    background: var(--slot);
+    overflow: visible;
+    background: transparent;
     text-decoration: none;
     align-self: end;
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .72),
-      inset 0 0 0 1px rgba(26, 25, 23, .06),
-      inset 0 -1px 0 rgba(26, 25, 23, .04),
       0 1px 2px rgba(62, 65, 116, .07),
       0 2px 8px -2px rgba(62, 65, 116, .10),
       0 12px 36px -8px rgba(62, 65, 116, .22);
+  }
+
+  .slot__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border-radius: inherit;
+    overflow: hidden;
+    background: var(--slot);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .72),
+      inset 0 0 0 1px rgba(26, 25, 23, .06),
+      inset 0 -1px 0 rgba(26, 25, 23, .04);
   }
 
   .case .panel {

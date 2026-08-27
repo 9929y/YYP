@@ -134,6 +134,20 @@ html.yy-reveal .rv.in {
   will-change: auto;
 }
 
+/* Filter on `.slot` itself flattens the drop shadow into a rectangular
+   filter region. Keep opacity/transform on the card; blur the inner clip. */
+html.yy-reveal .slot.rv {
+  filter: none;
+}
+html.yy-reveal .slot.rv .slot__media {
+  filter: blur(var(--blur-medium));
+  transition: filter var(--duration-very-slow) var(--ease-smooth-out);
+  transition-delay: var(--d, 0s);
+}
+html.yy-reveal .slot.rv.in .slot__media {
+  filter: none;
+}
+
 /* Reduced motion: the script bails before setting the class, so this is only a
    belt-and-braces guard in case the class is ever set another way. */
 @media (prefers-reduced-motion: reduce) {

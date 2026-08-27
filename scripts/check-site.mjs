@@ -325,6 +325,12 @@ const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'u
 if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
   errors.push('landing .slot must not use left/right directional shadows that square the corners');
 }
+if (!landingCss.includes('.slot__media')) {
+  errors.push('landing .slot must clip media in .slot__media so drop shadows are not squared');
+}
+if (!/\.slot\s*\{[^}]*overflow:\s*visible/.test(landingCss)) {
+  errors.push('landing .slot must use overflow: visible so shadows follow the radius');
+}
 
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
 if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
