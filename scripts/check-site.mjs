@@ -858,11 +858,17 @@ for (const project of landingFeatured) {
   }
 }
 
-if (!slotMediaAstro.includes('priority') || !slotMediaAstro.includes("priority || play === 'hover' ? 'metadata'")) {
+if (!slotMediaAstro.includes('priority') || !slotMediaAstro.includes("priority ? 'metadata'")) {
   errors.push('SlotMedia.astro must preload metadata only for the priority (first) case');
 }
 if (!slotMediaAstro.includes('slot__poster') || !slotMediaAstro.includes('fetchpriority')) {
-  errors.push('SlotMedia.astro must render a priority poster <img> for the first landing case');
+  errors.push('SlotMedia.astro must render a poster <img> (eager for first case)');
+}
+if (!slotMediaAstro.includes('data-src') || !/priority \? undefined : videoUrl/.test(slotMediaAstro)) {
+  errors.push('SlotMedia.astro must defer non-first case video src via data-src until scroll');
+}
+if (!scrollJs.includes('ensureSource') || !scrollJs.includes("getAttribute('data-src')")) {
+  errors.push('yy-scroll.js must attach deferred video sources on scroll/play');
 }
 
 const projectIndexAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8');

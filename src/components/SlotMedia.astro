@@ -5,21 +5,22 @@ import { publicUrl } from '../data/projects';
 interface Props {
   project: Project;
   play: 'hover' | 'scroll' | 'auto';
-  /** First above-the-fold case: eager poster + metadata preload. */
+  /** First above-the-fold case: eager poster + metadata preload + source in HTML. */
   priority?: boolean;
 }
 
 const { project, play, priority = false } = Astro.props;
 const posterUrl = project.video?.poster ? publicUrl(project.video.poster) : undefined;
-const preload =
-  priority || play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none';
+const videoUrl = project.video ? publicUrl(project.video.src) : undefined;
+/* First case may fetch metadata early. Others keep no <source> until scroll. */
+const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
 ---
 
 <span class="slot__media" data-reveal="wipe">
   {
     project.video ? (
       <>
-        {priority && posterUrl && (
+        {posterUrl && (
           <img
             class="slot__poster"
             src={posterUrl}
@@ -27,13 +28,12 @@ const preload =
             width={project.video.width}
             height={project.video.height}
             decoding="async"
-            fetchpriority="high"
-            loading="eager"
+            fetchpriority={priority ? 'high' : 'auto'}
+            loading={priority ? 'eager' : 'lazy'}
           />
         )}
         <video
           class="slot__v"
-          poster={priority ? undefined : posterUrl}
           muted
           loop
           playsinline
@@ -43,8 +43,9 @@ const preload =
           height={project.video.height}
           aria-label={project.video.label}
           data-play={play}
+          data-src={priority ? undefined : videoUrl}
         >
-          <source src={publicUrl(project.video.src)} type="video/mp4" />
+          {priority && videoUrl ? <source src={videoUrl} type="video/mp4" /> : null}
         </video>
       </>
     ) : (
