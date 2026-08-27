@@ -17,8 +17,8 @@ export interface ProjectVideo {
   width: number;
   height: number;
   label: string;
-  /** scroll = play when in view (landing default); hover = play on pointer enter. */
-  play?: 'hover' | 'scroll';
+  /** scroll = play when in view; hover = play on pointer enter; auto = muted autoplay on load. */
+  play?: 'hover' | 'scroll' | 'auto';
 }
 
 export interface ProjectLogo {
@@ -88,10 +88,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Opus Clip marquee preview',
-      play: 'scroll'
+      play: 'auto'
     },
     placeholderFile: 'videos/case-opusclip-marquee.mp4',
-    placeholderSpec: '4:3 · plays in view',
+    placeholderSpec: '4:3 · autoplay',
     prevSlug: 'alzheimerdisease',
     nextSlug: 'mckinseyecommerce'
   },
@@ -160,10 +160,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'McKinsey orbit preview',
-      play: 'scroll'
+      play: 'auto'
     },
     placeholderFile: 'videos/case-mckinsey.mp4',
-    placeholderSpec: '4:3 · plays in view',
+    placeholderSpec: '4:3 · autoplay',
     prevSlug: 'ai-driven-product-design',
     nextSlug: 'larkdesign'
   },
@@ -200,10 +200,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Lark Design carousel preview',
-      play: 'scroll'
+      play: 'auto'
     },
     placeholderFile: 'videos/case-lark.mp4',
-    placeholderSpec: '4:3 · plays in view',
+    placeholderSpec: '4:3 · autoplay',
     prevSlug: 'mckinseyecommerce',
     nextSlug: 'cummins-digitalization'
   },

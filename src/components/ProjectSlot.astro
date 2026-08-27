@@ -22,7 +22,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       {project.panelFoot && <p class="panel__foot">{project.panelFoot}</p>}
     </div>
   ) : showMedia && href ? (
-    <a class="slot" href={href} aria-label={label} data-cursor-label="view">
+    <a class="slot" href={href} aria-label={label} data-cursor-label="view" data-reveal="media">
       {project.video ? (
         <video
           class="slot__v"
@@ -30,7 +30,8 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
           muted
           loop
           playsinline
-          preload={play === 'hover' ? 'metadata' : 'none'}
+          autoplay={play === 'auto'}
+          preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
           width={project.video.width}
           height={project.video.height}
           aria-label={project.video.label}
@@ -59,6 +60,7 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       class:list={['slot', 'slot--static']}
       role="group"
       aria-label={project.title}
+      data-reveal="media"
       data-cursor-label={project.status === 'in-progress' ? 'on progress' : undefined}
       data-cursor-chip={project.status === 'in-progress' ? 'true' : undefined}
       data-status={project.status}
@@ -70,7 +72,8 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
           muted
           loop
           playsinline
-          preload={play === 'hover' ? 'metadata' : 'none'}
+          autoplay={play === 'auto'}
+          preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
           width={project.video.width}
           height={project.video.height}
           aria-label={project.video.label}

@@ -202,6 +202,7 @@
      Modes (data-play on the <video>):
        · scroll — play when in view, pause when leaving (landing default)
        · hover  — play on pointer enter, pause on leave
+       · auto   — muted autoplay as soon as the element can play
 
      Guards:
        · muted + playsinline are on the element
@@ -253,7 +254,11 @@
       for (var i = 0; i < vids.length; i++) {
         var v = vids[i];
         var mode = v.getAttribute('data-play') || 'scroll';
-        if (mode === 'hover' && canHover) wireHover(v);
+        if (mode === 'auto') {
+          v.__yyInView = true;
+          if (v.preload === 'none') v.preload = 'auto';
+          tryPlay(v);
+        } else if (mode === 'hover' && canHover) wireHover(v);
         else scrollVids.push(v);
       }
 

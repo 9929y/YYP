@@ -10,8 +10,10 @@
             --reveal-duration: 400ms; --reveal-blur: 0px"
 
    Named recipes: text | fade | wipe | media | clip | intro-meta | intro-headline
-   Custom names: start from the text recipe; add a later rule for
-     html.yy-reveal [data-reveal="your-name"] { ... }
+   Landing featured rows and case-study blocks all read these same tokens.
+   Change :root --reveal-text-* / --reveal-media-* to restyle both at once.
+   Per-node: data-reveal + optional CSS vars. Homepage cases use
+   data-reveal-sync="case" so the label (text) and slot (media) start together.
 
    HARD RULE: this file may only animate opacity, transform, filter, clip-path.
    Do not set grid-template-columns, padding-left/right, or content color.

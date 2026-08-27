@@ -340,7 +340,7 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 36px; height: 36px;',
+    '  display: block; width: 22px; height: 22px;',
     '  border-radius: 50%; object-fit: cover;',
     '  pointer-events: none;',
     '}',
@@ -1249,7 +1249,7 @@
         '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
           '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
-            '" alt="" width="36" height="36" decoding="async">' +
+            '" alt="" width="22" height="22" decoding="async">' +
         '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
