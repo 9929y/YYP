@@ -365,6 +365,18 @@ if (
   errors.push('yy-case-layout.css must glass-style McKinsey and Lark cards');
 }
 if (
+  !caseLayoutCss.includes('grid-template-rows: 1fr 1fr') ||
+  !caseLayoutCss.includes('align-items: stretch')
+) {
+  errors.push('yy-case-layout.css must keep same-section cards equal height');
+}
+if (
+  !caseLayoutCss.includes('.step-card-2 .subtitle-4') ||
+  !caseLayoutCss.includes('justify-content: flex-start')
+) {
+  errors.push('yy-case-layout.css must top-align card copy');
+}
+if (
   !caseLayoutCss.includes('border-radius: var(--case-radius)') ||
   !caseLayoutCss.includes('.grid-img')
 ) {

@@ -225,7 +225,74 @@
 
 .step-card-2,
 .step-card-2.end {
-  padding: 24px 28px 28px;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: start;
+  justify-content: flex-start;
+  grid-auto-rows: auto;
+  padding: 20px 24px 24px;
+}
+
+.step-card-2 .subtitle-4 {
+  margin: 0 0 8px;
+}
+
+.step-card-2 .heading-medium-3,
+.step-card-2 .heading-medium-3.larkblue {
+  margin: 0;
+  padding: 0 0 8px;
+}
+
+.step-card-2 .service-description-2,
+.step-card-2 .steps-description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  grid-row-gap: 0;
+}
+
+.step-card-2 .paragraph {
+  margin: 0;
+}
+
+/* Same section = same card size. Webflow used `auto` rows and
+   `grid-auto-rows: 1fr` *inside* each card, so extra height opened a
+   gap between the index and the copy instead of sitting under it. */
+@media screen and (min-width: 992px) {
+  .highlight-grid .about-content-2 {
+    align-items: stretch;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 16px;
+    grid-row-gap: 16px;
+  }
+
+  .feedback {
+    align-items: stretch;
+  }
+}
+
+.shadow-card {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 28px 28px 32px;
+}
+
+.shadow-card .heading--slide {
+  margin: 0;
+  padding: 0 0 12px;
+}
+
+.shadow-card .paragraph {
+  margin: 0;
 }
 
 .highlight-grid .about-content-2 {
