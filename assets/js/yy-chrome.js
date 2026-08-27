@@ -1149,7 +1149,27 @@
       '</footer>';
 
     var host = shadow('yy-footer', footHTML);
-    if (DARK_FOOTER[here]) host.classList.add('is-dark');
+    if (DARK_FOOTER[here]) {
+      host.classList.add('is-dark');
+      /* Light-DOM patch: Webflow's .footer-section is hard-coded #fff and
+         would leave a white band under dark case pages. Keep prev/next
+         (four-column) as content; only retint the section + link chrome. */
+      var darkFoot = document.createElement('style');
+      darkFoot.textContent =
+        'html.yy-chrome .footer-section{' +
+        'background-color:#000!important;' +
+        'border-top-color:rgba(255,255,255,.12)!important;' +
+        '}' +
+        'html.yy-chrome .footer-section .footer-link,' +
+        'html.yy-chrome .footer-section .text-block-19,' +
+        'html.yy-chrome .footer-section .text-block-20{' +
+        'color:#fff!important;' +
+        '}' +
+        'html.yy-chrome .footer-section .hover-line-fill-3{' +
+        'background-color:#fff!important;' +
+        '}';
+      (document.head || HTML).appendChild(darkFoot);
+    }
     var credit = document.querySelector('.footer-credit-wrapper');
     if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
     else document.body.appendChild(host);
