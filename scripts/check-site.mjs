@@ -358,11 +358,16 @@ if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
   errors.push('yy-case-layout.css must lighten Opus impact captions on black');
 }
 if (
-  !caseLayoutCss.includes('.shadow-card') ||
   !caseLayoutCss.includes('.step-card-2') ||
   !caseLayoutCss.includes('background: transparent')
 ) {
-  errors.push('yy-case-layout.css must not glass-fill HTML cards over page washes');
+  errors.push('yy-case-layout.css must not glass-fill Lark step cards over page washes');
+}
+if (
+  !caseLayoutCss.includes('.shadow-card') ||
+  !caseLayoutCss.includes('backdrop-filter: blur(12px)')
+) {
+  errors.push('yy-case-layout.css must keep the existing McKinsey Takeaways glass cards');
 }
 if (
   !caseLayoutCss.includes('grid-template-rows: 1fr 1fr') ||

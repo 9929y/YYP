@@ -196,19 +196,22 @@
   color: #d4d4d4;
 }
 
-/* ---------- HTML cards only ----------
-   `--case-radius` is for inner HTML cards (Lark 01–06, McKinsey Takeaways).
-   Do not paint a glass fill over them: Lark sits on `.backgroundcolor` /
-   `.thechallenge.lark` washes, and McKinsey already has its own shadow.
-   Bitmaps (hero collages, 9-up screens, touchpoints maps) already include
-   their own cards, colors, and corners — never round or tint those files. */
+/* ---------- HTML cards ----------
+   `--case-radius` is for inner HTML cards only. Lark 01–06 stay unfilled
+   so `.backgroundcolor` / `.thechallenge.lark` washes show through.
+   McKinsey `.shadow-card` keeps the glass treatment already on the page.
+   Bitmaps keep their own cards, colors, and corners — never round those. */
 .shadow-card,
 .step-card-2 {
   box-sizing: border-box;
   border-radius: var(--case-radius);
+}
+
+.step-card-2 {
   background: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+  box-shadow: none;
 }
 
 .shadow-card {
@@ -218,8 +221,23 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  padding: 8% 8% 5%;
-  box-shadow: -6px -6px 20px #0003, 6px 6px 20px 6px #14141433;
+  padding: 28px 28px 32px;
+  background: rgba(255, 255, 255, 0.58);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  backdrop-filter: blur(12px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.20);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shadow-card {
+    background: rgba(255, 255, 255, 0.94);
+  }
 }
 
 .step-card-2,
