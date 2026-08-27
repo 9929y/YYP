@@ -250,9 +250,9 @@
    "legacy": "67cf08162efef1a5103b5c10_IMG_6398.webp",
    "bucket": "about",
    "role": "photo",
-   "desc": "滑雪场雪坡实拍：头顶红色缆车厢与索道塔，远处是被雪覆盖的度假村建筑群，坡上有一名穿蓝色雪服的人；原图存成横向、内容旋转 90°",
+   "desc": "滑雪场雪坡实拍：头顶红色缆车厢与索道塔，远处是被雪覆盖的度假村建筑群，坡上有一名穿蓝色雪服的人",
    "where_used": "人物或场景 —— 关于页兴趣照片墙里的滑雪场景（HTML 章节标为 dog lover，与实际内容不符）",
-   "reuse": "可作生活/兴趣类配图；人物远景不可辨认，但为本人相册照片，复用前确认；注意原图方向需旋转修正",
+   "reuse": "可作生活/兴趣类配图；人物远景不可辨认，但为本人相册照片，复用前确认",
    "alt": "Snowy ski resort seen from the slope, with red gondola cabins overhead and a snow-covered village below",
    "pages": [
     "aboutme.html"
@@ -265,9 +265,9 @@
     "aboutme.html": 28
    },
    "css_selectors": [],
-   "w": 3200,
-   "h": 2400,
-   "bytes": 596268,
+   "w": 2400,
+   "h": 3200,
+   "bytes": 579482,
    "variants": [
     "about/photo-ski-resort-gondola-slope-p-1080.webp",
     "about/photo-ski-resort-gondola-slope-p-1600.webp",
@@ -283,9 +283,9 @@
    "legacy": "67cf0816ce1ac15cfd70ca48_IMG_6299.webp",
    "bucket": "about",
    "role": "photo",
-   "desc": "雪场实拍：戴白色头盔、穿紫色雪服的人站在雪坡上看手机，身旁立着两块单板，背景是晴天雪山与防护网；原图存成横向、内容旋转 90°",
+   "desc": "雪场实拍：戴白色头盔、穿紫色雪服的人站在雪坡上看手机，身旁立着两块单板，背景是晴天雪山与防护网",
    "where_used": "人物或场景 —— 支撑关于页滑雪兴趣段落（HTML 章节标为 dog lover，与实际内容不符）",
-   "reuse": "可作滑雪/运动兴趣配图；为本人肖像（侧面、戴头盔），复用前确认；注意原图方向需旋转修正",
+   "reuse": "可作滑雪/运动兴趣配图；为本人肖像（侧面、戴头盔），复用前确认",
    "alt": "Skier in a purple jacket and helmet standing beside a snowboard on a sunny mountain slope",
    "pages": [
     "aboutme.html"
@@ -298,9 +298,9 @@
     "aboutme.html": 20
    },
    "css_selectors": [],
-   "w": 3200,
-   "h": 2400,
-   "bytes": 585672,
+   "w": 2400,
+   "h": 3200,
+   "bytes": 564936,
    "variants": [
     "about/photo-snowboarder-on-slope-portrait-p-1080.webp",
     "about/photo-snowboarder-on-slope-portrait-p-1600.webp",

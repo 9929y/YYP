@@ -1,68 +1,26 @@
 /* ============================================================================
-   yy-reveal.js — fills the gaps in the case pages' entrance animations.
+   yy-reveal.js — IntersectionObserver for named recipes in yy-motion.css.
 
-   THE PROBLEM, measured. Entrance motion on the case pages comes from Webflow
-   IX2, which only animates elements carrying `data-w-id`. That attribute was
-   added by hand, per page, in the Webflow editor, and it was never applied
-   consistently. Coverage of images plus text blocks:
+   Marks nodes with .in when they enter view. Hidden state is CSS-only, gated on
+   html.yy-reveal, so JS off / no observer / any throw leaves content visible.
 
-       mckinseyecommerce         94%      fashion              67%
-       ai-driven-product-design  93%      tiktok-research      18%
-       cummins-digitalization    89%      alzheimerdisease     14%
-                                          mifinance            11%
-                                          larkdesign            7%
+   Targets:
+     · Explicit: [data-reveal] (except none / intro-*) and .rv
+     · Landing (html.yy-landing): explicit only — never auto-collect (hero intro
+       is a CSS timeline; auto-collect would steal those nodes).
+     · Other pages: if nothing is marked, auto-collect images + text that IX2
+       does not own, stamp .yy-rv.
 
-   larkdesign has 7 data-w-id elements to cover 87 images and text blocks.
-   McKinsey has 18 covering 51. That is why some things animate in and some
-   just appear — it is the original authoring, not a regression: the
-   data-w-id counts are identical before and after this round's work.
-
-   THE APPROACH. This layer animates ONLY what IX2 does not own. The selector is
-   literally `:not([data-w-id])` and not a descendant of one, so the two systems
-   cannot fight over an element — there is no shared target by construction.
-
-   MATCHING THE EXISTING FEEL is the whole point; a second reveal with different
-   timing would make the page read as two pages. Both numbers below are measured,
-   not chosen:
-
-     · 500ms — the dominant duration in McKinsey's IX2 action list (39 of 308
-       items), confirmed by frame-sampling a live reveal.
-     · outQuad, i.e. cubic-bezier(.25,.46,.45,.94) — the named easing IX2 uses
-       for entrances. Sampled opacity decelerates 0.13 → 0.34 → 0.52 → 0.65 →
-       0.76 → 0.84 → 0.90, and y decelerates 87 → 66 → 48 → 35 → 24 → 16 → 10.
-       Ease-out is also the correct family for entering elements.
-     · translateY 100px → 0 — IX2's own travel distance for these blocks.
-
-   Stagger is 40ms, within the 30-50ms band for related items, capped at 5 steps
-   so a group never takes longer than 500 + 4x40 = 660ms to settle. Beyond that a
-   reader has already scrolled past.
-
-   FAILING SAFE. Content is visible by default and the animation is opted into by
-   a class this script sets before first paint. If the script never runs, throws,
-   or the browser has no IntersectionObserver, every element stays visible. This
-   is the opposite of the first landing-page attempt, which defaulted to
-   opacity 0 and left content permanently invisible when JS was off.
+   data-reveal="none" excludes a node (and descendants via closest).
+   data-reveal-mode="inout" re-hides on leave; default is once (enter only).
+   IX2 [data-w-id] is never a target.
    ============================================================================ */
 (function () {
   'use strict';
 
   var html = document.documentElement;
-
-  /* Never animate: chrome, the preloader (it sits at z-index 10000 over
-     everything), sticky/fixed elements whose position we must not disturb, and
-     anything inside a lightbox. */
   var SKIP = 'yy-nav,yy-footer,.sr-only,.navbar,.preloader-lark,.w-lightbox-backdrop,.footer-credit-wrapper';
 
-  /* Skip anything the page is ALREADY hiding by clipping it out of an
-     overflow:hidden ancestor — those are hover-reveal labels and carousel slides
-     whose visibility the page controls itself.
-
-     Measured case: projects.html has `.text-gradient-class` labels inside
-     `.card-gradient` (overflow: hidden), shown on hover. Adding opacity:0 to one
-     of them locked it off permanently, because IntersectionObserver correctly
-     reports a clipped-out element as not intersecting, so `.in` never arrived
-     and hovering revealed nothing. Layering a second opacity system on top of a
-     page's own is the bug; not doing it is the fix. */
   function clippedOut(el) {
     var r = el.getBoundingClientRect();
     var e = el.parentElement;
@@ -70,7 +28,6 @@
       var cs = getComputedStyle(e);
       if (/hidden|clip/.test(cs.overflow + cs.overflowX + cs.overflowY)) {
         var pr = e.getBoundingClientRect();
-        /* Outside the clipper's box on either axis, with a 2px tolerance. */
         if (r.bottom < pr.top - 2 || r.top > pr.bottom + 2 ||
             r.right < pr.left - 2 || r.left > pr.right + 2) return true;
       }
@@ -88,25 +45,34 @@
     return false;
   }
 
-  function collect() {
-    var out = [];
+  function recipeOf(el) {
+    return (el.getAttribute && el.getAttribute('data-reveal')) || '';
+  }
 
-    /* Images big enough to be content rather than an icon. */
+  function skipMarked(el) {
+    var r = recipeOf(el);
+    if (r === 'none' || r.indexOf('intro-') === 0) return true;
+    if (el.closest && el.closest('[data-reveal="none"]')) return true;
+    return false;
+  }
+
+  function modeOf(el) {
+    return (el.getAttribute && el.getAttribute('data-reveal-mode')) || 'once';
+  }
+
+  function collectAuto() {
+    var out = [];
     var imgs = document.querySelectorAll('img');
     for (var i = 0; i < imgs.length; i++) {
       var im = imgs[i];
-      if (im.closest(SKIP) || ownedByIx2(im) || clippedOut(im)) continue;
+      if (im.closest(SKIP) || ownedByIx2(im) || clippedOut(im) || skipMarked(im)) continue;
       if (im.getBoundingClientRect().width < 80) continue;
       out.push(im);
     }
-
-    /* Innermost text blocks — a container whose child also holds long text
-       would double up with that child and the two would stagger against each
-       other. */
     var blocks = document.querySelectorAll('p,h1,h2,h3,h4,blockquote,li,div');
     for (var j = 0; j < blocks.length; j++) {
       var el = blocks[j];
-      if (el.closest(SKIP) || ownedByIx2(el) || clippedOut(el)) continue;
+      if (el.closest(SKIP) || ownedByIx2(el) || clippedOut(el) || skipMarked(el)) continue;
       var t = (el.textContent || '').trim();
       if (t.length < 30) continue;
       var nested = false;
@@ -121,65 +87,104 @@
     return out;
   }
 
+  function collectExplicit() {
+    var nodes = document.querySelectorAll('[data-reveal], .rv, .yy-rv');
+    var out = [];
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el.closest(SKIP) || ownedByIx2(el) || skipMarked(el)) continue;
+      out.push(el);
+    }
+    return out;
+  }
+
+  function setStagger(el, step) {
+    el.style.setProperty('--d', (Math.min(step, 4) * 40) + 'ms');
+  }
+
+  function syncKey(el) {
+    var g = el.closest && el.closest('[data-reveal-sync], .case');
+    return g || el;
+  }
+
+  function revealList(list, io) {
+    var seen = [];
+    for (var i = 0; i < list.length; i++) {
+      var key = syncKey(list[i]);
+      var idx = -1;
+      for (var s = 0; s < seen.length; s++) if (seen[s] === key) { idx = s; break; }
+      if (idx < 0) {
+        idx = seen.length;
+        seen.push(key);
+      }
+      setStagger(list[i], idx);
+      list[i].classList.add('in');
+      if (modeOf(list[i]) !== 'inout' && io) io.unobserve(list[i]);
+    }
+  }
+
+  function onScreenItems(items) {
+    var out = [];
+    for (var q = 0; q < items.length; q++) {
+      var box = items[q].getBoundingClientRect();
+      if (box.top < innerHeight && box.bottom > 0) out.push(items[q]);
+    }
+    return out;
+  }
+
+  /* Mark first-viewport nodes before the hide gate so a page fade is not
+     stacked on a second opacity:0 enter for content already in view. */
+  function primeOnScreen(items) {
+    revealList(onScreenItems(items), null);
+  }
+
   try {
     if (!('IntersectionObserver' in window)) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    /* Set before paint so opting in never causes a flash of already-visible
-       content being hidden. */
-    html.className += ' yy-reveal';
-
     var start = function () {
       try {
-        /* Landing (and future Astro pages) mark explicit targets with .rv.
-           Case pages have no .rv, so we auto-collect and stamp .yy-rv.
-           One observer, one class contract: html.yy-reveal. */
-        var explicit = document.querySelectorAll('.rv');
-        var items = explicit.length ? Array.prototype.slice.call(explicit) : collect();
-        if (!items.length) { html.classList.remove('yy-reveal'); return; }
+        var isLanding = /\byy-landing\b/.test(html.className);
+        var explicit = collectExplicit();
+        var items = (isLanding || explicit.length) ? explicit : collectAuto();
+        if (!items.length) return;
 
-        if (!explicit.length) {
+        if (!explicit.length && !isLanding) {
           for (var i = 0; i < items.length; i++) items[i].classList.add('yy-rv');
         }
 
+        primeOnScreen(items);
+        html.classList.add('yy-reveal');
+
         var io = new IntersectionObserver(function (entries) {
-          /* Sort by document position so a group staggers top-to-bottom rather
-             than in observer-callback order, which is not guaranteed. */
           var shown = [];
-          for (var n = 0; n < entries.length; n++)
+          var left = [];
+          for (var n = 0; n < entries.length; n++) {
             if (entries[n].isIntersecting) shown.push(entries[n].target);
+            else left.push(entries[n].target);
+          }
           shown.sort(function (a, b) {
             return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
           });
-          for (var m = 0; m < shown.length; m++) {
-            /* Cap the stagger at 5 steps: 500 + 4 x 40 = 660ms to settle. */
-            shown[m].style.transitionDelay = (Math.min(m, 4) * 40) + 'ms';
-            shown[m].classList.add('in');
-            io.unobserve(shown[m]);
+          revealList(shown, io);
+          for (var h = 0; h < left.length; h++) {
+            if (modeOf(left[h]) === 'inout') left[h].classList.remove('in');
           }
         }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
 
         for (var p = 0; p < items.length; p++) io.observe(items[p]);
 
-        /* ---- safety sweep: a GUARANTEE, not a diagnosis ----
-           IntersectionObserver can legitimately never fire for an element the
-           page itself clips or moves — projects.html has a hover-reveal label
-           inside an overflow:hidden card that behaves exactly this way, and an
-           earlier attempt to detect that case by geometry still missed it.
-
-           Rather than keep guessing at causes, this sweep force-reveals anything
-           still waiting once the reader has scrolled past where it sits. The
-           layer therefore CANNOT leave content permanently invisible regardless
-           of why the observer stayed quiet — which is the property that actually
-           matters, and the one this project has repeatedly failed to hold. */
         var sweep = function () {
-          var pend = document.querySelectorAll('.yy-rv:not(.in), .rv:not(.in)');
-          for (var i = 0; i < pend.length; i++) {
-            var r = pend[i].getBoundingClientRect();
+          var pend = document.querySelectorAll(
+            '.yy-rv:not(.in), .rv:not(.in), [data-reveal]:not(.in):not([data-reveal="none"]):not([data-reveal^="intro-"])'
+          );
+          for (var s = 0; s < pend.length; s++) {
+            if (skipMarked(pend[s]) || ownedByIx2(pend[s])) continue;
+            var r = pend[s].getBoundingClientRect();
             if (r.top < innerHeight + 200) {
-              pend[i].style.transitionDelay = '0ms';
-              pend[i].classList.add('in');
-              io.unobserve(pend[i]);
+              pend[s].style.setProperty('--d', '0ms');
+              pend[s].classList.add('in');
+              if (modeOf(pend[s]) !== 'inout') io.unobserve(pend[s]);
             }
           }
         };
@@ -188,22 +193,10 @@
           clearTimeout(sweepTimer);
           sweepTimer = setTimeout(sweep, 400);
         }, { passive: true });
-        /* Also sweep once well after load, for anything already passed on arrival
-           (a deep link, or a restored scroll position). */
         setTimeout(sweep, 2500);
 
-        /* Anything already on screen at load reveals immediately — waiting for a
-           scroll that may never happen would leave the first screen blank. */
         requestAnimationFrame(function () {
-          var d = 0;
-          for (var q = 0; q < items.length; q++) {
-            var r = items[q].getBoundingClientRect();
-            if (r.top < innerHeight && r.bottom > 0) {
-              items[q].style.transitionDelay = (Math.min(d++, 4) * 40) + 'ms';
-              items[q].classList.add('in');
-              io.unobserve(items[q]);
-            }
-          }
+          revealList(onScreenItems(items), io);
         });
       } catch (e) {
         html.classList.remove('yy-reveal');

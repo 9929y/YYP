@@ -24,6 +24,7 @@ const ogImage = project.cover
   htmlClass={htmlClass}
   reveal={true}
   lenis={true}
+  chrome={true}
   noindex={noindex}
 >
   <Fragment slot="head">
@@ -37,9 +38,9 @@ const ogImage = project.cover
     <header class="cs__hero">
       <p class="cs__eyebrow">Case study</p>
       <div>
-        <h1 class="cs__title rv">{project.title}</h1>
-        <p class="cs__scope rv">{project.scope}</p>
-        <p class="cs__note rv">{project.note}</p>
+        <h1 class="cs__title rv" data-reveal="text">{project.title}</h1>
+        <p class="cs__scope rv" data-reveal="text">{project.scope}</p>
+        <p class="cs__note rv" data-reveal="text">{project.note}</p>
       </div>
     </header>
     <div class="cs__body">
