@@ -439,15 +439,13 @@
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
     /* ---- navigation panel ----------------------------------------------
-       Figma: Canvas Cover (page frost) + Glass-canva (panel). Mid-size popup
-       fills the space above the capsule with equal gaps. Expand inside card. */
+       Figma: Canvas Cover (page frost in light DOM via yy-chrome.css) +
+       glass panel fill. Shadow DOM backdrop-filter cannot sample the page,
+       so blur lives on html.yy-panel-open body::before; panel keeps fill. */
     '.panel-backdrop{',
     '  position: absolute; z-index: 0; inset: 0;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
-    /* Figma Canvas Cover: blur 100px + rgba(255,250,250,0.2) */
-    '  background: var(--yy-page-cover-fill);',
-    '  -webkit-backdrop-filter: blur(var(--yy-page-cover-blur)) saturate(1.2);',
-    '  backdrop-filter: blur(var(--yy-page-cover-blur)) saturate(1.2);',
+    '  background: transparent;',
     '}',
     ':host(.is-open:not(.is-fullpage)) .panel-backdrop{',
     '  opacity: 1; visibility: visible; pointer-events: auto;',
@@ -475,25 +473,21 @@
     '  inset: 0; top: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh;',
     '  max-width: none;',
     '}',
-    /* Glass popup — same recipe for Work / About / Resume */
+    /* Glass fill + shadows; page blur is light-DOM body::before (see yy-chrome.css). */
     '.panel{',
     '  position: relative; z-index: 1; left: auto; right: auto; bottom: auto; top: auto;',
     '  flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;',
     '  margin-inline: 0; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
     '  color: var(--yy-ink); background: var(--yy-panel-fill);',
-    '  -webkit-backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
-    '  backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
     '  box-shadow: var(--yy-panel-inset), var(--yy-panel-drop);',
     '  transform-origin: center bottom;',
-    '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out), backdrop-filter 680ms var(--ease-smooth-out,ease-out);',
+    '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out);',
     '}',
     '.panel.is-expanded{',
     '  flex: 1 1 auto;',
     '  width: 100%; height: 100%; max-width: none;',
     '  border-radius: 0; background: var(--yy-panel-full-fill);',
-    '  -webkit-backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
-    '  backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
     '  box-shadow: var(--yy-panel-inset);',
     '}',
     '.panel-scroll{',
@@ -507,17 +501,13 @@
     '.panel-view--resume,',
     '.panel-view--about,',
     '.panel-view--work{ padding: 0; height: 100%; }',
-    /* Work uses the same glass as About / Resume */
+    /* Work uses the same glass fill as About / Resume */
     '.panel.is-work{',
     '  background: var(--yy-panel-fill);',
-    '  -webkit-backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
-    '  backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
     '  box-shadow: var(--yy-panel-inset), var(--yy-panel-drop);',
     '}',
     '.panel.is-work.is-expanded{',
     '  background: var(--yy-panel-full-fill);',
-    '  -webkit-backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
-    '  backdrop-filter: blur(var(--yy-panel-blur)) saturate(1.2);',
     '}',
     'yy-resume-content,',
     'yy-about-content,',
