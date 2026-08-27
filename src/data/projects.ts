@@ -12,6 +12,8 @@ export interface ProjectCover {
 
 export interface ProjectVideo {
   src: string;
+  /** Optional VP9 source offered first via <source type="video/webm">. */
+  webm?: string;
   /** Optional still shown before play. Prefer a real frame when available. */
   poster?: string;
   width: number;
