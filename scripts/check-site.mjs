@@ -377,6 +377,12 @@ const motionCssCode = motionCss.replace(/\/\*[\s\S]*?\*\//g, '');
 if (!motionCss.includes('--reveal-text-distance') || !motionCss.includes('[data-reveal="text"]')) {
   errors.push('yy-motion.css must define the default text recipe (--reveal-text-distance + data-reveal=text)');
 }
+if (!motionCss.includes('--page-fade-out') || !motionCss.includes('--page-fade-in') || !motionCss.includes('@view-transition')) {
+  errors.push('yy-motion.css must define MPA page fades (@view-transition + --page-fade-out/in)');
+}
+if (!motionCss.includes('view-transition-name: yy-nav') || !motionCss.includes('view-transition-name: yy-footer')) {
+  errors.push('yy-motion.css must name yy-nav and yy-footer for view transitions');
+}
 if (!motionCss.includes(':not(.in)') || !motionCss.includes('[data-reveal].in')) {
   errors.push('yy-motion.css must hide with :not(.in) so .in can actually reveal data-reveal nodes');
 }
@@ -403,6 +409,9 @@ if (!caseLayout.includes('data-reveal="text"')) {
 const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf8');
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
+}
+if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
+  errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
 }
 if (!revealJs.includes('data-reveal-sync') || !fs.readFileSync(path.join(ROOT, 'src/components/ProjectIndex.astro'), 'utf8').includes('data-reveal-sync="case"')) {
   errors.push('landing case rows must share one reveal (data-reveal-sync) so text and cards enter together');
@@ -560,6 +569,9 @@ if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('pane
 }
 
 const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
+if (scrollJs.includes('yy-rv--wipe') || scrollJs.includes('function tagImages')) {
+  errors.push('yy-scroll.js must not tag images with yy-rv--wipe; default enter lives in yy-motion.css');
+}
 if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
   errors.push('yy-scroll.js must pause videos for expanded navigation panels');
 }
@@ -584,6 +596,19 @@ if (indexAstro.includes('reveal={false}')) {
 }
 if (indexAstro.includes('yy-flow.js')) {
   errors.push('src/pages/index.astro must not load yy-flow.js after the GIF canvas cutover');
+}
+
+const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
+  errors.push('landing.css must not hide slot media with opacity:0; reveal owns enter, placeholder is load-fail only');
+}
+
+const slotAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectSlot.astro'), 'utf8');
+if (/<a class="slot"[^>]*data-reveal/.test(slotAstro) || /class:list=\{\['slot'[\s\S]*?data-reveal="media"/.test(slotAstro.split('slot__media')[0])) {
+  errors.push('ProjectSlot.astro must put data-reveal on inner media, not the slot chrome');
+}
+if (!slotAstro.includes('slot__media') || !slotAstro.includes('data-reveal="media"')) {
+  errors.push('ProjectSlot.astro must wrap img/video in .slot__media with data-reveal=media');
 }
 
 const landingFeatured = projectsMod.landingProjects();

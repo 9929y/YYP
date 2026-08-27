@@ -153,32 +153,8 @@
     window.addEventListener('wheel', scheduleSoftSnap, { passive: true });
     window.addEventListener('touchend', scheduleSoftSnap, { passive: true });
   }
-  /* --------------------------------------------------------------------------
-     Effect 1 — filmic image reveal.
-
-     yy-reveal.js gives every uncovered element the same treatment: rise 12px,
-     un-blur, fade. Correct for text. For a large image the awwwards-standard
-     move is a clip wipe with a micro over-scale settling back to 1, so the frame
-     opens rather than the picture sliding. Same 500ms and same easing as the
-     text reveal, so the two read as one system — only the shape of the motion
-     differs, which is the point.
-
-     Applied by tagging the element; motion lives in yy-motion.css.
-     -------------------------------------------------------------------------- */
-  function tagImages() {
-    try {
-      var rv = document.querySelectorAll('.yy-rv');
-      for (var i = 0; i < rv.length; i++) {
-        var el = rv[i];
-        if (el.tagName !== 'IMG') continue;
-        var r = el.getBoundingClientRect();
-        /* Only large imagery earns the wipe — a 90px thumbnail wiping open reads
-           as a glitch, not as cinema. */
-        if (r.width < 320) continue;
-        el.classList.add('yy-rv--wipe');
-      }
-    } catch (e) { /* the base reveal still applies */ }
-  }
+  /* Default image enter is the same fade + 8px rise as copy (yy-motion.css).
+     Optional data-reveal="wipe" still exists in CSS but is unused by default. */
 
   /* ⛔ 一个被删掉的 Effect 2，记在这里免得再加一次。
 
@@ -319,12 +295,7 @@
   }
 
   function boot() {
-    tagImages();
     wireVideos();
-    /* Newly revealed images need tagging too — yy-reveal adds .yy-rv on its own
-       schedule, and on the long pages that happens well after load. */
-    var n = 0;
-    var iv = setInterval(function () { tagImages(); if (++n > 12) clearInterval(iv); }, 700);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });

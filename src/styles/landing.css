@@ -719,20 +719,13 @@
     align-self: end;
   }
 
-  /* Cross-fade + cross-blur from placeholder to real image, per
-     transitions.dev's 14-skeleton-reveal. Its reveal parameters land exactly on
-     the token scale — 400ms = --duration-slow ("skeleton content reveal"),
-     2px = --blur-small, ease-in-out — so they are referenced, not restated.
-
-     ⚠️ Only HALF the recipe is used, on purpose. The recipe also pulses the
-     skeleton while data loads. These slots are not loading — they are *not yet
-     supplied*. A pulse would promise an image is on its way, which would be a
-     lie until Yanice exports one. The reveal half is honest and is the part that
-     matters: drop a file into assets/images/home/ and it fades in over the
-     placeholder with no code change.
-
-     The image starts at opacity 0, so a 404 shows nothing rather than a broken
-     icon — JS only reveals it after a successful load. */
+  /* Media fill. Enter motion is on .slot__media (yy-reveal), not opacity here.
+     Hover scale is on the inner img/video so it does not fight reveal transform. */
+  .slot__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
   /* ~6px overscan clips export hairlines (AtlasNova top ~4 source px ≈ 2.3
      CSS px under cover) inside overflow:hidden + radius. */
   .slot img,
@@ -744,50 +737,38 @@
     height: calc(100% + 12px);
     object-fit: cover;
     display: block;
-    opacity: 0;
-    filter: blur(var(--blur-small));
-    transition: opacity var(--duration-slow) var(--ease-in-out),
-                filter var(--duration-slow) var(--ease-in-out);
   }
 
-  .slot.is-revealed img,
-  .slot.is-revealed video {
-    opacity: 1;
-    filter: none;
-  }
-
-  /* The skeleton leaves as the content arrives — a cross-fade, not a swap. */
+  /* Placeholder only when there is no file or the load failed. */
   .slot .ph {
+    opacity: 0;
+    pointer-events: none;
     transition: opacity var(--duration-slow) var(--ease-in-out),
-                transform var(--m-dur) var(--ease-bounce-strong);
+                transform var(--duration-fast) var(--ease-bounce-strong);
   }
-  .slot.is-revealed .ph { opacity: 0; }
+  .slot.is-placeholder .ph {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slot.is-placeholder img,
+  .slot.is-placeholder video {
+    visibility: hidden;
+  }
 
   /* Hover in/out split, per transitions.dev's 11-avatar-group-hover.
-     Before, BOTH directions shared the overshoot curve. transitions-polish is
-     explicit that overshoot belongs to entrances only and that hover-out is the
-     one place where the return should be MORE elaborate than the arrival:
-
-       In:  quick and direct — --duration-fast-or-less with --ease-smooth-out
-       Out: softer and springier — --ease-bounce-strong, so it settles
-            instead of snapping
-
-     Duration stays 320ms: that is both kedavra's measured hover value and the
-     avatar recipe's own live tuning (--avatar-dur: 320ms). Two independent
-     sources landing on the same number, so there is nothing to align.
-
      The base rule carries the OUT transition; :hover overrides it with the IN. */
-  .slot:hover img,
-  .slot:hover video,
-  .slot:hover .ph {
-    transition: transform var(--m-dur) var(--ease-smooth-out);
+  @media (hover: hover) and (pointer: fine) {
+    .slot img,
+    .slot video {
+      transition: transform var(--duration-fast) var(--ease-bounce-strong);
+    }
+    .slot:hover img,
+    .slot:hover video,
+    .slot:hover .ph {
+      transition-timing-function: var(--ease-smooth-out);
+      transform: scale(1.03);
+    }
   }
-  /* Measured: 492x369 grows to 505x386 on hover, about 3%. My first pass used
-     1.018, which is not perceptible — one of the three things Yanice correctly
-     called out as "no hover effect". */
-  .slot:hover img,
-  .slot:hover video,
-  .slot:hover .ph { transform: scale(1.03); }
 
   /* ---------- placeholder ----------
      Prints the exact export spec it is waiting for, so the requirement cannot

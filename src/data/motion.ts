@@ -7,28 +7,33 @@
  * Recipes live in assets/css/yy-motion.css. yy-reveal.js only toggles `.in`.
  * Webflow IX2 on [data-w-id] is a separate writer — do not compete.
  *
- * One-shot: change default text enter/exit by editing --reveal-text-* in
- * yy-motion.css. Customize one node with data-reveal="…" or --reveal-delay /
- * --reveal-distance / --reveal-duration / --reveal-blur.
+ * Three knob groups in yy-motion.css :root:
+ *   --reveal-text-*     default enter for copy and auto .yy-rv (site-wide)
+ *   --reveal-media-*    images/video; inherit text unless overridden
+ *   --page-fade-*       MPA View Transition root fade
+ *
+ * Per-node: data-reveal="…" or --reveal-delay / --reveal-distance /
+ * --reveal-duration / --reveal-blur.
  */
 export const motionOwnership = {
-  reveal: ['opacity', 'transform', 'filter', 'clip-path'],
+  reveal: ['opacity', 'transform', 'clip-path'],
   hover: ['transform', 'opacity'],
   cursor: ['transform', 'width', 'height', 'background-color', 'color'],
   ix2: ['any property on [data-w-id] — do not compete'],
   lenis: ['scroll position'],
-  flow: ['canvas pixels only']
+  flow: ['canvas pixels only'],
+  page: ['root opacity via View Transitions; yy-nav / yy-footer named snapshots']
 } as const;
 
 /** Named recipes in yy-motion.css. `text` is the site default for copy. */
 export const revealRecipes = {
-  text: 'Default copy enter: fade + 12px rise + light blur, 500ms',
+  text: 'Default copy enter: fade + 8px rise, 250ms, no blur',
   fade: 'Opacity only',
-  wipe: 'Clip wipe + micro over-scale (images)',
-  media: 'Alias of wipe for figures / slots',
+  wipe: 'Optional clip wipe (unused by default)',
+  media: 'Same rise as text (inherits --reveal-text-* via --reveal-media-*)',
   clip: 'Headline-style clip-path open',
   'intro-meta': 'Landing hero meta (CSS timeline, not IntersectionObserver)',
-  'intro-headline': 'Landing hero headline (CSS timeline)',
+  'intro-headline': 'Landing hero headline (CSS timeline, same 250ms fade-up)',
   none: 'Exclude this node from reveal'
 } as const;
 
@@ -49,5 +54,6 @@ export const breakpoints = {
 export const reducedMotionPolicy = {
   neverDisableIx2: true,
   contentVisibleWithoutJs: true,
-  cursorFallsBackToNative: true
+  cursorFallsBackToNative: true,
+  noViewTransitions: true
 } as const;

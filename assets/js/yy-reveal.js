@@ -123,22 +123,38 @@
     }
   }
 
+  function onScreenItems(items) {
+    var out = [];
+    for (var q = 0; q < items.length; q++) {
+      var box = items[q].getBoundingClientRect();
+      if (box.top < innerHeight && box.bottom > 0) out.push(items[q]);
+    }
+    return out;
+  }
+
+  /* Mark first-viewport nodes before the hide gate so a page fade is not
+     stacked on a second opacity:0 enter for content already in view. */
+  function primeOnScreen(items) {
+    revealList(onScreenItems(items), null);
+  }
+
   try {
     if (!('IntersectionObserver' in window)) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    html.className += ' yy-reveal';
 
     var start = function () {
       try {
         var isLanding = /\byy-landing\b/.test(html.className);
         var explicit = collectExplicit();
         var items = (isLanding || explicit.length) ? explicit : collectAuto();
-        if (!items.length) { html.classList.remove('yy-reveal'); return; }
+        if (!items.length) return;
 
         if (!explicit.length && !isLanding) {
           for (var i = 0; i < items.length; i++) items[i].classList.add('yy-rv');
         }
+
+        primeOnScreen(items);
+        html.classList.add('yy-reveal');
 
         var io = new IntersectionObserver(function (entries) {
           var shown = [];
@@ -180,12 +196,7 @@
         setTimeout(sweep, 2500);
 
         requestAnimationFrame(function () {
-          var onScreen = [];
-          for (var q = 0; q < items.length; q++) {
-            var box = items[q].getBoundingClientRect();
-            if (box.top < innerHeight && box.bottom > 0) onScreen.push(items[q]);
-          }
-          revealList(onScreen, io);
+          revealList(onScreenItems(items), io);
         });
       } catch (e) {
         html.classList.remove('yy-reveal');
