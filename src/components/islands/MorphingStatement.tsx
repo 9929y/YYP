@@ -17,7 +17,7 @@ const towardWords = ['intent.', 'outcomes.', 'flow.'];
 function useMorphingWords() {
   const textIndexRef = useRef(0);
   const morphRef = useRef(0);
-  const cooldownRef = useRef(cooldownTime);
+  const cooldownRef = useRef<number>(cooldownTime);
   const timeRef = useRef(0);
   const beyond1Ref = useRef<HTMLSpanElement>(null);
   const beyond2Ref = useRef<HTMLSpanElement>(null);
