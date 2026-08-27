@@ -64,33 +64,29 @@ export function useMediaQuery(
 }
 
 /*
- * Open arc: 8-slot ring, 5 front seats. Portfolio shelf: face-on open, large
- * faces, sharp covers, hover + click-to-navigate, orbit/zoom preserved.
- * Intro + open share the same transform chain (no planar flash).
+ * Open arc from an 8-slot ring — show 5 front seats, back empty.
+ * No cylinder auto-spin; per-card left/right sway. Scroll snaps selection.
  */
 const SLOT_COUNT = 8;
 const VISIBLE_CARDS = 5;
-/** Degrees between seats — tighter = more face-on readable. */
-const ARC_STEP_PAGE = 34;
-const ARC_STEP_PANEL = 30;
-const FACE_GAP = 0.86;
+/** Tight seat spacing so all 5 stay in the first-look FOV. */
+const ARC_STEP_PAGE = 26;
+const ARC_STEP_PANEL = 24;
+const FACE_GAP = 0.78;
 const DRAG_YAW = 0.32;
 const DRAG_PITCH = 0.2;
 const WHEEL_ZOOM = 0.0024;
-const WHEEL_YAW = 0.16;
+const WHEEL_SELECT = 0.018;
 const ROTATE_X_SOFT = 18;
 const ROTATE_X_HARD = 32;
-/** Near-zero lean so first view reads front-facing. */
 const REST_LEAN_PAGE = 2;
 const REST_LEAN_PANEL = 0;
 const ZOOM_MIN = 0.72;
-const ZOOM_MAX = 1.55;
+const ZOOM_MAX = 1.45;
 const ZOOM_SOFT_MIN = 0.62;
-const ZOOM_SOFT_MAX = 1.68;
-const ZOOM_DEFAULT_PANEL = 1.22;
-const ZOOM_DEFAULT_PAGE = 1.08;
-/** Slow ambient yaw after idle (deg/sec). */
-const AUTO_SPIN = 3.2;
+const ZOOM_SOFT_MAX = 1.55;
+const ZOOM_DEFAULT_PANEL = 0.92;
+const ZOOM_DEFAULT_PAGE = 0.9;
 const RUBBER = 0.32;
 const CLICK_DRAG_PX = 8;
 const SPRING = {
@@ -131,15 +127,40 @@ function faceAngle(index: number, step: number): number {
   return (index - mid) * step;
 }
 
-/** Near-large / far-small — readable outer seats (not vanishing). */
+/** Cylinder yaw that centers seat `index`. */
+function yawForIndex(index: number, step: number): number {
+  return -faceAngle(index, step);
+}
+
+function normalizeDeg(deg: number): number {
+  let d = deg % 360;
+  if (d > 180) d -= 360;
+  if (d < -180) d += 360;
+  return d;
+}
+
+/** Which of the 5 seats is closest to camera-forward given cylinder yaw. */
+function nearestIndex(yaw: number, step: number, count: number): number {
+  let best = 0;
+  let bestAbs = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < count; i++) {
+    const world = Math.abs(normalizeDeg(yaw + faceAngle(i, step)));
+    if (world < bestAbs) {
+      bestAbs = world;
+      best = i;
+    }
+  }
+  return best;
+}
+
 function depthScale(index: number, step: number): number {
   const t = Math.abs(faceAngle(index, step)) / 90;
-  return clamp(1.04 - t * 0.32, 0.72, 1.04);
+  return clamp(1.02 - t * 0.18, 0.82, 1.02);
 }
 
 function depthOpacity(index: number, step: number): number {
   const t = Math.abs(faceAngle(index, step)) / 90;
-  return clamp(1 - t * 0.28, 0.72, 1);
+  return clamp(1 - t * 0.14, 0.86, 1);
 }
 
 function cardTransform(
@@ -189,7 +210,9 @@ const CarouselFace = memo(function CarouselFace({
   arcStep,
   spread,
   settled,
-  onHoverChange
+  selected,
+  onHoverChange,
+  onSelect
 }: {
   card: ProjectsCarouselCard;
   index: number;
@@ -198,12 +221,14 @@ const CarouselFace = memo(function CarouselFace({
   arcStep: number;
   spread: boolean;
   settled: boolean;
+  selected: boolean;
   onHoverChange: (hovered: boolean) => void;
+  onSelect: (index: number) => void;
 }) {
   const reduced = prefersReducedMotion();
   const from = introTransform(index, radius, arcStep);
   const to = openTransform(index, radius, arcStep);
-  const floatDelay = `${index * 0.45}s`;
+  const swayDelay = `${index * 0.35}s`;
   const opacity = depthOpacity(index, arcStep);
   const href = card.href || undefined;
   const Tag = href ? 'a' : 'div';
@@ -211,9 +236,11 @@ const CarouselFace = memo(function CarouselFace({
   return (
     <motion.div
       className="yy-projects-card-slot"
+      data-selected={selected ? 'true' : 'false'}
       style={{
         width: `${faceWidth}px`,
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        zIndex: selected ? 3 : 1
       }}
       initial={false}
       animate={{
@@ -234,26 +261,32 @@ const CarouselFace = memo(function CarouselFace({
       <div
         className={
           settled
-            ? 'yy-projects-card-float is-floating'
+            ? 'yy-projects-card-float is-swaying'
             : 'yy-projects-card-float'
         }
-        style={{ animationDelay: floatDelay }}
+        style={{ animationDelay: swayDelay }}
       >
         <Tag
           className="yy-projects-card"
           data-tone={card.tone % 7}
           data-has-cover={card.coverSrc ? 'true' : 'false'}
           data-has-href={href ? 'true' : 'false'}
+          data-selected={selected ? 'true' : 'false'}
           href={href}
           {...(href
             ? {
-                'aria-label': `${card.title} — ${card.scope}`
+                'aria-label': `${card.title} — ${card.scope}`,
+                'aria-current': selected ? ('true' as const) : undefined
               }
             : { 'aria-hidden': true as const })}
           onMouseEnter={() => onHoverChange(true)}
           onMouseLeave={() => onHoverChange(false)}
-          onFocus={() => onHoverChange(true)}
+          onFocus={() => {
+            onHoverChange(true);
+            onSelect(index);
+          }}
           onBlur={() => onHoverChange(false)}
+          onPointerDown={() => onSelect(index)}
           style={
             {
               width: `${faceWidth}px`,
@@ -284,12 +317,12 @@ const CarouselFace = memo(function CarouselFace({
       <div
         className={
           settled
-            ? 'yy-projects-card-shadow is-floating'
+            ? 'yy-projects-card-shadow is-swaying'
             : 'yy-projects-card-shadow'
         }
         style={{
           width: `${faceWidth * 0.78}px`,
-          animationDelay: floatDelay
+          animationDelay: swayDelay
         }}
         aria-hidden="true"
       />
@@ -311,23 +344,24 @@ function ProjectsCarouselMotion({
   const lastPointer = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
   const movedPx = useRef(0);
-  const baseYaw = useRef(0);
-  const autoPhase = useRef(0);
-  const autoPausedUntil = useRef(0);
-  const autoWasPaused = useRef(false);
-  const hoverPaused = useRef(false);
   const zoomIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const selectIdle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const settledRef = useRef(false);
   const pinchDist = useRef<number | null>(null);
   const activePointerId = useRef<number | null>(null);
+  const wheelSelectAccum = useRef(0);
 
   const restLean = embed === 'panel' ? REST_LEAN_PANEL : REST_LEAN_PAGE;
   const arcStep = embed === 'panel' ? ARC_STEP_PANEL : ARC_STEP_PAGE;
   const zoomDefault =
     embed === 'panel' ? ZOOM_DEFAULT_PANEL : ZOOM_DEFAULT_PAGE;
 
+  const midIndex = Math.floor((VISIBLE_CARDS - 1) / 2);
   const [spread, setSpread] = useState(() => prefersReducedMotion());
   const [settled, setSettled] = useState(() => prefersReducedMotion());
+  const [selectedIndex, setSelectedIndex] = useState(midIndex);
+  const selectedRef = useRef(selectedIndex);
+  selectedRef.current = selectedIndex;
   settledRef.current = settled;
 
   const visibleCards = useMemo(() => cards.slice(0, VISIBLE_CARDS), [cards]);
@@ -342,8 +376,6 @@ function ProjectsCarouselMotion({
     setSpread(false);
     setSettled(false);
     settledRef.current = false;
-    // Hold face-on after fan-out before ambient spin.
-    autoPausedUntil.current = performance.now() + 3200;
     const openTimer = window.setTimeout(() => setSpread(true), 140);
     const doneTimer = window.setTimeout(() => {
       setSettled(true);
@@ -356,14 +388,14 @@ function ProjectsCarouselMotion({
   }, []);
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
-  // Large faces — panel matches / exceeds prior page cylinder.
+  // Moderate cylinder so five seats fit the viewport without dominating it.
   const cylinderWidth = isScreenSizeSm
     ? embed === 'panel'
-      ? 1720
-      : 1880
+      ? 1280
+      : 1420
     : embed === 'panel'
-      ? 2920
-      : 3120;
+      ? 2100
+      : 2280;
   const seatArc = (arcStep / 360) * cylinderWidth;
   const faceWidth = seatArc * FACE_GAP;
   const radius = cylinderWidth / (2 * Math.PI);
@@ -382,6 +414,21 @@ function ProjectsCarouselMotion({
     rotateX.stop();
     zoom.stop();
   }, [rotateX, rotateY, zoom]);
+
+  const snapToIndex = useCallback(
+    (index: number, spring = true) => {
+      const next = clamp(index, 0, visibleCards.length - 1);
+      setSelectedIndex(next);
+      selectedRef.current = next;
+      const target = yawForIndex(next, arcStep);
+      if (prefersReducedMotion() || !spring) {
+        rotateY.set(target);
+        return;
+      }
+      void animate(rotateY, target, SPRING_SNAP);
+    },
+    [arcStep, rotateY, visibleCards.length]
+  );
 
   const settleElastic = useCallback(() => {
     if (prefersReducedMotion()) {
@@ -403,14 +450,25 @@ function ProjectsCarouselMotion({
     void animate(zoom, clamp(z, ZOOM_MIN, ZOOM_MAX), SPRING_SNAP);
   }, [restLean, rotateX, zoom]);
 
-  const onHoverChange = useCallback((hovered: boolean) => {
-    hoverPaused.current = hovered;
-    if (hovered) {
-      autoPausedUntil.current = Number.POSITIVE_INFINITY;
-    } else {
-      autoPausedUntil.current = performance.now() + 900;
-    }
+  const snapSelectionFromYaw = useCallback(() => {
+    const idx = nearestIndex(
+      rotateY.get(),
+      arcStep,
+      visibleCards.length
+    );
+    snapToIndex(idx);
+  }, [arcStep, rotateY, snapToIndex, visibleCards.length]);
+
+  const onHoverChange = useCallback((_hovered: boolean) => {
+    /* sway continues; selection is scroll/drag driven */
   }, []);
+
+  const onSelect = useCallback(
+    (index: number) => {
+      snapToIndex(index);
+    },
+    [snapToIndex]
+  );
 
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -422,7 +480,6 @@ function ProjectsCarouselMotion({
       pointerStart.current = { x: event.clientX, y: event.clientY };
       lastPointer.current = { x: event.clientX, y: event.clientY };
       activePointerId.current = event.pointerId;
-      autoPausedUntil.current = Number.POSITIVE_INFINITY;
     },
     []
   );
@@ -478,10 +535,26 @@ function ProjectsCarouselMotion({
         zoom.set(clamp(zNext, ZOOM_SOFT_MIN, ZOOM_SOFT_MAX));
       }
 
-      baseYaw.current = rotateY.get();
-      autoPhase.current = 0;
+      // Live-update which seat is centered while dragging.
+      const live = nearestIndex(
+        rotateY.get(),
+        arcStep,
+        visibleCards.length
+      );
+      if (live !== selectedRef.current) {
+        selectedRef.current = live;
+        setSelectedIndex(live);
+      }
     },
-    [restLean, rotateX, rotateY, stopOrbit, zoom]
+    [
+      arcStep,
+      restLean,
+      rotateX,
+      rotateY,
+      stopOrbit,
+      visibleCards.length,
+      zoom
+    ]
   );
 
   const finishPointer = useCallback(
@@ -500,34 +573,34 @@ function ProjectsCarouselMotion({
         /* already released */
       }
 
-      autoPausedUntil.current = performance.now() + 1200;
-
       if (!wasDragging) {
-        // Tap: allow native <a> navigation (do not preventDefault).
-        baseYaw.current = rotateY.get();
-        autoPhase.current = 0;
         return;
       }
 
       if (prefersReducedMotion()) {
-        baseYaw.current = rotateY.get();
-        autoPhase.current = 0;
+        snapSelectionFromYaw();
         settleElastic();
         return;
       }
 
-      const coastY = rotateY.get() + velocity.current.x * DRAG_YAW * 7;
-      baseYaw.current = coastY;
-      autoPhase.current = 0;
-      void animate(rotateY, coastY, SPRING);
+      const coastY = rotateY.get() + velocity.current.x * DRAG_YAW * 5;
+      rotateY.set(coastY);
+      const idx = nearestIndex(coastY, arcStep, visibleCards.length);
+      snapToIndex(idx);
       settleElastic();
     },
-    [rotateY, settleElastic]
+    [
+      arcStep,
+      rotateY,
+      settleElastic,
+      snapSelectionFromYaw,
+      snapToIndex,
+      visibleCards.length
+    ]
   );
 
   const onCardClickCapture = useCallback(
     (event: ReactMouseEvent<HTMLDivElement>) => {
-      // If the gesture was an orbit drag, block link navigation.
       if (movedPx.current >= CLICK_DRAG_PX) {
         event.preventDefault();
         event.stopPropagation();
@@ -537,47 +610,11 @@ function ProjectsCarouselMotion({
   );
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
-
-    let raf = 0;
-    let last = performance.now();
-
-    const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-
-      const paused =
-        dragging.current ||
-        dragArmed.current ||
-        hoverPaused.current ||
-        now < autoPausedUntil.current ||
-        !settledRef.current;
-      if (paused) {
-        autoWasPaused.current = true;
-      } else {
-        if (autoWasPaused.current) {
-          baseYaw.current = rotateY.get();
-          autoPhase.current = 0;
-          autoWasPaused.current = false;
-        }
-        autoPhase.current += dt * AUTO_SPIN;
-        rotateY.set(baseYaw.current + autoPhase.current);
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [rotateY]);
-
-  useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
 
     const applyZoomDelta = (delta: number) => {
       stopOrbit();
-      autoPausedUntil.current = performance.now() + 1100;
       const zNext = rubberBand(zoom.get() - delta, ZOOM_MIN, ZOOM_MAX);
       zoom.set(clamp(zNext, ZOOM_SOFT_MIN, ZOOM_SOFT_MAX));
       if (zoomIdle.current) clearTimeout(zoomIdle.current);
@@ -586,13 +623,17 @@ function ProjectsCarouselMotion({
       }, 140);
     };
 
-    const applyYawDelta = (delta: number) => {
-      stopOrbit();
-      autoPausedUntil.current = performance.now() + 1100;
-      const next = rotateY.get() + delta;
-      rotateY.set(next);
-      baseYaw.current = next;
-      autoPhase.current = 0;
+    const applySelectDelta = (delta: number) => {
+      wheelSelectAccum.current += delta * WHEEL_SELECT;
+      if (Math.abs(wheelSelectAccum.current) < 1) return;
+      const step = wheelSelectAccum.current > 0 ? 1 : -1;
+      wheelSelectAccum.current = 0;
+      // Scroll right / down → next card (cylinder turns left).
+      snapToIndex(selectedRef.current + step);
+      if (selectIdle.current) clearTimeout(selectIdle.current);
+      selectIdle.current = setTimeout(() => {
+        settleElastic();
+      }, 120);
     };
 
     const onWheel = (event: WheelEvent) => {
@@ -600,21 +641,15 @@ function ProjectsCarouselMotion({
       const absX = Math.abs(event.deltaX);
       const absY = Math.abs(event.deltaY);
 
-      // Horizontal scroll / shift+wheel → yaw the drum.
-      if (event.shiftKey || absX > absY) {
-        const yawDelta = event.shiftKey
-          ? (event.deltaY + event.deltaX) * WHEEL_YAW
-          : event.deltaX * WHEEL_YAW;
-        applyYawDelta(yawDelta);
-        return;
-      }
-
+      // Pinch-zoom (ctrl+wheel) keeps zoom.
       if (event.ctrlKey) {
         applyZoomDelta(event.deltaY * WHEEL_ZOOM);
         return;
       }
 
-      applyZoomDelta(event.deltaY * WHEEL_ZOOM);
+      // Horizontal or vertical scroll → select / snap a card.
+      const selectDelta = absX > absY ? event.deltaX : event.deltaY;
+      applySelectDelta(selectDelta);
     };
 
     const onTouchMove = (event: TouchEvent) => {
@@ -641,12 +676,13 @@ function ProjectsCarouselMotion({
     stage.addEventListener('touchcancel', onTouchEnd);
     return () => {
       if (zoomIdle.current) clearTimeout(zoomIdle.current);
+      if (selectIdle.current) clearTimeout(selectIdle.current);
       stage.removeEventListener('wheel', onWheel);
       stage.removeEventListener('touchmove', onTouchMove);
       stage.removeEventListener('touchend', onTouchEnd);
       stage.removeEventListener('touchcancel', onTouchEnd);
     };
-  }, [rotateY, settleElastic, stopOrbit, zoom]);
+  }, [settleElastic, snapToIndex, stopOrbit, zoom]);
 
   return (
     <div
@@ -658,6 +694,7 @@ function ProjectsCarouselMotion({
       data-visible={visibleCards.length}
       data-spread={spread ? 'true' : 'false'}
       data-settled={settled ? 'true' : 'false'}
+      data-selected={selectedIndex}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={finishPointer}
@@ -683,7 +720,9 @@ function ProjectsCarouselMotion({
               arcStep={arcStep}
               spread={spread}
               settled={settled}
+              selected={index === selectedIndex}
               onHoverChange={onHoverChange}
+              onSelect={onSelect}
             />
           ))}
         </motion.div>

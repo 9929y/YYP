@@ -59,8 +59,8 @@ html.yy-projects body {
 .yy-projects-carousel {
   position: relative;
   width: 100%;
-  height: min(78vh, 760px);
-  min-height: 620px;
+  height: min(62vh, 520px);
+  min-height: 440px;
   overflow: visible;
   touch-action: none;
   overscroll-behavior: none;
@@ -71,7 +71,7 @@ html.yy-projects body {
 
 .yy-projects-carousel[data-embed='panel'] {
   height: 100%;
-  min-height: min(68vh, 560px);
+  min-height: min(46vh, 380px);
   flex: 1 1 auto;
 }
 
@@ -85,7 +85,7 @@ html.yy-projects body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  perspective: 900px;
+  perspective: 1180px;
   transform-style: preserve-3d;
   will-change: transform;
   background: transparent;
@@ -93,7 +93,7 @@ html.yy-projects body {
 }
 
 .yy-projects-carousel[data-embed='panel'] .yy-projects-carousel__stage {
-  perspective: 860px;
+  perspective: 1100px;
 }
 
 .yy-projects-carousel__cylinder {
@@ -129,23 +129,24 @@ html.yy-projects body {
   pointer-events: auto;
 }
 
-.yy-projects-card-float.is-floating {
-  animation: yy-card-float 5.6s ease-in-out infinite;
+.yy-projects-card-float.is-swaying {
+  animation: yy-card-sway 4.8s ease-in-out infinite;
 }
 
 .yy-projects-card-float:has(.yy-projects-card:hover),
-.yy-projects-card-float:has(.yy-projects-card:focus-visible) {
+.yy-projects-card-float:has(.yy-projects-card:focus-visible),
+.yy-projects-card-float:has(.yy-projects-card[data-selected='true']) {
   animation-play-state: paused;
   z-index: 4;
 }
 
-@keyframes yy-card-float {
+@keyframes yy-card-sway {
   0%,
   100% {
-    transform: translateY(3px);
+    transform: translateY(2px) rotateY(-5deg);
   }
   50% {
-    transform: translateY(-6px);
+    transform: translateY(-3px) rotateY(5deg);
   }
 }
 
@@ -165,8 +166,8 @@ html.yy-projects body {
   opacity: 0.45;
 }
 
-.yy-projects-card-shadow.is-floating {
-  animation: yy-card-shadow 5.6s ease-in-out infinite;
+.yy-projects-card-shadow.is-swaying {
+  animation: yy-card-shadow 4.8s ease-in-out infinite;
 }
 
 @keyframes yy-card-shadow {
@@ -184,8 +185,8 @@ html.yy-projects body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .yy-projects-card-float.is-floating,
-  .yy-projects-card-shadow.is-floating {
+  .yy-projects-card-float.is-swaying,
+  .yy-projects-card-shadow.is-swaying {
     animation: none;
   }
 
@@ -236,7 +237,15 @@ html.yy-projects body {
 
 .yy-projects-card:hover,
 .yy-projects-card:focus-visible {
-  transform: translateZ(36px) scale(1.07);
+  transform: translateZ(28px) scale(1.05);
+}
+
+.yy-projects-card[data-selected='true'] {
+  transform: translateZ(42px) scale(1.1);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.95),
+    0 0 0 5px rgba(62, 65, 116, 0.28),
+    0 18px 40px -14px rgba(26, 25, 23, 0.35);
 }
 
 .yy-projects-card:focus-visible {
@@ -271,25 +280,18 @@ html.yy-projects body {
   filter: none;
 }
 
-/* Rim + sheen only — no backdrop-filter (that was blurring covers). */
+/* Rim + sheen only — no dark vertical wash, no backdrop-filter. */
 .yy-projects-card__glass {
-  background:
-    linear-gradient(
-      to top,
-      rgba(26, 25, 23, 0.55) 0%,
-      rgba(26, 25, 23, 0.12) 28%,
-      rgba(26, 25, 23, 0) 52%
-    ),
-    linear-gradient(
-      var(--sheen-angle),
-      rgba(255, 255, 255, 0.28) 0%,
-      rgba(255, 255, 255, 0.06) 40%,
-      rgba(255, 255, 255, 0) 70%
-    );
+  background: linear-gradient(
+    var(--sheen-angle),
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 42%,
+    rgba(255, 255, 255, 0) 72%
+  );
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
-    0 12px 36px -10px rgba(26, 25, 23, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+    0 12px 32px -12px rgba(26, 25, 23, 0.22);
   transform: translateZ(1.5px);
 }
 
@@ -341,30 +343,35 @@ html.yy-projects body {
     translate 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   text-align: left;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 6px 18px -10px rgba(26, 25, 23, 0.28);
 }
 
 .yy-projects-card:hover .yy-projects-card__meta,
-.yy-projects-card:focus-visible .yy-projects-card__meta {
+.yy-projects-card:focus-visible .yy-projects-card__meta,
+.yy-projects-card[data-selected='true'] .yy-projects-card__meta {
   opacity: 1;
   translate: 0 0;
 }
 
 .yy-projects-card__title {
   font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: clamp(13px, 1.35vw, 18px);
+  font-size: clamp(12px, 1.2vw, 16px);
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.01em;
-  color: #fff;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  color: #1a1917;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .yy-projects-card__scope {
-  font-size: clamp(10px, 1vw, 12px);
+  font-size: clamp(10px, 0.95vw, 11px);
   line-height: 1.35;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(26, 25, 23, 0.62);
 }
 
 /* ---------- static / reduced-motion fallback ---------- */
@@ -400,8 +407,8 @@ html.yy-projects body {
 
 @media (max-width: 640px) {
   .yy-projects-carousel {
-    height: min(70vh, 580px);
-    min-height: 480px;
+    height: min(56vh, 460px);
+    min-height: 380px;
   }
 
   .projects-hero {
