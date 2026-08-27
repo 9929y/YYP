@@ -515,7 +515,10 @@
     /* Avoid FOUC / “source-like” flash before panel CE scripts upgrade. */
     'yy-resume-content:not(:defined),',
     'yy-about-content:not(:defined),',
-    'yy-work-content:not(:defined){ visibility: hidden; }',
+    'yy-work-content:not(:defined),',
+    'yy-resume-content[data-yy-pending],',
+    'yy-about-content[data-yy-pending],',
+    'yy-work-content[data-yy-pending]{ visibility: hidden; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
     '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
@@ -682,13 +685,24 @@
 
   function loadPanelScript(cacheKey, file, tagName, label) {
     if (window.customElements && customElements.get(tagName)) {
+      // #region agent log
+      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript',message:'CE already defined',data:{tagName:tagName,file:file},timestamp:Date.now()})}).catch(function(){});
+      // #endregion
       return Promise.resolve();
     }
     if (loadPanelScript[cacheKey]) return loadPanelScript[cacheKey];
     loadPanelScript[cacheKey] = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
       script.src = ROOT + 'assets/js/' + file;
-      script.onload = resolve;
+      // #region agent log
+      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript',message:'script insert start',data:{tagName:tagName,file:file},timestamp:Date.now()})}).catch(function(){});
+      // #endregion
+      script.onload = function () {
+        // #region agent log
+        fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript.onload',message:'script loaded; CE may be defined',data:{tagName:tagName,defined:!!(window.customElements&&customElements.get(tagName))},timestamp:Date.now()})}).catch(function(){});
+        // #endregion
+        resolve();
+      };
       script.onerror = function () {
         loadPanelScript[cacheKey] = null;
         reject(new Error(label + ' component failed to load'));
@@ -696,6 +710,13 @@
       (document.head || HTML).appendChild(script);
     });
     return loadPanelScript[cacheKey];
+  }
+
+  function panelContentTag(name) {
+    if (name === 'work') return 'yy-work-content';
+    if (name === 'about') return 'yy-about-content';
+    if (name === 'resume') return 'yy-resume-content';
+    return '';
   }
 
   function ensureResumeComponent() {
@@ -774,6 +795,7 @@
     var resumeNavMode = false;
     var fullHistoryPushed = false;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var openSeq = 0;
 
     if (panelScroll) panelScroll.setAttribute('data-lenis-prevent', '');
 
@@ -796,6 +818,18 @@
       }
     }
 
+    function waitContentReady(name) {
+      var tag = panelContentTag(name);
+      if (!tag || !window.customElements) return Promise.resolve();
+      return customElements.whenDefined(tag).then(function () {
+        var view = viewFor(name);
+        var el = view && view.querySelector(tag);
+        if (!el) return;
+        if (typeof customElements.upgrade === 'function') customElements.upgrade(el);
+        return el.__yyStylesReady || Promise.resolve();
+      });
+    }
+
     function prepare(name) {
       var loaders = {
         resume: [ensureResumeComponent, 'Resume'],
@@ -803,14 +837,24 @@
         work: [ensureWorkComponent, 'Work']
       };
       var spec = loaders[name];
-      if (!spec) return;
-      spec[0]().catch(function (error) {
-        var view = viewFor(name);
-        if (view) {
-          view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
-        }
-        if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
-      });
+      if (!spec) return Promise.resolve();
+      // #region agent log
+      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:prepare',message:'prepare started (awaited before is-open)',data:{name:name},timestamp:Date.now()})}).catch(function(){});
+      // #endregion
+      return spec[0]()
+        .then(function () { return waitContentReady(name); })
+        .then(function () {
+          // #region agent log
+          fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-chrome.js:prepare.ready',message:'CE+styles ready',data:{name:name},timestamp:Date.now()})}).catch(function(){});
+          // #endregion
+        })
+        .catch(function (error) {
+          var view = viewFor(name);
+          if (view) {
+            view.innerHTML = '<p class="panel-note" role="alert">' + spec[1] + ' could not load. Please try again.</p>';
+          }
+          if (window.console) console.error('[yy-chrome] ' + name + ' load failed:', error);
+        });
     }
 
     function viewFor(name) {
@@ -1042,51 +1086,64 @@
     function open(name, trigger, opener) {
       closing = false;
       lastOpener = opener || trigger || lastOpener;
-      prepare(name);
-      active = name;
-      sync(name);
-      var start = trigger.getBoundingClientRect();
-      /* Popup always keeps main Navigation; section nav only after expand. */
-      leaveResumeNav();
-      clearFullpageUrl();
-      setExpandedChrome(false);
-      setBackgroundInert(false);
-      panel.setAttribute('aria-modal', 'false');
-      expand.hidden = false;
-      expand.setAttribute('aria-label', 'View full screen');
-      expand.setAttribute('aria-pressed', 'false');
-      if (panelScroll) {
-        panelScroll.scrollTop = viewScroll[name] || 0;
-      }
-      /* Force layout after view/aria prep — only then reveal the panel. */
-      void panel.offsetHeight;
-      var opening = armPanelOpen(start);
-      HTML.classList.add('yy-panel-open');
-      host.classList.add('is-open');
-      announcePanelState(false, true);
-      if (panelScroll) {
-        panelScroll.dispatchEvent(new Event('scroll'));
-      }
-      var targetView = viewFor(name);
-      function afterOpen() {
-        if (targetView && !reduced && targetView.animate) {
-          targetView.animate(
-            [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
-            { duration: 350, easing: PANEL_MOTION_EASE }
-          );
+      var seq = ++openSeq;
+      prepare(name).then(function () {
+        if (seq !== openSeq || closing) return;
+        active = name;
+        sync(name);
+        var start = trigger.getBoundingClientRect();
+        /* Popup always keeps main Navigation; section nav only after expand. */
+        leaveResumeNav();
+        clearFullpageUrl();
+        setExpandedChrome(false);
+        setBackgroundInert(false);
+        panel.setAttribute('aria-modal', 'false');
+        expand.hidden = false;
+        expand.setAttribute('aria-label', 'View full screen');
+        expand.setAttribute('aria-pressed', 'false');
+        if (panelScroll) {
+          panelScroll.scrollTop = viewScroll[name] || 0;
         }
-        if (!expand.hidden) expand.focus({ preventScroll: true });
-      }
-      if (opening) {
-        opening.onfinish = function () {
-          clearPanelAnimation();
+        /* Force layout after view/aria prep — only then reveal the panel. */
+        void panel.offsetHeight;
+        var opening = armPanelOpen(start);
+        HTML.classList.add('yy-panel-open');
+        host.classList.add('is-open');
+        // #region agent log
+        (function () {
+          var tag = panelContentTag(name);
+          var el = tag && root.querySelector(tag);
+          var defined = !!(tag && window.customElements && customElements.get(tag));
+          var link = el && el.shadowRoot && el.shadowRoot.querySelector('link[rel="stylesheet"]');
+          var pending = !!(el && el.hasAttribute('data-yy-pending'));
+          fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-chrome.js:open',message:'is-open applied after CE+styles ready',data:{name:name,ceDefined:defined,hasShadow:!!(el&&el.shadowRoot),hasLink:!!link,linkSheet:link&&link.sheet?true:false,pending:pending,hostReady:host.classList.contains('is-ready')},timestamp:Date.now()})}).catch(function(){});
+        })();
+        // #endregion
+        announcePanelState(false, true);
+        if (panelScroll) {
+          panelScroll.dispatchEvent(new Event('scroll'));
+        }
+        var targetView = viewFor(name);
+        function afterOpen() {
+          if (targetView && !reduced && targetView.animate) {
+            targetView.animate(
+              [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+              { duration: 350, easing: PANEL_MOTION_EASE }
+            );
+          }
+          if (!expand.hidden) expand.focus({ preventScroll: true });
+        }
+        if (opening) {
+          opening.onfinish = function () {
+            clearPanelAnimation();
+            afterOpen();
+          };
+          opening.oncancel = null;
+          opening.play();
+        } else {
           afterOpen();
-        };
-        opening.oncancel = null;
-        opening.play();
-      } else {
-        afterOpen();
-      }
+        }
+      });
     }
 
     function close(returnFocus) {
@@ -1116,36 +1173,39 @@
       clearPanelAnimation();
       if (opener) lastOpener = opener;
       saveViewScroll(active);
-      prepare(name);
-      active = name;
-      sync(name);
-      if (panel.classList.contains('is-expanded') && name === 'resume') {
-        enterResumeNav();
-        history.replaceState(
-          { yyPanelFull: true, panel: name },
-          '',
-          location.pathname + location.search + fullpageHash(name)
-        );
-        fullHistoryPushed = true;
-      } else {
-        leaveResumeNav();
-        if (panel.classList.contains('is-expanded')) {
+      var seq = ++openSeq;
+      prepare(name).then(function () {
+        if (seq !== openSeq || closing) return;
+        active = name;
+        sync(name);
+        if (panel.classList.contains('is-expanded') && name === 'resume') {
+          enterResumeNav();
           history.replaceState(
             { yyPanelFull: true, panel: name },
             '',
             location.pathname + location.search + fullpageHash(name)
           );
           fullHistoryPushed = true;
+        } else {
+          leaveResumeNav();
+          if (panel.classList.contains('is-expanded')) {
+            history.replaceState(
+              { yyPanelFull: true, panel: name },
+              '',
+              location.pathname + location.search + fullpageHash(name)
+            );
+            fullHistoryPushed = true;
+          }
         }
-      }
-      restoreViewScroll(name);
-      var next = viewFor(name);
-      if (next && !reduced && next.animate) {
-        next.animate(
-          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
-          { duration: 320, easing: PANEL_MOTION_EASE }
-        );
-      }
+        restoreViewScroll(name);
+        var next = viewFor(name);
+        if (next && !reduced && next.animate) {
+          next.animate(
+            [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 320, easing: PANEL_MOTION_EASE }
+          );
+        }
+      });
     }
 
     function applyExitFullpageUI() {
