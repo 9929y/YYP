@@ -378,9 +378,16 @@ if (
 }
 if (
   !caseLayoutCss.includes('border-radius: var(--case-radius)') ||
-  !caseLayoutCss.includes('.grid-img')
+  !caseLayoutCss.includes('.shadow-card') ||
+  !caseLayoutCss.includes('.step-card-2')
 ) {
-  errors.push('yy-case-layout.css must clip case media to --case-radius');
+  errors.push('yy-case-layout.css must keep --case-radius on HTML glass cards');
+}
+if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('overflow: visible')) {
+  errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
+}
+if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
 }
 
 const caseLayoutPages = [

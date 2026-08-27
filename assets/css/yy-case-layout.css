@@ -196,10 +196,12 @@
   color: #d4d4d4;
 }
 
-/* ---------- glass cards + shared media radius ----------
-   One radius (`--case-radius` = landing `--slot-radius` 36px) for case cards
-   and content images. Glass fill/blur/shadow matches the nav capsule `.cap`
-   in yy-chrome.js; cards stay 36px, not pills. Bitmaps get radius only. */
+/* ---------- glass cards ----------
+   `--case-radius` (landing `--slot-radius` 36px) is only for HTML cards.
+   Exported composites already have their own corners, shadows, and canvas
+   painted in the file. Rounding them again plus overflow:hidden clips the
+   baked background, fills the leftover with white, and squares the drop
+   shadow — the same bug as homepage slots. */
 .shadow-card,
 .step-card-2 {
   box-sizing: border-box;
@@ -300,64 +302,20 @@
   grid-row-gap: 16px;
 }
 
+/* Keep exported mockups on their authored corners. `.grid-img` stays at the
+   Webflow 20px radius (not 36px). Composites stay 0. Never clip the shadow. */
 .lightbox-link-4,
 .lightbox-link-4 img,
-.showroom img,
-.grid-img,
 .containerforimg img,
 .containerforimg2 img,
-.div-block-37 img,
-.layout125_component img,
-.video-wrapper,
+.image-15,
 .image-17,
-.image-18,
-.image-22,
-.image22,
-.image-23,
-.image-29,
-.image-33,
-.image-35,
-.image-36,
-.image-37,
-.image-38,
-.image-39,
-.image-76,
-.image-84,
-.image-85,
-.image-86,
-.image-888,
-.imagecutin,
-.imagebig,
-.image-13,
-._70,
-.shadow {
-  border-radius: var(--case-radius);
-}
-
-.lightbox-link-4,
-.video-wrapper,
-.grid-img,
-.showroom img,
-.containerforimg img,
-.containerforimg2 img,
-.div-block-37 img,
-.layout125_component img {
-  overflow: hidden;
-}
-
-.inner-page-hero-2 img,
-.hero-intro-2 img,
-.hero-intro-2.mck > img,
-.bg img,
-.image-5,
-.image-6,
-.image-19,
-.image-20,
-.image-69,
-.image-13.mck,
-.arrow,
-.social-icon-image,
-.image-68 {
+.image-18 {
   border-radius: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+.grid-img {
   overflow: visible;
 }
