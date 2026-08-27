@@ -397,7 +397,7 @@ if (!chromeJs.includes('--yy-panel-fill: rgba(255,255,255,.70)') || !chromeJs.in
   errors.push('yy-chrome.js must use Figma glass fill (.70) and blur 200px');
 }
 if (!chromeJs.includes('--yy-page-cover-fill: rgba(255,250,250,.20)') || !chromeJs.includes('--yy-page-cover-blur: 100px')) {
-  errors.push('yy-chrome.js must use Figma Canvas Cover tint + blur 100px');
+  errors.push('yy-chrome.js must keep Figma Canvas Cover tokens');
 }
 if (!chromeJs.includes('--yy-fill: rgba(255,255,255,.72)') || !chromeJs.includes('blur(8px) saturate(1.6)')) {
   errors.push('yy-chrome.js nav capsule must use Figma YyNav fill (.72) and blur 8px');
@@ -407,6 +407,12 @@ if (/:host\(yy-nav\.on-dark\)[\s\S]{0,200}--yy-fill:\s*rgba\(16,16,14/.test(chro
 }
 if (!chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)') || !chromeJs.includes('0 5px 40px 2px rgba(0,0,0,.15)')) {
   errors.push('yy-chrome.js panel must use Figma glass inset + drop shadow');
+}
+/* Shadow DOM cannot sample page backdrop — frost must live in light DOM */
+const chromeCssFrost = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
+if (!chromeCssFrost.includes('html.yy-panel-open body::before') ||
+    !chromeCssFrost.includes('backdrop-filter: blur(200px)')) {
+  errors.push('yy-chrome.css must frost the page in light DOM while popups are open (blur 200)');
 }
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
