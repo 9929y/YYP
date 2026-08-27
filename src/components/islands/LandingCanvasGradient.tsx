@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
@@ -49,6 +48,9 @@ function prefersLightCanvas(): boolean {
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
   const [mountCanvas, setMountCanvas] = useState(false);
+  const [gradientMod, setGradientMod] = useState<
+    typeof import('@shadergradient/react') | null
+  >(null);
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
   const [pixelDensity, setPixelDensity] = useState(1);
   const [panelExpanded, setPanelExpanded] = useState(false);
@@ -85,8 +87,12 @@ export default function LandingCanvasGradient() {
     let cancelled = false;
     let cancelIdle = () => {};
     const delayId = window.setTimeout(() => {
-      cancelIdle = scheduleIdle(() => {
-        if (!cancelled) setMountCanvas(true);
+      cancelIdle = scheduleIdle(async () => {
+        if (cancelled) return;
+        const mod = await import('@shadergradient/react');
+        if (cancelled) return;
+        setGradientMod(mod);
+        setMountCanvas(true);
       });
     }, MOUNT_DELAY_MS);
 
@@ -184,7 +190,8 @@ export default function LandingCanvasGradient() {
     layer.setAttribute('data-canvas-paused', motionActive ? 'false' : 'true');
   }, [motionActive]);
 
-  if (!allowMotion || !mountCanvas) return null;
+  if (!allowMotion || !mountCanvas || !gradientMod) return null;
+  const { ShaderGradient, ShaderGradientCanvas } = gradientMod;
 
   return (
     <ShaderGradientCanvas
