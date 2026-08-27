@@ -134,8 +134,7 @@
       applyCaseRuleDraw();
     });
   }
-  /* Default image enter is the same fade + 8px rise as copy (yy-motion.css).
-     Optional data-reveal="wipe" still exists in CSS but is unused by default. */
+  /* Landing thumbs use data-reveal="wipe" (clip + scale). Copy stays text rise. */
 
   /* ⛔ 一个被删掉的 Effect 2，记在这里免得再加一次。
 

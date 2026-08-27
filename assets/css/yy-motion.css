@@ -10,7 +10,7 @@
             --reveal-duration: 400ms; --reveal-blur: 0px"
 
    Named recipes: text | fade | wipe | media | clip | intro-meta | intro-headline
-   Homepage cases use data-reveal-sync="case" so the label and media start together.
+   Homepage cases: label=text, thumb=wipe; data-reveal-sync="case" starts both together.
 
    HARD RULE: default enter animates opacity + transform only.
    clip-path stays on optional wipe/clip recipes. Do not set grid, padding, or color.

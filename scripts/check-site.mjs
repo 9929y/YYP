@@ -753,8 +753,8 @@ const slotAstro = fs.readFileSync(path.join(ROOT, 'src/components/ProjectSlot.as
 if (/<a class="slot"[^>]*data-reveal/.test(slotAstro) || /class:list=\{\['slot'[\s\S]*?data-reveal="media"/.test(slotAstro.split('slot__media')[0])) {
   errors.push('ProjectSlot.astro must put data-reveal on inner media, not the slot chrome');
 }
-if (!slotAstro.includes('slot__media') || !slotAstro.includes('data-reveal="media"')) {
-  errors.push('ProjectSlot.astro must wrap img/video in .slot__media with data-reveal=media');
+if (!slotAstro.includes('slot__media') || !slotAstro.includes('data-reveal="wipe"')) {
+  errors.push('ProjectSlot.astro must wrap img/video in .slot__media with data-reveal=wipe');
 }
 
 const landingFeatured = projectsMod.landingProjects();
