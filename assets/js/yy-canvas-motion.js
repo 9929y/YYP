@@ -40,7 +40,7 @@
     x: 0,
     y: 0,
     coverOpacity: 1,
-    coverBlur: 85,
+    coverBlur: 70,
     coverFill: 0.16
   };
 
@@ -53,7 +53,7 @@
       x: -20,
       y: 36,
       coverOpacity: 1,
-      coverBlur: 125,
+      coverBlur: 80,
       coverFill: 0.42
     },
     /* 1 Atlas Nova — clearest glass */
@@ -75,7 +75,7 @@
       x: -10,
       y: 22,
       coverOpacity: 1,
-      coverBlur: 95,
+      coverBlur: 70,
       coverFill: 0.28
     },
     /* 3 Lark — medium-heavy frost */
@@ -86,7 +86,7 @@
       x: -26,
       y: 40,
       coverOpacity: 1,
-      coverBlur: 115,
+      coverBlur: 75,
       coverFill: 0.34
     }
   ];
@@ -104,6 +104,11 @@
 
   var lastAppliedScroll = -1;
   var rafPending = false;
+  var cachedStops = null;
+
+  function invalidateStops() {
+    cachedStops = null;
+  }
 
   function readScrollY() {
     return window.scrollY || window.pageYOffset || 0;
@@ -116,7 +121,9 @@
   }
 
   /** Build scrollY anchors for hero, each case focus, and page bottom. */
-  function buildStops(scrollY) {
+  function buildStops() {
+    if (cachedStops) return cachedStops;
+    var scrollY = readScrollY();
     var vh = window.innerHeight || 1;
     var cases = caseNodes();
     var stops = [{ y: 0, state: HERO }];
@@ -151,7 +158,8 @@
     stops.sort(function (a, b) {
       return a.y - b.y;
     });
-    return stops;
+    cachedStops = stops;
+    return cachedStops;
   }
 
   function mixStates(a, b, t, noMotion) {
@@ -180,7 +188,7 @@
   }
 
   function stateAtScroll(scrollY) {
-    var stops = buildStops(scrollY);
+    var stops = buildStops();
     if (!stops.length) return HERO;
 
     if (scrollY <= stops[0].y) return stops[0].state;
@@ -243,15 +251,16 @@
   }
 
   window.addEventListener('scroll', scheduleApply, { passive: true });
-  window.addEventListener('resize', scheduleApply, { passive: true });
+  window.addEventListener('resize', function () {
+    invalidateStops();
+    scheduleApply();
+  }, { passive: true });
   if (reduce.addEventListener) reduce.addEventListener('change', scheduleApply);
   else if (reduce.addListener) reduce.addListener(scheduleApply);
 
-  /* Opening intro: wait two frames so opacity:0 / scaleY(0) paint first. */
+  /* Opening intro: one frame so opacity:0 paints first. */
   requestAnimationFrame(function () {
-    requestAnimationFrame(function () {
-      root.setAttribute('data-intro-ready', 'true');
-    });
+    root.setAttribute('data-intro-ready', 'true');
   });
 
   applyScrollState(readScrollY());

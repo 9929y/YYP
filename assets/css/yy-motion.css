@@ -192,7 +192,7 @@ html.yy-landing [data-reveal="intro-headline"] {
 }
 
 [data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
-  animation: yy-intro-text var(--reveal-text-duration) var(--reveal-text-ease) calc(var(--duration-stagger) * 3) both;
+  animation: yy-intro-text var(--reveal-text-duration) var(--reveal-text-ease) var(--duration-stagger) both;
 }
 
 @keyframes yy-intro-fade {

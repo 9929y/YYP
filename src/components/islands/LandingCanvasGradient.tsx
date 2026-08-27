@@ -37,6 +37,15 @@ function markCanvasLive(live: boolean) {
   layer.setAttribute('data-canvas-live', live ? 'true' : 'false');
 }
 
+function prefersLightCanvas(): boolean {
+  if (typeof window === 'undefined') return true;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+  if (window.matchMedia('(max-width: 900px)').matches) return true;
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData) return true;
+  return false;
+}
+
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
   const [mountCanvas, setMountCanvas] = useState(false);
@@ -47,10 +56,14 @@ export default function LandingCanvasGradient() {
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setAllowMotion(!mq.matches);
+    const sync = () => setAllowMotion(!mq.matches && !prefersLightCanvas());
     sync();
     mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
+    window.addEventListener('resize', sync);
+    return () => {
+      mq.removeEventListener('change', sync);
+      window.removeEventListener('resize', sync);
+    };
   }, []);
 
   /* Cap DPR on high-density / small screens — cheaper first compile. */
