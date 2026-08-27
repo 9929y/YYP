@@ -1,0 +1,362 @@
+/* ============================================================================
+   yy-case-layout.css — project pages: one-column vs two-column
+
+   Linked only from Webflow case-study HTML (not About, Projects, or Landing).
+   Do not add these rules to the 19k-line Webflow sheet.
+
+   The landing homepage uses a two-track spine (label column | content column).
+   That is not the project-page layout. Case studies have two authored patterns:
+
+     TWO-COLUMN  Overview | Role, Industry/Role/Timeline meta, label|copy grids.
+     ONE-COLUMN  Introduction, Challenge, research notes, Cummins `.b1` chapters.
+
+   One-column blocks were still sitting in a half-width measure (`max-width: 36em`
+   plus leftover two-track padding), so a full-width section looked like an empty
+   second column. This sheet keeps the two-column grids and makes one-column
+   sections a single stacked line: heading, copy, then media, all the same width.
+   ============================================================================ */
+
+/* ---------- two-column: keep the original grids on desktop ---------- */
+@media screen and (min-width: 992px) {
+  .layout125_component:not(.b1):not(.live) {
+    display: grid;
+  }
+
+  .layout125_component.mck1.mck2:not(.b1) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .layout125_component.mck1:not(.mck2) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .layout125_component:not(.mck1):not(.b1):not(.live) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .layout125_component:not(.b1) .paragraph,
+  .layout125_component:not(.b1) .textblockp1 {
+    max-width: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ---------- one-column: a single stacked line, full well width ---------- */
+.div-block-37,
+.layout125_component.b1,
+.layout125_component.live {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: none;
+}
+
+.div-block-37 .layout125_content,
+.layout125_component.b1 .layout125_content,
+.layout125_component.live .layout125_content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+.div-block-37 .paragraph,
+.div-block-37 .paragraph.white,
+.div-block-37 .paragraph.white._1,
+.layout125_component.b1 .paragraph,
+.layout125_component.live .paragraph,
+.paragraph2 .paragraph,
+.paragraph2 .paragraph.white,
+.paragraph2 .paragraph.white._1,
+.div-block-3text2 .textblockp1,
+.div-block-3text2 .paragraph {
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.div-block-37 .paragraph.white._1,
+.paragraph2 .paragraph.white._1 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.div-block-37 img,
+.layout125_component.b1 img,
+.layout125_component.live img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.paragraph2.mck {
+  overflow: visible;
+}
+
+@media screen and (min-width: 1280px) {
+  .div-block-37 .paragraph.white {
+    padding-right: 0;
+  }
+}
+
+/* ---------- project heroes: one column, not logo | title ----------
+   `.hero-intro-2` is a 0.5fr|1fr grid. The wordmark is `justify-self: end` in
+   the first track, so a 300px lockup hangs off the left and `overflow-x: clip`
+   crops it (the “y / n” fragments on McKinsey). The H1 then lives only in the
+   second track instead of the full hero well.
+
+   McKinsey and Cummins share `.hero-intro-2.mck`. Stack logo, then title. */
+.hero-intro-2.mck {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.hero-intro-2.mck > img {
+  display: block;
+  width: auto;
+  max-width: min(300px, 100%);
+  height: auto;
+}
+
+.hero-intro-2.mck .stacked-title-2.mck {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  left: 0;
+  top: 0;
+  right: auto;
+}
+
+.hero-intro-2.mck .heading-xl,
+.hero-intro-2.mck h1 {
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero-intro-2.mck .medium-width-2,
+.hero-intro-2.mck .body-display-2 {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ---------- dark pages: readable type, no white prev/next stripe ----------
+   `.body { color: #fff; background: #fff }` is the light default. Dark case
+   pages override the background (`.blk` black, `.al` #2c2c2c) but
+   `.footer-section` stays `#fff` with `.footer-link { color: #0c0c0c }`, so
+   Previous / Next Project paint as a white bar on the black well.
+
+   Alzheimer `.ural` is a white island. `.headingpt.al` does not set color, so
+   those titles inherit body white → ~1.2:1 on the island. Opus impact captions
+   (`.counttext`) are `#606670` on black (~3.6:1, short of 4.5:1 for 1rem). */
+.body.blk .footer-section,
+.body.al .footer-section {
+  background-color: transparent;
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+.body.blk .footer-section .footer-link,
+.body.al .footer-section .footer-link {
+  color: #fff;
+}
+
+.body.blk .footer-section .hover-line,
+.body.al .footer-section .hover-line {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.body.blk .footer-section .hover-line-fill-3,
+.body.al .footer-section .hover-line-fill-3 {
+  background-color: #fff;
+}
+
+.body.blk yy-footer,
+.body.al yy-footer {
+  display: block;
+  width: 100%;
+  background-color: #fff;
+  color: #1a1917;
+}
+
+.body.al .ural .headingpt.al:not(.white):not(.new) {
+  color: #2c2c2c;
+}
+
+.body.blk .heading-medium-3.counttext {
+  color: #d4d4d4;
+}
+
+/* ---------- HTML glass cards ----------
+   Same frost as the nav capsule. Fill stays translucent so Lark's blue wash
+   still reads through 01–06. McKinsey sits on white, so a top specular
+   layer plus saturate keeps the glass from collapsing into a solid tile.
+   `.section7` clips on desktop and would flatten the backdrop. */
+.shadow-card,
+.step-card-2 {
+  box-sizing: border-box;
+  position: relative;
+  border-radius: var(--case-radius);
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  backdrop-filter: blur(16px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.20);
+}
+
+.shadow-card::before,
+.step-card-2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.shadow-card > *,
+.step-card-2 > * {
+  position: relative;
+  z-index: 1;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shadow-card,
+  .step-card-2 {
+    background: rgba(255, 255, 255, 0.88);
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .section7 {
+    overflow: visible;
+  }
+}
+
+.shadow-card {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 28px 28px 32px;
+}
+
+.step-card-2,
+.step-card-2.end {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: start;
+  justify-content: flex-start;
+  grid-auto-rows: auto;
+  padding: 20px 24px 24px;
+}
+
+.step-card-2 .subtitle-4 {
+  margin: 0 0 8px;
+}
+
+.step-card-2 .heading-medium-3,
+.step-card-2 .heading-medium-3.larkblue {
+  margin: 0;
+  padding: 0 0 8px;
+}
+
+.step-card-2 .service-description-2,
+.step-card-2 .steps-description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  grid-row-gap: 0;
+}
+
+.step-card-2 .paragraph {
+  margin: 0;
+}
+
+/* Same section = same card size. Webflow used `auto` rows and
+   `grid-auto-rows: 1fr` *inside* each card, so extra height opened a
+   gap between the index and the copy instead of sitting under it. */
+@media screen and (min-width: 992px) {
+  .highlight-grid .about-content-2 {
+    align-items: stretch;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: 16px;
+    grid-row-gap: 16px;
+  }
+
+  .feedback {
+    align-items: stretch;
+  }
+}
+
+.shadow-card .heading--slide {
+  margin: 0;
+  padding: 0 0 12px;
+}
+
+.shadow-card .paragraph {
+  margin: 0;
+}
+
+.highlight-grid .about-content-2 {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+}
+
+/* Background / composite images: no site radius. `.grid-img` is 20px in
+   Webflow; that still clips the painted canvas, so force 0. */
+.lightbox-link-4,
+.lightbox-link-4 img,
+.containerforimg img,
+.containerforimg2 img,
+.showroom img,
+.div-block-37 img,
+.layout125_component img,
+.image-15,
+.image-17,
+.image-18,
+.grid-img {
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+/* McKinsey flow boards (`.image-57`) used a hard 5px/10px offset shadow
+   with square corners — that is the right-angle umbra. Soft dual drop,
+   20px radius (not the 36px HTML card token), overflow visible. */
+.lightbox-link-4 img.image-57,
+.image-57 {
+  display: block;
+  border-radius: 20px;
+  overflow: visible;
+  background: transparent;
+  box-shadow:
+    0 4px 14px rgba(20, 20, 20, 0.08),
+    0 14px 36px -10px rgba(20, 20, 20, 0.16);
+}

@@ -32,9 +32,9 @@ html.yy-case body {
 }
 
 .cs__hero {
-  display: grid;
-  grid-template-columns: var(--col-label) minmax(0, 1fr);
-  gap: var(--col-gap);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   padding-bottom: 64px;
   border-bottom: 1px solid var(--hair);
   margin-bottom: 64px;
@@ -54,7 +54,7 @@ html.yy-case body {
   line-height: var(--lh-display);
   letter-spacing: -0.04em;
   font-weight: 600;
-  max-width: var(--col-content);
+  max-width: none;
 }
 
 .cs__scope,
@@ -63,7 +63,7 @@ html.yy-case body {
   font-size: var(--t-16);
   line-height: var(--lh-heading);
   color: var(--ink-2);
-  max-width: var(--col-content);
+  max-width: none;
 }
 
 .cs__body {
@@ -81,7 +81,7 @@ html.yy-case body {
 
 .cs__body :where(p) {
   margin: 0;
-  max-width: 40em;
+  max-width: none;
   color: var(--ink-2);
 }
 
@@ -93,9 +93,9 @@ html.yy-case body {
 }
 
 .case-section__header {
-  display: grid;
-  grid-template-columns: var(--col-label) minmax(0, 1fr);
-  gap: var(--col-gap);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding-bottom: 24px;
   border-bottom: 1px solid var(--hair);
 }
@@ -256,9 +256,7 @@ html.yy-case body {
 }
 
 @media (max-width: 877px) {
-  .cs__hero { grid-template-columns: 1fr; }
   .cs { padding: 104px var(--edge) 96px; }
-  .case-section__header,
   .case-meta,
   .media-pair__grid,
   .case-stat-grid {

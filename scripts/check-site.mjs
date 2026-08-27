@@ -316,6 +316,7 @@ for (const file of htmlFiles) {
 
 const requiredAssets = [
   'assets/css/yy-tokens.css',
+  'assets/css/yy-case-layout.css',
   'assets/css/yy-chrome.css',
   'assets/css/yy-resume.css',
   'assets/css/yy-motion.css',
@@ -479,6 +480,93 @@ if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
 }
 
+if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
+  errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
+}
+
+const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
+if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
+  errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
+}
+if (!caseLayoutCss.includes('.div-block-37') || !caseLayoutCss.includes('max-width: none')) {
+  errors.push('yy-case-layout.css must make one-column case text full width');
+}
+if (!caseLayoutCss.includes('.layout125_component.mck1.mck2:not(.b1)')) {
+  errors.push('yy-case-layout.css must preserve two-column intro grids');
+}
+if (!caseLayoutCss.includes('.hero-intro-2.mck')) {
+  errors.push('yy-case-layout.css must stack McKinsey/Cummins heroes as one column');
+}
+if (
+  !caseLayoutCss.includes('.body.blk .footer-section') ||
+  !caseLayoutCss.includes('.body.al .footer-section')
+) {
+  errors.push('yy-case-layout.css must drop the white prev/next bar on dark case pages');
+}
+if (!caseLayoutCss.includes('.ural .headingpt.al')) {
+  errors.push('yy-case-layout.css must keep Alzheimer ural headings dark on the white island');
+}
+if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
+  errors.push('yy-case-layout.css must lighten Opus impact captions on black');
+}
+if (
+  !caseLayoutCss.includes('.shadow-card') ||
+  !caseLayoutCss.includes('.step-card-2') ||
+  !caseLayoutCss.includes('backdrop-filter: blur(16px)')
+) {
+  errors.push('yy-case-layout.css must frost HTML cards so they read as glass');
+}
+if (!caseLayoutCss.includes('.section7') || !caseLayoutCss.includes('overflow: visible')) {
+  errors.push('yy-case-layout.css must not let .section7 clip McKinsey glass backdrops');
+}
+if (
+  !caseLayoutCss.includes('grid-template-rows: 1fr 1fr') ||
+  !caseLayoutCss.includes('align-items: stretch')
+) {
+  errors.push('yy-case-layout.css must keep same-section cards equal height');
+}
+if (
+  !caseLayoutCss.includes('.step-card-2 .subtitle-4') ||
+  !caseLayoutCss.includes('justify-content: flex-start')
+) {
+  errors.push('yy-case-layout.css must top-align card copy');
+}
+if (
+  !caseLayoutCss.includes('border-radius: var(--case-radius)') ||
+  !caseLayoutCss.includes('.shadow-card') ||
+  !caseLayoutCss.includes('.step-card-2')
+) {
+  errors.push('yy-case-layout.css must keep --case-radius on HTML cards only');
+}
+if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('border-radius: 0')) {
+  errors.push('yy-case-layout.css must not round exported images including .grid-img');
+}
+if (!caseLayoutCss.includes('.image-57') || !caseLayoutCss.includes('border-radius: 20px')) {
+  errors.push('yy-case-layout.css must soften McKinsey flow-board radius and shadow');
+}
+if (!caseLayoutCss.includes('overflow: visible')) {
+  errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
+}
+if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
+}
+
+const caseLayoutPages = [
+  'ai-driven-product-design.html',
+  'mckinseyecommerce.html',
+  'larkdesign.html',
+  'cummins-digitalization.html',
+  'mifinance.html',
+  'alzheimerdisease.html',
+  'tiktok-research.html'
+];
+for (const name of caseLayoutPages) {
+  const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
+  if (!html.includes('yy-case-layout.css')) {
+    errors.push(`${name}: missing yy-case-layout.css link`);
+  }
+}
+
 for (const panelName of ['work', 'about', 'resume']) {
   if (!chromeJs.includes(`panel: '${panelName}'`)) {
     errors.push(`yy-chrome.js missing ${panelName} panel configuration`);
@@ -587,6 +675,13 @@ const canvasGradient = fs.readFileSync(
 if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('panelExpanded')) {
   errors.push('LandingCanvasGradient must pause for expanded navigation panels');
 }
+if (
+  !canvasGradient.includes('.slot') ||
+  !canvasGradient.includes('pointerenter') ||
+  !canvasGradient.includes('pauseForThumbnail')
+) {
+  errors.push('LandingCanvasGradient must pause the background loop only while a project card is hovered');
+}
 
 const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
 if (scrollJs.includes('yy-rv--wipe') || scrollJs.includes('function tagImages')) {
@@ -594,6 +689,12 @@ if (scrollJs.includes('yy-rv--wipe') || scrollJs.includes('function tagImages'))
 }
 if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
   errors.push('yy-scroll.js must pause videos for expanded navigation panels');
+}
+if (scrollJs.includes('yy:scroll-idle') || scrollJs.includes('setScrollIdle')) {
+  errors.push('yy-scroll.js must not pause the landing background on scroll idle');
+}
+if (!scrollJs.includes('--rule-draw') || !scrollJs.includes('applyCaseRuleDraw')) {
+  errors.push('yy-scroll.js must draw the case spine as a scroll progressor (--rule-draw)');
 }
 if (!scrollJs.includes('panelOpen') ||
     !scrollJs.includes('lenis.stop()') ||
@@ -619,6 +720,25 @@ if (indexAstro.includes('yy-flow.js')) {
 }
 
 const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
+  errors.push('landing .slot must not use left/right directional shadows that square the corners');
+}
+if (!landingCss.includes('.slot__media')) {
+  errors.push('landing .slot must clip media in .slot__media so drop shadows are not squared');
+}
+if (!/\.slot\s*\{[^}]*overflow:\s*visible/.test(landingCss)) {
+  errors.push('landing .slot must use overflow: visible so shadows follow the radius');
+}
+if (
+  !landingCss.includes('caseRuleDraw') ||
+  !landingCss.includes('animation-timeline: view()') ||
+  !landingCss.includes('--rule-draw')
+) {
+  errors.push('landing case spine must reveal with scroll (view timeline + --rule-draw)');
+}
+if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
+  errors.push('hero spine must stay on the intro grow, not the case progressor');
+}
 if (/\.slot img,\s*\n\s*\.slot video \{[^}]*opacity:\s*0/.test(landingCss)) {
   errors.push('landing.css must not hide slot media with opacity:0; reveal owns enter, placeholder is load-fail only');
 }

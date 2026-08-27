@@ -3,10 +3,11 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
- * Plays continuously; scroll does not pause or scrub the shader.
  * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
  * In the project band, uSpeed drops to 0.7× base (data-motion-zone=projects).
- * Expanded navigation panels pause the shader clock via yy:panel-state.
+ * Hovering a project card (.slot) pauses the shader so it does not compete
+ * with the thumbnail. Expanded nav panels also pause via yy:panel-state.
+ * yy-canvas-motion still owns opacity / scale / rotate / cover.
  *
  * Entry: still image paints immediately; WebGL mounts after first paint / idle,
  * then crossfades in once the first frame is ready (avoids refresh hitch).
@@ -42,6 +43,7 @@ export default function LandingCanvasGradient() {
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
   const [pixelDensity, setPixelDensity] = useState(1);
   const [panelExpanded, setPanelExpanded] = useState(false);
+  const [slotHover, setSlotHover] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -124,7 +126,7 @@ export default function LandingCanvasGradient() {
     if (!root) return;
 
     const syncSpeed = () => {
-      const zone = root.getAttribute('data-motion-zone');
+      const zone = root.getAttribute('data-motion-zone') || 'hero';
       setUSpeed(zone === 'projects' ? PROJECT_SPEED : BASE_SPEED);
     };
 
@@ -143,10 +145,33 @@ export default function LandingCanvasGradient() {
     return () => window.removeEventListener('yy:panel-state', onPanelState);
   }, []);
 
-  if (!allowMotion || !mountCanvas) return null;
+  useEffect(() => {
+    const slots = Array.from(document.querySelectorAll('.slot'));
+    const onEnter = () => setSlotHover(true);
+    const onLeave = () => setSlotHover(false);
+    slots.forEach((slot) => {
+      slot.addEventListener('pointerenter', onEnter);
+      slot.addEventListener('pointerleave', onLeave);
+    });
+    return () => {
+      slots.forEach((slot) => {
+        slot.removeEventListener('pointerenter', onEnter);
+        slot.removeEventListener('pointerleave', onLeave);
+      });
+    };
+  }, []);
 
-  const motionActive = !panelExpanded;
+  const pauseForThumbnail = slotHover;
+  const motionActive = !panelExpanded && !pauseForThumbnail;
   const activeSpeed = motionActive ? uSpeed : 0;
+
+  useEffect(() => {
+    const layer = document.querySelector('.yy-canvas');
+    if (!layer) return;
+    layer.setAttribute('data-canvas-paused', motionActive ? 'false' : 'true');
+  }, [motionActive]);
+
+  if (!allowMotion || !mountCanvas) return null;
 
   return (
     <ShaderGradientCanvas

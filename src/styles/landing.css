@@ -201,9 +201,11 @@
       transition: opacity 240ms ease;
     }
     html.yy-landing .hero.row--ruled::before,
-    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before {
+    [data-motion-root][data-intro-ready="true"] .hero.row--ruled::before,
+    html.yy-landing .case.row--ruled::before {
       animation: none !important;
       transform: none !important;
+      clip-path: none !important;
     }
   }
 
@@ -272,6 +274,26 @@
 
   .hero.row--ruled::before {
     background: #939393;
+  }
+
+  /* Case spine = a progressor. The 1px rule next to the thumbnail is clipped
+     to the viewport's bottom edge: it only exists for the part of the case
+     you have already scrolled to. Hero keeps its intro grow, not this. */
+  html.yy-landing .case.row--ruled::before {
+    clip-path: inset(0 0 calc((1 - var(--rule-draw, 1)) * 100%) 0);
+  }
+
+  @supports (animation-timeline: view()) {
+    html.yy-landing .case.row--ruled::before {
+      animation: caseRuleDraw linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 0%;
+    }
+  }
+
+  @keyframes caseRuleDraw {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0 0); }
   }
 
   @media (max-width: 900px) { .row--ruled::before { display: none; } }
@@ -532,9 +554,12 @@
     }
   }
 
-  /* Media fills the column past the spine — larger than the old 823 cap.
-     Shadow mirrors the nav capsule (inset hair + soft indigo drop) on all
-     four sides so the thumb lifts off the canvas/cover. */
+  /* Media fills the column past the spine. Drop shadow lives on `.slot`
+     (overflow: visible) so the blur follows `--slot-radius`. Clip + inset
+     hair live on `.slot__media` — overflow:hidden on the same node as a
+     drop shadow squares the umbra, which is why the old card looked like
+     a right angle had trapped the glow. Nav `.cap` is small enough that
+     the same pairing is less obvious. */
   .slot {
     display: block;
     position: relative;
@@ -542,20 +567,27 @@
     max-width: 960px;
     aspect-ratio: 4 / 3;
     border-radius: var(--slot-radius);
-    overflow: hidden;
-    background: var(--slot);
+    overflow: visible;
+    background: transparent;
     text-decoration: none;
     align-self: end;
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .72),
-      inset 0 0 0 1px rgba(26, 25, 23, .06),
-      inset 0 -1px 0 rgba(26, 25, 23, .04),
       0 1px 2px rgba(62, 65, 116, .07),
       0 2px 8px -2px rgba(62, 65, 116, .10),
-      0 12px 36px -8px rgba(62, 65, 116, .22),
-      0 -6px 20px -10px rgba(62, 65, 116, .12),
-      8px 0 28px -12px rgba(62, 65, 116, .16),
-      -8px 0 28px -12px rgba(62, 65, 116, .16);
+      0 12px 36px -8px rgba(62, 65, 116, .22);
+  }
+
+  .slot__media {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border-radius: inherit;
+    overflow: hidden;
+    background: var(--slot);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .72),
+      inset 0 0 0 1px rgba(26, 25, 23, .06),
+      inset 0 -1px 0 rgba(26, 25, 23, .04);
   }
 
   .case .panel {

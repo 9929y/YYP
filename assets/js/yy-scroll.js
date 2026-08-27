@@ -139,19 +139,69 @@
         try {
           lenis.scrollTo(next.y, {
             duration: 0.95,
-            onComplete: function () { snapping = false; }
+            onComplete: function () {
+              snapping = false;
+            }
           });
         } catch (e) {
           snapping = false;
         }
         /* Fallback if onComplete missing in this Lenis build. */
-        setTimeout(function () { snapping = false; }, 1100);
+        setTimeout(function () {
+          snapping = false;
+        }, 1100);
       }, 160);
     }
 
-    window.addEventListener('scroll', scheduleSoftSnap, { passive: true });
-    window.addEventListener('wheel', scheduleSoftSnap, { passive: true });
-    window.addEventListener('touchend', scheduleSoftSnap, { passive: true });
+    function onLandingScroll() {
+      scheduleSoftSnap();
+      scheduleRuleDraw();
+    }
+
+    window.addEventListener('scroll', onLandingScroll, { passive: true });
+    window.addEventListener('wheel', onLandingScroll, { passive: true });
+    window.addEventListener('touchend', onLandingScroll, { passive: true });
+    window.addEventListener('resize', scheduleRuleDraw, { passive: true });
+  }
+
+  /* --------------------------------------------------------------------------
+     Landing case spine — same idea as a reading progressor.
+
+     The 1px rule beside each thumbnail is clipped to the viewport bottom:
+     `--rule-draw` is the fraction of the case that sits above that edge.
+     CSS `animation-timeline: view()` does this without JS where supported;
+     this fallback keeps Firefox/older Safari in the same shape.
+     -------------------------------------------------------------------------- */
+  var ruleDrawRaf = 0;
+  var supportsViewTimeline = false;
+  try {
+    supportsViewTimeline = CSS.supports('animation-timeline: view()');
+  } catch (e) {
+    supportsViewTimeline = false;
+  }
+
+  function applyCaseRuleDraw() {
+    if (!isLanding || RM.matches || supportsViewTimeline) return;
+    var cases = document.querySelectorAll('.case.row--ruled');
+    if (!cases.length) return;
+    var vh = window.innerHeight || 1;
+    for (var i = 0; i < cases.length; i++) {
+      var rect = cases[i].getBoundingClientRect();
+      var h = rect.height || 1;
+      var p = (vh - rect.top) / h;
+      if (p < 0) p = 0;
+      else if (p > 1) p = 1;
+      cases[i].style.setProperty('--rule-draw', p.toFixed(4));
+    }
+  }
+
+  function scheduleRuleDraw() {
+    if (!isLanding || RM.matches || supportsViewTimeline) return;
+    if (ruleDrawRaf) return;
+    ruleDrawRaf = requestAnimationFrame(function () {
+      ruleDrawRaf = 0;
+      applyCaseRuleDraw();
+    });
   }
   /* Default image enter is the same fade + 8px rise as copy (yy-motion.css).
      Optional data-reveal="wipe" still exists in CSS but is unused by default. */
@@ -296,6 +346,7 @@
 
   function boot() {
     wireVideos();
+    applyCaseRuleDraw();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
