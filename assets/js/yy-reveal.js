@@ -63,8 +63,11 @@
     return false;
   }
 
+  /* Project / case pages: enter + exit (inout). Landing stays once unless marked. */
+  var defaultMode = /\byy-landing\b/.test(html.className) ? 'once' : 'inout';
+
   function modeOf(el) {
-    return (el.getAttribute && el.getAttribute('data-reveal-mode')) || 'once';
+    return (el.getAttribute && el.getAttribute('data-reveal-mode')) || defaultMode;
   }
 
   function isObserved(el) {

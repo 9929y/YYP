@@ -385,7 +385,10 @@ if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #
   errors.push('yy-footer host must paint a light band by default so light pages match landing chrome');
 }
 if (!chromeJs.includes(':host(yy-footer.is-dark)') || !chromeJs.includes('DARK_FOOTER')) {
-  errors.push('yy-footer must support is-dark / DARK_FOOTER for Opus Clip, McKinsey, and Alzheimer');
+  errors.push('yy-footer must support is-dark / DARK_FOOTER for Opus Clip and Alzheimer');
+}
+if (/DARK_FOOTER[\s\S]{0,200}mckinseyecommerce\.html/.test(chromeJs)) {
+  errors.push('yy-chrome.js must not mark McKinsey as a dark footer page (McKinsey is light)');
 }
 
 const chromeCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
@@ -441,6 +444,9 @@ if (!caseLayout.includes('data-reveal="text"')) {
 const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf8');
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
+}
+if (!revealJs.includes("'inout'") || !/defaultMode[\s\S]{0,80}inout/.test(revealJs)) {
+  errors.push('yy-reveal.js must default project pages to data-reveal-mode inout (enter + exit)');
 }
 if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
   errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
@@ -596,6 +602,11 @@ for (const name of caseLayoutPages) {
   if (!html.includes('yy-case-layout.css')) {
     errors.push(`${name}: missing yy-case-layout.css link`);
   }
+}
+
+const mckHtml = fs.readFileSync(path.join(ROOT, 'mckinseyecommerce.html'), 'utf8');
+if (/<body[^>]*\bblk\b/.test(mckHtml)) {
+  errors.push('mckinseyecommerce.html must be a light page — do not use body.blk (black ground + black .paragraph)');
 }
 
 for (const panelName of ['work', 'about', 'resume']) {

@@ -70,10 +70,10 @@
   }
 
   /* Dark case pages keep a black ground through the credit row.
-     Whitelist by filename — body.blk is not present on every dark-looking page. */
+     Whitelist by filename — Opus + Alzheimer only. McKinsey is a light page
+     (body.blk was black-on-black with .paragraph = black). */
   var DARK_FOOTER = {
     'ai-driven-product-design.html': true,
-    'mckinseyecommerce.html': true,
     'alzheimerdisease.html': true
   };
 
