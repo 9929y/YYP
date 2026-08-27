@@ -199,10 +199,12 @@
     (document.head || HTML).appendChild(cursorSheet);
   }
 
-  var sheet = document.createElement('link');
-  sheet.rel = 'stylesheet';
-  sheet.href = ROOT + 'assets/css/yy-chrome.css';
-  (document.head || HTML).appendChild(sheet);
+  if (!document.querySelector('link[href*="yy-chrome.css"]')) {
+    var sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = ROOT + 'assets/css/yy-chrome.css';
+    (document.head || HTML).appendChild(sheet);
+  }
 
   if (/\byy-case-type\b/.test(HTML.className) && !document.querySelector('link[href*="yy-case-type.css"]')) {
     var typeSheet = document.createElement('link');
