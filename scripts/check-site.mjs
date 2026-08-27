@@ -713,8 +713,21 @@ if (!chromeJs.includes(':host(.is-ready.is-open) .panel-stack') ||
     !chromeJs.includes('[data-panel-view].is-active') ||
     !chromeJs.includes('void panel.offsetHeight') ||
     !chromeJs.includes('armPanelOpen') ||
-    !chromeJs.includes(':not(:defined)')) {
+    !chromeJs.includes(':not(:defined)') ||
+    !chromeJs.includes('data-yy-pending') ||
+    !chromeJs.includes('waitContentReady') ||
+    !chromeJs.includes('__yyStylesReady')) {
   errors.push('yy-chrome.js must gate panel visibility on is-ready+is-open and sync is-active views');
+}
+for (const [file, label] of [
+  ['assets/js/yy-work.js', 'Work'],
+  ['assets/js/yy-about.js', 'About'],
+  ['assets/js/yy-resume.js', 'Resume']
+]) {
+  const src = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  if (!src.includes('data-yy-pending') || !src.includes('__yyStylesReady')) {
+    errors.push(`${label} panel CE must hide until stylesheet ready (__yyStylesReady / data-yy-pending)`);
+  }
 }
 if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {

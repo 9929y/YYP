@@ -107,9 +107,6 @@
         if (settled) return;
         settled = true;
         self.removeAttribute('data-yy-pending');
-        // #region agent log
-        fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-work.js:css-ready',message:'yy-work styles ready; pending cleared',data:{href:sheet.href},timestamp:Date.now()})}).catch(function(){});
-        // #endregion
         resolve();
       }
       sheet.addEventListener('load', done);
@@ -117,9 +114,6 @@
       shadow.appendChild(sheet);
       try { if (sheet.sheet) done(); } catch (err) {}
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-work.js:ctor',message:'CE constructed with pending until CSS',data:{href:sheet.href,pending:true},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     var shell = document.createElement('div');
     shell.innerHTML = render();
     while (shell.firstChild) shadow.appendChild(shell.firstChild);

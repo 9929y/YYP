@@ -685,24 +685,13 @@
 
   function loadPanelScript(cacheKey, file, tagName, label) {
     if (window.customElements && customElements.get(tagName)) {
-      // #region agent log
-      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript',message:'CE already defined',data:{tagName:tagName,file:file},timestamp:Date.now()})}).catch(function(){});
-      // #endregion
       return Promise.resolve();
     }
     if (loadPanelScript[cacheKey]) return loadPanelScript[cacheKey];
     loadPanelScript[cacheKey] = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
       script.src = ROOT + 'assets/js/' + file;
-      // #region agent log
-      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript',message:'script insert start',data:{tagName:tagName,file:file},timestamp:Date.now()})}).catch(function(){});
-      // #endregion
-      script.onload = function () {
-        // #region agent log
-        fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:loadPanelScript.onload',message:'script loaded; CE may be defined',data:{tagName:tagName,defined:!!(window.customElements&&customElements.get(tagName))},timestamp:Date.now()})}).catch(function(){});
-        // #endregion
-        resolve();
-      };
+      script.onload = resolve;
       script.onerror = function () {
         loadPanelScript[cacheKey] = null;
         reject(new Error(label + ' component failed to load'));
@@ -838,16 +827,8 @@
       };
       var spec = loaders[name];
       if (!spec) return Promise.resolve();
-      // #region agent log
-      fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'A',location:'yy-chrome.js:prepare',message:'prepare started (awaited before is-open)',data:{name:name},timestamp:Date.now()})}).catch(function(){});
-      // #endregion
       return spec[0]()
         .then(function () { return waitContentReady(name); })
-        .then(function () {
-          // #region agent log
-          fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-chrome.js:prepare.ready',message:'CE+styles ready',data:{name:name},timestamp:Date.now()})}).catch(function(){});
-          // #endregion
-        })
         .catch(function (error) {
           var view = viewFor(name);
           if (view) {
@@ -1109,16 +1090,6 @@
         var opening = armPanelOpen(start);
         HTML.classList.add('yy-panel-open');
         host.classList.add('is-open');
-        // #region agent log
-        (function () {
-          var tag = panelContentTag(name);
-          var el = tag && root.querySelector(tag);
-          var defined = !!(tag && window.customElements && customElements.get(tag));
-          var link = el && el.shadowRoot && el.shadowRoot.querySelector('link[rel="stylesheet"]');
-          var pending = !!(el && el.hasAttribute('data-yy-pending'));
-          fetch('http://127.0.0.1:7399/ingest/3a7f2c1e-debug',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'nav-flash'},body:JSON.stringify({sessionId:'nav-flash',runId:'post-fix',hypothesisId:'B',location:'yy-chrome.js:open',message:'is-open applied after CE+styles ready',data:{name:name,ceDefined:defined,hasShadow:!!(el&&el.shadowRoot),hasLink:!!link,linkSheet:link&&link.sheet?true:false,pending:pending,hostReady:host.classList.contains('is-ready')},timestamp:Date.now()})}).catch(function(){});
-        })();
-        // #endregion
         announcePanelState(false, true);
         if (panelScroll) {
           panelScroll.dispatchEvent(new Event('scroll'));
