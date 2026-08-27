@@ -20,20 +20,23 @@ const { projects } = Astro.props;
       data-reveal-sync="case"
     >
       <div class="case__label" data-reveal="text">
-        <CaseNoteGenerate client:visible text={project.note} />
-        <div class="case__meta">
-          {project.logo && (
-            <img
-              class="case__logo"
-              src={publicUrl(project.logo.src)}
-              alt={project.logo.alt}
-              width={project.logo.width}
-              height={project.logo.height}
-              loading="lazy"
-            />
-          )}
-          <h2 class="case__name">{project.headline ?? project.title}</h2>
-          <p class="case__scope">{project.scope}</p>
+        <div class="case__copy">
+          <div class="case__meta">
+            {project.logo && (
+              <img
+                class="case__logo"
+                src={publicUrl(project.logo.src)}
+                alt={project.logo.alt}
+                width={project.logo.width}
+                height={project.logo.height}
+                loading="lazy"
+              />
+            )}
+            <h2 class="case__name">{project.headline ?? project.title}</h2>
+            <p class="case__scope">{project.scope}</p>
+          </div>
+          {/* Desktop: hangs 24px under centered title. Small: right column. */}
+          <CaseNoteGenerate client:visible text={project.note} />
         </div>
       </div>
       <ProjectSlot project={project} />
