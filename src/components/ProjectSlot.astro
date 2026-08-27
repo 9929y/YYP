@@ -11,34 +11,6 @@ const href = project.href ? publicUrl(project.href) : undefined;
 const label = `${project.title} case study`;
 const play = project.video?.play ?? 'scroll';
 const showMedia = project.kind !== 'panel' && !!(project.video || project.cover);
-
-const media = project.video ? (
-  <video
-    class="slot__v"
-    poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
-    muted
-    loop
-    playsinline
-    autoplay={play === 'auto'}
-    preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
-    width={project.video.width}
-    height={project.video.height}
-    aria-label={project.video.label}
-    data-play={play}
-  >
-    <source src={publicUrl(project.video.src)} type="video/mp4" />
-  </video>
-) : (
-  project.cover && (
-    <img
-      src={publicUrl(project.cover.src)}
-      alt={project.cover.alt}
-      loading="lazy"
-      width={project.cover.width}
-      height={project.cover.height}
-    />
-  )
-);
 ---
 
 {
@@ -52,7 +24,33 @@ const media = project.video ? (
   ) : showMedia && href ? (
     <a class="slot" href={href} aria-label={label} data-cursor-label="view">
       <span class="slot__media" data-reveal="media">
-        {media}
+        {project.video ? (
+          <video
+            class="slot__v"
+            poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
+            muted
+            loop
+            playsinline
+            autoplay={play === 'auto'}
+            preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
+            width={project.video.width}
+            height={project.video.height}
+            aria-label={project.video.label}
+            data-play={play}
+          >
+            <source src={publicUrl(project.video.src)} type="video/mp4" />
+          </video>
+        ) : (
+          project.cover && (
+            <img
+              src={publicUrl(project.cover.src)}
+              alt={project.cover.alt}
+              loading="lazy"
+              width={project.cover.width}
+              height={project.cover.height}
+            />
+          )
+        )}
       </span>
       <span class="ph">
         <span class="ph__file">{project.placeholderFile}</span>
@@ -69,7 +67,33 @@ const media = project.video ? (
       data-status={project.status}
     >
       <span class="slot__media" data-reveal="media">
-        {media}
+        {project.video ? (
+          <video
+            class="slot__v"
+            poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
+            muted
+            loop
+            playsinline
+            autoplay={play === 'auto'}
+            preload={play === 'hover' ? 'metadata' : play === 'auto' ? 'auto' : 'none'}
+            width={project.video.width}
+            height={project.video.height}
+            aria-label={project.video.label}
+            data-play={play}
+          >
+            <source src={publicUrl(project.video.src)} type="video/mp4" />
+          </video>
+        ) : (
+          project.cover && (
+            <img
+              src={publicUrl(project.cover.src)}
+              alt={project.cover.alt}
+              loading="lazy"
+              width={project.cover.width}
+              height={project.cover.height}
+            />
+          )
+        )}
       </span>
       <span class="ph">
         <span class="ph__file">{project.placeholderFile}</span>
