@@ -711,7 +711,9 @@ if (!chromeJs.includes(':host(.is-ready.is-open) .panel-stack') ||
     !chromeJs.includes("host.classList.add('is-ready')") ||
     !chromeJs.includes("classList.toggle('is-active'") ||
     !chromeJs.includes('[data-panel-view].is-active') ||
-    !chromeJs.includes('void panel.offsetHeight')) {
+    !chromeJs.includes('void panel.offsetHeight') ||
+    !chromeJs.includes('armPanelOpen') ||
+    !chromeJs.includes(':not(:defined)')) {
   errors.push('yy-chrome.js must gate panel visibility on is-ready+is-open and sync is-active views');
 }
 if (!chromeJs.includes('function expandToFullpage()') ||

@@ -512,6 +512,10 @@
     'yy-resume-content,',
     'yy-about-content,',
     'yy-work-content{ display: block; height: 100%; min-height: 100%; }',
+    /* Avoid FOUC / “source-like” flash before panel CE scripts upgrade. */
+    'yy-resume-content:not(:defined),',
+    'yy-about-content:not(:defined),',
+    'yy-work-content:not(:defined){ visibility: hidden; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
     '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
@@ -999,6 +1003,22 @@
       panelAnimation.oncancel = null;
     }
 
+    /* Arm open keyframes while still invisible so the first painted frame
+       after .is-open is the scaled/transparent start — not a full-opacity flash. */
+    function armPanelOpen(from) {
+      clearPanelAnimation();
+      if (reduced || !panel.animate) return null;
+      var to = panel.getBoundingClientRect();
+      panelAnimation = panel.animate(keyframesBetween(from, to, false), {
+        duration: PANEL_MOTION_MS,
+        easing: PANEL_MOTION_EASE,
+        fill: 'both'
+      });
+      panelAnimation.pause();
+      panelAnimation.currentTime = 0;
+      return panelAnimation;
+    }
+
     function finishClose(target) {
       closing = false;
       active = '';
@@ -1040,6 +1060,7 @@
       }
       /* Force layout after view/aria prep — only then reveal the panel. */
       void panel.offsetHeight;
+      var opening = armPanelOpen(start);
       HTML.classList.add('yy-panel-open');
       host.classList.add('is-open');
       announcePanelState(false, true);
@@ -1047,7 +1068,7 @@
         panelScroll.dispatchEvent(new Event('scroll'));
       }
       var targetView = viewFor(name);
-      animatePanel(start, false, function () {
+      function afterOpen() {
         if (targetView && !reduced && targetView.animate) {
           targetView.animate(
             [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
@@ -1055,7 +1076,17 @@
           );
         }
         if (!expand.hidden) expand.focus({ preventScroll: true });
-      });
+      }
+      if (opening) {
+        opening.onfinish = function () {
+          clearPanelAnimation();
+          afterOpen();
+        };
+        opening.oncancel = null;
+        opening.play();
+      } else {
+        afterOpen();
+      }
     }
 
     function close(returnFocus) {
