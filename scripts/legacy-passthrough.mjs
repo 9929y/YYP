@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = process.cwd();
 /** HTML emitted by Astro — never overwrite with a root passthrough copy. */
 const GENERATED_HTML = new Set(['index.html', 'landing.html']);
+/** Kept in git for rollback reference, but never published. */
+const UNPUBLISHED_HTML = new Set(['index.webflow.html']);
 
 function mime(file) {
   return {
@@ -65,7 +67,10 @@ export default function legacyPassthrough() {
 
                     const fromRoot = path.join(ROOT, rel);
                     const isAsset = rel === 'assets' || rel.startsWith('assets/');
-                    const isHtml = rel.endsWith('.html') && !GENERATED_HTML.has(path.basename(rel));
+                    const isHtml =
+                      rel.endsWith('.html') &&
+                      !GENERATED_HTML.has(path.basename(rel)) &&
+                      !UNPUBLISHED_HTML.has(path.basename(rel));
                     if ((isAsset || isHtml) && fs.existsSync(fromRoot) && fs.statSync(fromRoot).isFile()) {
                       return send(res, fromRoot);
                     }
@@ -85,7 +90,7 @@ export default function legacyPassthrough() {
         });
         for (const name of fs.readdirSync(ROOT)) {
           if (!name.endsWith('.html')) continue;
-          if (GENERATED_HTML.has(name)) continue;
+          if (GENERATED_HTML.has(name) || UNPUBLISHED_HTML.has(name)) continue;
           const dest = path.join(out, name);
           if (fs.existsSync(dest)) continue;
           fs.copyFileSync(path.join(ROOT, name), dest);

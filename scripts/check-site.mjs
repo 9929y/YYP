@@ -265,8 +265,8 @@ if (useDist) {
   } else if (!isRedirectStub(fs.readFileSync(distLanding, 'utf8'))) {
     errors.push('dist/landing.html should redirect to /');
   }
-  if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
-    errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
+  if (fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
+    errors.push('dist/index.webflow.html must not exist — the archive is kept in git, not published');
   }
   if (fs.existsSync(path.join(distDir, 'resume.html'))) {
     errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
@@ -332,7 +332,6 @@ const requiredAssets = [
   'assets/fonts/plus-jakarta-sans-400.woff2',
   'assets/fonts/plus-jakarta-sans-600.woff2',
   'assets/fonts/caveat-500.woff2',
-  'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];
 for (const asset of requiredAssets) {
