@@ -331,6 +331,16 @@ if (!landingCss.includes('.slot__media')) {
 if (!/\.slot\s*\{[^}]*overflow:\s*visible/.test(landingCss)) {
   errors.push('landing .slot must use overflow: visible so shadows follow the radius');
 }
+if (
+  !landingCss.includes('caseRuleDraw') ||
+  !landingCss.includes('animation-timeline: view()') ||
+  !landingCss.includes('--rule-draw')
+) {
+  errors.push('landing case spine must reveal with scroll (view timeline + --rule-draw)');
+}
+if (/\.hero\.row--ruled::before[\s\S]{0,200}--rule-draw/.test(landingCss)) {
+  errors.push('hero spine must stay on the intro grow, not the case progressor');
+}
 
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
 if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
@@ -544,6 +554,9 @@ if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded'))
 }
 if (scrollJs.includes('yy:scroll-idle') || scrollJs.includes('setScrollIdle')) {
   errors.push('yy-scroll.js must not pause the landing background on scroll idle');
+}
+if (!scrollJs.includes('--rule-draw') || !scrollJs.includes('applyCaseRuleDraw')) {
+  errors.push('yy-scroll.js must draw the case spine as a scroll progressor (--rule-draw)');
 }
 if (!scrollJs.includes('panelOpen') ||
     !scrollJs.includes('lenis.stop()') ||
