@@ -158,7 +158,7 @@
     if (currentPage() === 'projects.html') {
       typeBoot =
         'html.yy-case-type,html.yy-case-type body' +
-        '{background-color:#fff!important;color:#1a1917!important}';
+        '{background-color:#fff!important;color:#242220!important}';
     }
   }
 
@@ -228,9 +228,10 @@
   var CSS = [
     ':host{',
     '  all: initial;',
-    '  --yy-ink: #1a1917;',
+    '  --yy-ink: #242220;',
     '  --yy-ink-dim: #5b5a56;',
     '  --yy-fill: rgba(255,255,255,.58);',
+    '  --yy-panel-fill: rgba(255,255,255,.70);',
     '  --yy-hair: rgba(255,255,255,.65);',
     '  --yy-panel-full-fill: rgba(255,255,255,.92);',
     '  --yy-ease: cubic-bezier(1,0,.4,1);',
@@ -315,13 +316,13 @@
     '  width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;',
     '  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);',
     '  white-space: nowrap;',
-    '  background: #1a1917; color: #fff; border-radius: 999px;',
+    '  background: #242220; color: #fff; border-radius: 999px;',
     '  font-size: 13px; font-weight: 600; text-decoration: none;',
     '}',
     '.skip:focus{',
     '  width: auto; height: auto; margin: 0; padding: 10px 16px;',
     '  overflow: visible; clip: auto; clip-path: none;',
-    '  outline: 2px solid #1a1917; outline-offset: 2px;',
+    '  outline: 2px solid #242220; outline-offset: 2px;',
     '}',
 
     /* ---- the glass capsule ----------------------------------------------
@@ -342,7 +343,7 @@
     '  box-shadow:',
     '    inset 0 1px 0 rgba(255,255,255,.92),',
     '    inset 0 0 0 1px var(--yy-hair),',
-    '    inset 0 -1px 0 rgba(26,25,23,.05),',
+    '    inset 0 -1px 0 rgba(36,34,32,.05),',
     '    0 1px 2px rgba(62,65,116,.07),',
     '    0 2px 8px -2px rgba(62,65,116,.09),',
     '    0 12px 36px -8px rgba(62,65,116,.20);',
@@ -372,7 +373,7 @@
     /* Where backdrop-filter is unsupported OR silently dead (an ancestor
        forming a backdrop root), the fill alone must carry legibility. */
     '@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){',
-    '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-hair: rgba(26,25,23,.10); }',
+    '  :host{ --yy-fill: rgba(255,255,255,.94); --yy-panel-fill: rgba(255,255,255,.96); --yy-hair: rgba(36,34,32,.10); }',
     '}',
 
     '.cap a, .cap button{',
@@ -398,11 +399,11 @@
     '.cap a.is-shown, .cap button.is-shown{',
     '  opacity: 1; transform: none;',
     '}',
-    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(26,25,23,.055); }',
+    '.cap a:hover, .cap button:hover{ color: var(--yy-ink); background: rgba(36,34,32,.055); }',
     '.cap a:focus-visible, .cap button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 1px; }',
-    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }',
-    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }',
-    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: rgba(26,25,23,.075); }',
+    '.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }',
+    '.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }',
+    '.cap button[aria-current="location"]{ color: var(--yy-ink); font-weight: 600; background: rgba(36,34,32,.075); }',
     '.cap-back{ display: inline-flex !important; align-items: center; justify-content: center; padding: 8px 12px !important; }',
     '.cap-back svg{ display: block; width: 16px; height: 16px; }',
 
@@ -417,18 +418,26 @@
     '  font-size: 0 !important; line-height: 0 !important;',
     '  overflow: hidden;',
     '}',
-    '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
+    '.brand:hover, .brand:focus-visible{ background: rgba(36,34,32,.055) !important; }',
     '.brand-orb{',
     '  display: block; width: 36px; height: 36px;',
     '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
-    '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(26,25,23,.13); }',
+    '.rule{ width: 1px; height: 18px; margin: 0 6px; background: rgba(36,34,32,.13); }',
     '.ext::after{ content: " \\2197"; font-size: .85em; opacity: .6; }',
 
     /* ---- navigation panel ----------------------------------------------
        Mid-size popup fills the space above the capsule with equal gaps
        (top and above the nav). Expand lives inside the card. */
+    '.panel-backdrop{',
+    '  position: absolute; z-index: 0; inset: 0;',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '  background: transparent;',
+    '}',
+    ':host(.is-open:not(.is-fullpage)) .panel-backdrop{',
+    '  opacity: 1; visibility: visible; pointer-events: auto;',
+    '}',
     '.panel-stack{',
     '  position: absolute; z-index: 1; left: 0; right: 0;',
     '  top: var(--yy-panel-gap);',
@@ -456,13 +465,13 @@
     '  flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;',
     '  margin-inline: 0; overflow: hidden;',
     '  box-sizing: border-box; border: 0; border-radius: var(--yy-panel-radius);',
-    '  color: var(--yy-ink); background: var(--yy-fill);',
+    '  color: var(--yy-ink); background: var(--yy-panel-fill);',
     '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
     '  backdrop-filter: blur(12px) saturate(1.6);',
     '  box-shadow:',
     '    inset 0 1px 0 rgba(255,255,255,.92),',
     '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
-    '    inset 0 -1px 0 rgba(26,25,23,.05),',
+    '    inset 0 -1px 0 rgba(36,34,32,.05),',
     '    0 5px 50px 5px rgba(0,0,0,.18);',
     '  transform-origin: center bottom; contain: layout paint;',
     '  transition: background-color 680ms var(--ease-smooth-out,ease-out), box-shadow 680ms var(--ease-smooth-out,ease-out), backdrop-filter 680ms var(--ease-smooth-out,ease-out);',
@@ -616,7 +625,7 @@
     '  display: block;',
     '  max-width: 1260px; margin: 0 auto;',
     '  padding: 40px 24px 120px;',   /* 120px bottom clears the fixed capsule */
-    '  border-top: 1px solid rgba(26,25,23,.10);',
+    '  border-top: 1px solid rgba(36,34,32,.10);',
     '  box-sizing: border-box;',
     '}',
     ':host(yy-footer.is-dark) .ft{ border-top-color: rgba(255,255,255,.10); }',
@@ -750,6 +759,7 @@
 
   function setupPanel(host) {
     var root = host.shadowRoot;
+    var panelBackdrop = root.querySelector('.panel-backdrop');
     var panelStack = root.querySelector('.panel-stack');
     var panel = root.querySelector('.panel');
     var panelScroll = root.querySelector('.panel-scroll');
@@ -1251,6 +1261,12 @@
     }
 
     if (cap) cap.addEventListener('click', onCapClick);
+    if (panelBackdrop) {
+      panelBackdrop.addEventListener('click', function () {
+        if (!active || closing || panel.classList.contains('is-expanded')) return;
+        close();
+      });
+    }
     expand.addEventListener('click', expandToFullpage);
     window.addEventListener('popstate', function (event) {
       var state = event.state;
@@ -1300,6 +1316,7 @@
        renders identically, so only focus order catches it. */
     var navHTML =
       (target ? '<a class="skip" href="#' + esc(target) + '">Skip to content</a>' : '') +
+      '<div class="panel-backdrop" aria-hidden="true"></div>' +
       '<div class="panel-stack">' +
         '<div class="panel" id="yy-nav-panel" role="dialog" aria-modal="false" aria-label="Navigation content">' +
           '<button class="expand" type="button" aria-label="View full screen" aria-pressed="false">' +
