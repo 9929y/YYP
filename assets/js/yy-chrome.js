@@ -36,6 +36,37 @@
     return (!last || last === 'index.html') ? 'index.html' : last;
   }
 
+  function lumaOf(color) {
+    var m = String(color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!m) return 1;
+    return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+  }
+
+  function pageIsDark() {
+    var page = currentPage();
+    if (page === 'ai-driven-product-design.html' || page === 'alzheimerdisease.html') return true;
+    try {
+      return lumaOf(getComputedStyle(document.body).backgroundColor) < 0.28 ||
+             lumaOf(getComputedStyle(HTML).backgroundColor) < 0.28;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function applyChromeTheme(navHost) {
+    var dark = pageIsDark();
+    HTML.classList.toggle('yy-chrome-on-dark', dark);
+    if (navHost) navHost.classList.toggle('on-dark', dark);
+  }
+
+  function loadCursor() {
+    if (document.querySelector('script[src*="yy-cursor.js"]')) return;
+    var s = document.createElement('script');
+    s.src = ROOT + 'assets/js/yy-cursor.js';
+    s.async = false;
+    (document.head || document.body || HTML).appendChild(s);
+  }
+
   /* Light case + work-hub pages get the landing type/ink overlay.
      Opus and Alzheimer keep Webflow black/white; do not list them here. */
   var CASE_TYPE_PAGES = {
@@ -138,6 +169,13 @@
     (document.head || HTML).appendChild(motion);
   }
 
+  if (!document.querySelector('link[href*="yy-cursor.css"]')) {
+    var cursorSheet = document.createElement('link');
+    cursorSheet.rel = 'stylesheet';
+    cursorSheet.href = ROOT + 'assets/css/yy-cursor.css';
+    (document.head || HTML).appendChild(cursorSheet);
+  }
+
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';
@@ -190,6 +228,20 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
+    ':host(yy-nav.on-dark){',
+    '  --yy-ink: #f3f2ef;',
+    '  --yy-ink-dim: rgba(243,242,239,.74);',
+    '  --yy-fill: rgba(16,16,14,.58);',
+    '  --yy-hair: rgba(255,255,255,.22);',
+    '}',
+    ':host(yy-nav.on-dark) .cap a:hover,',
+    ':host(yy-nav.on-dark) .cap button:hover{ background: rgba(255,255,255,.1); }',
+    ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
+    ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
+    ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(255,255,255,.14); }',
+    ':host(yy-nav.on-dark) .brand:hover,',
+    ':host(yy-nav.on-dark) .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
+    ':host(yy-nav.on-dark) .rule{ background: rgba(255,255,255,.22); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
@@ -211,12 +263,12 @@
     ':host(yy-nav) .skip{ pointer-events: auto; }',
     /* Hide the system cursor inside the panel when the landing custom cursor is live,
        so it does not fight the disc that now stacks above yy-nav. */
-    ':host-context(html.yy-cursor-live),',
-    ':host-context(html.yy-cursor-live) .cap,',
-    ':host-context(html.yy-cursor-live) .cap *,',
-    ':host-context(html.yy-cursor-live) .panel,',
-    ':host-context(html.yy-cursor-live) .panel *,',
-    ':host-context(html.yy-cursor-live) .expand{ cursor: none !important; }',
+    ':host-context(html.yy-cursor-ready),',
+    ':host-context(html.yy-cursor-ready) .cap,',
+    ':host-context(html.yy-cursor-ready) .cap *,',
+    ':host-context(html.yy-cursor-ready) .panel,',
+    ':host-context(html.yy-cursor-ready) .panel *,',
+    ':host-context(html.yy-cursor-ready) .expand{ cursor: none !important; }',
     /* Light band on every page, including dark Webflow cases, so the footer
        matches the landing chrome instead of inheriting body #000. */
     ':host(yy-footer){',
@@ -340,7 +392,7 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 16px; height: 16px;',
+    '  display: block; width: 24px; height: 24px;',
     '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
@@ -496,7 +548,7 @@
     '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
     '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
-    '  .brand-orb{ width: 16px; height: 16px; }',
+    '  .brand-orb{ width: 20px; height: 20px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',
@@ -1266,7 +1318,7 @@
         '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
           '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
-            '?v=15" alt="" width="16" height="16" decoding="async">' +
+            '?v=16" alt="" width="24" height="24" decoding="async">' +
         '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
@@ -1274,6 +1326,7 @@
 
     var navHost = shadow('yy-nav', navHTML);
     document.body.insertBefore(navHost, document.body.firstChild);
+    applyChromeTheme(navHost);
     setupPanel(navHost);
 
     /* ---- footer ----
@@ -1310,6 +1363,7 @@
   function go() {
     try {
       mount();
+      loadCursor();
     } catch (e) {
       /* Hand the page back to its own chrome, intact, within a frame. */
       HTML.classList.remove('yy-chrome');

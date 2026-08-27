@@ -85,7 +85,7 @@
     if (card.unable) {
       return '<article class="card card--unable" aria-label="' + esc(card.title) + '">' + inner + '</article>';
     }
-    return '<a class="card" href="' + esc(card.href) + '">' + inner + '</a>';
+    return '<a class="card" href="' + esc(card.href) + '" data-cursor-label="view">' + inner + '</a>';
   }
 
   function render() {
@@ -104,6 +104,7 @@
     var shell = document.createElement('div');
     shell.innerHTML = render();
     while (shell.firstChild) shadow.appendChild(shell.firstChild);
+    if (typeof window.__yyCursorBind === 'function') window.__yyCursorBind(shadow);
     return self;
   }
 

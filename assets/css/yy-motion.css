@@ -76,6 +76,10 @@ yy-footer {
   view-transition-name: yy-footer;
 }
 
+#yy-cursor {
+  view-transition-name: yy-cursor;
+}
+
 /* ---------------------------------------------------------------------------
    Gate: html.yy-reveal is set by yy-reveal.js only. JS off → visible content.
    --------------------------------------------------------------------------- */

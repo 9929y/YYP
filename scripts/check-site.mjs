@@ -322,6 +322,7 @@ const requiredAssets = [
   'assets/css/yy-case-type.css',
   'assets/css/yy-about.css',
   'assets/css/yy-work.css',
+  'assets/css/yy-cursor.css',
   'assets/js/yy-chrome.js',
   'assets/js/yy-reveal.js',
   'assets/js/yy-scroll.js',
@@ -345,6 +346,15 @@ const chromeJsPath = path.join(ROOT, 'assets/js/yy-chrome.js');
 const chromeJs = fs.readFileSync(chromeJsPath, 'utf8');
 if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
   errors.push('yy-chrome.js must hide the legacy Webflow navbar');
+}
+if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
+  errors.push('yy-chrome.js must load the shared cursor sheet and script on every page');
+}
+if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
+  errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
+}
+if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
+  errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
 }
 if (!chromeJs.includes("document.body.appendChild(host)") || !chromeJs.includes("setupFooterPanelTriggers(host)")) {
   errors.push('yy-chrome.js must append the shared footer to document.body and wire footer panel triggers');
@@ -383,6 +393,9 @@ if (!motionCss.includes('--page-fade-out') || !motionCss.includes('--page-fade-i
 if (!motionCss.includes('view-transition-name: yy-nav') || !motionCss.includes('view-transition-name: yy-footer')) {
   errors.push('yy-motion.css must name yy-nav and yy-footer for view transitions');
 }
+if (!motionCss.includes('view-transition-name: yy-cursor')) {
+  errors.push('yy-motion.css must name #yy-cursor so the disc does not snap to the system arrow on MPA fades');
+}
 if (!motionCss.includes(':not(.in)') || !motionCss.includes('[data-reveal].in')) {
   errors.push('yy-motion.css must hide with :not(.in) so .in can actually reveal data-reveal nodes');
 }
@@ -418,6 +431,13 @@ if (!revealJs.includes('data-reveal-sync') || !fs.readFileSync(path.join(ROOT, '
 }
 if (!revealJs.includes('intro-')) {
   errors.push('yy-reveal.js must skip intro-* CSS-timeline recipes');
+}
+const cursorJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-cursor.js'), 'utf8');
+if (cursorJs.includes('moves === 0') && cursorJs.includes('standDown()')) {
+  errors.push('yy-cursor.js must not stand down the disc when the pointer is idle');
+}
+if (!cursorJs.includes('yy-cursor-ready')) {
+  errors.push('yy-cursor.js must set html.yy-cursor-ready so the system arrow stays hidden before the first move');
 }
 if (
   /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
