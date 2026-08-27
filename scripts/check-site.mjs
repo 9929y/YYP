@@ -329,6 +329,9 @@ const requiredAssets = [
   'assets/js/yy-about.js',
   'assets/js/yy-work.js',
   'assets/js/yy-link-preview.js',
+  'assets/fonts/plus-jakarta-sans-400.woff2',
+  'assets/fonts/plus-jakarta-sans-600.woff2',
+  'assets/fonts/caveat-500.woff2',
   'assets/images/home/landing-canvas.gif',
   'assets/images/home/landing-canvas-still.png'
 ];

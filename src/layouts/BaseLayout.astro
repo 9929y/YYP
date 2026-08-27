@@ -45,11 +45,8 @@ const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).joi
       html.yy-chrome .footer-section { border-top: none; padding-top: 48px; padding-bottom: 0 }
       .preloader-lark { display: none !important }
     </style>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-    />
+    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-600.woff2" as="font" type="font/woff2" crossorigin />
     <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
     <link href="/assets/css/yy-motion.css" rel="stylesheet" type="text/css" />
     {chrome && (
