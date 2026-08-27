@@ -118,7 +118,7 @@ for (const marker of ['<yy-resume-content', 'ensureResumeComponent', '<yy-about-
   }
 }
 if (chromeSource.includes("{ href: 'projects.html'") || chromeSource.includes("{ href: 'aboutme.html'")) {
-  errors.push('yy-chrome.js footer Work/About must open panels, not navigate to standalone pages');
+  errors.push('yy-chrome.js must not route Work/About through standalone page hrefs in chrome config');
 }
 
 const resumeJsPath = path.join(ROOT, 'assets/js/yy-resume.js');
@@ -357,8 +357,11 @@ if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
 }
-if (!chromeJs.includes("document.body.appendChild(host)") || !chromeJs.includes("setupFooterPanelTriggers(host)")) {
-  errors.push('yy-chrome.js must append the shared footer to document.body and wire footer panel triggers');
+if (!chromeJs.includes("document.body.appendChild(host)")) {
+  errors.push('yy-chrome.js must append the shared footer to document.body');
+}
+if (!chromeJs.includes('© Yanice Yang 2026') || chromeJs.includes('setupFooterPanelTriggers')) {
+  errors.push('yy-chrome.js footer must be credit-only (no footer panel triggers)');
 }
 if (chromeJs.includes('insertBefore(host, credit')) {
   errors.push('yy-chrome.js must not nest the shared footer next to .footer-credit-wrapper');
@@ -367,7 +370,10 @@ if (!chromeJs.includes('.footer-section:not(:has(.four-column))')) {
   errors.push('yy-chrome.js must hide credit-only Webflow footer shells');
 }
 if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #fff;')) {
-  errors.push('yy-footer host must paint a light band so dark case pages match landing chrome');
+  errors.push('yy-footer host must paint a light band by default so light pages match landing chrome');
+}
+if (!chromeJs.includes(':host(yy-footer.is-dark)') || !chromeJs.includes('DARK_FOOTER')) {
+  errors.push('yy-footer must support is-dark / DARK_FOOTER for Opus Clip and McKinsey');
 }
 
 const chromeCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-chrome.css'), 'utf8');
