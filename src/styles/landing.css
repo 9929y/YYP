@@ -249,8 +249,8 @@
     grid-template-columns: var(--col-label-case) minmax(0, 1fr);
     column-gap: var(--col-gap);
     row-gap: 20px;
-    /* Shared bottom edge: left info stack + media (any viewport width). */
-    align-items: end;
+    /* Stretch so the label column matches media height and can vertically center. */
+    align-items: stretch;
   }
 
   /* 首屏内容列仍卡在 492 measure；外框与竖线轴线与 case 共用。 */
@@ -459,15 +459,24 @@
     box-sizing: border-box;
   }
 
-  /* Label column: note on top, logo/name/scope below (Figma gap 36, justify-end). */
+  /* Label column: title block vertically centered against media; hover note
+     hangs 24px under the title without shifting its center (absolute). */
   .case__label {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    gap: 36px;
+    justify-content: center;
+    align-items: stretch;
     min-height: 0;
-    padding-bottom: 4px;
+    height: 100%;
+    padding-bottom: 0;
     box-sizing: border-box;
+    overflow: visible;
+  }
+
+  .case__copy {
+    position: relative;
+    width: 100%;
+    flex: 0 0 auto;
   }
 
   .case__meta {
@@ -507,12 +516,14 @@
     max-width: 16em;
   }
 
-  /* Supporting line under the hover note area: one step below the title.
-     Title stays --t-20 / 600; scope stays --t-13 / ink-3. */
+  /* Hover note: 24px under .case__meta. Absolute so title stays column-centered. */
   .case__note {
     display: block;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 24px);
     margin: 0;
-    padding-top: 14px;
+    padding-top: 0;
     max-width: 18em;
     width: 100%;
     font-size: var(--t-16);
@@ -572,7 +583,8 @@
     overflow: visible;
     background: transparent;
     text-decoration: none;
-    align-self: end;
+    align-self: stretch;
+    justify-self: stretch;
     box-shadow:
       0 1px 2px rgba(62, 65, 116, .07),
       0 2px 8px -2px rgba(62, 65, 116, .10),
@@ -745,24 +757,47 @@
     }
   }
 
-  /* Below the frame, the label column collapses and the content column goes
-     full width. The 4:3 slot keeps its ratio at every size, so the images
-     Yanice exports never need a second crop.
+  /* Below the frame: case header becomes title | note (2-col), media full width
+     underneath (small-screen reference). Hero still stacks to one column.
      829 + 2 x 24 edge = 877. */
   @media (max-width: 877px) {
-    .row,
-    .case.row { grid-template-columns: 1fr; gap: 20px; }
+    .row { grid-template-columns: 1fr; gap: 20px; }
+    .case.row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: start;
+    }
     .case__label {
-      justify-content: flex-start;
+      display: block;
       min-height: 0;
       height: auto;
       max-height: none;
       padding-bottom: 0;
-      gap: 24px;
       order: -1;
+    }
+    .case__copy {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: clamp(16px, 4vw, 32px);
+      align-items: start;
+    }
+    .case__meta {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .case__note {
+      position: static;
+      grid-column: 2;
+      grid-row: 1;
+      top: auto;
+      max-width: none;
+      padding-top: 0;
+      align-self: start;
     }
     .case .slot {
       align-self: stretch;
+      width: 100%;
+      max-width: none;
     }
     .hero {
       min-height: 0;
