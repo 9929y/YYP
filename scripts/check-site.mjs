@@ -514,10 +514,19 @@ const canvasGradient = fs.readFileSync(
 if (!canvasGradient.includes('yy:panel-state') || !canvasGradient.includes('panelExpanded')) {
   errors.push('LandingCanvasGradient must pause for expanded navigation panels');
 }
+if (
+  !canvasGradient.includes('yy:scroll-idle') ||
+  !canvasGradient.includes('pauseForThumbnail')
+) {
+  errors.push('LandingCanvasGradient must pause the background loop when a case thumbnail is settled');
+}
 
 const scrollJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-scroll.js'), 'utf8');
 if (!scrollJs.includes('yy:panel-state') || !scrollJs.includes('panelExpanded')) {
   errors.push('yy-scroll.js must pause videos for expanded navigation panels');
+}
+if (!scrollJs.includes('yy:scroll-idle') || !scrollJs.includes('setScrollIdle')) {
+  errors.push('yy-scroll.js must signal scroll idle so the landing background can pause');
 }
 if (!scrollJs.includes('panelOpen') ||
     !scrollJs.includes('lenis.stop()') ||

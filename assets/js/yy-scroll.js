@@ -48,6 +48,8 @@
   var snapTimer = 0;
   var snapping = false;
   var panelOpen = false;
+  var idleTimer = 0;
+  var scrollIdle = false;
 
   function start() {
     if (lenis || RM.matches || panelOpen) return;
@@ -97,6 +99,30 @@
     } catch (e) { /* native overflow lock remains the fallback */ }
   });
 
+  /* Landing background clock (ShaderGradient) pauses when the wheel has
+     settled on a case so the loop does not compete with the thumbnail.
+     yy-canvas-motion still owns opacity / scale / rotate / cover. */
+  function setScrollIdle(idle) {
+    if (idle === scrollIdle) return;
+    scrollIdle = idle;
+    html.setAttribute('data-scroll-idle', idle ? 'true' : 'false');
+    var root = document.querySelector('[data-motion-root]');
+    if (root) root.setAttribute('data-scroll-idle', idle ? 'true' : 'false');
+    try {
+      window.dispatchEvent(new CustomEvent(idle ? 'yy:scroll-idle' : 'yy:scroll-active'));
+    } catch (e) { /* CustomEvent missing → attribute on the root is enough */ }
+  }
+
+  function noteScrollActivity() {
+    setScrollIdle(false);
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () {
+      idleTimer = 0;
+      if (snapping) return;
+      setScrollIdle(true);
+    }, 160);
+  }
+
   /* --------------------------------------------------------------------------
      Landing soft snap — after the wheel settles, ease to the nearest .case
      center via Lenis. Avoids CSS scroll-snap (janky with Lenis smoothing).
@@ -139,19 +165,30 @@
         try {
           lenis.scrollTo(next.y, {
             duration: 0.95,
-            onComplete: function () { snapping = false; }
+            onComplete: function () {
+              snapping = false;
+              setScrollIdle(true);
+            }
           });
         } catch (e) {
           snapping = false;
+          setScrollIdle(true);
         }
         /* Fallback if onComplete missing in this Lenis build. */
-        setTimeout(function () { snapping = false; }, 1100);
+        setTimeout(function () {
+          snapping = false;
+        }, 1100);
       }, 160);
     }
 
-    window.addEventListener('scroll', scheduleSoftSnap, { passive: true });
-    window.addEventListener('wheel', scheduleSoftSnap, { passive: true });
-    window.addEventListener('touchend', scheduleSoftSnap, { passive: true });
+    function onLandingScroll() {
+      noteScrollActivity();
+      scheduleSoftSnap();
+    }
+
+    window.addEventListener('scroll', onLandingScroll, { passive: true });
+    window.addEventListener('wheel', onLandingScroll, { passive: true });
+    window.addEventListener('touchend', onLandingScroll, { passive: true });
   }
   /* --------------------------------------------------------------------------
      Effect 1 — filmic image reveal.

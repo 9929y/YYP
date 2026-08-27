@@ -3,10 +3,10 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
- * Plays continuously; scroll does not pause or scrub the shader.
  * Layer scale / translate / opacity / rotate is owned by yy-canvas-motion.js.
  * In the project band, uSpeed drops to 0.7× base (data-motion-zone=projects).
- * Expanded navigation panels pause the shader clock via yy:panel-state.
+ * Settled on a case (yy:scroll-idle) pauses the shader so it does not compete
+ * with the thumbnail. Expanded nav panels also pause via yy:panel-state.
  *
  * Entry: still image paints immediately; WebGL mounts after first paint / idle,
  * then crossfades in once the first frame is ready (avoids refresh hitch).
@@ -42,6 +42,8 @@ export default function LandingCanvasGradient() {
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
   const [pixelDensity, setPixelDensity] = useState(1);
   const [panelExpanded, setPanelExpanded] = useState(false);
+  const [scrollIdle, setScrollIdle] = useState(false);
+  const [motionZone, setMotionZone] = useState('hero');
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -124,7 +126,8 @@ export default function LandingCanvasGradient() {
     if (!root) return;
 
     const syncSpeed = () => {
-      const zone = root.getAttribute('data-motion-zone');
+      const zone = root.getAttribute('data-motion-zone') || 'hero';
+      setMotionZone(zone);
       setUSpeed(zone === 'projects' ? PROJECT_SPEED : BASE_SPEED);
     };
 
@@ -143,9 +146,23 @@ export default function LandingCanvasGradient() {
     return () => window.removeEventListener('yy:panel-state', onPanelState);
   }, []);
 
+  useEffect(() => {
+    const onIdle = () => setScrollIdle(true);
+    const onActive = () => setScrollIdle(false);
+    window.addEventListener('yy:scroll-idle', onIdle);
+    window.addEventListener('yy:scroll-active', onActive);
+    const root = document.querySelector('[data-motion-root]');
+    if (root?.getAttribute('data-scroll-idle') === 'true') setScrollIdle(true);
+    return () => {
+      window.removeEventListener('yy:scroll-idle', onIdle);
+      window.removeEventListener('yy:scroll-active', onActive);
+    };
+  }, []);
+
   if (!allowMotion || !mountCanvas) return null;
 
-  const motionActive = !panelExpanded;
+  const pauseForThumbnail = scrollIdle && motionZone === 'projects';
+  const motionActive = !panelExpanded && !pauseForThumbnail;
   const activeSpeed = motionActive ? uSpeed : 0;
 
   return (
