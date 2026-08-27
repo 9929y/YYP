@@ -12,6 +12,7 @@ interface Props {
 const { project, play, priority = false } = Astro.props;
 const posterUrl = project.video?.poster ? publicUrl(project.video.poster) : undefined;
 const videoUrl = project.video ? publicUrl(project.video.src) : undefined;
+const webmUrl = project.video?.webm ? publicUrl(project.video.webm) : undefined;
 /* First case may fetch metadata early. Others keep no <source> until scroll. */
 const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
 ---
@@ -44,7 +45,9 @@ const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
           aria-label={project.video.label}
           data-play={play}
           data-src={priority ? undefined : videoUrl}
+          data-webm={priority ? undefined : webmUrl}
         >
+          {priority && webmUrl ? <source src={webmUrl} type="video/webm" /> : null}
           {priority && videoUrl ? <source src={videoUrl} type="video/mp4" /> : null}
         </video>
       </>
@@ -54,6 +57,7 @@ const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
           src={publicUrl(project.cover.src)}
           alt={project.cover.alt}
           loading="lazy"
+          decoding="async"
           width={project.cover.width}
           height={project.cover.height}
         />
@@ -62,6 +66,5 @@ const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
   }
 </span>
 <span class="ph">
-  <span class="ph__file">{project.placeholderFile}</span>
-  <span class="ph__spec">{project.placeholderSpec}</span>
+  <span class="ph__file">{project.title}</span>
 </span>

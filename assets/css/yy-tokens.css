@@ -6,8 +6,7 @@
    rules that reference --duration-* / --ease-* are invalid.
 
    Motion values are copied from transitions.dev (transitions-polish) and matched
-   by PURPOSE, never by nearest number. A value that matches no token is left
-   as a literal (see --m-dur on the landing hover).
+   by PURPOSE, never by nearest number.
 
    Visual tokens below are MEASURED (kedavra.me + shipped case pages), not invented.
 
@@ -15,11 +14,49 @@
      1280  desktop frame lock
      992   desktop-only effects (cursor, ASCII flow) — min-width enable
      991   same effects — max-width disable
+     900   landing canvas light / skip WebGL
      877   landing two-column collapse
+     768   case-note static copy on coarse pointers
      767   type step (hero 40 -> 64)
      560   chrome capsule / landing edge
      479   Webflow mobile
    ============================================================================ */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/caveat-500.woff2") format("woff2");
+}
 
 :root {
   /* 时长 */
@@ -132,15 +169,4 @@
     --ground: #fff;
     --hair: #e4e1dc;
     --slot: #efece8;
-
-    /* ---- motion — MEASURED off kedavra.me 2026-08-19, not invented ----
-       0.32s appears 54 times and is the site's single dominant duration.
-       The signature easing has y2 = 2.56 > 1, i.e. it overshoots — that
-       springiness is the entire source of the reference site's "feel".
-       Only transform and opacity are ever transitioned (64 and 10 uses
-       against 6 for margin), which is why it never drops frames. */
-    --m-dur: .32s;
-    --m-dur-sm: .24s;
-    --m-overshoot: cubic-bezier(.34, 2.56, .64, 1);
-    --m-stagger: .06s;
   }

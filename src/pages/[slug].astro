@@ -1,5 +1,9 @@
 ---
-/** Scaffold only — replace body sections before publishing any `engine: 'astro'` case. */
+/** Scaffold only — replace body sections before publishing any `engine: 'astro'` case.
+ * TODO: AtlasNova is engine:astro but status:in-progress, so this route emits
+ * zero pages today. The placeholder copy below ("Add the project's strongest
+ * evidence artifact here", CaseStat value="—") would ship the moment it flips
+ * to published — replace before going live. */
 import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
 import CaseMetaGrid from '../components/CaseMetaGrid.astro';
 import CaseQuote from '../components/CaseQuote.astro';
@@ -36,7 +40,6 @@ if (!project) {
         label={project.video.label}
         width={project.video.width}
         height={project.video.height}
-        caption={project.placeholderSpec}
       />
     ) : project.cover ? (
       <MediaFigure
@@ -44,7 +47,6 @@ if (!project) {
         alt={project.cover.alt}
         width={project.cover.width}
         height={project.cover.height}
-        caption={project.placeholderSpec}
       />
     ) : (
       <p>Add the project’s strongest evidence artifact here.</p>

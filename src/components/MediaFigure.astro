@@ -13,6 +13,6 @@ const { src, alt, width, height, caption } = Astro.props;
 ---
 
 <figure class="media rv" data-reveal="media">
-  <img src={publicUrl(src)} alt={alt} width={width} height={height} loading="lazy" />
+  <img src={publicUrl(src)} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

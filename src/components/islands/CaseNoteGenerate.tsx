@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import TextGenerateEffect from './TextGenerateEffect';
+import { islandTiming } from '../../data/motion';
 
 interface Props {
   text: string;
@@ -34,18 +35,20 @@ export default function CaseNoteGenerate({ text }: Props) {
         setTrigger(false);
         return;
       }
-      if (reduced.matches && slot.matches(':hover')) setTrigger(true);
+      setTrigger(slot.matches(':hover'));
     };
 
     slot.addEventListener('pointerenter', onEnter);
     slot.addEventListener('pointerleave', onLeave);
     hoverMq.addEventListener('change', sync);
+    reduced.addEventListener('change', sync);
     sync();
 
     return () => {
       slot.removeEventListener('pointerenter', onEnter);
       slot.removeEventListener('pointerleave', onLeave);
       hoverMq.removeEventListener('change', sync);
+      reduced.removeEventListener('change', sync);
     };
   }, []);
 
@@ -55,8 +58,9 @@ export default function CaseNoteGenerate({ text }: Props) {
         as="p"
         className="case__note-generate"
         filter
-        staggerDuration={0.06}
-        transition={{ duration: 0.45 }}
+        srOnly={false}
+        staggerDuration={islandTiming.caseNoteStagger}
+        transition={{ duration: islandTiming.caseNoteDuration }}
         trigger={trigger}
       >
         {text}

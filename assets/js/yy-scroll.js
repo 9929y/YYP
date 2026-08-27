@@ -171,8 +171,9 @@
      -------------------------------------------------------------------------- */
   function wireVideos() {
     try {
-      var vids = document.querySelectorAll('.slot video, .media--video video');
-      if (!vids.length) return;
+      var vids = Array.prototype.slice.call(document.querySelectorAll('.slot video, .media--video video'));
+      var posters = Array.prototype.slice.call(document.querySelectorAll('.slot img[data-video-src]'));
+      if (!vids.length && !posters.length) return;
       var panelExpanded = false;
 
       if (RM.matches) {                 /* poster only, never fetch the video */
@@ -189,15 +190,25 @@
       function ensureSource(v) {
         if (v.dataset.yySrcReady === '1') return Promise.resolve();
         var src = v.getAttribute('data-src');
-        if (!src) {
+        var webm = v.getAttribute('data-webm');
+        if (!src && !webm) {
           v.dataset.yySrcReady = '1';
           return Promise.resolve();
         }
-        var source = document.createElement('source');
-        source.src = src;
-        source.type = 'video/mp4';
-        v.appendChild(source);
-        v.removeAttribute('data-src');
+        if (webm) {
+          var webmSource = document.createElement('source');
+          webmSource.src = webm;
+          webmSource.type = 'video/webm';
+          v.appendChild(webmSource);
+          v.removeAttribute('data-webm');
+        }
+        if (src) {
+          var source = document.createElement('source');
+          source.src = src;
+          source.type = 'video/mp4';
+          v.appendChild(source);
+          v.removeAttribute('data-src');
+        }
         v.dataset.yySrcReady = '1';
         if (v.preload === 'none') v.preload = 'metadata';
         try { v.load(); } catch (err) { /* ignore */ }
@@ -214,9 +225,9 @@
       }
 
       function tryPlay(v) {
-        if (panelExpanded) return;
+        if (panelExpanded || !v || typeof v.play !== 'function') return;
         ensureSource(v).then(function () {
-          if (panelExpanded) return;
+          if (panelExpanded || !v || typeof v.play !== 'function') return;
           var pr = v.play();
           if (pr && typeof pr.catch === 'function') pr.catch(function () { /* poster stays */ });
         });
@@ -237,16 +248,24 @@
         slot.addEventListener('pointerleave', leave);
       }
 
-      var scrollVids = [];
-      for (var i = 0; i < vids.length; i++) {
-        var v = vids[i];
+      function classifyVideo(v) {
         var mode = v.getAttribute('data-play') || 'scroll';
         if (mode === 'auto') {
           v.__yyInView = true;
           if (v.preload === 'none') v.preload = 'auto';
           tryPlay(v);
-        } else if (mode === 'hover' && canHover) wireHover(v);
-        else scrollVids.push(v);
+          return 'auto';
+        }
+        if (mode === 'hover' && canHover) {
+          wireHover(v);
+          return 'hover';
+        }
+        return 'scroll';
+      }
+
+      var scrollVids = [];
+      for (var i = 0; i < vids.length; i++) {
+        if (classifyVideo(vids[i]) === 'scroll') scrollVids.push(vids[i]);
       }
 
       function resumeEligibleVideos() {
@@ -270,7 +289,8 @@
         }
       });
 
-      if (!scrollVids.length || !('IntersectionObserver' in window)) {
+      var hasScrollWork = scrollVids.length || posters.length;
+      if (!hasScrollWork || !('IntersectionObserver' in window)) {
         document.addEventListener('visibilitychange', function () {
           if (!document.hidden) return;
           for (var m = 0; m < vids.length; m++) if (!vids[m].paused) vids[m].pause();
@@ -280,14 +300,61 @@
 
       /* 进场早、退场晚的迟滞：>=15% 开播，<5% 才暂停。 */
       var PLAY_AT = 0.15, PAUSE_AT = 0.05;
+
+      function posterToVideo(img) {
+        var src = img.getAttribute('data-video-src');
+        if (!src) return null;
+        var video = document.createElement('video');
+        video.className = 'slot__v';
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.preload = 'none';
+        video.poster = img.currentSrc || img.src;
+        var w = img.getAttribute('width');
+        var h = img.getAttribute('height');
+        if (w) video.setAttribute('width', w);
+        if (h) video.setAttribute('height', h);
+        video.setAttribute('aria-label', img.getAttribute('alt') || '');
+        video.setAttribute('data-play', img.getAttribute('data-play') || 'scroll');
+        var webm = img.getAttribute('data-video-webm');
+        if (webm) {
+          var webmSource = document.createElement('source');
+          webmSource.src = webm;
+          webmSource.type = 'video/webm';
+          video.appendChild(webmSource);
+        }
+        var mp4 = document.createElement('source');
+        mp4.src = src;
+        mp4.type = 'video/mp4';
+        video.appendChild(mp4);
+        img.parentNode.replaceChild(video, img);
+        vids.push(video);
+        return video;
+      }
+
       var io = new IntersectionObserver(function (entries) {
         for (var n = 0; n < entries.length; n++) {
-          var e = entries[n], vid = e.target;
-          vid.__yyInView = e.intersectionRatio >= PLAY_AT;
+          var e = entries[n], node = e.target;
+          if (node.tagName === 'IMG' && node.hasAttribute('data-video-src')) {
+            if (e.intersectionRatio < PLAY_AT) continue;
+            io.unobserve(node);
+            var swapped = posterToVideo(node);
+            if (!swapped) continue;
+            var kind = classifyVideo(swapped);
+            if (kind === 'scroll') {
+              swapped.__yyInView = true;
+              io.observe(swapped);
+              tryPlay(swapped);
+            }
+            continue;
+          }
+          node.__yyInView = e.intersectionRatio >= PLAY_AT;
           if (e.intersectionRatio >= PLAY_AT) {
-            if (vid.paused) tryPlay(vid);
-          } else if (e.intersectionRatio < PAUSE_AT && !vid.paused) {
-            vid.pause();
+            if (node.paused) tryPlay(node);
+          } else if (e.intersectionRatio < PAUSE_AT && !node.paused) {
+            node.pause();
           }
         }
       }, {
@@ -295,6 +362,7 @@
       });
 
       for (var j = 0; j < scrollVids.length; j++) io.observe(scrollVids[j]);
+      for (var q = 0; q < posters.length; q++) io.observe(posters[q]);
 
       document.addEventListener('visibilitychange', function () {
         if (!document.hidden) return;

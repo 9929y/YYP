@@ -35,8 +35,10 @@ const { projects } = Astro.props;
             <h2 class="case__name">{project.headline ?? project.title}</h2>
             <p class="case__scope">{project.scope}</p>
           </div>
-          {/* Desktop: hangs 24px under centered title. Small: right column. */}
-          <CaseNoteGenerate client:visible text={project.note} />
+          {/* Desktop hover: hangs 24px under centered title. Small: right column. */}
+          <p class="sr-only">{project.note}</p>
+          <p class="case__note case__note--static">{project.note}</p>
+          <CaseNoteGenerate client:media="(hover: hover) and (pointer: fine)" text={project.note} />
         </div>
       </div>
       <ProjectSlot project={project} priority={index === 0} />
