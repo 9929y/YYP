@@ -37,19 +37,26 @@
   }
 
   function lumaOf(color) {
-    var m = String(color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!m) return 1;
+    var s = String(color || '');
+    if (!s || s === 'transparent') return null;
+    var m = s.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
+    if (!m) return null;
+    if (m[4] !== undefined && parseFloat(m[4]) === 0) return null;
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
   function pageIsDark() {
     var page = currentPage();
+    if (page === 'index.html') return false;
     if (page === 'ai-driven-product-design.html' ||
         page === 'alzheimerdisease.html' ||
         page === 'mckinseyecommerce.html') return true;
     try {
-      return lumaOf(getComputedStyle(document.body).backgroundColor) < 0.28 ||
-             lumaOf(getComputedStyle(HTML).backgroundColor) < 0.28;
+      var bodyLuma = lumaOf(getComputedStyle(document.body).backgroundColor);
+      if (bodyLuma !== null) return bodyLuma < 0.28;
+      var htmlLuma = lumaOf(getComputedStyle(HTML).backgroundColor);
+      if (htmlLuma !== null) return htmlLuma < 0.28;
+      return false;
     } catch (e) {
       return false;
     }
@@ -73,7 +80,8 @@
      Whitelist by filename — body.blk is not present on every dark-looking page. */
   var DARK_FOOTER = {
     'ai-driven-product-design.html': true,
-    'mckinseyecommerce.html': true
+    'mckinseyecommerce.html': true,
+    'alzheimerdisease.html': true
   };
 
   /* Light case + work-hub pages get the landing type/ink overlay.
@@ -374,8 +382,8 @@
     /* Orbit brand — animated disc that links home (replaces Caveat wordmark). */
     '.brand{',
     '  display: inline-flex !important; align-items: center; justify-content: center;',
-    '  width: 44px !important; height: 44px !important;',
-    '  padding: 4px !important; margin: 0 !important;',
+    '  width: 48px !important; height: 48px !important;',
+    '  padding: 6px !important; margin: 0 !important;',
     '  border-radius: 999px !important;',
     '  background: transparent !important;',
     '  color: transparent !important;',
@@ -384,7 +392,7 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(26,25,23,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 24px; height: 24px;',
+    '  display: block; width: 36px; height: 36px;',
     '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
@@ -539,8 +547,8 @@
     '@media (max-width: 560px){',
     '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
-    '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
-    '  .brand-orb{ width: 20px; height: 20px; }',
+    '  .brand{ width: 44px !important; height: 44px !important; padding: 4px !important; }',
+    '  .brand-orb{ width: 30px; height: 30px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',

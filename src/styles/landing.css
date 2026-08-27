@@ -62,6 +62,7 @@
      case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
     position: relative;
+    background: var(--ground);
     --t-11: 10px;
     --t-13: 11px;
     --t-16: 14px;
