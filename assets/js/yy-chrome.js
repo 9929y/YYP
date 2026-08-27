@@ -45,21 +45,15 @@
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
+  /* Only Lark + Opus Clip use the dark nav capsule. Every other page — including
+     McKinsey, Alzheimer, homepage, and Work hub — stays light glass. */
+  var DARK_NAV_PAGES = {
+    'larkdesign.html': true,
+    'ai-driven-product-design.html': true
+  };
+
   function pageIsDark() {
-    var page = currentPage();
-    if (page === 'index.html') return false;
-    if (page === 'ai-driven-product-design.html' ||
-        page === 'alzheimerdisease.html' ||
-        page === 'mckinseyecommerce.html') return true;
-    try {
-      var bodyLuma = lumaOf(getComputedStyle(document.body).backgroundColor);
-      if (bodyLuma !== null) return bodyLuma < 0.28;
-      var htmlLuma = lumaOf(getComputedStyle(HTML).backgroundColor);
-      if (htmlLuma !== null) return htmlLuma < 0.28;
-      return false;
-    } catch (e) {
-      return false;
-    }
+    return !!DARK_NAV_PAGES[currentPage()];
   }
 
   function applyChromeTheme(navHost) {
@@ -224,7 +218,7 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
-    ':host(yy-nav.on-dark){',
+    ':host(yy-nav.on-dark) .cap{',
     '  --yy-ink: #f3f2ef;',
     '  --yy-ink-dim: rgba(243,242,239,.74);',
     '  --yy-fill: rgba(16,16,14,.58);',
@@ -235,9 +229,9 @@
     ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
     ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
     ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(255,255,255,.14); }',
-    ':host(yy-nav.on-dark) .brand:hover,',
-    ':host(yy-nav.on-dark) .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
-    ':host(yy-nav.on-dark) .rule{ background: rgba(255,255,255,.22); }',
+    ':host(yy-nav.on-dark) .cap .brand:hover,',
+    ':host(yy-nav.on-dark) .cap .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
+    ':host(yy-nav.on-dark) .cap .rule{ background: rgba(255,255,255,.22); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
@@ -414,6 +408,12 @@
     '  display: flex; flex-direction: column; align-items: stretch;',
     '  box-sizing: border-box;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '  /* Popups always light — never inherit the dark nav capsule tokens. */',
+    '  --yy-ink: #1a1917;',
+    '  --yy-ink-dim: #5b5a56;',
+    '  --yy-fill: rgba(255,255,255,.58);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.92);',
+    '  color: var(--yy-ink);',
     '}',
     ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel-stack.is-expanded{',
@@ -459,21 +459,20 @@
     '.panel-view--resume,',
     '.panel-view--about,',
     '.panel-view--work{ padding: 0; height: 100%; }',
-    /* Work cards are the glass (same recipe as .cap). A filled/blurred panel
-       becomes a backdrop root and makes those cards read as solid white. */
     '.panel.is-work{',
-    '  background: transparent;',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
-    '  box-shadow: none;',
-    '  contain: none;',
-    '  overflow: visible;',
+    '  background: var(--yy-fill);',
+    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
+    '  backdrop-filter: blur(12px) saturate(1.6);',
+    '  box-shadow:',
+    '    inset 0 1px 0 rgba(255,255,255,.92),',
+    '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
+    '    inset 0 -1px 0 rgba(26,25,23,.05),',
+    '    0 5px 50px 5px rgba(0,0,0,.18);',
     '}',
     '.panel.is-work.is-expanded{',
-    '  background: transparent;',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
-    '  box-shadow: none;',
+    '  background: var(--yy-panel-full-fill);',
+    '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
+    '  backdrop-filter: blur(20px) saturate(1.35);',
     '}',
     'yy-resume-content,',
     'yy-about-content,',

@@ -354,6 +354,15 @@ if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
 if (!chromeJs.includes('on-dark') || !chromeJs.includes('yy-chrome-on-dark')) {
   errors.push('yy-chrome.js must invert capsule ink on dark pages (yy-chrome-on-dark / on-dark)');
 }
+if (!chromeJs.includes('DARK_NAV_PAGES') || !chromeJs.includes("'larkdesign.html'")) {
+  errors.push('yy-chrome.js must whitelist only Lark + Opus for dark nav (DARK_NAV_PAGES)');
+}
+if (!chromeJs.includes('Popups always light')) {
+  errors.push('yy-chrome.js must keep navigation popups on light tokens (panel-stack --yy-ink)');
+}
+if (/\.panel\.is-work[\s\S]{0,200}background:\s*transparent/.test(chromeJs)) {
+  errors.push('yy-chrome.js Work panel must use a light glass fill, not a transparent backdrop');
+}
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
 }
@@ -525,10 +534,12 @@ if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
 if (
   !caseLayoutCss.includes('.shadow-card') ||
   !caseLayoutCss.includes('.step-card-2') ||
-  !caseLayoutCss.includes('backdrop-filter: blur(16px)') ||
-  !caseLayoutCss.includes('backdrop-filter: blur(12px)')
+  !caseLayoutCss.includes('backdrop-filter: blur(16px)')
 ) {
-  errors.push('yy-case-layout.css must frost shadow-card and step-card-2 as separate glass recipes');
+  errors.push('yy-case-layout.css must frost shadow-card as white glass');
+}
+if (/\.step-card-2\s*\{[^}]*backdrop-filter:\s*blur/.test(caseLayoutCss)) {
+  errors.push('yy-case-layout.css must not blur Lark step-card-2 — radius only, keep blue wash visible');
 }
 if (!caseLayoutCss.includes('.section7') || !caseLayoutCss.includes('overflow: visible')) {
   errors.push('yy-case-layout.css must not let .section7 clip McKinsey glass backdrops');

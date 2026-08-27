@@ -39,7 +39,7 @@
   padding: 10px 10px 0;
   color: inherit;
   text-decoration: none;
-  background: var(--yy-fill, rgba(255, 255, 255, 0.58));
+  background: rgba(255, 255, 255, 0.58);
   border-radius: 18px;
   overflow: hidden;
   -webkit-backdrop-filter: blur(12px) saturate(1.6);
