@@ -264,10 +264,11 @@
 |---|---|---|---|
 | `hero-alzheimer-care-wearable-card-cover.webp` | 首页项目卡封面：一堆智能手表堆叠俯拍，中央一只橙色表盘立起，显示四瓣花形图标与「MEETING」胶囊标签，周围深色表盘分 | 英雄图 —— 首页第 6 张项目卡封面（Build communicative syst |  |
 | `hero-cummins-guidanz-card-cover.webp` | 首页项目卡封面：Cummins 红色背景上斜置三块 Guidanz 深色界面（诊断会话列表、Diagnostic Ses | 英雄图 —— 首页第 4 张项目卡封面（Digitalize diagnostic to |  |
-| `case-lark.jpg` | 首页项目卡封面：浅蓝白底上，中心是带齿轮的用户设置圆形图标，外圈弧线串起邮件、日历、视频会议、云文档、打卡定位、应用宫格 | 英雄图 —— 首页第 3 张项目卡封面（Improve onboarding exper |  |
-| `case-mckinsey.jpg` | 首页项目卡封面：深蓝底扁平插画，女性站在放大的手机前点选购物车，手机顶部是遮阳篷式店铺造型，周围散布蓝色植物叶片，脚边是 | 英雄图 —— 首页第 2 张项目卡封面（Build E-commerce busines |  |
+| `case-lark-frame.jpg` | 首页项目卡封面：从 case-lark.mp4 截取的三机位 onboarding 界面（Add Team Members / Docs / External Contacts） | 英雄图 —— 首页 Lark 案例视频 poster |  |
+| `case-mckinsey-frame.jpg` | 首页项目卡封面：从 case-mckinsey.mp4 截取的直播电商手机界面（Choose payment methods） | 英雄图 —— 首页 McKinsey 案例视频 poster |  |
 | `hero-mi-finance-account-card-cover.webp` | 首页项目卡封面：浅粉底上斜置一组小米金融（Mi Finance）移动端界面——中央是带小米金融 logo 的产品封面页， | 英雄图 —— 首页第 5 张项目卡封面（Facilitate Account Creat | ⚠️ |
-| `case-opusclip.jpg` | 首页项目卡封面：紫色渐变卡片上斜置 OpusClip 视频剪辑工具界面，左侧是带高亮词的转写字幕列表，右侧是播客双人视频 | 英雄图 —— 首页第 1 张项目卡封面（Build new AI feature for |  |
+| `case-opusclip-frame.jpg` | 首页项目卡封面：从 case-opusclip-marquee.mp4 截取的 OpusClip 产品界面 collage | 英雄图 —— 首页 OpusClip 案例视频 poster |  |
+| `case-atlasnova-frame.jpg` | 首页项目卡封面：从 case-atlasnova.mp4 截取的 brand kit 输入界面 | 英雄图 —— 首页 AtlasNova 案例视频 poster |  |
 
 ## `about/` — 关于页
 

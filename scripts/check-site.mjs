@@ -850,8 +850,8 @@ for (const project of landingFeatured) {
   if (fs.existsSync(videoPath) && fs.statSync(videoPath).size > landingVideoBudget) {
     errors.push(`${project.slug}: landing video exceeds 5.5 MB thumbnail budget`);
   }
-  if (!project.video.poster || !/assets\/images\/home\/case-[a-z0-9-]+\.jpe?g$/i.test(project.video.poster)) {
-    errors.push(`${project.slug}: landing poster must be a case-*.jpg frame from the video`);
+  if (!project.video.poster || !/assets\/images\/home\/case-[a-z0-9-]+-frame\.jpe?g$/i.test(project.video.poster)) {
+    errors.push(`${project.slug}: landing poster must be a case-*-frame.jpg extracted from the video`);
   }
   if (project.video.poster && /hero-.*-card-cover/.test(project.video.poster)) {
     errors.push(`${project.slug}: landing poster must not use legacy hero-*-card-cover thumbnails`);

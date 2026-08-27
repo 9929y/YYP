@@ -86,7 +86,7 @@ export const projects: Project[] = [
     },
     video: {
       src: 'assets/videos/case-opusclip-marquee.mp4',
-      poster: 'assets/images/home/case-opusclip.jpg',
+      poster: 'assets/images/home/case-opusclip-frame.jpg',
       width: 1440,
       height: 1080,
       label: 'Opus Clip marquee preview',
@@ -120,7 +120,7 @@ export const projects: Project[] = [
     },
     video: {
       src: 'assets/videos/case-atlasnova.mp4',
-      poster: 'assets/images/home/case-atlasnova.jpg',
+      poster: 'assets/images/home/case-atlasnova-frame.jpg',
       width: 1440,
       height: 1080,
       label: 'AtlasNova brand kit input cover',
@@ -151,14 +151,14 @@ export const projects: Project[] = [
       height: 44
     },
     cover: {
-      src: 'assets/images/home/case-mckinsey.jpg',
+      src: 'assets/images/home/case-mckinsey-frame.jpg',
       alt: 'McKinsey live-streamed ecommerce case study',
       width: 1440,
       height: 1080
     },
     video: {
       src: 'assets/videos/case-mckinsey.mp4',
-      poster: 'assets/images/home/case-mckinsey.jpg',
+      poster: 'assets/images/home/case-mckinsey-frame.jpg',
       width: 1440,
       height: 1080,
       label: 'McKinsey orbit preview',
@@ -191,14 +191,14 @@ export const projects: Project[] = [
       height: 22
     },
     cover: {
-      src: 'assets/images/home/case-lark.jpg',
+      src: 'assets/images/home/case-lark-frame.jpg',
       alt: 'Lark Design onboarding case study',
       width: 1440,
       height: 1080
     },
     video: {
       src: 'assets/videos/case-lark.mp4',
-      poster: 'assets/images/home/case-lark.jpg',
+      poster: 'assets/images/home/case-lark-frame.jpg',
       width: 1440,
       height: 1080,
       label: 'Lark Design carousel preview',
