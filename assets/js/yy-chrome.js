@@ -441,6 +441,10 @@
     ':host(.is-open:not(.is-fullpage)) .panel-backdrop{',
     '  opacity: 1; visibility: visible; pointer-events: auto;',
     '}',
+    /* Hidden until host is both ready (wired) and open — no flash of unstyled views. */
+    '.panel-stack,.panel,.panel-scroll{',
+    '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '}',
     '.panel-stack{',
     '  position: absolute; z-index: 1; left: 0; right: 0;',
     '  top: var(--yy-panel-gap);',
@@ -450,7 +454,6 @@
     '  margin-inline: auto;',
     '  display: flex; flex-direction: column; align-items: stretch;',
     '  box-sizing: border-box;',
-    '  opacity: 0; visibility: hidden; pointer-events: none;',
     '  /* Popups always light — never inherit the dark nav capsule tokens. */',
     '  --yy-ink: #1a1917;',
     '  --yy-ink-dim: #5b5a56;',
@@ -459,7 +462,11 @@
     '  --yy-panel-full-fill: rgba(255,255,255,.78);',
     '  color: var(--yy-ink);',
     '}',
-    ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
+    ':host(.is-ready.is-open) .panel-stack,',
+    ':host(.is-ready.is-open) .panel,',
+    ':host(.is-ready.is-open) .panel-scroll{',
+    '  opacity: 1; visibility: visible; pointer-events: auto;',
+    '}',
     '.panel-stack.is-expanded{',
     '  inset: 0; top: 0; bottom: 0; width: 100vw; height: 100vh; height: 100dvh;',
     '  max-width: none;',
@@ -488,6 +495,8 @@
     '  -webkit-overflow-scrolling: touch;',
     '  scrollbar-gutter: stable; box-sizing: border-box;',
     '}',
+    '[data-panel-view]{ display: none; }',
+    '[data-panel-view].is-active{ display: block; }',
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
     '.panel-view--resume,',
     '.panel-view--about,',
@@ -503,7 +512,6 @@
     'yy-resume-content,',
     'yy-about-content,',
     'yy-work-content{ display: block; height: 100%; min-height: 100%; }',
-    '.panel-view[hidden]{ display: none; }',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
     '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
@@ -901,7 +909,9 @@
         triggers[i].setAttribute('aria-expanded', selected ? 'true' : 'false');
       }
       for (var j = 0; j < views.length; j++) {
-        views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
+        var on = views[j].getAttribute('data-panel-view') === name;
+        views[j].classList.toggle('is-active', on);
+        views[j].hidden = !on;
       }
       panel.classList.toggle('is-work', name === 'work');
     }
@@ -993,6 +1003,7 @@
       closing = false;
       active = '';
       host.classList.remove('is-open');
+      /* Keep .is-ready so the next open does not flash unstyled content. */
       setExpandedChrome(false);
       HTML.classList.remove('yy-panel-open');
       setBackgroundInert(false);
@@ -1000,7 +1011,10 @@
       expand.hidden = false;
       expand.setAttribute('aria-label', 'View full screen');
       expand.setAttribute('aria-pressed', 'false');
-      for (var j = 0; j < views.length; j++) views[j].hidden = true;
+      for (var j = 0; j < views.length; j++) {
+        views[j].classList.remove('is-active');
+        views[j].hidden = true;
+      }
       for (var i = 0; i < triggers.length; i++) triggers[i].setAttribute('aria-expanded', 'false');
       if (target && target.focus) target.focus({ preventScroll: true });
     }
@@ -1016,15 +1030,22 @@
       leaveResumeNav();
       clearFullpageUrl();
       setExpandedChrome(false);
-      HTML.classList.add('yy-panel-open');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
       expand.hidden = false;
       expand.setAttribute('aria-label', 'View full screen');
       expand.setAttribute('aria-pressed', 'false');
-      announcePanelState(false, true);
+      if (panelScroll) {
+        panelScroll.scrollTop = viewScroll[name] || 0;
+      }
+      /* Force layout after view/aria prep — only then reveal the panel. */
+      void panel.offsetHeight;
+      HTML.classList.add('yy-panel-open');
       host.classList.add('is-open');
-      restoreViewScroll(name);
+      announcePanelState(false, true);
+      if (panelScroll) {
+        panelScroll.dispatchEvent(new Event('scroll'));
+      }
       var targetView = viewFor(name);
       animatePanel(start, false, function () {
         if (targetView && !reduced && targetView.animate) {
@@ -1290,6 +1311,8 @@
       }
       close();
     });
+
+    host.classList.add('is-ready');
   }
 
   function mount() {

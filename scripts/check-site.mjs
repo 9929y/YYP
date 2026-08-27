@@ -707,6 +707,13 @@ for (const marker of ['closing', 'setBackgroundInert', 'lastOpener', '--yy-panel
     errors.push(`yy-chrome.js missing popup lifecycle safeguard ${marker}`);
   }
 }
+if (!chromeJs.includes(':host(.is-ready.is-open) .panel-stack') ||
+    !chromeJs.includes("host.classList.add('is-ready')") ||
+    !chromeJs.includes("classList.toggle('is-active'") ||
+    !chromeJs.includes('[data-panel-view].is-active') ||
+    !chromeJs.includes('void panel.offsetHeight')) {
+  errors.push('yy-chrome.js must gate panel visibility on is-ready+is-open and sync is-active views');
+}
 if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {
   errors.push('yy-chrome.js must expand to a URL layer without a shrink toggle');
