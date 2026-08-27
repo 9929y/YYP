@@ -63,8 +63,8 @@
     return false;
   }
 
-  /* Project / case pages: enter + exit (inout). Landing stays once unless marked. */
-  var defaultMode = /\byy-landing\b/.test(html.className) ? 'once' : 'inout';
+  /* Content enters once; do not re-hide on scroll-up. */
+  var defaultMode = 'once';
 
   function modeOf(el) {
     return (el.getAttribute && el.getAttribute('data-reveal-mode')) || defaultMode;
@@ -243,10 +243,13 @@
 
       observeNew(items, false);
 
-      var sweepTimer = null;
+      var sweepRaf = 0;
       function scheduleSweep() {
-        clearTimeout(sweepTimer);
-        sweepTimer = setTimeout(sweepPending, 120);
+        if (sweepRaf) return;
+        sweepRaf = requestAnimationFrame(function () {
+          sweepRaf = 0;
+          sweepPending();
+        });
       }
       window.addEventListener('scroll', scheduleSweep, { passive: true });
       window.addEventListener('yy:scroll', scheduleSweep, { passive: true });

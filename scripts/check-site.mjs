@@ -175,7 +175,6 @@ const requiredCaseStudyComponents = [
   'CaseSection.astro',
   'CaseMetaGrid.astro',
   'MediaVideo.astro',
-  'MediaPair.astro',
   'CaseQuote.astro',
   'CaseStat.astro'
 ];
@@ -265,8 +264,8 @@ if (useDist) {
   } else if (!isRedirectStub(fs.readFileSync(distLanding, 'utf8'))) {
     errors.push('dist/landing.html should redirect to /');
   }
-  if (!fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
-    errors.push('dist/index.webflow.html missing — archived Webflow homepage should passthrough');
+  if (fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
+    errors.push('dist/index.webflow.html must not exist — the archive is kept in git, not published');
   }
   if (fs.existsSync(path.join(distDir, 'resume.html'))) {
     errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
@@ -298,13 +297,7 @@ if (useDist) {
 }
 
 const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
-const optionalMissing = new Set(
-  projectsMod.projects.flatMap((p) => {
-    const out = [];
-    if (p.placeholderFile && p.cover) out.push(toDisk(p.cover.src));
-    return out;
-  })
-);
+const optionalMissing = new Set();
 
 const knownGenerated = useDist
   ? new Set()
@@ -335,7 +328,9 @@ const requiredAssets = [
   'assets/js/yy-about.js',
   'assets/js/yy-work.js',
   'assets/js/yy-link-preview.js',
-  'assets/images/home/landing-canvas.gif',
+  'assets/fonts/plus-jakarta-sans-400.woff2',
+  'assets/fonts/plus-jakarta-sans-600.woff2',
+  'assets/fonts/caveat-500.woff2',
   'assets/images/home/landing-canvas-still.png'
 ];
 for (const asset of requiredAssets) {
@@ -471,8 +466,8 @@ const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
 }
-if (!revealJs.includes("'inout'") || !/defaultMode[\s\S]{0,80}inout/.test(revealJs)) {
-  errors.push('yy-reveal.js must default project pages to data-reveal-mode inout (enter + exit)');
+if (!revealJs.includes("'once'") || !/defaultMode[\s\S]{0,80}once/.test(revealJs)) {
+  errors.push('yy-reveal.js must default all pages to data-reveal-mode once (no re-hide on scroll-up)');
 }
 if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
   errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
@@ -846,7 +841,7 @@ if (fs.existsSync(canvasGif) && fs.statSync(canvasGif).size > 4 * 1024 * 1024) {
 }
 
 for (const project of projectsMod.projects) {
-  if (project.cover && !project.placeholderFile) {
+  if (project.cover) {
     const p = path.join(ROOT, toDisk(project.cover.src));
     if (!fs.existsSync(p)) errors.push(`${project.slug}: missing cover ${project.cover.src}`);
   }

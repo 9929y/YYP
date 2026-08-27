@@ -20,7 +20,9 @@ const { projects } = Astro.props;
       data-reveal-sync="case"
     >
       <div class="case__label" data-reveal="text">
-        <CaseNoteGenerate client:visible text={project.note} />
+        <p class="sr-only">{project.note}</p>
+        <p class="case__note case__note--static">{project.note}</p>
+        <CaseNoteGenerate client:media="(hover: hover) and (pointer: fine)" text={project.note} />
         <div class="case__meta">
           {project.logo && (
             <img
@@ -36,7 +38,7 @@ const { projects } = Astro.props;
           <p class="case__scope">{project.scope}</p>
         </div>
       </div>
-      <ProjectSlot project={project} />
+      <ProjectSlot project={project} index={index} />
     </article>
   ))
 }

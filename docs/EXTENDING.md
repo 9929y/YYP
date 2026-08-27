@@ -43,7 +43,7 @@ as `index.webflow.html`.
      `docs/BASELINE.md`).
 2. Put the narrative in the `[slug].astro` slot, using `MediaFigure` for images.
 3. Cover images live under `assets/images/<slug>/` plus a 4:3 card at
-   `assets/images/home/`. Update `assets/images/manifest.json` when you add files.
+   `assets/images/home/`. Update `docs/images-manifest.json` when you add files.
 4. Leave existing Webflow case HTML alone until you migrate that slug. The
    build will not overwrite an Astro-emitted HTML file with a legacy copy.
 
@@ -64,7 +64,8 @@ Tokens: `assets/css/yy-tokens.css`, linked in `<head>` on every page.
 
 Property ownership is documented at the top of `assets/css/yy-chrome.css` and in
 `src/data/motion.ts`. If two layers write `filter` (or any other property),
-delete one. Wrap new islands in `MotionGate` when they are motion-only.
+delete one. Gate motion-only islands with `prefers-reduced-motion` (see
+`LandingCanvasGradient.tsx`) rather than a wrapper component.
 
 Do not install Tailwind, shadcn, Three.js, or Remotion into the site bundle.
 React Bits / Motion Primitives are allowed as a **single-route island** after

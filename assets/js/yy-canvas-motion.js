@@ -105,9 +105,16 @@
   var lastAppliedScroll = -1;
   var rafPending = false;
   var cachedStops = null;
+  var cachedZone = null;
+  var canvasLayer = document.querySelector('.yy-canvas');
+  var coverLayer = document.querySelector('.yy-canvas__cover:not(.yy-canvas__cover--heavy)');
+  var coverHeavy = document.querySelector('.yy-canvas__cover--heavy');
+  var BLUR_MIN = 28;
+  var BLUR_MAX = 80;
 
   function invalidateStops() {
     cachedStops = null;
+    cachedZone = null;
   }
 
   function readScrollY() {
@@ -208,29 +215,46 @@
   }
 
   function apply(state) {
-    root.style.setProperty('--canvas-scale', state.scale.toFixed(4));
-    root.style.setProperty('--canvas-rotate', state.rotate.toFixed(2) + 'deg');
-    root.style.setProperty('--canvas-x', state.x.toFixed(2) + 'px');
-    root.style.setProperty('--canvas-y', state.y.toFixed(2) + 'px');
-    root.style.setProperty('--canvas-opacity', state.opacity.toFixed(3));
-    root.style.setProperty('--cover-opacity', state.coverOpacity.toFixed(3));
-    root.style.setProperty('--cover-blur', state.coverBlur.toFixed(1) + 'px');
-    root.style.setProperty('--cover-fill', state.coverFill.toFixed(3));
+    var canvasTarget = canvasLayer || root;
+    var coverTarget = coverLayer || root;
+    canvasTarget.style.setProperty('--canvas-scale', state.scale.toFixed(4));
+    canvasTarget.style.setProperty('--canvas-rotate', state.rotate.toFixed(2) + 'deg');
+    canvasTarget.style.setProperty('--canvas-x', state.x.toFixed(2) + 'px');
+    canvasTarget.style.setProperty('--canvas-y', state.y.toFixed(2) + 'px');
+    canvasTarget.style.setProperty('--canvas-opacity', state.opacity.toFixed(3));
+    coverTarget.style.setProperty('--cover-fill', state.coverFill.toFixed(3));
+    var t = clamp((state.coverBlur - BLUR_MIN) / (BLUR_MAX - BLUR_MIN), 0, 1);
+    var light = state.coverOpacity * (1 - t);
+    var heavy = state.coverOpacity * t;
+    coverTarget.style.setProperty('--cover-opacity', light.toFixed(3));
+    if (coverHeavy) coverHeavy.style.setProperty('--cover-opacity', heavy.toFixed(3));
     /* Hard-clear for footer readability once both layers are effectively gone. */
     var clear = state.opacity < 0.02 && state.coverOpacity < 0.02;
     root.setAttribute('data-canvas-clear', clear ? 'true' : 'false');
   }
 
-  function motionZone(scrollY) {
+  function zoneBounds() {
+    if (cachedZone) return cachedZone;
     var cases = caseNodes();
-    if (!cases.length) return 'hero';
-    var vh = window.innerHeight || 1;
+    if (!cases.length) {
+      cachedZone = { firstTop: Infinity, lastBottom: Infinity };
+      return cachedZone;
+    }
+    var scrollY = readScrollY();
     var first = cases[0].getBoundingClientRect();
-    var firstTop = first.top + scrollY;
-    if (scrollY + vh * 0.4 < firstTop) return 'hero';
     var last = cases[cases.length - 1].getBoundingClientRect();
-    var lastBottom = last.bottom + scrollY;
-    if (scrollY > lastBottom - vh * 0.45) return 'footer';
+    cachedZone = {
+      firstTop: first.top + scrollY,
+      lastBottom: last.bottom + scrollY
+    };
+    return cachedZone;
+  }
+
+  function motionZone(scrollY) {
+    var bounds = zoneBounds();
+    var vh = window.innerHeight || 1;
+    if (scrollY + vh * 0.4 < bounds.firstTop) return 'hero';
+    if (scrollY > bounds.lastBottom - vh * 0.45) return 'footer';
     return 'projects';
   }
 
@@ -255,6 +279,15 @@
     invalidateStops();
     scheduleApply();
   }, { passive: true });
+  document.addEventListener('load', function (e) {
+    if (e.target && e.target.tagName === 'IMG') {
+      invalidateStops();
+      scheduleApply();
+    }
+  }, true);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) scheduleApply();
+  });
   if (reduce.addEventListener) reduce.addEventListener('change', scheduleApply);
   else if (reduce.addListener) reduce.addListener(scheduleApply);
 

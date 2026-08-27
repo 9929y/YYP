@@ -80,9 +80,9 @@ run, and no broken references remain.
 
 ## Image catalog
 
-`assets/images/CATALOG.md` describes all 261 distinct images — what each one
+`docs/CATALOG.md` describes all 261 distinct images — what each one
 shows, the job it does on the page, and whether it can be reused elsewhere.
-`assets/images/manifest.json` is the same data one record per image, with the
+`docs/images-manifest.json` is the same data one record per image, with the
 pre-rename filename kept in `legacy` so anything can be traced back through git.
 
 Files live in per-case-study folders under names that say what they are:

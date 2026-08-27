@@ -5,14 +5,28 @@ import { publicUrl } from '../data/projects';
 interface Props {
   project: Project;
   play: 'hover' | 'scroll' | 'auto';
+  index?: number;
 }
 
-const { project, play } = Astro.props;
+const { project, play, index = 0 } = Astro.props;
+const lazyVideo = index > 0 && !!project.video && !!project.video.poster;
 ---
 
 <span class="slot__media" data-reveal="wipe">
   {
-    project.video ? (
+    project.video && lazyVideo ? (
+      <img
+        src={publicUrl(project.video.poster)}
+        alt={project.video.label}
+        loading="lazy"
+        decoding="async"
+        width={project.video.width}
+        height={project.video.height}
+        data-video-src={publicUrl(project.video.src)}
+        data-video-webm={project.video.webm ? publicUrl(project.video.webm) : undefined}
+        data-play={play}
+      />
+    ) : project.video ? (
       <video
         class="slot__v"
         poster={project.video.poster ? publicUrl(project.video.poster) : undefined}
@@ -26,6 +40,7 @@ const { project, play } = Astro.props;
         aria-label={project.video.label}
         data-play={play}
       >
+        {project.video.webm && <source src={publicUrl(project.video.webm)} type="video/webm" />}
         <source src={publicUrl(project.video.src)} type="video/mp4" />
       </video>
     ) : (
@@ -34,6 +49,7 @@ const { project, play } = Astro.props;
           src={publicUrl(project.cover.src)}
           alt={project.cover.alt}
           loading="lazy"
+          decoding="async"
           width={project.cover.width}
           height={project.cover.height}
         />
@@ -42,6 +58,5 @@ const { project, play } = Astro.props;
   }
 </span>
 <span class="ph">
-  <span class="ph__file">{project.placeholderFile}</span>
-  <span class="ph__spec">{project.placeholderSpec}</span>
+  <span class="ph__file">{project.title}</span>
 </span>

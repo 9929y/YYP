@@ -199,10 +199,12 @@
     (document.head || HTML).appendChild(cursorSheet);
   }
 
-  var sheet = document.createElement('link');
-  sheet.rel = 'stylesheet';
-  sheet.href = ROOT + 'assets/css/yy-chrome.css';
-  (document.head || HTML).appendChild(sheet);
+  if (!document.querySelector('link[href*="yy-chrome.css"]')) {
+    var sheet = document.createElement('link');
+    sheet.rel = 'stylesheet';
+    sheet.href = ROOT + 'assets/css/yy-chrome.css';
+    (document.head || HTML).appendChild(sheet);
+  }
 
   if (/\byy-case-type\b/.test(HTML.className) && !document.querySelector('link[href*="yy-case-type.css"]')) {
     var typeSheet = document.createElement('link');
@@ -350,6 +352,8 @@
     '    0 2px 8px -2px rgba(62,65,116,.09),',
     '    0 12px 36px -8px rgba(62,65,116,.20);',
     '  overflow: hidden;',
+    '  /* Documented exception: capsule size uses layout properties, not transform. */',
+    '  will-change: width, max-width, height, padding;',
     '  transition:',
     '    width 520ms var(--yy-orbit-ease),',
     '    max-width 520ms var(--yy-orbit-ease),',
@@ -561,7 +565,7 @@
     '  position: relative; inset: auto;',
     '  display: block; width: 14px; height: 14px; flex: none;',
     '}',
-    '.corner{ position: absolute; width: 4px; height: 4px; transition: transform var(--duration-slow,.4s) var(--m-overshoot,var(--ease-smooth-out,ease-out)); }',
+    '.corner{ position: absolute; width: 4px; height: 4px; transition: transform var(--duration-slow,.4s) var(--ease-bounce,var(--ease-smooth-out,ease-out)); }',
     '.corner-nw{ left: 0; top: 0; border-left: 1px solid; border-top: 1px solid; }',
     '.corner-ne{ right: 0; top: 0; border-right: 1px solid; border-top: 1px solid; }',
     '.corner-sw{ left: 0; bottom: 0; border-left: 1px solid; border-bottom: 1px solid; }',

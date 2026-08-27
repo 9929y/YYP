@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
+
+import { islandTiming, breakpoints } from '../../data/motion';
 
 /**
  * Landing hero canvas — ShaderGradient export (waterPlane / city).
@@ -15,9 +16,9 @@ import { ShaderGradient, ShaderGradientCanvas } from '@shadergradient/react';
 const BASE_SPEED = 0.1;
 const PROJECT_SPEED = BASE_SPEED * 0.7;
 /** Let CSS intro / first paint settle before compiling WebGL. */
-const MOUNT_DELAY_MS = 320;
+const MOUNT_DELAY_MS = islandTiming.canvasMountDelayMs;
 
-function scheduleIdle(cb: () => void, timeout = 1200): () => void {
+function scheduleIdle(cb: () => void | Promise<void>, timeout = 1200): () => void {
   if (typeof window === 'undefined') return () => {};
   const w = window as Window & {
     requestIdleCallback?: (fn: () => void, opts?: { timeout: number }) => number;
@@ -40,7 +41,7 @@ function markCanvasLive(live: boolean) {
 function prefersLightCanvas(): boolean {
   if (typeof window === 'undefined') return true;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-  if (window.matchMedia('(max-width: 900px)').matches) return true;
+  if (window.matchMedia(`(max-width: ${breakpoints.canvasLight}px)`).matches) return true;
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (conn?.saveData) return true;
   return false;
@@ -49,6 +50,9 @@ function prefersLightCanvas(): boolean {
 export default function LandingCanvasGradient() {
   const [allowMotion, setAllowMotion] = useState(false);
   const [mountCanvas, setMountCanvas] = useState(false);
+  const [gradientMod, setGradientMod] = useState<
+    typeof import('@shadergradient/react') | null
+  >(null);
   const [uSpeed, setUSpeed] = useState(BASE_SPEED);
   const [pixelDensity, setPixelDensity] = useState(1);
   const [panelExpanded, setPanelExpanded] = useState(false);
@@ -70,7 +74,7 @@ export default function LandingCanvasGradient() {
   useEffect(() => {
     if (!allowMotion) return;
     const dpr = window.devicePixelRatio || 1;
-    const narrow = window.matchMedia('(max-width: 900px)').matches;
+    const narrow = window.matchMedia(`(max-width: ${breakpoints.canvasLight}px)`).matches;
     setPixelDensity(narrow || dpr >= 2 ? 0.75 : 1);
   }, [allowMotion]);
 
@@ -85,8 +89,12 @@ export default function LandingCanvasGradient() {
     let cancelled = false;
     let cancelIdle = () => {};
     const delayId = window.setTimeout(() => {
-      cancelIdle = scheduleIdle(() => {
-        if (!cancelled) setMountCanvas(true);
+      cancelIdle = scheduleIdle(async () => {
+        if (cancelled) return;
+        const mod = await import('@shadergradient/react');
+        if (cancelled) return;
+        setGradientMod(mod);
+        setMountCanvas(true);
       });
     }, MOUNT_DELAY_MS);
 
@@ -184,7 +192,8 @@ export default function LandingCanvasGradient() {
     layer.setAttribute('data-canvas-paused', motionActive ? 'false' : 'true');
   }, [motionActive]);
 
-  if (!allowMotion || !mountCanvas) return null;
+  if (!allowMotion || !mountCanvas || !gradientMod) return null;
+  const { ShaderGradient, ShaderGradientCanvas } = gradientMod;
 
   return (
     <ShaderGradientCanvas

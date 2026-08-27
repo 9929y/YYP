@@ -1,5 +1,6 @@
-import { motion, type Transition } from 'motion/react';
+import { motion, useReducedMotion, type Transition } from 'motion/react';
 import { type ElementType, useMemo } from 'react';
+import { islandTiming } from '../../data/motion';
 
 export type TextGenerateEffectProps = {
   children: string;
@@ -10,6 +11,7 @@ export type TextGenerateEffectProps = {
   staggerDuration?: number;
   transition?: Transition;
   filter?: boolean;
+  srOnly?: boolean;
 };
 
 export function TextGenerateEffect({
@@ -18,31 +20,38 @@ export function TextGenerateEffect({
   className,
   wordClassName,
   trigger = true,
-  staggerDuration = 0.1,
-  transition = { duration: 0.5 },
-  filter = true
+  staggerDuration = islandTiming.textGenerateStagger,
+  transition = { duration: islandTiming.textGenerateDuration },
+  filter = true,
+  srOnly = true
 }: TextGenerateEffectProps) {
   const words = useMemo(() => children.split(' '), [children]);
   const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
+  const reduced = useReducedMotion();
+  const instant = Boolean(reduced);
+  const live = trigger;
+  const useFilter = instant ? false : filter;
+  const delayStep = instant ? 0 : staggerDuration;
 
   return (
-    <MotionTag aria-label={children} className={['text-generate', className].filter(Boolean).join(' ')}>
-      <span className="sr-only">{children}</span>
+    <MotionTag aria-label={srOnly ? children : undefined} className={['text-generate', className].filter(Boolean).join(' ')}>
+      {srOnly && <span className="sr-only">{children}</span>}
       {words.map((word, i) => (
         <motion.span
           animate={
-            trigger
-              ? { filter: filter ? 'blur(0px)' : undefined, opacity: 1 }
-              : { filter: filter ? 'blur(4px)' : undefined, opacity: 0 }
+            live
+              ? { filter: useFilter ? 'blur(0px)' : undefined, opacity: 1 }
+              : { filter: useFilter ? 'blur(4px)' : undefined, opacity: 0 }
           }
           aria-hidden="true"
           className={['text-generate__word', wordClassName].filter(Boolean).join(' ')}
-          initial={{ filter: filter ? 'blur(4px)' : undefined, opacity: 0 }}
+          initial={{ filter: useFilter ? 'blur(4px)' : undefined, opacity: 0 }}
           key={`${i}-${word}`}
           /* Stagger on enter only — exit fades together so hover-out feels instant. */
           transition={{
             ...transition,
-            delay: trigger ? i * staggerDuration : 0
+            duration: instant ? 0 : transition.duration,
+            delay: live ? i * delayStep : 0
           }}
         >
           {word}{' '}

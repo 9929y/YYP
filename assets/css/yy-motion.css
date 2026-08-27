@@ -178,47 +178,30 @@ html.yy-reveal [data-reveal="none"] {
    Same 250ms fade-up as the default enter recipe.
    --------------------------------------------------------------------------- */
 
-html.yy-landing [data-reveal="intro-meta"],
-html.yy-landing [data-reveal="intro-headline"] {
-  opacity: 0;
-}
+/* Landing hero intro — pure CSS timeline. No JS gate: `both` fill supplies the
+   from-state, so the hero cannot get stranded if a script fails to load. */
 
-html.yy-landing [data-reveal="intro-headline"] {
-  transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
-}
-
-[data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"] {
+html.yy-landing [data-reveal="intro-meta"] {
   animation: yy-intro-fade var(--reveal-text-duration) var(--reveal-text-ease) both;
 }
 
-[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--top [data-reveal="intro-meta"] {
+html.yy-landing .hero__col--lead .hero__zone--top [data-reveal="intro-meta"] {
   animation-delay: var(--duration-stagger);
 }
 
-[data-motion-root][data-intro-ready="true"] .hero__col--lead .hero__zone--meta [data-reveal="intro-meta"] {
+html.yy-landing .hero__col--lead .hero__zone--meta [data-reveal="intro-meta"] {
   animation-delay: calc(var(--duration-stagger) * 2);
 }
 
-[data-motion-root][data-intro-ready="true"] .hero__col--statement .hero__zone--top [data-reveal="intro-meta"] {
+html.yy-landing .hero__col--statement .hero__zone--top [data-reveal="intro-meta"] {
   animation-delay: var(--duration-stagger);
 }
 
-[data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
-  animation: yy-intro-text var(--reveal-text-duration) var(--reveal-text-ease) var(--duration-stagger) both;
+html.yy-landing [data-reveal="intro-headline"] {
+  animation: yy-intro-fade var(--reveal-text-duration) var(--reveal-text-ease) var(--duration-stagger) both;
 }
 
 @keyframes yy-intro-fade {
-  from {
-    opacity: 0;
-    transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes yy-intro-text {
   from {
     opacity: 0;
     transform: translateY(var(--reveal-text-distance)) scale(var(--reveal-text-scale));
@@ -241,9 +224,7 @@ html.yy-landing [data-reveal="intro-headline"] {
   }
 
   html.yy-landing [data-reveal="intro-meta"],
-  html.yy-landing [data-reveal="intro-headline"],
-  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-meta"],
-  [data-motion-root][data-intro-ready="true"] [data-reveal="intro-headline"] {
+  html.yy-landing [data-reveal="intro-headline"] {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -261,3 +242,22 @@ html.yy-landing [data-reveal="intro-headline"] {
     animation: none !important;
   }
 }
+
+@media print {
+  .yy-rv, .rv, [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+/* IX2 failsafe: if the Webflow runtime never arrives, reveal its nodes rather
+   than leaving them invisible forever. Inert when IX2 runs — it writes inline
+   styles that win over this animation. */
+@media (prefers-reduced-motion: no-preference) {
+  html.w-mod-js:not(.w-mod-ix) [data-w-id][style*="opacity:0"] {
+    animation: yy-ix2-failsafe 1ms linear 3s forwards;
+  }
+}
+@keyframes yy-ix2-failsafe { to { opacity: 1; } }
+

@@ -6,6 +6,10 @@ export default defineConfig({
   site: 'https://www.yaniceyang.com',
   output: 'static',
   integrations: [react(), legacyPassthrough()],
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport'
+  },
   build: {
     format: 'file',
     assets: '_astro'

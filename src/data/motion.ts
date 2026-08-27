@@ -7,25 +7,45 @@
  * Recipes live in assets/css/yy-motion.css. yy-reveal.js only toggles `.in`.
  * Webflow IX2 on [data-w-id] is a separate writer — do not compete.
  *
- * Three knob groups in yy-motion.css :root:
- *   --reveal-text-*     default enter for copy and auto .yy-rv (site-wide)
- *   --reveal-media-*    images/video; inherit text unless overridden
- *   --page-fade-*       MPA View Transition root fade
+ * CSS custom properties in assets/css/yy-tokens.css are the visual authority.
+ * Numbers here are the same values for islands that cannot read CSS vars.
  *
- * Per-node: data-reveal="…" or --reveal-delay / --reveal-distance /
- * --reveal-duration / --reveal-blur.
+ * Exceptions (layout-triggering, documented):
+ *   - nav `.cap` animates width/max-width/height/padding (yy-chrome.js)
+ *   - #yy-cursor animates width/height (yy-cursor.css)
  */
 export const motionOwnership = {
   reveal: ['opacity', 'transform', 'clip-path'],
   hover: ['transform', 'opacity'],
   cursor: ['transform', 'width', 'height', 'background-color', 'color'],
+  chromeCapsule: ['width', 'max-width', 'height', 'padding'],
   ix2: ['any property on [data-w-id] — do not compete'],
   lenis: ['scroll position'],
   flow: ['canvas pixels only'],
   page: ['root opacity via View Transitions; yy-nav / yy-footer named snapshots']
 } as const;
 
-/** Named recipes in yy-motion.css. `text` is the site default for copy. */
+/** Milliseconds — keep in lockstep with `--duration-*` in yy-tokens.css. */
+export const durations = {
+  stagger: 40,
+  micro: 80,
+  quick: 150,
+  fast: 250,
+  medium: 350,
+  slow: 400,
+  verySlow: 500
+} as const;
+
+export const islandTiming = {
+  textGenerateStagger: 0.1,
+  textGenerateDuration: 0.5,
+  caseNoteStagger: 0.06,
+  caseNoteDuration: 0.45,
+  morphTime: 1.5,
+  morphCooldown: 1.8,
+  canvasMountDelayMs: 320
+} as const;
+
 export const revealRecipes = {
   text: 'Default copy enter: fade + 8px rise + scale-small (0.98), 250ms',
   fade: 'Opacity only',
@@ -49,7 +69,11 @@ export const revealModes = {
 export const breakpoints = {
   desktopEffectMin: 992,
   desktopEffectMax: 991,
+  canvasLight: 900,
   landingCollapse: 877,
+  landingMidMin: 878,
+  landingMidMax: 1259,
+  caseNoteStatic: 768,
   typeStep: 767,
   chromeCapsule: 560,
   webflowMobile: 479
