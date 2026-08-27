@@ -255,7 +255,13 @@ const CarouselFace = memo(function CarouselFace({
   );
 });
 
-function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
+function ProjectsCarouselMotion({
+  cards,
+  embed = 'page'
+}: {
+  cards: ProjectsCarouselCard[];
+  embed?: 'page' | 'panel';
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const lastPointer = useRef({ x: 0, y: 0 });
@@ -298,7 +304,14 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 
   const isScreenSizeSm = useMediaQuery('(max-width: 640px)');
   // Wider 8-slot ring; face width from seat arc so neighbors keep air.
-  const cylinderWidth = isScreenSizeSm ? 1560 : 2680;
+  // Panel embed uses a slightly tighter cylinder to fit the popup.
+  const cylinderWidth = isScreenSizeSm
+    ? embed === 'panel'
+      ? 1180
+      : 1560
+    : embed === 'panel'
+      ? 1980
+      : 2680;
   const seatArc = (ARC_STEP / 360) * cylinderWidth;
   const faceWidth = seatArc * FACE_GAP;
   const radius = cylinderWidth / (2 * Math.PI);
@@ -504,6 +517,7 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
       ref={stageRef}
       className="yy-projects-carousel"
       data-testid="projects-carousel"
+      data-embed={embed}
       data-slots={SLOT_COUNT}
       data-visible={visibleCards.length}
       data-spread={spread ? 'true' : 'false'}
@@ -540,13 +554,16 @@ function ProjectsCarouselMotion({ cards }: { cards: ProjectsCarouselCard[] }) {
 }
 
 export function ProjectsCarousel3D({
-  cards
+  cards,
+  embed = 'page'
 }: {
   cards: ProjectsCarouselCard[];
+  /** page = full hub; panel = nav Work popup compact stage */
+  embed?: 'page' | 'panel';
 }) {
   if (!cards.length) return null;
   // Always mount the 3D stage (no flat-grid MotionGate fallback flash).
-  return <ProjectsCarouselMotion cards={cards} />;
+  return <ProjectsCarouselMotion cards={cards} embed={embed} />;
 }
 
 export default ProjectsCarousel3D;

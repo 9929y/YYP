@@ -70,6 +70,12 @@ html.yy-projects body {
   -webkit-user-select: none;
 }
 
+.yy-projects-carousel[data-embed='panel'] {
+  height: 100%;
+  min-height: min(52vh, 420px);
+  flex: 1 1 auto;
+}
+
 .yy-projects-carousel:active {
   cursor: inherit;
 }
