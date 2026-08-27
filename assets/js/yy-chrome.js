@@ -51,27 +51,12 @@
     { id: 'skills',        label: 'Skills' }
   ];
 
-  /* Footer carries the tail. `fashion.html`'s only inbound link today is a
-     sentence inside aboutme.html — the site graph must not depend on one
-     page's prose, so the chrome links it explicitly. */
-  var FOOT = [
-    { href: 'projects.html', label: 'Work' },
-    { href: 'aboutme.html',  label: 'About' },
-    { href: 'fashion.html',  label: 'Fashion' },
-    { panel: 'resume',       label: 'Resume' }
-  ];
-
-  /* Resume is NOT a social profile — it lives in the nav row above as text.
-     Dropping it here also retires `icon-resume.webp`, the asset that on all
-     seven case pages sits on an href pointing at Instagram. */
-  var SOCIAL = [
-    { href: 'https://www.linkedin.com/in/yanice-yang', label: 'LinkedIn', img: 'icon-linkedin.webp' },
-    { href: 'mailto:yaniceydesign@gmail.com',          label: 'Email',    img: 'icon-email.webp' }
-  ];
-  /* Instagram exists on the seven case pages but only behind the mislabelled
-     resume icon, so nobody can find it. Kept as a text link: no new asset,
-     and the link stops lying about where it goes. */
-  var INSTAGRAM = 'https://www.instagram.com/tycreated/';
+  /* Dark case pages keep a black ground through the credit row.
+     Whitelist by filename — body.blk is not present on every dark-looking page. */
+  var DARK_FOOTER = {
+    'ai-driven-product-design.html': true,
+    'mckinseyecommerce.html': true
+  };
 
   /* --------------------------------------------------------------------------
      Step 1 — hide the legacy chrome from CSS parsed before <body> exists.
@@ -171,7 +156,8 @@
     ':host-context(html.yy-cursor-live) .panel,',
     ':host-context(html.yy-cursor-live) .panel *,',
     ':host-context(html.yy-cursor-live) .expand{ cursor: none !important; }',
-    ':host(yy-footer){ display: block; }',
+    ':host(yy-footer){ display: block; background: transparent; }',
+    ':host(yy-footer.is-dark){ background: #000; }',
 
     /* ---- skip link: first tab stop, parked off-screen until focused ---- */
     /* ⚠️ 不能用 `position: fixed` + 负 top 把它藏到视口外。
@@ -455,22 +441,20 @@
     '  .cap, .cap::before, .cap::after, .cap > *, .expand, .corner{ transition-duration: 1ms !important; }',
     '}',
 
-    /* ---- footer -------------------------------------------------------- */
+    /* ---- footer — credit only, aligned to --frame-spine (1260) -------- */
     '.ft{',
-    '  display: flex; flex-wrap: wrap; align-items: center; gap: 20px 28px;',
-    '  max-width: 1280px; margin: 0 auto;',
+    '  display: block;',
+    '  max-width: 1260px; margin: 0 auto;',
     '  padding: 40px 24px 120px;',   /* 120px bottom clears the fixed capsule */
     '  border-top: 1px solid rgba(26,25,23,.10);',
-    '  font-size: 13px;',
+    '  box-sizing: border-box;',
     '}',
-    '.ft nav{ display: flex; flex-wrap: wrap; gap: 4px 18px; }',
-    '.ft a,.ft button{ margin:0; padding:0; border:0; background:none; color: var(--yy-ink-dim); font:inherit; text-decoration: none; cursor:pointer; transition: color .2s var(--yy-ease); }',
-    '.ft a:hover,.ft button:hover{ color: var(--yy-ink); text-decoration: underline; text-underline-offset: 3px; }',
-    '.ft a:focus-visible,.ft button:focus-visible{ outline: 2px solid var(--yy-ink); outline-offset: 3px; border-radius: 2px; }',
-    '.soc{ display: flex; align-items: center; gap: 16px; }',
-    '.soc img{ display: block; width: 18px; height: 18px; object-fit: contain; }',
-    '.credit{ margin: 0 0 0 auto; color: var(--yy-ink-dim); }',
-    '@media (max-width: 560px){ .credit{ margin-left: 0; flex-basis: 100%; } }'
+    ':host(yy-footer.is-dark) .ft{ border-top-color: rgba(255,255,255,.10); }',
+    '.credit{',
+    '  margin: 0; color: var(--yy-ink-dim);',
+    '  font-size: 13px; font-weight: 500; letter-spacing: .04em;',
+    '}',
+    ':host(yy-footer.is-dark) .credit{ color: #fff; }'
   ].join('\n');
 
   /* --------------------------------------------------------------------------
@@ -484,17 +468,6 @@
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function link(item, here) {
-    /* 页面链接用相对路径 —— 与站上 11 个页面既有的写法一致。
-       ROOT 只用于资源（css / 图片），那里相对路径才真的可能解析到别处。
-       On the homepage, Work scrolls to #work instead of bouncing to projects.html. */
-    var href = (here === 'index.html' && item.homeHref) ? item.homeHref : item.href;
-    var attrs = 'href="' + esc(href) + '"';
-    if (item.ext) attrs += ' target="_blank" rel="noopener"';
-    if (!item.ext && item.href === here) attrs += ' aria-current="page"';
-    return '<a ' + attrs + (item.ext ? ' class="ext"' : '') + '>' + esc(item.label) + '</a>';
   }
 
   function panelTrigger(item) {
@@ -545,13 +518,6 @@
       (document.head || HTML).appendChild(script);
     });
     return resumeLoad;
-  }
-
-  function footerItem(item, here) {
-    if (item.panel) {
-      return '<button type="button" data-open-panel="' + esc(item.panel) + '">' + esc(item.label) + '</button>';
-    }
-    return link(item, here);
   }
 
   /* --------------------------------------------------------------------------
@@ -1134,20 +1100,6 @@
     });
   }
 
-  function setupFooterPanelTriggers(host) {
-    var buttons = host.shadowRoot.querySelectorAll('[data-open-panel]');
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].addEventListener('click', function (event) {
-        window.dispatchEvent(new CustomEvent('yy:open-panel', {
-          detail: {
-            name: event.currentTarget.getAttribute('data-open-panel'),
-            returnFocus: event.currentTarget
-          }
-        }));
-      });
-    }
-  }
-
   function mount() {
     var here = currentPage();
     var target = skipTarget();
@@ -1185,32 +1137,19 @@
     setupPanel(navHost);
 
     /* ---- footer ----
-       One code path, three cases. Insert after `.footer-credit-wrapper` where
-       it exists (9 pages) and let the boot CSS hide the original; append to
-       body where it does not (fashion.html, tiktok-research.html).
+       Credit only. Insert after `.footer-credit-wrapper` where it exists
+       (9 pages) and let the boot CSS hide the original; append to body where
+       it does not (fashion.html, tiktok-research.html).
 
        `.four-column` is NEVER touched — the prev/next project links in it are
        content, not chrome. */
     var footHTML =
       '<footer class="ft">' +
-        '<nav aria-label="Footer">' +
-          FOOT.map(function (i) { return footerItem(i, here); }).join('') +
-        '</nav>' +
-        '<div class="soc">' +
-          SOCIAL.map(function (s) {
-            return '<a href="' + esc(s.href) + '"' +
-              (/^https?:/.test(s.href) ? ' target="_blank" rel="noopener"' : '') +
-              ' aria-label="' + esc(s.label) + '">' +
-              '<img src="' + esc(ROOT + 'assets/images/ui/' + s.img) + '" alt="" width="18" height="18">' +
-              '</a>';
-          }).join('') +
-          '<a href="' + esc(INSTAGRAM) + '" target="_blank" rel="noopener">Instagram</a>' +
-        '</div>' +
         '<p class="credit">© Yanice Yang 2026</p>' +
       '</footer>';
 
     var host = shadow('yy-footer', footHTML);
-    setupFooterPanelTriggers(host);
+    if (DARK_FOOTER[here]) host.classList.add('is-dark');
     var credit = document.querySelector('.footer-credit-wrapper');
     if (credit && credit.parentNode) credit.parentNode.insertBefore(host, credit.nextSibling);
     else document.body.appendChild(host);
