@@ -466,8 +466,8 @@ const revealJs = fs.readFileSync(path.join(ROOT, 'assets/js/yy-reveal.js'), 'utf
 if (!revealJs.includes('data-reveal-mode') || !revealJs.includes('yy-landing')) {
   errors.push('yy-reveal.js must support data-reveal-mode and landing explicit-only collection');
 }
-if (!revealJs.includes("'inout'") || !/defaultMode[\s\S]{0,80}inout/.test(revealJs)) {
-  errors.push('yy-reveal.js must default project pages to data-reveal-mode inout (enter + exit)');
+if (!revealJs.includes("'once'") || !/defaultMode[\s\S]{0,80}once/.test(revealJs)) {
+  errors.push('yy-reveal.js must default all pages to data-reveal-mode once (no re-hide on scroll-up)');
 }
 if (!revealJs.includes('function primeOnScreen') || revealJs.indexOf('function primeOnScreen') > revealJs.indexOf("html.classList.add('yy-reveal')")) {
   errors.push('yy-reveal.js must mark in-view nodes .in before adding html.yy-reveal');
