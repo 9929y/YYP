@@ -17,7 +17,7 @@
     {
       href: 'mckinseyecommerce.html',
       cover: 'assets/images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp',
-      pos: '0 0',
+      pos: '50% 0',
       title: 'Digital Consulting UXD',
       sub: 'build a product from 0 to 1'
     },

@@ -404,7 +404,9 @@
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
     '.panel-view--resume,',
     '.panel-view--about,',
-    '.panel-view--work{ padding: 0; background: transparent; }',
+    '.panel-view--work{ padding: 0; }',
+    '.panel.is-work{ background: rgba(255,255,255,.22); }',
+    '.panel.is-work.is-expanded{ background: rgba(255,255,255,.32); }',
     'yy-resume-content,',
     'yy-about-content,',
     'yy-work-content{ display: block; min-height: 100%; }',
@@ -827,6 +829,7 @@
       for (var j = 0; j < views.length; j++) {
         views[j].hidden = views[j].getAttribute('data-panel-view') !== name;
       }
+      panel.classList.toggle('is-work', name === 'work');
     }
 
     function saveViewScroll(name) {

@@ -26,7 +26,7 @@
   flex-direction: column;
   min-width: 0;
   height: min(28vh, 240px);
-  padding: 7px 7px 0;
+  padding: 12px 12px 0;
   color: inherit;
   text-decoration: none;
   background: rgba(255, 255, 255, 0.28);
