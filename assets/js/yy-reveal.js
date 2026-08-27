@@ -138,19 +138,50 @@
     return g || el;
   }
 
-  function revealList(list, observer) {
-    var seen = [];
+  /** When any member of a sync group enters, reveal the whole group together. */
+  function expandSync(list) {
+    var out = [];
+    var seenGroups = [];
     for (var i = 0; i < list.length; i++) {
-      var key = syncKey(list[i]);
+      var el = list[i];
+      var g = el.closest && el.closest('[data-reveal-sync]');
+      if (!g) {
+        out.push(el);
+        continue;
+      }
+      var already = false;
+      for (var s = 0; s < seenGroups.length; s++) if (seenGroups[s] === g) { already = true; break; }
+      if (already) continue;
+      seenGroups.push(g);
+      var members = g.querySelectorAll('[data-reveal], .rv, .yy-rv');
+      for (var m = 0; m < members.length; m++) {
+        var node = members[m];
+        if (skipMarked(node) || ownedByIx2(node) || wrapsIx2(node)) continue;
+        out.push(node);
+      }
+    }
+    return out;
+  }
+
+  function revealList(list, observer) {
+    var expanded = expandSync(list);
+    var seen = [];
+    for (var i = 0; i < expanded.length; i++) {
+      var key = syncKey(expanded[i]);
       var idx = -1;
       for (var s = 0; s < seen.length; s++) if (seen[s] === key) { idx = s; break; }
       if (idx < 0) {
         idx = seen.length;
         seen.push(key);
       }
-      setStagger(list[i], idx);
-      list[i].classList.add('in');
-      if (modeOf(list[i]) !== 'inout' && observer) observer.unobserve(list[i]);
+      /* Sync groups share one start — no stagger between members. */
+      if (expanded[i].closest && expanded[i].closest('[data-reveal-sync]')) {
+        expanded[i].style.setProperty('--d', '0ms');
+      } else {
+        setStagger(expanded[i], idx);
+      }
+      expanded[i].classList.add('in');
+      if (modeOf(expanded[i]) !== 'inout' && observer) observer.unobserve(expanded[i]);
     }
   }
 
@@ -233,10 +264,33 @@
   function start() {
     try {
       var explicit = collectExplicit();
-      var items = (isLanding || explicit.length) ? explicit : collectAuto();
+      var items;
+      if (isLanding) {
+        items = explicit;
+      } else {
+        /* Case pages: explicit hero recipes + auto-collect for IX2 gaps. */
+        var auto = collectAuto();
+        items = [];
+        var seen = typeof WeakSet === 'function' ? new WeakSet() : null;
+        var seenList = seen ? null : [];
+        function pushUnique(el) {
+          if (seen) {
+            if (seen.has(el)) return;
+            seen.add(el);
+          } else {
+            for (var u = 0; u < seenList.length; u++) if (seenList[u] === el) return;
+            seenList.push(el);
+          }
+          items.push(el);
+        }
+        for (var e = 0; e < explicit.length; e++) pushUnique(explicit[e]);
+        for (var a = 0; a < auto.length; a++) pushUnique(auto[a]);
+      }
       if (!items.length) return;
 
-      if (!explicit.length && !isLanding) tagAuto(items);
+      if (!isLanding) tagAuto(items.filter(function (el) {
+        return !el.hasAttribute('data-reveal') && !el.classList.contains('rv');
+      }));
 
       primeOnScreen(items);
       html.classList.add('yy-reveal');

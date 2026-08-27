@@ -32,6 +32,10 @@ export const revealRecipes = {
   wipe: 'Landing thumbnails: clip wipe from bottom + scale-medium (0.97); syncs with case label',
   media: 'Fade + 8px rise + scale-medium (0.97); Astro case-study figures',
   clip: 'Headline-style clip-path open',
+  'from-top': 'Case hero: slide down from above + fade (sync with from-right)',
+  'from-bottom': 'Case hero: slide up from below + fade',
+  'from-left': 'Case hero: slide in from left + fade',
+  'from-right': 'Case hero: slide in from right + fade (Lark phones, etc.)',
   'intro-meta': 'Landing hero meta (CSS timeline, not IntersectionObserver)',
   'intro-headline': 'Landing hero headline (CSS timeline, same 250ms fade-up)',
   none: 'Exclude this node from reveal'

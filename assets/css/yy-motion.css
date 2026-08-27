@@ -9,8 +9,10 @@
      style="--reveal-delay: 120ms; --reveal-distance: 8px;
             --reveal-duration: 400ms; --reveal-blur: 0px"
 
-   Named recipes: text | fade | wipe | media | clip | intro-meta | intro-headline
+   Named recipes: text | fade | wipe | media | clip | from-top | from-bottom |
+   from-left | from-right | intro-meta | intro-headline
    Homepage cases: label=text, thumb=wipe; data-reveal-sync="case" starts both together.
+   Case heroes: data-reveal-sync="hero" + from-* so copy and media settle together.
 
    HARD RULE: default enter animates opacity + transform only.
    clip-path stays on optional wipe/clip recipes. Do not set grid, padding, or color.
@@ -31,7 +33,12 @@
   --reveal-media-ease: var(--reveal-text-ease);
   --reveal-media-scale: var(--scale-medium);
 
-  /* ---- MPA page fade (View Transitions API) ---- */
+  /* ---- directional hero slides (case pages) ---- */
+  --reveal-slide-y: var(--distance-medium);
+  --reveal-slide-x: 48px;
+  --reveal-slide-duration: var(--duration-slow);
+  --reveal-slide-ease: var(--ease-smooth-out);
+  --reveal-slide-scale: var(--scale-small);
   --page-fade-out: 180ms;
   --page-fade-in: 220ms;
   --page-fade-ease: var(--ease-smooth-out);
@@ -93,6 +100,10 @@ html.yy-reveal [data-reveal="fade"],
 html.yy-reveal [data-reveal="wipe"],
 html.yy-reveal [data-reveal="media"],
 html.yy-reveal [data-reveal="clip"],
+html.yy-reveal [data-reveal="from-left"],
+html.yy-reveal [data-reveal="from-right"],
+html.yy-reveal [data-reveal="from-top"],
+html.yy-reveal [data-reveal="from-bottom"],
 html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]) {
   transition-property: opacity, transform;
   transition-duration: var(--reveal-duration);
@@ -111,7 +122,7 @@ html.yy-reveal .yy-rv--wipe {
 html.yy-reveal .yy-rv:not(.in),
 html.yy-reveal .rv:not(.in),
 html.yy-reveal [data-reveal="text"]:not(.in),
-html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="clip"]):not([data-reveal="media"]):not(.in) {
+html.yy-reveal [data-reveal]:not([data-reveal="none"]):not([data-reveal^="intro-"]):not([data-reveal="fade"]):not([data-reveal="wipe"]):not([data-reveal="clip"]):not([data-reveal="media"]):not([data-reveal="from-left"]):not([data-reveal="from-right"]):not([data-reveal="from-top"]):not([data-reveal="from-bottom"]):not(.in) {
   opacity: 0;
   transform: translateY(var(--reveal-distance)) scale(var(--reveal-scale));
 }
@@ -145,6 +156,36 @@ html.yy-reveal [data-reveal="wipe"]:not(.in) {
   opacity: 0;
   transform: scale(var(--reveal-media-scale));
   clip-path: inset(100% 0 0 0);
+}
+
+/* Case hero directional slides — larger travel, shared duration with sync group. */
+html.yy-reveal [data-reveal="from-top"],
+html.yy-reveal [data-reveal="from-bottom"],
+html.yy-reveal [data-reveal="from-left"],
+html.yy-reveal [data-reveal="from-right"] {
+  --reveal-duration: var(--reveal-slide-duration);
+  --reveal-ease: var(--reveal-slide-ease);
+  --reveal-scale: var(--reveal-slide-scale);
+}
+
+html.yy-reveal [data-reveal="from-top"]:not(.in) {
+  opacity: 0;
+  transform: translateY(calc(var(--reveal-slide-y) * -1)) scale(var(--reveal-scale));
+}
+
+html.yy-reveal [data-reveal="from-bottom"]:not(.in) {
+  opacity: 0;
+  transform: translateY(var(--reveal-slide-y)) scale(var(--reveal-scale));
+}
+
+html.yy-reveal [data-reveal="from-left"]:not(.in) {
+  opacity: 0;
+  transform: translateX(calc(var(--reveal-slide-x) * -1)) scale(var(--reveal-scale));
+}
+
+html.yy-reveal [data-reveal="from-right"]:not(.in) {
+  opacity: 0;
+  transform: translateX(var(--reveal-slide-x)) scale(var(--reveal-scale));
 }
 
 html.yy-reveal .yy-rv.in,
