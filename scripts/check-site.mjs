@@ -321,6 +321,11 @@ if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
   errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
 }
 
+const landingCss = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (landingCss.includes('8px 0 28px -12px') || landingCss.includes('-8px 0 28px -12px')) {
+  errors.push('landing .slot must not use left/right directional shadows that square the corners');
+}
+
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
 if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
   errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
