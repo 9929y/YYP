@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { islandTiming } from '../../data/motion';
 
 /*
  * Morph algorithm adapted directly from Magic UI's MIT-licensed Morphing Text:
@@ -7,8 +8,8 @@ import { useCallback, useEffect, useRef } from 'react';
  * Magic UI uses a 1.5s morph. The longer 1.8s cooldown below is the only timing
  * change, giving each statement enough time to be read before the next morph.
  */
-const morphTime = 1.5;
-const cooldownTime = 1.8;
+const morphTime = islandTiming.morphTime;
+const cooldownTime = islandTiming.morphCooldown;
 
 const beyondWords = ['prompts,', 'outputs,', 'automation,'];
 const towardWords = ['intent.', 'outcomes.', 'flow.'];
@@ -17,7 +18,7 @@ function useMorphingWords() {
   const textIndexRef = useRef(0);
   const morphRef = useRef(0);
   const cooldownRef = useRef(cooldownTime);
-  const timeRef = useRef(new Date());
+  const timeRef = useRef(0);
   const beyond1Ref = useRef<HTMLSpanElement>(null);
   const beyond2Ref = useRef<HTMLSpanElement>(null);
   const toward1Ref = useRef<HTMLSpanElement>(null);
@@ -89,26 +90,69 @@ function useMorphingWords() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (reducedMotion.matches) {
-      doCooldown();
-      return;
-    }
+    const root = beyond1Ref.current?.closest('.morph-statement-root') || beyond1Ref.current;
+    let animationFrameId = 0;
+    let running = false;
+    let inView = true;
 
-    let animationFrameId: number;
-    const animate = () => {
+    const stop = () => {
+      running = false;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+    };
+
+    const animate = (now: number) => {
       animationFrameId = requestAnimationFrame(animate);
-
-      const newTime = new Date();
-      const dt = (newTime.getTime() - timeRef.current.getTime()) / 1000;
-      timeRef.current = newTime;
+      if (!timeRef.current) {
+        timeRef.current = now;
+        return;
+      }
+      const dt = (now - timeRef.current) / 1000;
+      timeRef.current = now;
       cooldownRef.current -= dt;
-
       if (cooldownRef.current <= 0) doMorph();
       else doCooldown();
     };
 
-    animate();
-    return () => cancelAnimationFrame(animationFrameId);
+    const start = () => {
+      if (running || reducedMotion.matches || document.hidden || !inView) return;
+      running = true;
+      timeRef.current = 0;
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const sync = () => {
+      if (reducedMotion.matches) {
+        stop();
+        doCooldown();
+        return;
+      }
+      if (document.hidden || !inView) {
+        stop();
+        return;
+      }
+      start();
+    };
+
+    let io: IntersectionObserver | null = null;
+    if (root && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver((entries) => {
+        inView = entries.some((entry) => entry.isIntersecting);
+        sync();
+      });
+      io.observe(root);
+    }
+
+    reducedMotion.addEventListener('change', sync);
+    document.addEventListener('visibilitychange', sync);
+    sync();
+
+    return () => {
+      stop();
+      io?.disconnect();
+      reducedMotion.removeEventListener('change', sync);
+      document.removeEventListener('visibilitychange', sync);
+    };
   }, [doMorph, doCooldown]);
 
   return { beyond1Ref, beyond2Ref, toward1Ref, toward2Ref };
