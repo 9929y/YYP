@@ -36,6 +36,48 @@ function send(res, file) {
   fs.createReadStream(file).pipe(res);
 }
 
+const VARIANT_RE = /-p-\d+\.(webp|png|jpe?g)$/i;
+const TEXT_SCAN = new Set(['.html', '.css', '.js', '.mjs', '.astro', '.ts', '.tsx', '.json', '.md']);
+
+function walkFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === '.git') continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+function referencedAssets() {
+  const refs = new Set();
+  const re = /(?:^|["'(\s,])(\/?assets\/[^"' )\s,]+)/g;
+  for (const file of walkFiles(ROOT)) {
+    if (!TEXT_SCAN.has(path.extname(file).toLowerCase())) continue;
+    let text;
+    try { text = fs.readFileSync(file, 'utf8'); } catch { continue; }
+    let m;
+    while ((m = re.exec(text))) refs.add(m[1].replace(/^\//, '').replace(/\\/g, '/'));
+  }
+  return refs;
+}
+
+function copyAssetsFiltered(src, dest, refs) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const from = path.join(src, entry.name);
+    const to = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyAssetsFiltered(from, to, refs);
+      continue;
+    }
+    const rel = path.relative(ROOT, from).replace(/\\/g, '/');
+    if (VARIANT_RE.test(entry.name) && !refs.has(rel)) continue;
+    fs.copyFileSync(from, to);
+  }
+}
+
 export default function legacyPassthrough() {
   return {
     name: 'legacy-passthrough',
@@ -84,10 +126,7 @@ export default function legacyPassthrough() {
       },
       'astro:build:done': async ({ dir }) => {
         const out = fileURLToPath(dir);
-        fs.cpSync(path.join(ROOT, 'assets'), path.join(out, 'assets'), {
-          recursive: true,
-          dereference: true
-        });
+        copyAssetsFiltered(path.join(ROOT, 'assets'), path.join(out, 'assets'), referencedAssets());
         for (const name of fs.readdirSync(ROOT)) {
           if (!name.endsWith('.html')) continue;
           if (GENERATED_HTML.has(name) || UNPUBLISHED_HTML.has(name)) continue;

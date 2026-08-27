@@ -18,7 +18,7 @@ const PROJECT_SPEED = BASE_SPEED * 0.7;
 /** Let CSS intro / first paint settle before compiling WebGL. */
 const MOUNT_DELAY_MS = islandTiming.canvasMountDelayMs;
 
-function scheduleIdle(cb: () => void, timeout = 1200): () => void {
+function scheduleIdle(cb: () => void | Promise<void>, timeout = 1200): () => void {
   if (typeof window === 'undefined') return () => {};
   const w = window as Window & {
     requestIdleCallback?: (fn: () => void, opts?: { timeout: number }) => number;
