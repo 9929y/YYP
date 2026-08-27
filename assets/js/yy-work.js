@@ -11,22 +11,22 @@
       href: 'ai-driven-product-design.html',
       cover: 'assets/images/opusclip/hero-opusclip-ai-video-editing-cover.webp',
       pos: '50%',
-      title: 'AI-powered Video Tool',
+      title: 'Opus Clip · Video creation beyond prompts',
       sub: 'Launch new features with AI'
     },
     {
       href: 'mckinseyecommerce.html',
       cover: 'assets/images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp',
       pos: '50% 0',
-      title: 'Digital Consulting UXD',
-      sub: 'build a product from 0 to 1'
+      title: 'McKinsey · Live shopping from 0 to 1',
+      sub: 'Build a product from 0 to 1'
     },
     {
       href: 'larkdesign.html',
       cover: 'assets/images/lark/illustration-bytedance-workspace-modules-ring.webp',
       pos: '50%',
-      title: 'All-in-One Office Tool UXD',
-      sub: 'Product Ideations and iterations'
+      title: 'Lark · Team onboarding',
+      sub: 'Product ideation and iterations'
     },
     {
       href: 'cummins-digitalization.html',
@@ -40,7 +40,7 @@
       cover: 'assets/images/mifinance/screen-mi-finance-e-account-screens-stack.webp',
       pos: '50%',
       title: 'Financial Digital Tool UXD',
-      sub: 'ACCESSIBILITY&UX IMPROVEMENT'
+      sub: 'Accessibility & UX improvement'
     },
     {
       href: 'alzheimerdisease.html',
@@ -61,7 +61,7 @@
       cover: 'assets/images/lark/illustration-lark-education-class-collaboration-cover.webp',
       pos: '50%',
       title: 'Lark Education Field Study',
-      sub: 'Qualitative&Quantitative (ON process)',
+      sub: 'Qualitative & quantitative · in progress',
       unable: true
     }
   ];
