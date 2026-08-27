@@ -175,7 +175,6 @@ const requiredCaseStudyComponents = [
   'CaseSection.astro',
   'CaseMetaGrid.astro',
   'MediaVideo.astro',
-  'MediaPair.astro',
   'CaseQuote.astro',
   'CaseStat.astro'
 ];

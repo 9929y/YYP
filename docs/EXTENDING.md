@@ -64,7 +64,8 @@ Tokens: `assets/css/yy-tokens.css`, linked in `<head>` on every page.
 
 Property ownership is documented at the top of `assets/css/yy-chrome.css` and in
 `src/data/motion.ts`. If two layers write `filter` (or any other property),
-delete one. Wrap new islands in `MotionGate` when they are motion-only.
+delete one. Gate motion-only islands with `prefers-reduced-motion` (see
+`LandingCanvasGradient.tsx`) rather than a wrapper component.
 
 Do not install Tailwind, shadcn, Three.js, or Remotion into the site bundle.
 React Bits / Motion Primitives are allowed as a **single-route island** after
