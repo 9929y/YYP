@@ -42,7 +42,9 @@ export interface Project {
   kind: ProjectKind;
   theme: ProjectTheme;
   featuredOnLanding: boolean;
+  /** Reserved for a future Astro index page; only `featuredOnLanding` is read today. */
   featuredOnIndex: boolean;
+  /** Reserved for `projects.html` migration; only `featuredOnLanding` is read today. */
   featuredOnProjects: boolean;
   landingOrder: number;
   /** SEO description; falls back to `note`. */
