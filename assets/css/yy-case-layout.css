@@ -128,6 +128,18 @@
   height: auto;
 }
 
+/* Cummins brand mark: half of the shared mck hero logo cap (300 → 150). */
+.hero-intro-2.mck > img.image-69 {
+  max-width: min(150px, 100%);
+}
+
+/* Xiaomi wordmark: half of Webflow .image-20 (30% → 15%). */
+.image-20 {
+  width: 15%;
+  max-width: 15%;
+  height: auto;
+}
+
 .hero-intro-2.mck .stacked-title-2.mck {
   width: 100%;
   max-width: 100%;

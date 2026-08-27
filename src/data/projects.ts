@@ -90,10 +90,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Opus Clip marquee preview',
-      play: 'auto'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-opusclip-marquee.mp4',
-    placeholderSpec: '4:3 · autoplay',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'alzheimerdisease',
     nextSlug: 'mckinseyecommerce'
   },
@@ -162,10 +162,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'McKinsey orbit preview',
-      play: 'auto'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-mckinsey.mp4',
-    placeholderSpec: '4:3 · autoplay',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'ai-driven-product-design',
     nextSlug: 'larkdesign'
   },
@@ -202,10 +202,10 @@ export const projects: Project[] = [
       width: 1440,
       height: 1080,
       label: 'Lark Design carousel preview',
-      play: 'auto'
+      play: 'scroll'
     },
     placeholderFile: 'videos/case-lark.mp4',
-    placeholderSpec: '4:3 · autoplay',
+    placeholderSpec: '4:3 · plays in view',
     prevSlug: 'mckinseyecommerce',
     nextSlug: 'cummins-digitalization'
   },

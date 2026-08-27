@@ -507,18 +507,19 @@
     max-width: 16em;
   }
 
-  /* Same type as .case__name (size + weight); muted ink only. */
+  /* Supporting line under the hover note area: one step below the title.
+     Title stays --t-20 / 600; scope stays --t-13 / ink-3. */
   .case__note {
     display: block;
     margin: 0;
     padding-top: 14px;
-    max-width: 15em;
+    max-width: 18em;
     width: 100%;
-    font-size: var(--t-20);
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.03em;
-    color: var(--ink);
+    font-size: var(--t-16);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0;
+    color: var(--ink-2);
   }
 
   .case__note-generate,

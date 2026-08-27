@@ -35,6 +35,25 @@ html.yy-case-type .xxl-heading-2 {
   padding-bottom: 0 !important;
 }
 
+/* Hero H1s: unify Cummins (.bold-text.cmi) and Xiaomi/others (.heading-xl).
+   Was ~40px via --t-40 on .heading-xl vs ~2rem Webflow on Cummins — too large
+   at 1440px and inconsistent. */
+html.yy-case-type .inner-page-hero-2 .heading-xl,
+html.yy-case-type .inner-page-hero-2 .heading-xl.mi,
+html.yy-case-type .inner-page-hero-2 .heading-xl.al,
+html.yy-case-type .inner-page-hero-2 h1.cmi,
+html.yy-case-type .inner-page-hero-2 .bold-text.cmi {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: var(--t-32) !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+  line-height: var(--lh-tight) !important;
+  letter-spacing: -0.02em !important;
+  word-spacing: 0.04em !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+}
+
 html.yy-case-type .heading-xl.count4,
 html.yy-case-type .heading-xl-2.count4,
 html.yy-case-type .xxl-heading-2.count4 {
@@ -127,6 +146,15 @@ html.yy-case-type .body-display-2 {
 html.yy-case-type .body-display-2.light {
   font-size: var(--t-13) !important;
   line-height: var(--lh-caption) !important;
+}
+
+/* Dark heroes (Cummins `.blk`, navy McKinsey, white-on-dark intros): pale
+   white disclaimer — yy-case-type --ink-3 is unreadable on charcoal grounds. */
+html.yy-case-type .body-display-2.light.blk,
+html.yy-case-type .grid-wrapper-5.cmi .body-display-2.light,
+html.yy-case-type .grid-wrapper-5.mck .body-display-2.light,
+html.yy-case-type .hero-intro-2.text-color-white .body-display-2.light {
+  color: rgba(255, 255, 255, 0.72) !important;
 }
 
 /* ---- projects hub cards ------------------------------------------------- */
