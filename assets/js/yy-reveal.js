@@ -333,6 +333,25 @@
       document.addEventListener('load', function (e) {
         if (e.target && e.target.tagName === 'IMG') rescanLazyImages();
       }, true);
+
+      /* Failsafe: IX2 opacity:0 nodes that never cleared (common when scroll
+         IX2 races Lenis) — fade them in if still invisible after settle. */
+      if (!isLanding) {
+        setTimeout(function () {
+          var stuck = document.querySelectorAll('[data-w-id]');
+          for (var i = 0; i < stuck.length; i++) {
+            var el = stuck[i];
+            if (el.classList.contains('preloader-lark') || el.closest('.preloader-lark')) continue;
+            var op = parseFloat(getComputedStyle(el).opacity);
+            if (!(op < 0.05)) continue;
+            var box = el.getBoundingClientRect();
+            if (box.bottom < -80 || box.top > innerHeight + 80) continue;
+            el.style.transition = 'opacity 420ms var(--ease-smooth-out, ease), transform 420ms var(--ease-smooth-out, ease)';
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          }
+        }, 3200);
+      }
     } catch (e) {
       html.classList.remove('yy-reveal');
       if (window.console) console.error('[yy-reveal] off, content shown:', e);
