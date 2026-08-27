@@ -392,9 +392,9 @@ if (!chromeJs.includes('Popups always light')) {
 if (/\.panel\.is-work[\s\S]{0,200}background:\s*transparent/.test(chromeJs)) {
   errors.push('yy-chrome.js Work panel must use a light glass fill, not a transparent backdrop');
 }
-/* Figma Glass-canva / Canvas Cover / YyNav — light glass for all three popups */
-if (!chromeJs.includes('--yy-panel-fill: rgba(255,255,255,.90)') || !chromeJs.includes('--yy-panel-blur: 100px')) {
-  errors.push('yy-chrome.js must use Figma Glass-canva fill (.90) and blur 100px');
+/* Figma glass popup / Canvas Cover / YyNav — light glass for all three popups */
+if (!chromeJs.includes('--yy-panel-fill: rgba(255,255,255,.70)') || !chromeJs.includes('--yy-panel-blur: 200px')) {
+  errors.push('yy-chrome.js must use Figma glass fill (.70) and blur 200px');
 }
 if (!chromeJs.includes('--yy-page-cover-fill: rgba(255,250,250,.20)') || !chromeJs.includes('--yy-page-cover-blur: 100px')) {
   errors.push('yy-chrome.js must use Figma Canvas Cover tint + blur 100px');
@@ -405,8 +405,8 @@ if (!chromeJs.includes('--yy-fill: rgba(255,255,255,.72)') || !chromeJs.includes
 if (/:host\(yy-nav\.on-dark\)[\s\S]{0,200}--yy-fill:\s*rgba\(16,16,14/.test(chromeJs)) {
   errors.push('yy-chrome.js must not dark-fill the nav capsule on Opus (text color only)');
 }
-if (!chromeJs.includes('inset 0 0 20px 10px rgba(255,255,255,.20)') || !chromeJs.includes('0 5px 50px 5px rgba(0,0,0,.25)')) {
-  errors.push('yy-chrome.js panel must use Figma Glass-canva inset glow + drop shadow');
+if (!chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)') || !chromeJs.includes('0 5px 40px 2px rgba(0,0,0,.15)')) {
+  errors.push('yy-chrome.js panel must use Figma glass inset + drop shadow');
 }
 if (/\.brand-orb[\s\S]{0,120}width: 16px/.test(chromeJs)) {
   errors.push('yy-chrome.js must keep the 44px Orbit disc; only the inner GIF should be smaller than 36px');
@@ -668,7 +668,7 @@ if (!chromeJs.includes('class="expand"')) {
 if (!chromeJs.includes('@media (prefers-reduced-motion: reduce)')) {
   errors.push('yy-chrome.js popup missing reduced-motion fallback');
 }
-if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.94)') ||
+if (!chromeJs.includes('--yy-panel-full-fill: rgba(255,255,255,.78)') ||
     !chromeJs.includes('.panel.is-expanded{') ||
     !chromeJs.includes('.panel-stack.is-expanded{')) {
   errors.push('yy-chrome.js expanded panel must fully cover the viewport with a glass fill');
@@ -708,7 +708,7 @@ if (!chromeJs.includes('.panel.is-expanded .expand{ display: none') ||
 if (!chromeJs.includes('View full screen') ||
     !chromeJs.includes('expand-label') ||
     !chromeJs.includes("top: 18px; right: 18px;") ||
-    !chromeJs.includes('inset 0 0 20px 10px rgba(255,255,255,.20)')) {
+    !chromeJs.includes('inset 0 15px 20px 0 rgba(255,255,255,.13)')) {
   errors.push('yy-chrome.js popup must keep View full screen as an icon inside the panel card');
 }
 if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
