@@ -31,7 +31,7 @@
           '</p>' +
           '<p class="about__hello">Hello,</p>' +
           '<h1 class="about__name">I\'m Yanice Yang</h1>' +
-          '<p class="about__lead">I\'m a User Experience Designer based in the Bay Area. I enjoy solving digital problem through empathizing, researching, exploring and designing.</p>' +
+          '<p class="about__lead">I\'m a User Experience Designer based in the Bay Area. I enjoy solving digital problems by empathizing, researching, exploring and designing.</p>' +
           '<a class="about__btn" href="https://www.linkedin.com/in/yanice-yang" target="_blank" rel="noopener">' +
             'LinkedIn' +
             '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
@@ -51,7 +51,7 @@
         '</div>' +
       '</header>' +
       '<section class="about__bio">' +
-        '<p>Thanks for stopping by. I am a designer passioned in exploring diverse fields and help users and business find the happier path to succeed. As a UX designer, I’ve come to deeply appreciate the role of design as a bridge between user needs and business goals. To me, UX is not just about creating visually appealing interfaces—it’s about solving real problems in a way that feels intuitive, inclusive, and meaningful to users. Before becoming a UX designer, I was once a fashion designer for 5 years, feel free to check my fashion work here. I also enjoy learning Math, Physics and other STEM fields.</p>' +
+        '<p>Thanks for stopping by. I am a designer passionate about exploring diverse fields and helping users and businesses find a clearer path to success. As a UX designer, I\'ve come to deeply appreciate design as a bridge between user needs and business goals. To me, UX is not just about visually appealing interfaces—it is about solving real problems in ways that feel intuitive, inclusive, and meaningful. Before becoming a UX designer, I was a fashion designer for five years; feel free to check my fashion work here. I also enjoy learning math, physics, and other STEM fields.</p>' +
         '<h2>Fun Fact</h2>' +
         '<p>I made 100k revenue in 2019 when I run a small business in Fashion field;)</p>' +
         '<a class="about__btn" href="fashion.html">' +

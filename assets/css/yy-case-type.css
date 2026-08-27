@@ -1,23 +1,18 @@
 /* ============================================================================
-   yy-case-type.css — case / projects type + ink overlay.
+   yy-case-type.css — case / projects typography overlay.
 
    Landing tokens (yy-tokens.css) are the source: display / heading / body /
-   caption sizes, --lh-* leading, --ink / --ink-2 / --ink-3.
+   caption sizes and --lh-* leading.
 
-   Allowed: font-* , letter-spacing, line-height, color, vertical spacing
+   Allowed: font-* , letter-spacing, line-height, vertical spacing
             (margin-top / margin-bottom / padding-top / padding-bottom).
+   Do not override authored colors, backgrounds, or image layout.
    Do not change authored columns or side gutters. Vertical only.
    Never use the margin / padding shorthand — it would zero the sides.
    ============================================================================ */
 
-html.yy-case-type {
-  background: var(--ground);
-}
-
 html.yy-case-type body,
 html.yy-case-type .body {
-  background-color: var(--ground) !important;
-  color: var(--ink) !important;
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   font-size: var(--t-16);
   line-height: var(--lh-body);
@@ -34,7 +29,6 @@ html.yy-case-type .xxl-heading-2 {
   font-style: normal !important;
   line-height: var(--lh-tight) !important;
   letter-spacing: -0.04em !important;
-  color: var(--ink) !important;
   margin-top: 0 !important;
   margin-bottom: 16px !important;
   padding-top: 0 !important;
@@ -61,7 +55,6 @@ html.yy-case-type .xxl-heading-2.change {
   font-style: normal !important;
   line-height: var(--lh-heading) !important;
   letter-spacing: -0.03em !important;
-  color: var(--ink) !important;
   margin-top: 28px !important;
   margin-bottom: 12px !important;
   padding-top: 0 !important;
@@ -77,7 +70,6 @@ html.yy-case-type .heading-medium-3 {
   line-height: var(--lh-caption) !important;
   letter-spacing: 0.12em !important;
   text-transform: uppercase !important;
-  color: var(--ink-3) !important;
   margin-top: 0 !important;
   margin-bottom: 10px !important;
   padding-top: 0 !important;
@@ -88,7 +80,6 @@ html.yy-case-type .heading-medium-3.counttext {
   text-transform: none !important;
   letter-spacing: -0.02em !important;
   font-weight: 500 !important;
-  color: var(--ink-2) !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
@@ -101,7 +92,6 @@ html.yy-case-type .heading-medium-3.ai.mid {
   line-height: var(--lh-heading) !important;
   letter-spacing: -0.03em !important;
   text-transform: none !important;
-  color: var(--ink) !important;
   margin-top: 28px !important;
   margin-bottom: 12px !important;
 }
@@ -116,7 +106,6 @@ html.yy-case-type p.paragraph {
   font-weight: 400 !important;
   line-height: var(--lh-body) !important;
   letter-spacing: 0 !important;
-  color: var(--ink-2) !important;
   margin-top: 0 !important;
   margin-bottom: 1.15em !important;
 }
@@ -126,7 +115,6 @@ html.yy-case-type .headingpt strong,
 html.yy-case-type .bold-text,
 html.yy-case-type .bold-text-10,
 html.yy-case-type .bold-text-11 {
-  color: var(--ink) !important;
   font-weight: 600 !important;
 }
 
@@ -134,13 +122,11 @@ html.yy-case-type .body-display-2 {
   font-size: var(--t-16) !important;
   font-weight: 400 !important;
   line-height: var(--lh-body) !important;
-  color: var(--ink-2) !important;
 }
 
 html.yy-case-type .body-display-2.light {
   font-size: var(--t-13) !important;
   line-height: var(--lh-caption) !important;
-  color: var(--ink-3) !important;
 }
 
 /* ---- projects hub cards ------------------------------------------------- */
@@ -149,7 +135,6 @@ html.yy-case-type .text-gradient-name {
   font-weight: 600 !important;
   line-height: var(--lh-heading) !important;
   letter-spacing: -0.03em !important;
-  color: var(--ink) !important;
 }
 
 html.yy-case-type .text-gradient-class {
@@ -157,7 +142,6 @@ html.yy-case-type .text-gradient-class {
   font-weight: 500 !important;
   line-height: var(--lh-caption) !important;
   letter-spacing: 0 !important;
-  color: var(--ink-3) !important;
 }
 
 /* ---- in-page prev/next (content, not chrome) ---------------------------- */
@@ -165,7 +149,6 @@ html.yy-case-type .footer-link,
 html.yy-case-type .footer-link._111,
 html.yy-case-type .text-block-19,
 html.yy-case-type .text-block-20 {
-  color: var(--ink) !important;
   letter-spacing: -0.02em !important;
   text-transform: none !important;
   font-size: var(--t-13) !important;
@@ -175,91 +158,9 @@ html.yy-case-type .text-block-20 {
 html.yy-case-type .text-block-7,
 html.yy-case-type .circle-button-3,
 html.yy-case-type .text-block-21 {
-  color: var(--ink-3) !important;
   letter-spacing: 0.08em !important;
 }
 
 html.yy-case-type .circle-button-3 {
   font-size: var(--t-11) !important;
-}
-
-/* Catch remaining Webflow text colours (brand blue, pure black, white-on-black)
-   without painting media. */
-html.yy-case-type h1,
-html.yy-case-type h2,
-html.yy-case-type h3,
-html.yy-case-type h4 {
-  color: var(--ink);
-}
-
-html.yy-case-type .heading-medium,
-html.yy-case-type .heading-medium.title,
-html.yy-case-type .cmi,
-html.yy-case-type .display-sm {
-  color: var(--ink) !important;
-}
-
-/* ============================================================================
-   Equal-height paired image cells.
-
-   Webflow two-up rows keep their authored columns and side padding.
-   Only the image *boxes* stretch to the same row height so a tall diagram
-   cannot sit next to a short one.
-
-   Pairs:
-     .grid-2-2          Lark old/new workflow, pie-chart pairs
-     .grid-2-2.mck      McKinsey 2×2 challenge illustrations
-     .grid-11.ne        Lark closing photo pair
-   ============================================================================ */
-
-html.yy-case-type .w-layout-grid.grid-2-2,
-html.yy-case-type .w-layout-grid.grid-11.ne {
-  align-items: stretch;
-}
-
-html.yy-case-type .w-layout-grid.grid-2-2 > img,
-html.yy-case-type .w-layout-grid.grid-2-2 > a,
-html.yy-case-type .w-layout-grid.grid-11.ne > img {
-  min-width: 0;
-  min-height: 0;
-  align-self: stretch;
-  justify-self: stretch;
-}
-
-/* Same-height boxes: the Lark old/new workflow pair is 3380 vs 2080 tall.
-   A shared aspect box + contain keeps both cells one length without
-   changing the 2-column template. */
-html.yy-case-type .w-layout-grid.grid-2-2:not(.mck) > img,
-html.yy-case-type .w-layout-grid.grid-2-2:not(.mck) > a img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
-  object-position: center;
-}
-
-/* McKinsey spots already use a shared 30vh height; fill the cell without
-   stretching the drawing. Side gutters stay as authored. */
-html.yy-case-type .w-layout-grid.grid-2-2.mck > img {
-  width: 100%;
-  height: 30vh;
-  object-fit: contain;
-  object-position: center;
-}
-
-html.yy-case-type .w-layout-grid.grid-11.ne > img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* Lark discovery two-up (chart vs waiting spot) — keep 2-col template. */
-html.yy-case-type .w-layout-grid.grid-3-2.grid2 > img.imagecutin {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 2;
-  object-fit: contain;
-  object-position: center;
 }

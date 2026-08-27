@@ -62,6 +62,7 @@
      case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
     position: relative;
+    background: var(--ground);
     --t-11: 10px;
     --t-13: 11px;
     --t-16: 14px;
@@ -590,10 +591,6 @@
       inset 0 -1px 0 rgba(36, 34, 32, .04);
   }
 
-  .case .panel {
-    align-self: end;
-  }
-
   /* Media fill. Enter motion is on .slot__media (yy-reveal), not opacity here.
      Hover scale is on the inner img/video so it does not fight reveal transform. */
   .slot__media {
@@ -669,66 +666,6 @@
 
   .ph__spec {
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: var(--t-11);
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
-
-  /* ---------- AtlasNova: a typographic panel, not a grey box ----------
-     It has no page and no imagery yet, so it carries the outline as its
-     content. A placeholder labelled "placeholder" says nothing; the act
-     titles say what the project is. Deliberately NOT a link — there is
-     nowhere to go, and a dead link is worse than no link. */
-  .panel {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--slot-radius);
-    background: var(--slot);
-    padding: 44px 48px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  /* A single flex column that DISTRIBUTES across whatever height the panel has,
-     rather than a 2-column block that stacks at the top. The first version used
-     `columns: 2` and left roughly 450 of the 702px empty, which reads as
-     unfinished rather than composed. space-between is self-adjusting, so this
-     holds at every breakpoint and if the act list ever changes length. */
-  .panel__acts {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-bottom: 28px;
-  }
-
-  .panel__acts li {
-    font-size: var(--t-16);
-    line-height: var(--lh-heading);
-    color: var(--ink-2);
-    counter-increment: act;
-    display: flex;
-    gap: 14px;
-    align-items: baseline;
-    border-bottom: 1px solid rgba(36, 34, 32, .06);
-    padding-bottom: 9px;
-  }
-  .panel__acts li:last-child { border-bottom: 0; padding-bottom: 0; }
-
-  .panel__acts li::before {
-    content: counter(act, decimal-leading-zero);
-    color: var(--ink-3);
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: var(--t-11);
-    flex: none;
-  }
-
-  .panel__foot {
-    margin: 0;
     font-size: var(--t-11);
     letter-spacing: .1em;
     text-transform: uppercase;
@@ -814,8 +751,7 @@
       gap: 24px;
       order: -1;
     }
-    .case .slot,
-    .case .panel {
+    .case .slot {
       align-self: stretch;
     }
     .hero {
@@ -841,9 +777,6 @@
     }
     .case { margin-bottom: 80px; min-height: 0; }
     .slot { width: 100%; aspect-ratio: 4 / 3; }
-    .panel { padding: 32px; aspect-ratio: auto; }
-    .panel__acts { display: block; padding-bottom: 20px; }
-    .panel__acts li { padding: 0 0 10px; margin-bottom: 10px; }
   }
 
   @media (max-width: 560px) {

@@ -37,22 +37,22 @@
   }
 
   function lumaOf(color) {
-    var m = String(color || '').match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!m) return 1;
+    var s = String(color || '');
+    if (!s || s === 'transparent') return null;
+    var m = s.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\s*\)/);
+    if (!m) return null;
+    if (m[4] !== undefined && parseFloat(m[4]) === 0) return null;
     return (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
   }
 
+  /* Only Opus Clip uses the dark nav capsule. Lark, McKinsey, Alzheimer,
+     homepage, and Work hub stay light glass. Popups are always light. */
+  var DARK_NAV_PAGES = {
+    'ai-driven-product-design.html': true
+  };
+
   function pageIsDark() {
-    var page = currentPage();
-    if (page === 'ai-driven-product-design.html' ||
-        page === 'alzheimerdisease.html' ||
-        page === 'mckinseyecommerce.html') return true;
-    try {
-      return lumaOf(getComputedStyle(document.body).backgroundColor) < 0.28 ||
-             lumaOf(getComputedStyle(HTML).backgroundColor) < 0.28;
-    } catch (e) {
-      return false;
-    }
+    return !!DARK_NAV_PAGES[currentPage()];
   }
 
   function applyChromeTheme(navHost) {
@@ -69,11 +69,44 @@
     (document.head || document.body || HTML).appendChild(s);
   }
 
+  /* ASCII cursor wake on case studies. Landing keeps its own #yy-flow + palette
+     in index.astro. Colors chosen for page-ground readability (deep accents on
+     light pages; luminous pastels on Opus/Medical dark grounds). */
+  var FLOW_PALETTES = {
+    'larkdesign.html':               { base: '#2a73e2', alt: '#9aa3ad', idle: '#e6e8eb' },
+    'mckinseyecommerce.html':        { base: '#e03400', alt: '#a89a94', idle: '#ebe7e4' },
+    'ai-driven-product-design.html': { base: '#d4c8ff', alt: '#e8e6f2', idle: '#c5c0d4' },
+    'mifinance.html':                { base: '#e8710a', alt: '#9a958e', idle: '#ebe8e4' },
+    'cummins-digitalization.html':   { base: '#980000', alt: '#9a9290', idle: '#ebe7e6' },
+    'alzheimerdisease.html':         { base: '#8eb0f0', alt: '#d8dce4', idle: '#b0b4bc' },
+    'tiktok-research.html':          { base: '#3d5a6c', alt: '#9aa3ad', idle: '#e6e8eb' }
+  };
+
+  function loadFlow() {
+    var pal = FLOW_PALETTES[currentPage()];
+    if (!pal) return;
+    if (document.getElementById('yy-flow')) return;
+    HTML.classList.add('yy-flow-case');
+    var cv = document.createElement('canvas');
+    cv.id = 'yy-flow';
+    cv.setAttribute('aria-hidden', 'true');
+    cv.setAttribute('data-yy-base', pal.base);
+    cv.setAttribute('data-yy-alt', pal.alt);
+    cv.setAttribute('data-yy-idle', pal.idle);
+    document.body.insertBefore(cv, document.body.firstChild);
+    if (document.querySelector('script[src*="yy-flow.js"]')) return;
+    var s = document.createElement('script');
+    s.src = ROOT + 'assets/js/yy-flow.js';
+    s.async = false;
+    (document.head || document.body || HTML).appendChild(s);
+  }
+
   /* Dark case pages keep a black ground through the credit row.
-     Whitelist by filename — body.blk is not present on every dark-looking page. */
+     Whitelist by filename — Opus + Alzheimer only. McKinsey is a light page
+     (body.blk was black-on-black with .paragraph = black). */
   var DARK_FOOTER = {
     'ai-driven-product-design.html': true,
-    'mckinseyecommerce.html': true
+    'alzheimerdisease.html': true
   };
 
   /* Light case + work-hub pages get the landing type/ink overlay.
@@ -120,11 +153,13 @@
   var typeBoot = '';
   if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
     HTML.className += ' yy-case-type';
-    /* Inline so black Webflow shells cannot flash or win on specificity
-       before yy-case-type.css arrives. */
-    typeBoot =
-      'html.yy-case-type,html.yy-case-type body' +
-      '{background-color:#fff!important;color:#242220!important}';
+    /* Work hub only: inline white ground before CSS loads. Case studies keep
+       Webflow-authored page colors (Lark blue wash, etc.). */
+    if (currentPage() === 'projects.html') {
+      typeBoot =
+        'html.yy-case-type,html.yy-case-type body' +
+        '{background-color:#fff!important;color:#242220!important}';
+    }
   }
 
   var boot = document.createElement('style');
@@ -215,7 +250,7 @@
     '  color: var(--yy-ink);',
     '  -webkit-font-smoothing: antialiased;',
     '}',
-    ':host(yy-nav.on-dark){',
+    ':host(yy-nav.on-dark) .cap{',
     '  --yy-ink: #f3f2ef;',
     '  --yy-ink-dim: rgba(243,242,239,.74);',
     '  --yy-fill: rgba(16,16,14,.58);',
@@ -226,9 +261,9 @@
     ':host(yy-nav.on-dark) .cap a[aria-current="page"],',
     ':host(yy-nav.on-dark) .cap button[aria-expanded="true"],',
     ':host(yy-nav.on-dark) .cap button[aria-current="location"]{ background: rgba(255,255,255,.14); }',
-    ':host(yy-nav.on-dark) .brand:hover,',
-    ':host(yy-nav.on-dark) .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
-    ':host(yy-nav.on-dark) .rule{ background: rgba(255,255,255,.22); }',
+    ':host(yy-nav.on-dark) .cap .brand:hover,',
+    ':host(yy-nav.on-dark) .cap .brand:focus-visible{ background: rgba(255,255,255,.1) !important; }',
+    ':host(yy-nav.on-dark) .cap .rule{ background: rgba(255,255,255,.22); }',
 
     /* ---- nav host: fixed, bottom-centred, below the preloader (10000) ----
        No transform here — a transformed host becomes a backdrop root and
@@ -375,8 +410,8 @@
     /* Orbit brand — animated disc that links home (replaces Caveat wordmark). */
     '.brand{',
     '  display: inline-flex !important; align-items: center; justify-content: center;',
-    '  width: 44px !important; height: 44px !important;',
-    '  padding: 4px !important; margin: 0 !important;',
+    '  width: 48px !important; height: 48px !important;',
+    '  padding: 6px !important; margin: 0 !important;',
     '  border-radius: 999px !important;',
     '  background: transparent !important;',
     '  color: transparent !important;',
@@ -385,7 +420,7 @@
     '}',
     '.brand:hover, .brand:focus-visible{ background: rgba(36,34,32,.055) !important; }',
     '.brand-orb{',
-    '  display: block; width: 24px; height: 24px;',
+    '  display: block; width: 36px; height: 36px;',
     '  border-radius: 50%; object-fit: contain;',
     '  pointer-events: none;',
     '}',
@@ -413,6 +448,12 @@
     '  display: flex; flex-direction: column; align-items: stretch;',
     '  box-sizing: border-box;',
     '  opacity: 0; visibility: hidden; pointer-events: none;',
+    '  /* Popups always light — never inherit the dark nav capsule tokens. */',
+    '  --yy-ink: #1a1917;',
+    '  --yy-ink-dim: #5b5a56;',
+    '  --yy-fill: rgba(255,255,255,.58);',
+    '  --yy-panel-full-fill: rgba(255,255,255,.92);',
+    '  color: var(--yy-ink);',
     '}',
     ':host(.is-open) .panel-stack{ opacity: 1; visibility: visible; pointer-events: auto; }',
     '.panel-stack.is-expanded{',
@@ -458,21 +499,20 @@
     '.panel-view--resume,',
     '.panel-view--about,',
     '.panel-view--work{ padding: 0; height: 100%; }',
-    /* Work cards are the glass (same recipe as .cap). A filled/blurred panel
-       becomes a backdrop root and makes those cards read as solid white. */
     '.panel.is-work{',
-    '  background: transparent;',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
-    '  box-shadow: none;',
-    '  contain: none;',
-    '  overflow: visible;',
+    '  background: var(--yy-fill);',
+    '  -webkit-backdrop-filter: blur(12px) saturate(1.6);',
+    '  backdrop-filter: blur(12px) saturate(1.6);',
+    '  box-shadow:',
+    '    inset 0 1px 0 rgba(255,255,255,.92),',
+    '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
+    '    inset 0 -1px 0 rgba(26,25,23,.05),',
+    '    0 5px 50px 5px rgba(0,0,0,.18);',
     '}',
     '.panel.is-work.is-expanded{',
-    '  background: transparent;',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
-    '  box-shadow: none;',
+    '  background: var(--yy-panel-full-fill);',
+    '  -webkit-backdrop-filter: blur(20px) saturate(1.35);',
+    '  backdrop-filter: blur(20px) saturate(1.35);',
     '}',
     'yy-resume-content,',
     'yy-about-content,',
@@ -548,8 +588,8 @@
     '@media (max-width: 560px){',
     '  .cap{ gap: 0; max-width: calc(100vw - 16px); }',
     '  .cap a, .cap button{ padding: 8px 12px; font-size: 13px; }',
-    '  .brand{ width: 40px !important; height: 40px !important; padding: 3px !important; }',
-    '  .brand-orb{ width: 20px; height: 20px; }',
+    '  .brand{ width: 44px !important; height: 44px !important; padding: 4px !important; }',
+    '  .brand-orb{ width: 30px; height: 30px; }',
     '  :host(.is-resume-nav) .cap{',
     '    max-width: calc(100vw - 16px);',
     '    overflow-x: auto;',
@@ -1345,6 +1385,7 @@
     try {
       mount();
       loadCursor();
+      loadFlow();
     } catch (e) {
       /* Hand the page back to its own chrome, intact, within a frame. */
       HTML.classList.remove('yy-chrome');
