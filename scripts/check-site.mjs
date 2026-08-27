@@ -728,6 +728,9 @@ for (const [file, label] of [
   if (!src.includes('data-yy-pending') || !src.includes('__yyStylesReady')) {
     errors.push(`${label} panel CE must hide until stylesheet ready (__yyStylesReady / data-yy-pending)`);
   }
+  if (!src.includes('Paint markup only after CSS')) {
+    errors.push(`${label} panel CE must defer HTML until stylesheet load (no unstyled FOUC)`);
+  }
 }
 if (!chromeJs.includes('function expandToFullpage()') ||
     !chromeJs.includes('if (closing || !active) return;')) {

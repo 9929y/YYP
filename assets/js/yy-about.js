@@ -119,6 +119,10 @@
       function done() {
         if (settled) return;
         settled = true;
+        /* Paint markup only after CSS applies — never show unstyled HTML. */
+        var shell = document.createElement('div');
+        shell.innerHTML = render();
+        while (shell.firstChild) shadow.appendChild(shell.firstChild);
         self.removeAttribute('data-yy-pending');
         resolve();
       }
@@ -127,9 +131,6 @@
       shadow.appendChild(sheet);
       try { if (sheet.sheet) done(); } catch (err) {}
     });
-    var shell = document.createElement('div');
-    shell.innerHTML = render();
-    while (shell.firstChild) shadow.appendChild(shell.firstChild);
     return self;
   }
 

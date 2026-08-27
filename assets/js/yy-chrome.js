@@ -199,6 +199,16 @@
     (document.head || HTML).appendChild(cursorSheet);
   }
 
+  /* Warm panel CE stylesheets so first Work/About/Resume open is not a CSS race. */
+  ['yy-work.css', 'yy-about.css', 'yy-resume.css'].forEach(function (file) {
+    if (document.querySelector('link[href*="' + file + '"][rel="preload"]')) return;
+    var preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'style';
+    preload.href = ROOT + 'assets/css/' + file;
+    (document.head || HTML).appendChild(preload);
+  });
+
   var sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = ROOT + 'assets/css/yy-chrome.css';
@@ -518,7 +528,11 @@
     'yy-work-content:not(:defined),',
     'yy-resume-content[data-yy-pending],',
     'yy-about-content[data-yy-pending],',
-    'yy-work-content[data-yy-pending]{ visibility: hidden; }',
+    'yy-work-content[data-yy-pending]{',
+    '  visibility: hidden;',
+    '  opacity: 0;',
+    '  pointer-events: none;',
+    '}',
     '.panel-kicker{',
     '  margin: 0 0 10px; color: var(--yy-ink-dim);',
     '  font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;',
