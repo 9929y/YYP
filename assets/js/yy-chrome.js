@@ -404,7 +404,7 @@
     '.panel-view{ min-height: 100%; box-sizing: border-box; padding: 72px clamp(24px,4vw,72px); }',
     '.panel-view--resume,',
     '.panel-view--about,',
-    '.panel-view--work{ padding: 0; }',
+    '.panel-view--work{ padding: 0; background: transparent; }',
     'yy-resume-content,',
     'yy-about-content,',
     'yy-work-content{ display: block; min-height: 100%; }',
