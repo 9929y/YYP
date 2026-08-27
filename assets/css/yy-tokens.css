@@ -119,7 +119,7 @@
     --lh-caption: 1.45;
 
     /* ---- light / neutral ---- */
-    --ink: #1a1917;
+    --ink: #242220;
     --ink-2: #55534e;
     --ink-3: #6d6a63;   /* 5.18:1 on --ground; #8a877f was 3.44:1 */
     /* #fff, not the reference's off-white. Measured: the 9 light case pages all

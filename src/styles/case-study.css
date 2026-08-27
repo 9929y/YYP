@@ -22,7 +22,7 @@ html.yy-case body {
 /* Case studies use the same ink scale as the landing (warm dark grey, not
    pure black, not inverted white-on-black). data-theme is kept for markup. */
 .cs[data-theme="dark"] {
-  --ink: #1a1917;
+  --ink: #242220;
   --ink-2: #55534e;
   --ink-3: #6d6a63;
   --ground: #fff;

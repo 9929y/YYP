@@ -637,8 +637,8 @@ if (!chromeJs.includes('/* Popup always keeps main Navigation') ||
     !chromeJs.includes("if (active === 'resume') enterResumeNav()")) {
   errors.push('yy-chrome.js must keep main nav on Resume popup and enter section nav only on expand');
 }
-if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }') ||
-    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(26,25,23,.075); font-weight: 600; }')) {
+if (!chromeJs.includes('.cap button[aria-expanded="true"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }') ||
+    !chromeJs.includes('.cap a[aria-current="page"]{ color: var(--yy-ink); background: rgba(36,34,32,.075); font-weight: 600; }')) {
   errors.push('yy-chrome.js capsule must show a selected pill for active nav items');
 }
 if (chromeJs.includes('width: 36px; height: 36px;') &&

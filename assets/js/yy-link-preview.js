@@ -97,7 +97,7 @@
       'pointer-events:none',
       'border-radius:14px',
       'overflow:hidden',
-      'box-shadow:0 18px 40px -16px rgba(26,25,23,.45),0 0 0 1px rgba(255,255,255,.7)',
+      'box-shadow:0 18px 40px -16px rgba(36,34,32,.45),0 0 0 1px rgba(255,255,255,.7)',
       'background:#fff',
       'padding:4px',
       'box-sizing:content-box',
