@@ -1,5 +1,5 @@
 /* projects.css — Astro projects hub + cylinder carousel + pointer orbit.
-   Tokens from yy-tokens.css. Card faces mirror yy-nav glass capsule. */
+   Tokens from yy-tokens.css. Sharp photo faces; panel blurs the page behind. */
 
 html.yy-projects {
   background: var(--ground);
@@ -50,7 +50,7 @@ html.yy-projects body {
 .projects-stage {
   max-width: none;
   margin: 0 auto;
-  padding: 48px 0;
+  padding: 32px 0 56px;
   overflow: visible;
 }
 
@@ -59,12 +59,11 @@ html.yy-projects body {
 .yy-projects-carousel {
   position: relative;
   width: 100%;
-  height: min(72vh, 640px);
-  min-height: 560px;
+  height: min(78vh, 760px);
+  min-height: 620px;
   overflow: visible;
   touch-action: none;
   overscroll-behavior: none;
-  /* Keep the site cursor — do not force grab/grabbing. */
   cursor: inherit;
   user-select: none;
   -webkit-user-select: none;
@@ -72,7 +71,7 @@ html.yy-projects body {
 
 .yy-projects-carousel[data-embed='panel'] {
   height: 100%;
-  min-height: min(52vh, 420px);
+  min-height: min(68vh, 560px);
   flex: 1 1 auto;
 }
 
@@ -86,8 +85,7 @@ html.yy-projects body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  /* Stronger FOV than flat CSS default — drum projection read. */
-  perspective: 780px;
+  perspective: 900px;
   transform-style: preserve-3d;
   will-change: transform;
   background: transparent;
@@ -95,7 +93,7 @@ html.yy-projects body {
 }
 
 .yy-projects-carousel[data-embed='panel'] .yy-projects-carousel__stage {
-  perspective: 720px;
+  perspective: 860px;
 }
 
 .yy-projects-carousel__cylinder {
@@ -123,30 +121,34 @@ html.yy-projects body {
   -webkit-backface-visibility: visible;
 }
 
-/* Soft float — gated by .is-floating so entrance fan stays clip-free. */
 .yy-projects-card-float {
   position: relative;
   z-index: 1;
   transform-style: preserve-3d;
   will-change: transform;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .yy-projects-card-float.is-floating {
   animation: yy-card-float 5.6s ease-in-out infinite;
 }
 
+.yy-projects-card-float:has(.yy-projects-card:hover),
+.yy-projects-card-float:has(.yy-projects-card:focus-visible) {
+  animation-play-state: paused;
+  z-index: 4;
+}
+
 @keyframes yy-card-float {
   0%,
   100% {
-    transform: translateY(4px) rotateY(-3deg);
+    transform: translateY(3px);
   }
   50% {
-    transform: translateY(-5px) rotateY(3deg);
+    transform: translateY(-6px);
   }
 }
 
-/* Ground shadow — top-light oval under the floating plate. */
 .yy-projects-card-shadow {
   position: absolute;
   left: 50%;
@@ -175,7 +177,6 @@ html.yy-projects body {
     filter: blur(9px);
   }
   50% {
-    /* Card rises → softer, larger, more transparent shadow */
     opacity: 0.32;
     transform: translate(-50%, 62%) scale(1.08) scaleY(0.32);
     filter: blur(14px);
@@ -197,14 +198,18 @@ html.yy-projects body {
     transform: translate(-50%, 58%) scaleY(0.35);
     filter: blur(10px);
   }
+
+  .yy-projects-card {
+    transition: none !important;
+  }
 }
 
-/* ---------- capsule photo faces + frost overlay ---------- */
+/* ---------- capsule photo faces (sharp imagery, no backdrop blur) ---------- */
 
 .yy-projects-card {
   --sheen-angle: 145deg;
   --sheen-x: 50%;
-  --card-radius: 36%;
+  --card-radius: 28%;
   position: relative;
   display: block;
   aspect-ratio: 3 / 4;
@@ -214,8 +219,28 @@ html.yy-projects body {
   border-radius: var(--card-radius);
   box-sizing: border-box;
   background: transparent;
+  color: inherit;
+  text-decoration: none;
   transform-style: preserve-3d;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  outline: none;
+}
+
+.yy-projects-card[data-has-href='false'] {
+  cursor: default;
+}
+
+.yy-projects-card:hover,
+.yy-projects-card:focus-visible {
+  transform: translateZ(36px) scale(1.07);
+}
+
+.yy-projects-card:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 0 0 4px rgba(62, 65, 116, 0.45);
 }
 
 .yy-projects-card__plate,
@@ -228,11 +253,10 @@ html.yy-projects body {
   pointer-events: none;
 }
 
-/* Quiet white bed — keeps frost readable when no cover. */
 .yy-projects-card__plate {
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.5);
   transform: translateZ(0);
-  box-shadow: 0 10px 28px -14px rgba(26, 25, 23, 0.2);
+  box-shadow: 0 14px 36px -16px rgba(26, 25, 23, 0.35);
   overflow: hidden;
 }
 
@@ -243,28 +267,29 @@ html.yy-projects body {
   object-position: center;
   display: block;
   transform: translateZ(0.5px);
+  /* Keep photos sharp — never filter/blur the image. */
+  filter: none;
 }
 
-/* Frost overlay — lighter when a cover is present so imagery reads. */
+/* Rim + sheen only — no backdrop-filter (that was blurring covers). */
 .yy-projects-card__glass {
   background:
     linear-gradient(
-      var(--sheen-angle),
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(255, 255, 255, 0.22) 38%,
-      rgba(255, 255, 255, 0.1) 68%,
-      rgba(255, 255, 255, 0.06) 100%
+      to top,
+      rgba(26, 25, 23, 0.55) 0%,
+      rgba(26, 25, 23, 0.12) 28%,
+      rgba(26, 25, 23, 0) 52%
     ),
-    rgba(255, 255, 255, 0.28);
-  -webkit-backdrop-filter: blur(6px) saturate(1.35);
-  backdrop-filter: blur(6px) saturate(1.35);
+    linear-gradient(
+      var(--sheen-angle),
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0) 70%
+    );
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
-    0 1px 2px rgba(62, 65, 116, 0.07),
-    0 2px 8px -2px rgba(62, 65, 116, 0.09),
-    0 12px 36px -8px rgba(62, 65, 116, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 12px 36px -10px rgba(26, 25, 23, 0.28);
   transform: translateZ(1.5px);
 }
 
@@ -278,8 +303,6 @@ html.yy-projects body {
       rgba(255, 255, 255, 0.22) 100%
     ),
     rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(12px) saturate(1.6);
-  backdrop-filter: blur(12px) saturate(1.6);
 }
 
 .yy-projects-card__glass::after {
@@ -293,36 +316,55 @@ html.yy-projects body {
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.08) 45%,
     rgba(255, 255, 255, 0) 72%
   );
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .yy-projects-card__glass {
-    background:
-      linear-gradient(
-        var(--sheen-angle),
-        rgba(255, 255, 255, 0.7) 0%,
-        rgba(255, 255, 255, 0.4) 45%,
-        rgba(255, 255, 255, 0.28) 100%
-      ),
-      rgba(255, 255, 255, 0.45);
-  }
+.yy-projects-card__meta {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 12%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transform: translateZ(2px);
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 0.28s ease,
+    translate 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  text-align: left;
+}
 
-  .yy-projects-card[data-has-cover='false'] .yy-projects-card__glass {
-    background:
-      linear-gradient(
-        var(--sheen-angle),
-        rgba(255, 255, 255, 0.94) 0%,
-        rgba(255, 255, 255, 0.78) 45%,
-        rgba(255, 255, 255, 0.7) 100%
-      ),
-      rgba(255, 255, 255, 0.92);
-  }
+.yy-projects-card:hover .yy-projects-card__meta,
+.yy-projects-card:focus-visible .yy-projects-card__meta {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.yy-projects-card__title {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.yy-projects-card__scope {
+  font-size: clamp(10px, 1vw, 12px);
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* ---------- static / reduced-motion fallback ---------- */
@@ -358,8 +400,8 @@ html.yy-projects body {
 
 @media (max-width: 640px) {
   .yy-projects-carousel {
-    height: min(64vh, 520px);
-    min-height: 440px;
+    height: min(70vh, 580px);
+    min-height: 480px;
   }
 
   .projects-hero {
@@ -367,6 +409,6 @@ html.yy-projects body {
   }
 
   .projects-stage {
-    padding: 32px 0;
+    padding: 24px 0 40px;
   }
 }

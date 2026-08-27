@@ -13,7 +13,8 @@ const cards = projects.map((p, i) => {
     scope: p.scope,
     tone: i,
     coverSrc: coverSrc ? publicUrl(coverSrc) : undefined,
-    coverAlt: p.cover?.alt ?? p.title
+    coverAlt: p.cover?.alt ?? p.title,
+    href: p.href ? publicUrl(p.href) : null
   };
 });
 ---

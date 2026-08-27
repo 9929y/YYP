@@ -461,12 +461,12 @@
     '}',
     /* Work cards are the glass (same recipe as .cap). A filled/blurred panel
        becomes a backdrop root and makes those cards read as solid white. */
-    /* Work stage needs a readable frame; keep fill non-backdrop so card frost
-       is not flattened into a solid milky slab. */
+    /* Work: blur the page behind the panel. Card photos stay sharp
+       (no backdrop-filter on covers). */
     '.panel.is-work{',
-    '  background: rgba(255,255,255,.72);',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
+    '  background: rgba(255,255,255,.52);',
+    '  -webkit-backdrop-filter: blur(22px) saturate(1.25);',
+    '  backdrop-filter: blur(22px) saturate(1.25);',
     '  box-shadow:',
     '    inset 0 1px 0 rgba(255,255,255,.92),',
     '    inset 0 0 0 1.5px rgba(255,255,255,.82),',
@@ -475,9 +475,9 @@
     '  overflow: visible;',
     '}',
     '.panel.is-work.is-expanded{',
-    '  background: rgba(255,255,255,.88);',
-    '  -webkit-backdrop-filter: none;',
-    '  backdrop-filter: none;',
+    '  background: rgba(255,255,255,.62);',
+    '  -webkit-backdrop-filter: blur(28px) saturate(1.3);',
+    '  backdrop-filter: blur(28px) saturate(1.3);',
     '  box-shadow:',
     '    inset 0 0 0 1.5px rgba(255,255,255,.96),',
     '    inset 0 1px 0 rgba(255,255,255,.96);',
@@ -937,9 +937,13 @@
       return closing ? [large, small] : [small, large];
     }
 
-    function announcePanelState(expanded, open) {
+    function announcePanelState(expanded, open, panelName) {
       window.dispatchEvent(new CustomEvent('yy:panel-state', {
-        detail: { expanded: expanded, open: open }
+        detail: {
+          expanded: expanded,
+          open: open,
+          panel: panelName || active || ''
+        }
       }));
     }
 
@@ -1004,7 +1008,7 @@
       expand.hidden = false;
       expand.setAttribute('aria-label', 'View full screen');
       expand.setAttribute('aria-pressed', 'false');
-      announcePanelState(false, true);
+      announcePanelState(false, true, name);
       host.classList.add('is-open');
       restoreViewScroll(name);
       var targetView = viewFor(name);
@@ -1030,7 +1034,7 @@
       saveViewScroll(former);
       clearFullpageUrl();
       HTML.classList.remove('yy-panel-open');
-      announcePanelState(false, false);
+      announcePanelState(false, false, former);
       setBackgroundInert(false);
       leaveResumeNav();
       var target = returnFocus || lastOpener || triggerFor(former);
@@ -1069,6 +1073,7 @@
         }
       }
       restoreViewScroll(name);
+      announcePanelState(panel.classList.contains('is-expanded'), true, name);
       var next = viewFor(name);
       if (next && !reduced && next.animate) {
         next.animate(
@@ -1110,7 +1115,7 @@
 
       var before = panel.getBoundingClientRect();
       leaveResumeNav();
-      announcePanelState(false, false);
+      announcePanelState(false, false, former);
       HTML.classList.remove('yy-panel-open');
       setBackgroundInert(false);
       panel.setAttribute('aria-modal', 'false');
@@ -1170,7 +1175,7 @@
       setExpandedChrome(true);
       setBackgroundInert(true);
       panel.setAttribute('aria-modal', 'false');
-      announcePanelState(true, true);
+      announcePanelState(true, true, active);
       expand.hidden = true;
       expand.setAttribute('aria-pressed', 'true');
       if (active === 'resume') enterResumeNav();
