@@ -196,33 +196,30 @@
   color: #d4d4d4;
 }
 
-/* ---------- glass cards ----------
-   `--case-radius` (landing `--slot-radius` 36px) is only for HTML cards.
-   Exported composites already have their own corners, shadows, and canvas
-   painted in the file. Rounding them again plus overflow:hidden clips the
-   baked background, fills the leftover with white, and squares the drop
-   shadow — the same bug as homepage slots. */
+/* ---------- HTML cards only ----------
+   `--case-radius` is for inner HTML cards (Lark 01–06, McKinsey Takeaways).
+   Do not paint a glass fill over them: Lark sits on `.backgroundcolor` /
+   `.thechallenge.lark` washes, and McKinsey already has its own shadow.
+   Bitmaps (hero collages, 9-up screens, touchpoints maps) already include
+   their own cards, colors, and corners — never round or tint those files. */
 .shadow-card,
 .step-card-2 {
   box-sizing: border-box;
   border-radius: var(--case-radius);
-  background: rgba(255, 255, 255, 0.58);
-  -webkit-backdrop-filter: blur(12px) saturate(1.6);
-  backdrop-filter: blur(12px) saturate(1.6);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
-    inset 0 -1px 0 rgba(26, 25, 23, 0.05),
-    0 1px 2px rgba(62, 65, 116, 0.07),
-    0 2px 8px -2px rgba(62, 65, 116, 0.09),
-    0 12px 36px -8px rgba(62, 65, 116, 0.20);
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .shadow-card,
-  .step-card-2 {
-    background: rgba(255, 255, 255, 0.94);
-  }
+.shadow-card {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 8% 8% 5%;
+  box-shadow: -6px -6px 20px #0003, 6px 6px 20px 6px #14141433;
 }
 
 .step-card-2,
@@ -278,16 +275,6 @@
   }
 }
 
-.shadow-card {
-  height: 100%;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  padding: 28px 28px 32px;
-}
-
 .shadow-card .heading--slide {
   margin: 0;
   padding: 0 0 12px;
@@ -302,20 +289,20 @@
   grid-row-gap: 16px;
 }
 
-/* Keep exported mockups on their authored corners. `.grid-img` stays at the
-   Webflow 20px radius (not 36px). Composites stay 0. Never clip the shadow. */
+/* Background / composite images: no site radius. `.grid-img` is 20px in
+   Webflow; that still clips the painted canvas, so force 0. */
 .lightbox-link-4,
 .lightbox-link-4 img,
 .containerforimg img,
 .containerforimg2 img,
+.showroom img,
+.div-block-37 img,
+.layout125_component img,
 .image-15,
 .image-17,
-.image-18 {
+.image-18,
+.grid-img {
   border-radius: 0;
   overflow: visible;
   background: transparent;
-}
-
-.grid-img {
-  overflow: visible;
 }

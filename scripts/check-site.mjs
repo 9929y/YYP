@@ -360,9 +360,9 @@ if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
 if (
   !caseLayoutCss.includes('.shadow-card') ||
   !caseLayoutCss.includes('.step-card-2') ||
-  !caseLayoutCss.includes('backdrop-filter')
+  !caseLayoutCss.includes('background: transparent')
 ) {
-  errors.push('yy-case-layout.css must glass-style McKinsey and Lark cards');
+  errors.push('yy-case-layout.css must not glass-fill HTML cards over page washes');
 }
 if (
   !caseLayoutCss.includes('grid-template-rows: 1fr 1fr') ||
@@ -381,9 +381,12 @@ if (
   !caseLayoutCss.includes('.shadow-card') ||
   !caseLayoutCss.includes('.step-card-2')
 ) {
-  errors.push('yy-case-layout.css must keep --case-radius on HTML glass cards');
+  errors.push('yy-case-layout.css must keep --case-radius on HTML cards only');
 }
-if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('overflow: visible')) {
+if (!caseLayoutCss.includes('.grid-img') || !caseLayoutCss.includes('border-radius: 0')) {
+  errors.push('yy-case-layout.css must not round exported images including .grid-img');
+}
+if (!caseLayoutCss.includes('overflow: visible')) {
   errors.push('yy-case-layout.css must leave exported composites unclipped (overflow: visible)');
 }
 if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
