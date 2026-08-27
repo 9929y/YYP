@@ -1266,7 +1266,7 @@
         '<a class="brand" href="index.html" aria-label="Yanice Yang home"' +
           (here === 'index.html' ? ' aria-current="page"' : '') + '>' +
           '<img class="brand-orb" src="' + esc(ROOT + 'assets/images/ui/nav-orb.gif') +
-            '" alt="" width="16" height="16" decoding="async">' +
+            '?v=15" alt="" width="16" height="16" decoding="async">' +
         '</a>' +
         '<span class="rule" aria-hidden="true"></span>' +
         NAV.map(panelTrigger).join('') +
