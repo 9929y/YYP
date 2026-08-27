@@ -138,6 +138,7 @@ html.yy-reveal .rv.in {
    filter region. Keep opacity/transform on the card; blur the inner clip. */
 html.yy-reveal .slot.rv {
   filter: none;
+  will-change: opacity, transform;
 }
 html.yy-reveal .slot.rv .slot__media {
   filter: blur(var(--blur-medium));
