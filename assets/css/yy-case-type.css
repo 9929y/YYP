@@ -162,6 +162,15 @@ html.yy-case-type .body-display-2.light {
   color: var(--ink-3) !important;
 }
 
+/* Dark heroes (Cummins `.blk`, navy McKinsey, white-on-dark intros): pale
+   white disclaimer — yy-case-type --ink-3 is unreadable on charcoal grounds. */
+html.yy-case-type .body-display-2.light.blk,
+html.yy-case-type .grid-wrapper-5.cmi .body-display-2.light,
+html.yy-case-type .grid-wrapper-5.mck .body-display-2.light,
+html.yy-case-type .hero-intro-2.text-color-white .body-display-2.light {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
 /* ---- projects hub cards ------------------------------------------------- */
 html.yy-case-type .text-gradient-name {
   font-size: var(--t-20) !important;
