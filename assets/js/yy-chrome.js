@@ -219,7 +219,6 @@
     '  --yy-ink: #f3f2ef;',
     '  --yy-ink-dim: rgba(243,242,239,.74);',
     '  --yy-fill: rgba(16,16,14,.58);',
-    '  --yy-panel-fill: rgba(16,16,14,.70);',
     '  --yy-hair: rgba(255,255,255,.22);',
     '}',
     ':host(yy-nav.on-dark) .cap a:hover,',
