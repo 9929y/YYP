@@ -16,6 +16,34 @@
    sections a single stacked line: heading, copy, then media, all the same width.
    ============================================================================ */
 
+/* ---------- page gutter: align outer frame to site --edge --------------------
+   Webflow authored .section-layout1 as 5% / 15% (≥1280) / 0% (≤479). Overlay
+   only the outer horizontal padding so cases share Landing's --edge (10vw /
+   20px ≤560). Nested image/container paddings stay as authored composition.
+   Do not put these rules in yy-case-type.css (fonts + vertical spacing only).
+   --------------------------------------------------------------------------- */
+.section-layout1,
+.section-layout1._12 {
+  padding-left: var(--edge);
+  padding-right: var(--edge);
+}
+
+@media screen and (min-width: 1280px) {
+  .section-layout1,
+  .section-layout1._12 {
+    padding-left: var(--edge);
+    padding-right: var(--edge);
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .section-layout1,
+  .section-layout1._12 {
+    padding-left: var(--edge);
+    padding-right: var(--edge);
+  }
+}
+
 /* ---------- two-column: keep the original grids on desktop ---------- */
 @media screen and (min-width: 992px) {
   .layout125_component:not(.b1):not(.live) {
