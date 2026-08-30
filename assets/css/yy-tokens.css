@@ -18,8 +18,8 @@
      877   landing two-column collapse
      768   case-note static copy on coarse pointers
      767   type step (hero 40 -> 64)
-     560   chrome capsule / landing edge
-     479   Webflow mobile
+     560   chrome capsule / site --edge phone lock (20px)
+     479   Webflow mobile (legacy; outer case gutter uses --edge)
    ============================================================================ */
 
 @font-face {
@@ -130,7 +130,9 @@
     --col-gap: 17px;
     --col-gap-case: 8px;
     --col-content: 492px;
-    --edge: 24px;
+    /* Site-wide page gutter (Landing + Astro cases + chrome panels +
+       Webflow .section-layout1 overlay). Phone locks to 20px below. */
+    --edge: 10vw;
     --rule: #e9e9e9;
     --slot-radius: 36px;
     /* HTML case cards only. Exported images keep their own corners. */
@@ -170,3 +172,9 @@
     --hair: #e4e1dc;
     --slot: #efece8;
   }
+
+@media (max-width: 560px) {
+  :root {
+    --edge: 20px;
+  }
+}
