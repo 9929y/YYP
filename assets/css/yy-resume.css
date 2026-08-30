@@ -32,7 +32,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 0 clamp(20px, 5vw, 72px) 96px;
+  padding: 0 var(--edge) 96px;
 }
 
 .resume-grid {
@@ -313,7 +313,7 @@
 }
 
 @media (max-width: 560px) {
-  .resume { padding: 0 20px 96px; }
+  .resume { padding: 0 var(--edge) 96px; }
   .resume__name { font-size: var(--t-40); }
   .resume-job__header { grid-template-columns: 1fr; gap: 6px; }
   .resume-section__body { gap: 18px; }
