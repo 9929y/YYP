@@ -11,10 +11,17 @@
  *   · copies `assets/` into `dist/` at build time, skipping any `-p-<width>`
  *     responsive variant that nothing in the repo actually references.
  *
- * The variant filter is why srcset strings must stay literal in the source. A
- * srcset built by concatenation (`${DIR}/photo-p-${w}.webp`) contains no
- * matchable path, so those variants are silently left out of `dist/` and the
- * browser falls back to the full-size file.
+ * A page may build its srcset from a directory constant, so the full path never
+ * appears literally anywhere: `${IMG}/photo-p-800.webp` puts only the FILENAME
+ * in the source text. Matching on the filename as well as the full path is what
+ * keeps those variants shippable. This cost a live bug once — the whole
+ * Alzheimer image set 404'd in `dist/` while every path looked right in source,
+ * because a srcset candidate that 404s does not fall back to `src`; the image
+ * simply fails at that viewport width. check-site.mjs now walks srcset for
+ * exactly this.
+ *
+ * The filename is only ever used to KEEP a file, never to drop one, so a
+ * coincidental match costs a few kilobytes and can never de-ship anything.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -65,16 +72,19 @@ function walkFiles(dir, out = []) {
 }
 
 function referencedAssets() {
-  const refs = new Set();
-  const re = /(?:^|["'(\s,])(\/?assets\/[^"' )\s,]+)/g;
+  const paths = new Set();
+  const names = new Set();
+  const pathRe = /(?:^|["'(\s,])(\/?assets\/[^"' )\s,]+)/g;
+  const nameRe = /([\w-]+-p-\d+\.(?:webp|png|jpe?g))/gi;
   for (const file of walkFiles(ROOT)) {
     if (!TEXT_SCAN.has(path.extname(file).toLowerCase())) continue;
     let text;
     try { text = fs.readFileSync(file, 'utf8'); } catch { continue; }
     let m;
-    while ((m = re.exec(text))) refs.add(m[1].replace(/^\//, '').replace(/\\/g, '/'));
+    while ((m = pathRe.exec(text))) paths.add(m[1].replace(/^\//, '').replace(/\\/g, '/'));
+    while ((m = nameRe.exec(text))) names.add(m[1]);
   }
-  return refs;
+  return { paths, names };
 }
 
 function copyAssetsFiltered(src, dest, refs) {
@@ -87,7 +97,8 @@ function copyAssetsFiltered(src, dest, refs) {
       continue;
     }
     const rel = path.relative(ROOT, from).replace(/\\/g, '/');
-    if (VARIANT_RE.test(entry.name) && !refs.has(rel)) continue;
+    const referenced = refs.paths.has(rel) || refs.names.has(entry.name);
+    if (VARIANT_RE.test(entry.name) && !referenced) continue;
     fs.copyFileSync(from, to);
   }
 }

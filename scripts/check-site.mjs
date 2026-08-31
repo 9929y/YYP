@@ -57,6 +57,21 @@ function checkHtmlFile(file, baseDir, optionalMissing, knownGenerated) {
   let m;
   while ((m = re.exec(html))) refs.push(m[1]);
 
+  /* srcset candidates count as references. They were unchecked until a whole
+     case study's responsive variants 404'd in dist while every `src` resolved:
+     the page built its srcset from a directory constant, so the full paths never
+     appeared literally in source and the asset filter left the variants behind.
+     A srcset candidate that 404s does not fall back to `src` — the browser just
+     fails to paint the image at that viewport width, which is invisible until
+     someone loads the page at exactly the wrong size. */
+  const srcsetRe = /\bsrcset=["']([^"']+)["']/g;
+  while ((m = srcsetRe.exec(html))) {
+    for (const candidate of m[1].split(',')) {
+      const url = candidate.trim().split(/\s+/)[0];
+      if (url) refs.push(url);
+    }
+  }
+
   for (const ref of refs) {
     if (!ref || ref.startsWith('#') || ref.startsWith('mailto:') || ref.startsWith('tel:')) continue;
     if (/^https?:\/\//.test(ref) || ref.startsWith('data:') || ref.startsWith('//')) continue;
