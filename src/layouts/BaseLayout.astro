@@ -22,6 +22,15 @@ const {
 } = Astro.props;
 
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+
+/* The hand-managed assets/ layer is served under stable, unhashed names, so a
+   browser can hold a stale copy of one file while receiving page CSS that
+   depends on the new one. `?v=` moves the whole set to a new URL whenever any
+   of it changes, which is the only thing that bypasses a cache entry that is
+   still "fresh" under the header it was served with. Set by
+   scripts/assets-passthrough.mjs. */
+const v = import.meta.env.PUBLIC_ASSET_V;
+const q = v ? `?v=${v}` : '';
 const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).join(' ');
 ---
 <!DOCTYPE html>
@@ -44,22 +53,22 @@ const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).joi
     </style>
     <link rel="preload" href="/assets/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/assets/fonts/plus-jakarta-sans-600.woff2" as="font" type="font/woff2" crossorigin />
-    <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/yy-motion.css" rel="stylesheet" type="text/css" />
+    <link href={`/assets/css/yy-tokens.css${q}`} rel="stylesheet" type="text/css" />
+    <link href={`/assets/css/yy-motion.css${q}`} rel="stylesheet" type="text/css" />
     {chrome && (
       <>
-        <link href="/assets/css/yy-chrome.css" rel="stylesheet" type="text/css" />
-        <link href="/assets/css/yy-cursor.css" rel="stylesheet" type="text/css" />
+        <link href={`/assets/css/yy-chrome.css${q}`} rel="stylesheet" type="text/css" />
+        <link href={`/assets/css/yy-cursor.css${q}`} rel="stylesheet" type="text/css" />
       </>
     )}
     <slot name="head" />
-    {chrome && <script is:inline defer src="/assets/js/yy-chrome.js"></script>}
-    {reveal && <script is:inline defer src="/assets/js/yy-reveal.js"></script>}
+    {chrome && <script is:inline defer src={`/assets/js/yy-chrome.js${q}`}></script>}
+    {reveal && <script is:inline defer src={`/assets/js/yy-reveal.js${q}`}></script>}
     {lenis && (
       <>
-        <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
-        <script is:inline defer src="/assets/js/lenis.min.js"></script>
-        <script is:inline defer src="/assets/js/yy-scroll.js"></script>
+        <link href={`/assets/css/lenis.css${q}`} rel="stylesheet" type="text/css" />
+        <script is:inline defer src={`/assets/js/lenis.min.js${q}`}></script>
+        <script is:inline defer src={`/assets/js/yy-scroll.js${q}`}></script>
       </>
     )}
   </head>

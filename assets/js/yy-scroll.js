@@ -20,7 +20,6 @@
        ai-driven-product-design  11/11 stuck 0    11/11 stuck 0
        cummins-digitalization     7/7  stuck 0     7/7  stuck 0
        alzheimerdisease           7/7  stuck 0     7/7  stuck 0
-       tiktok-research            2/2  stuck 0     2/2  stuck 0
        index                      6/6  stuck 0     6/6  stuck 0
 
    Identical on every page. An earlier version of that gate compared

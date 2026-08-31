@@ -245,17 +245,6 @@
 | `wireframe-grayscale-ui-component-wireframes.webp` | 灰阶线框组件表：占位图标、月/日滚轮选择器与 CONFIRM 按钮、时间条目列表与新增按钮、表示工作时段的圆形时钟饼图、 | 界面展示 —— Prototype Process 章节展示成品前的中低保真组件设计 |  |
 | `wireframe-hand-drawn-ux-deliverable-sketches.webp` | 翻拍照片：白纸上铅笔手绘的一组界面草图与流程连线——多个带打叉占位图的卡片框、列表页、表单页与箭头串联的跳转关系；照片严 | 流程说明 —— .background.al3 / .div-block-8 区块用于呈 |  |
 
-## `tiktok/` — TikTok 安全策略调研
-
-7 张原图 · 11 个变体 · 0.8 MB
-
-| 文件 | 是什么 | 在页面里做什么 | |
-|---|---|---|---|
-| `chart-reasons-for-not-sharing-videos-female-vs-all.webp` | 分组条形图（黄色 Female / 灰色 All）：用户不愿分享视频的原因排序，前四位为「觉得不值得分享」「担心收到不友 | 数据支撑 —— 用调研数据证明女性用户的顾虑显著高于整体 |  |
-| `chart-unsafe-content-types-female-vs-all.webp` | 分组条形图（黄色 Female / 灰色 All）：用户遇到的不安全内容类型分布，依次为网络霸凌、色情低俗、仇恨言论、自 | 数据支撑 —— 说明女性用户实际遭遇的有害内容类型，指向安全策略优先级 |  |
-| `hero-egypt-female-safety-perception-title.webp` | TikTok 埃及市场调研的标题图：左侧为线描风格的戴头巾女性侧脸轮廓，配灰调与暖沙色渐变流线背景，右侧大字标题 Egy | 英雄图 —— 作为埃及女性用户安全感知调研章节的开篇视觉 |  |
-| `hero-tiktok-safety-strategy-cover.webp` | 案例封面图：右侧标题「TikTok Safety Strategy Exploration」，左侧扁平插画为一名低头双手 | 英雄图 —— TikTok 安全策略案例的封面图（.background-2.tikto |  |
-
 ## `home/` — 首页
 
 6 张原图 · 0 个变体 · 0.6 MB

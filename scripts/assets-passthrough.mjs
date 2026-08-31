@@ -23,11 +23,43 @@
  * The filename is only ever used to KEEP a file, never to drop one, so a
  * coincidental match costs a few kilobytes and can never de-ship anything.
  */
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = process.cwd();
+
+/**
+ * One version string for the WHOLE shared asset layer.
+ *
+ * `assets/css/*` and `assets/js/*` are hand-managed and served under stable,
+ * unhashed names, and BaseLayout links five of them on every route. That made
+ * them cacheable but not updatable: a visitor could hold a week-old
+ * yy-tokens.css while receiving freshly-hashed page CSS that depends on it.
+ * That is not hypothetical — renaming the type tokens did exactly this and
+ * collapsed every page to a flat 16px, because an undefined custom property
+ * invalidates the whole declaration and fails silently.
+ *
+ * Deliberately ONE hash over all of them rather than one per file. These files
+ * reference each other's custom properties, so what matters is that they move
+ * in lockstep; per-file versions would still allow a new yy-tokens.css to meet
+ * an old yy-case-type.css, which breaks just as hard in the other direction.
+ * They total a few tens of KB, so re-fetching the set is cheap.
+ */
+function sharedAssetVersion() {
+  const hash = crypto.createHash('sha256');
+  for (const dir of ['assets/css', 'assets/js']) {
+    const full = path.join(ROOT, dir);
+    if (!fs.existsSync(full)) continue;
+    for (const name of fs.readdirSync(full).sort()) {
+      if (!/\.(css|js)$/.test(name)) continue;
+      hash.update(`${dir}/${name}`);
+      hash.update(fs.readFileSync(path.join(full, name)));
+    }
+  }
+  return hash.digest('hex').slice(0, 8);
+}
 
 function mime(file) {
   return {
@@ -110,6 +142,10 @@ export default function assetsPassthrough() {
       'astro:config:setup'({ updateConfig }) {
         updateConfig({
           vite: {
+            /* Baked into the HTML at build time; see sharedAssetVersion(). */
+            define: {
+              'import.meta.env.PUBLIC_ASSET_V': JSON.stringify(sharedAssetVersion())
+            },
             plugins: [
               {
                 name: 'serve-workspace-assets',

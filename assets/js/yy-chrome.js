@@ -2,10 +2,10 @@
    yy-chrome.js — the shared chrome layer: one nav + one footer, all 12 pages.
 
    WHY THIS FILE EXISTS
-   Every page currently carries its own copy of the nav and footer markup, and
-   those copies have drifted. Measured example: index.html and projects.html
-   point the resume icon at hello.cv, while the seven case pages point that
-   same "Resume"-labelled icon at Instagram. One component, one link set.
+   The nav and footer used to be copied into every page's markup, and the copies
+   had drifted — different pages pointed the same "Resume" icon at different
+   destinations. This builds both from one definition instead, so there is one
+   component and one link set for the whole site.
 
    HOW IT LOADS
    Synchronous script in <head>. It stamps `html.yy-chrome`, injects two hide
@@ -30,6 +30,13 @@
   /* Derive asset paths from our own URL rather than assuming repo root, so a
      page moved into a subdirectory keeps working. */
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-chrome\.js.*$/, '') : '';
+  /* Carry our own ?v= onto every asset we inject, so the whole shared layer
+     moves as one version. Without this, a page could load a versioned
+     yy-tokens.css from the HTML and an UNversioned yy-case-type.css from here —
+     the two reference each other's custom properties, so a mismatch silently
+     voids font-size rules. BaseLayout stamps the query; we just pass it on. */
+  var VER = (SRC.match(/[?&]v=([^&]*)/) || ['', ''])[1];
+  var Q = VER ? '?v=' + VER : '';
 
   function currentPage() {
     var last = location.pathname.split('/').pop();
@@ -64,7 +71,7 @@
   function loadCursor() {
     if (document.querySelector('script[src*="yy-cursor.js"]')) return;
     var s = document.createElement('script');
-    s.src = ROOT + 'assets/js/yy-cursor.js';
+    s.src = ROOT + 'assets/js/yy-cursor.js' + Q;
     s.async = false;
     (document.head || document.body || HTML).appendChild(s);
   }
@@ -95,7 +102,7 @@
     document.body.insertBefore(cv, document.body.firstChild);
     if (document.querySelector('script[src*="yy-flow.js"]')) return;
     var s = document.createElement('script');
-    s.src = ROOT + 'assets/js/yy-flow.js';
+    s.src = ROOT + 'assets/js/yy-flow.js' + Q;
     s.async = false;
     (document.head || document.body || HTML).appendChild(s);
   }
@@ -152,21 +159,21 @@
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
     var tokens = document.createElement('link');
     tokens.rel = 'stylesheet';
-    tokens.href = ROOT + 'assets/css/yy-tokens.css';
+    tokens.href = ROOT + 'assets/css/yy-tokens.css' + Q;
     (document.head || HTML).appendChild(tokens);
   }
 
   if (!document.querySelector('link[href*="yy-motion.css"]')) {
     var motion = document.createElement('link');
     motion.rel = 'stylesheet';
-    motion.href = ROOT + 'assets/css/yy-motion.css';
+    motion.href = ROOT + 'assets/css/yy-motion.css' + Q;
     (document.head || HTML).appendChild(motion);
   }
 
   if (!document.querySelector('link[href*="yy-cursor.css"]')) {
     var cursorSheet = document.createElement('link');
     cursorSheet.rel = 'stylesheet';
-    cursorSheet.href = ROOT + 'assets/css/yy-cursor.css';
+    cursorSheet.href = ROOT + 'assets/css/yy-cursor.css' + Q;
     (document.head || HTML).appendChild(cursorSheet);
   }
 
@@ -176,21 +183,21 @@
     var preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'style';
-    preload.href = ROOT + 'assets/css/' + file;
+    preload.href = ROOT + 'assets/css/' + file + Q;
     (document.head || HTML).appendChild(preload);
   });
 
   if (!document.querySelector('link[href*="yy-chrome.css"]')) {
     var sheet = document.createElement('link');
     sheet.rel = 'stylesheet';
-    sheet.href = ROOT + 'assets/css/yy-chrome.css';
+    sheet.href = ROOT + 'assets/css/yy-chrome.css' + Q;
     (document.head || HTML).appendChild(sheet);
   }
 
   if (/\byy-case-type\b/.test(HTML.className) && !document.querySelector('link[href*="yy-case-type.css"]')) {
     var typeSheet = document.createElement('link');
     typeSheet.rel = 'stylesheet';
-    typeSheet.href = ROOT + 'assets/css/yy-case-type.css';
+    typeSheet.href = ROOT + 'assets/css/yy-case-type.css' + Q;
     (document.head || HTML).appendChild(typeSheet);
   }
 
@@ -678,7 +685,7 @@
     if (loadPanelScript[cacheKey]) return loadPanelScript[cacheKey];
     loadPanelScript[cacheKey] = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
-      script.src = ROOT + 'assets/js/' + file;
+      script.src = ROOT + 'assets/js/' + file + Q;
       script.onload = resolve;
       script.onerror = function () {
         loadPanelScript[cacheKey] = null;
