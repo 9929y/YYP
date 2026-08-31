@@ -299,9 +299,13 @@ if (useDist) {
 const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
 const optionalMissing = new Set();
 
+// Migrated pages only exist after a build, so a link to one is not a broken
+// link. Derived from projects.ts rather than listed, so migrating a page costs
+// one `engine` flip instead of an edit here.
+const astroGenerated = projectsMod.astroGeneratedHtml ? projectsMod.astroGeneratedHtml() : [];
 const knownGenerated = useDist
   ? new Set()
-  : new Set(['index.html', 'landing.html']);
+  : new Set(['index.html', 'landing.html', ...astroGenerated]);
 
 for (const file of htmlFiles) {
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
@@ -972,6 +976,27 @@ for (const project of projectsMod.projects) {
   if (project.href && project.engine === 'webflow') {
     const page = path.join(ROOT, toDisk(project.href));
     if (!fs.existsSync(page)) errors.push(`${project.slug}: missing ${project.href}`);
+  }
+}
+
+// Migration state machine. A page is either Webflow (root .html ships) or Astro
+// (src/pages/ emits it and the root file is archived) — never both. When both
+// exist the dev server serves the archive and the build ships the Astro page, so
+// a review on the tunnel shows the pre-migration page and the migration looks
+// like a no-op. See the UNPUBLISHED_HTML comment in scripts/legacy-passthrough.mjs.
+const passthroughSrc = fs.readFileSync(path.join(ROOT, 'scripts/legacy-passthrough.mjs'), 'utf8');
+for (const project of projectsMod.projects) {
+  if (project.engine !== 'astro' || !project.href) continue;
+  const legacy = toDisk(project.href);
+  const archive = legacy.replace(/\.html$/, '.webflow.html');
+  if (fs.existsSync(path.join(ROOT, legacy))) {
+    errors.push(`${project.slug}: engine is astro but root ${legacy} still exists — rename it to ${archive}`);
+  }
+  if (fs.existsSync(path.join(ROOT, archive)) && !passthroughSrc.includes(archive)) {
+    errors.push(`${archive} must be listed in UNPUBLISHED_HTML in scripts/legacy-passthrough.mjs`);
+  }
+  if (useDist && fs.existsSync(path.join(distDir, archive))) {
+    errors.push(`dist/${archive} must not exist — archives are kept in git, not published`);
   }
 }
 

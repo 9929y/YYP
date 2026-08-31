@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/fashion.css';
+---
+
+<!--
+  Fashion gallery — first page migrated off the Webflow passthrough.
+  Archive: fashion.webflow.html (kept in git, never published).
+
+  This is `kind: 'gallery'`, not a case study, so it gets its own page rather
+  than routing through [slug].astro / CaseStudyLayout — a photo collage has no
+  eyebrow, scope, meta grid or prev/next.
+
+  Both <img> keep the exact src/srcset/sizes/alt from the archive. The srcset is
+  load-bearing beyond responsiveness: legacy-passthrough.mjs only copies a
+  `-p-<width>.webp` variant into dist when some file textually references it, so
+  dropping a srcset silently de-ships those files.
+
+  Webflow IX2 (the old data-w-id on the wrapper) is gone with the Webflow
+  runtime. The sticky-scroll effect itself was always CSS — see fashion.css.
+-->
+<BaseLayout
+  title="Fashion — Yanice Yang"
+  description="Fashion design work: a beach editorial collection of sheer layered garments."
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <h1 class="sr-only">Fashion design work</h1>
+
+  <div class="fashion">
+    <div class="fashion__stage">
+      <div class="fashion__backdrop" aria-hidden="true">
+        <img
+          src="/assets/images/fashion/photo-beach-editorial-collection-collage-trimmed.webp"
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 959px) 100vw, 959px"
+          srcset="/assets/images/fashion/photo-beach-editorial-collection-collage-trimmed-p-500.webp 500w, /assets/images/fashion/photo-beach-editorial-collection-collage-trimmed-p-800.webp 800w, /assets/images/fashion/photo-beach-editorial-collection-collage-trimmed.webp 959w"
+          alt=""
+        />
+      </div>
+      <div class="fashion__frame">
+        <img
+          class="rv"
+          data-reveal="media"
+          src="/assets/images/fashion/photo-beach-editorial-collection-collage-full.webp"
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 959px) 100vw, 959px"
+          srcset="/assets/images/fashion/photo-beach-editorial-collection-collage-full-p-500.webp 500w, /assets/images/fashion/photo-beach-editorial-collection-collage-full-p-800.webp 800w, /assets/images/fashion/photo-beach-editorial-collection-collage-full.webp 959w"
+          alt="Tall collage of a fashion collection shot on a beach: sheer layered garments"
+        />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -294,7 +294,7 @@ export const projects: Project[] = [
     scope: 'Gallery',
     note: 'Fashion work, linked from About and the shared footer.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'gallery',
     theme: 'light',
     featuredOnLanding: false,
@@ -326,8 +326,28 @@ export function landingProjects(): Project[] {
     .sort((a, b) => a.landingOrder - b.landingOrder);
 }
 
+/**
+ * Projects that [slug].astro renders through CaseStudyLayout.
+ *
+ * `gallery` is excluded on purpose: a photo gallery has no eyebrow, scope, meta
+ * grid or prev/next, so it gets its own page in src/pages/ instead. Without this
+ * guard, flipping such a project to `engine: 'astro'` both wraps it in the
+ * case-study chrome and collides with that hand-written route.
+ */
 export function astroCaseStudies(): Project[] {
-  return projects.filter((p) => p.engine === 'astro' && p.status === 'published' && p.href);
+  return projects.filter(
+    (p) => p.engine === 'astro' && p.status === 'published' && p.href && p.kind !== 'gallery'
+  );
+}
+
+/**
+ * Filenames Astro emits, so callers stop treating them as missing files on disk.
+ * Migrated pages live in src/pages/ and only exist after a build.
+ */
+export function astroGeneratedHtml(): string[] {
+  return projects
+    .filter((p) => p.engine === 'astro' && p.status === 'published' && p.href)
+    .map((p) => p.href as string);
 }
 
 export function neighbors(slug: string): { prev?: Project; next?: Project } {

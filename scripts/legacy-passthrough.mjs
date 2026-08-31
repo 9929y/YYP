@@ -5,8 +5,18 @@ import { fileURLToPath } from 'node:url';
 const ROOT = process.cwd();
 /** HTML emitted by Astro — never overwrite with a root passthrough copy. */
 const GENERATED_HTML = new Set(['index.html', 'landing.html']);
-/** Kept in git for rollback reference, but never published. */
-const UNPUBLISHED_HTML = new Set(['index.webflow.html']);
+/**
+ * Kept in git for rollback reference, but never published.
+ *
+ * Every page migrated to Astro is renamed `<slug>.webflow.html` and listed here
+ * in the same commit. That rename is not bookkeeping — without it the dev server
+ * and the build disagree: the middleware below answers `/<slug>.html` from the
+ * repo root *before* Astro's router (so dev shows the old page), while
+ * `astro:build:done` skips the root copy when Astro already emitted that
+ * filename (so the build ships the new one). Reviews happen on the dev server,
+ * so a migration that leaves the root file in place looks like it did nothing.
+ */
+const UNPUBLISHED_HTML = new Set(['index.webflow.html', 'fashion.webflow.html']);
 
 function mime(file) {
   return {
