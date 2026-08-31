@@ -558,12 +558,79 @@ if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
   errors.push('yy-case-type.css must not use margin shorthand that zeros left/right');
 }
 
+// ---- raw-colour ratchet ------------------------------------------------------
+// Every colour on a design-system surface should come from a token. 78 raw hex
+// values predate the token layer, most of them in the case-study stylesheets
+// ported straight off Webflow. Banning them outright would fail today, so this
+// is a ratchet instead: the count may fall, never rise. Lower the budget when
+// you retire some.
+//
+// Primitive definitions (--color-*) are where raw hex is supposed to live, so
+// they are not counted.
+const RAW_HEX_BUDGET = 78;
+const tokenGovernedCss = [
+  'assets/css/yy-tokens.css',
+  'src/styles/landing.css',
+  'src/styles/case-study.css',
+  'src/styles/fashion.css',
+  ...fs
+    .readdirSync(path.join(ROOT, 'src/styles'))
+    .filter((f) => f.startsWith('case-') && f.endsWith('.css'))
+    .map((f) => `src/styles/${f}`)
+];
+let rawHex = 0;
+const rawHexFiles = [];
+for (const rel of [...new Set(tokenGovernedCss)]) {
+  const file = path.join(ROOT, rel);
+  if (!fs.existsSync(file)) continue;
+  const text = fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  let count = 0;
+  for (const m of text.matchAll(/(--[\w-]+)?\s*:\s*[^;{}]*?#[0-9a-fA-F]{3,8}\b/g)) {
+    if ((m[1] || '').startsWith('--color-')) continue;
+    count += 1;
+  }
+  if (count) rawHexFiles.push(`${rel} (${count})`);
+  rawHex += count;
+}
+if (rawHex > RAW_HEX_BUDGET) {
+  errors.push(
+    `raw hex colours rose to ${rawHex} (budget ${RAW_HEX_BUDGET}) — use a token: ${rawHexFiles.join(', ')}`
+  );
+} else if (rawHex < RAW_HEX_BUDGET) {
+  warnings.push(
+    `raw hex colours are down to ${rawHex} (budget ${RAW_HEX_BUDGET}) — lower RAW_HEX_BUDGET in check-site.mjs`
+  );
+}
+
 const tokensCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-tokens.css'), 'utf8');
-if (!tokensCss.includes('--slot-radius: 36px')) {
-  errors.push('yy-tokens.css missing --slot-radius: 36px for the Landing redesign');
+// 36px now lives on the primitive; --slot-radius aliases it. Assert both ends
+// so the value is still pinned and the alias cannot be flattened back.
+if (!tokensCss.includes('--radius-slot: 36px')) {
+  errors.push('yy-tokens.css missing --radius-slot: 36px for the Landing redesign');
+}
+if (!tokensCss.includes('--slot-radius: var(--radius-slot)')) {
+  errors.push('yy-tokens.css: --slot-radius must alias --radius-slot');
 }
 if (!tokensCss.includes('--frame-case: 1260px')) {
   errors.push('yy-tokens.css missing --frame-case: 1260px for the Landing redesign');
+}
+
+// The token layer the design system is built on. Each of these families was
+// missing entirely before and every one of them is something Figma mirrors, so
+// losing one silently would desync the two sides.
+for (const [token, why] of [
+  ['--color-shadow-rgb', 'the blue behind every card shadow'],
+  ['--color-glass-rgb', 'glass fill / highlight / border'],
+  ['--color-ink-rgb', 'ink at alpha'],
+  ['--color-frost-rgb', 'panel frost'],
+  ['--space-28', 'the most-used spacing value on the site'],
+  ['--rule-hero', 'the hero rule, which is NOT --rule'],
+  ['--state-hover-opacity', 'hover state'],
+  ['--focus-ring-color', 'focus ring']
+]) {
+  if (!tokensCss.includes(token + ':')) {
+    errors.push(`yy-tokens.css missing ${token} — ${why}`);
+  }
 }
 
 if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {

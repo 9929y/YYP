@@ -95,78 +95,280 @@
   --blur-large: 8px;             /* 成功勾选打开 */
 }
 
-/* Landing / new-page visual tokens. Legacy Webflow pages keep their own
-   colour system; nothing here may be applied to those pages as a colour overlay. */
+/* ============================================================================
+   VISUAL TOKENS — three layers, in the order a value travels.
+
+     Primitives  raw values, named by what they ARE (--color-ink-900, --size-16)
+        ↓ alias
+     Semantic    named by what they are FOR (--ink, --hair, --focus-ring-color)
+        ↓ bound
+     Components  page stylesheets use semantic tokens, never primitives
+
+   The rule that keeps this syncable with Figma: a Figma variable and its CSS
+   custom property share one name, character for character. No mapping table —
+   a mapping table is where the two sides start to drift.
+
+   Adding this layer changed zero pixels. Every semantic token below resolves to
+   exactly the value it had before; the primitives were extracted from those
+   values, not chosen fresh. The families that did not exist yet (spacing,
+   radius, weight, tracking, shadow, glass, z-index, interaction state) are new
+   and unused until page stylesheets adopt them.
+
+   Legacy Webflow pages keep their own colour system; nothing here may be
+   applied to those pages as a colour overlay.
+   ============================================================================ */
+
+/* ------------------------------------------------------------- PRIMITIVES -- */
+
 :root {
-    /* ---- frame ---- */
-    /* MEASURED off kedavra.me, not derived. The container is 830 on a 1440
-       screen — roughly 58% of the viewport is margin, and that width is why it
-       reads as a document rather than a dashboard. Its own teardown records the
-       split as 320 + 17 + 492 = 829 while describing the container as 830.
-       Yanice chose these proportions over the 1280/936 variant on 2026-08-19. */
-    /* --frame 保留作记录：kedavra 实测的 320 + 17 + 492 = 829。
-       它已不再用于布局 —— 见下方"一个外框，一条轴线"。首屏靠 --col-content
-       约束文字宽度来保住那个 measure。 */
-    --frame: 829px;
-    /* The index needs a wider frame than the hero, and this is a deliberate
-       exception rather than drift. The hero keeps kedavra's 492 measure because
-       that is what makes 64px type run 12 characters to the line. The index has
-       a different job: Yanice asked for one project per screen, and a 4:3 image
-       that owns a 900px-tall viewport is ~816px wide, which 492 cannot hold.
-       320 + 17 + 823 = 1160. */
-    --frame-index: 1160px;
-    /* One outer spine for hero + cases so the vertical rule shares one x at every
-       viewport. Figma uses 1160 (hero) / 1260 (case); centering nearly aligns them
-       on a 1920 artboard, but when both frames go fluid the old split (320 vs 372
-       label) put the rules ~52px apart. 1260 fits case media (372+17+823). */
-    --frame-case: 1260px;
-    --frame-spine: var(--frame-case);
-    --col-label: 320px;
-    --col-label-case: 372px;
-    /* Shared rule inset inside the spine (Figma case: 372 + 8).
-       Mid-width overrides shrink --col-label-case; rule stays in the gap. */
-    --rule-x: calc(var(--col-label-case) + 8px);
-    /* Full-frame Figma gutter. Mid widths raise this via landing.css. */
-    --col-gap: 17px;
-    --col-gap-case: 8px;
-    --col-content: 492px;
-    --edge: 24px;
-    --rule: #e9e9e9;
-    --slot-radius: 36px;
-    /* HTML case cards only. Exported images keep their own corners. */
-    --case-radius: var(--slot-radius);
-    --slot-w: 823px;
-    --slot-h: 617px;
+  /* ---- colour ----
+     Named by position in a ramp, not by use. Provenance lives on the semantic
+     alias that consumes them. */
+  --color-ink-900: #242220;   /* warm near-black; deliberately not #000 */
+  --color-ink-600: #55534e;
+  --color-ink-500: #6d6a63;
+  --color-white: #ffffff;
+  --color-offwhite: #fbfaf9;  /* ::selection foreground only */
+  --color-warm-100: #efece8;  /* media placeholder ground */
+  --color-warm-200: #e4e1dc;  /* hairline */
+  --color-grey-100: #e9e9e9;  /* general rule */
+  --color-grey-400: #939393;  /* HERO rule only — a much darker grey than
+                                 --color-grey-100. These two are not
+                                 interchangeable; see --rule vs --rule-hero. */
+  --color-brand-red: #f45f86;
+  --color-brand-blue: #6171ff;
 
-    /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
-       60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero
-       title and ONLY at >=992px. 64 would be off-grid and nobody can see 6%;
-       104 is a layout problem, not a font-size problem — in a 936 column it
-       yields about 9 characters per line. */
-    --t-11: 11px; --t-13: 13px; --t-16: 16px; --t-20: 20px;
-    --t-25: 25px; --t-32: 32px; --t-40: 40px; --t-48: 48px; --t-64: 64px;
+  /* ---- colour, as RGB triples ----
+     Four colours carried every shadow, glass surface and tinted overlay on this
+     site as 43 separate rgba() literals, with no token behind any of them.
+     Stored as triples so alpha variants derive from one source. */
+  --color-shadow-rgb: 62, 65, 116;  /* the blue in every card shadow (13 uses) */
+  --color-glass-rgb: 255, 255, 255; /* glass fill / highlight / border (19 uses) */
+  --color-ink-rgb: 36, 34, 32;      /* --color-ink-900 at alpha (8 uses) */
+  --color-frost-rgb: 255, 250, 250; /* panel frost — a third white (3 uses) */
 
-    /* ---- line-height by ROLE, not by size ----
-       Phase 1 established this: a 16px label and 16px prose need different
-       leading, so deriving line-height from font-size alone is wrong. */
-    --lh-display: 1;      /* measured: 64px type on 64px leading, ratio 1.00 */
-    --lh-tight: 1.15;
-    --lh-heading: 1.25;
-    --lh-body: 1.55;
-    --lh-caption: 1.45;
+  /* ---- type sizes ----
+     The site's shipped 8 steps. Named by value because that is what they are;
+     the role-based names are the semantic layer's job. */
+  --size-11: 11px;
+  --size-13: 13px;
+  --size-16: 16px;
+  --size-20: 20px;
+  --size-25: 25px;
+  --size-32: 32px;
+  --size-40: 40px;
+  --size-48: 48px;
+  --size-64: 64px;
 
-    /* ---- light / neutral ---- */
-    --ink: #242220;
-    --ink-2: #55534e;
-    --ink-3: #6d6a63;   /* 5.18:1 on --ground; #8a877f was 3.44:1 */
-    /* #fff, not the reference's off-white. Measured: the 9 light case pages all
-       render body at rgb(255,255,255), and Yanice's instruction is to unify style
-       WITHOUT touching the subpages — so the landing moves to meet them, which
-       removes the background flash on navigation and changes zero subpage pixels.
-       Checked against everything tuned on this value: the cursor's
-       mix-blend-mode: difference inverts a white dot to pure black here (better,
-       not worse), and --ink-3 gains contrast rather than losing it. */
-    --ground: #fff;
-    --hair: #e4e1dc;
-    --slot: #efece8;
-  }
+  /* ---- leading, by ROLE not by size ----
+     A 16px label and 16px prose need different leading, so deriving
+     line-height from font-size alone is wrong. Established in Phase 1. */
+  --leading-100: 1;     /* measured: 64px type on 64px leading */
+  --leading-115: 1.15;
+  --leading-125: 1.25;
+  --leading-145: 1.45;
+  --leading-155: 1.55;
+
+  /* ---- weight ----
+     Only these exist. assets/fonts/ carries a subset — any other weight
+     silently falls back. 700 is used exactly once (the About signature);
+     new work should stop at 600. */
+  --weight-400: 400;
+  --weight-500: 500;
+  --weight-600: 600;
+  --weight-700: 700;
+
+  /* ---- tracking ----
+     Was written as bare em values 28 times across the stylesheets. */
+  --tracking-eyebrow: 0.12em;   /* uppercase labels — 9 uses */
+  --tracking-display: -0.04em;  /* 6 uses */
+  --tracking-heading: -0.03em;  /* 8 uses */
+  --tracking-tight: -0.02em;    /* 5 uses */
+  --tracking-none: 0;
+
+  /* ---- spacing ----
+     There was no spacing scale at all; every value was hard-coded. This ladder
+     is measured off what the site actually uses, not imposed on it: a 4px grid
+     covers every value in the codebase except 3px and 7px (both single-use
+     noise) and 17px (--col-gap, a measured layout constant, deliberately not
+     part of this scale).
+
+     28 is a first-class step because it is the single most-used spacing value
+     on the site (16 occurrences) — any scale that rounds it away would leave
+     those 16 places with nothing to bind to. */
+  --space-0: 0;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-88: 88px;
+  --space-96: 96px;
+  --space-104: 104px;
+  --space-120: 120px;
+  --space-160: 160px;
+  --space-200: 200px;
+
+  /* ---- radius ----
+     Ten distinct radii were in use and one was tokenised. 999 and 2137 were two
+     spellings of the same pill. */
+  --radius-xs: 2px;    /* focus ring */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-slot: 36px; /* landing project slot */
+  --radius-pill: 999px;
+
+  /* ---- blur ---- */
+  --blur-7: 7px;
+  --blur-12: 12px;
+  --blur-16: 16px;
+  --blur-28: 28px;
+  --blur-80: 80px;
+  --blur-200: 200px;
+
+  /* ---- opacity ---- */
+  --opacity-04: 0.04;
+  --opacity-05: 0.05;
+  --opacity-08: 0.08;
+  --opacity-20: 0.20;
+  --opacity-48: 0.48;
+  --opacity-64: 0.64;
+  --opacity-72: 0.72;
+  --opacity-92: 0.92;
+}
+
+/* --------------------------------------------------------------- SEMANTIC -- */
+
+:root {
+  /* ---- ink ---- */
+  --ink: var(--color-ink-900);
+  --ink-2: var(--color-ink-600);
+  /* 5.18:1 on --ground. The previous #8a877f was 3.44:1 and failed. */
+  --ink-3: var(--color-ink-500);
+
+  /* ---- ground ----
+     #fff, not the reference's off-white. Measured: the light case pages all
+     render body at rgb(255,255,255), and the instruction was to unify style
+     WITHOUT touching the subpages — so the landing moved to meet them, which
+     removes the background flash on navigation and changes zero subpage pixels.
+     Checked against everything tuned on this value: the cursor's
+     mix-blend-mode: difference inverts a white dot to pure black here (better,
+     not worse), and --ink-3 gains contrast rather than losing it. */
+  --ground: var(--color-white);
+  --slot: var(--color-warm-100);
+
+  /* ---- lines ----
+     THREE distinct roles, not one. The stylesheets had drifted to five
+     different colours for the same visual job; these are the three that are
+     actually different. --rule-hero is markedly darker than --rule and the two
+     must never be collapsed. */
+  --hair: var(--color-warm-200);
+  --rule: var(--color-grey-100);
+  --rule-hero: var(--color-grey-400);
+
+  /* ---- glass ----
+     One recipe. The stylesheets had grown three accidental variants of this
+     card, differing in blur, saturation and six alpha values. */
+  --glass-fill: rgba(var(--color-glass-rgb), 0.58);
+  --glass-highlight: rgba(var(--color-glass-rgb), var(--opacity-92));
+  --glass-border: rgba(var(--color-glass-rgb), 0.55);
+  --glass-blur: var(--blur-12);
+  --glass-saturate: 1.6;
+  --frost-fill: rgba(var(--color-frost-rgb), var(--opacity-20));
+
+  /* ---- elevation ---- */
+  --shadow-1: 0 1px 2px rgba(var(--color-shadow-rgb), 0.07);
+  --shadow-2: 0 2px 8px -2px rgba(var(--color-shadow-rgb), 0.09);
+  --shadow-3: 0 12px 36px -8px rgba(var(--color-shadow-rgb), var(--opacity-20));
+  --shadow-hover: 0 8px 28px rgba(var(--color-shadow-rgb), 0.22);
+
+  /* ---- interaction state ----
+     None of this existed. Hover opacity was written bare three times, the focus
+     ring four times with two different colours, and there was no :active or
+     [disabled] treatment anywhere.
+
+     STANDING RULE: hover may change opacity and transform only. The site keeps
+     this almost everywhere already; a new component that needs a hover colour
+     should be questioned before it is given one. */
+  --state-hover-opacity: var(--opacity-64);
+  --focus-ring-color: var(--ink);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+  --focus-ring-radius: var(--radius-xs);
+
+  /* ---- layering ----
+     Two disjoint bands with nothing between them: content sits at 0–3, chrome
+     at 8990+. Written out so the gap is legible instead of accidental. */
+  --z-canvas: 0;
+  --z-cover: 1;
+  --z-content: 2;
+  --z-above: 3;
+  --z-frost: 8990;
+  --z-nav: 9000;
+  --z-cursor: 9800;
+
+  /* ---- type, by role ----
+     `--t-*` are the literal-size aliases the pages use today. They are kept
+     because src/styles/landing.css redefines the whole ladder ~12.5% down for
+     the landing scale, which means the NAMES CURRENTLY LIE THERE: --t-16 is
+     14px on the landing page. Resolving that (role names plus a Figma mode per
+     scale) is a follow-up; it touches every page and is not a zero-pixel
+     change like this file is. */
+  --t-11: var(--size-11);
+  --t-13: var(--size-13);
+  --t-16: var(--size-16);
+  --t-20: var(--size-20);
+  --t-25: var(--size-25);
+  --t-32: var(--size-32);
+  --t-40: var(--size-40);
+  --t-48: var(--size-48);
+  --t-64: var(--size-64);
+
+  --lh-display: var(--leading-100);
+  --lh-tight: var(--leading-115);
+  --lh-heading: var(--leading-125);
+  --lh-caption: var(--leading-145);
+  --lh-body: var(--leading-155);
+
+  /* ---- frame ----
+     Layout constants, measured rather than derived, so they are semantic from
+     the start and have no primitive beneath them.
+
+     The index needs a wider frame than the hero, and that is a deliberate
+     exception rather than drift. The hero keeps kedavra's 492 measure because
+     that is what makes 64px type run 12 characters to the line. The index has a
+     different job: one project per screen, and a 4:3 image that owns a
+     900px-tall viewport is ~816px wide, which 492 cannot hold. 320+17+823=1160. */
+  --frame-index: 1160px;
+  /* One outer spine for hero + cases so the vertical rule shares one x at every
+     viewport. Figma uses 1160 (hero) / 1260 (case); centring nearly aligns them
+     on a 1920 artboard, but when both frames go fluid the old split (320 vs 372
+     label) put the rules ~52px apart. 1260 fits case media (372+17+823). */
+  --frame-case: 1260px;
+  --frame-spine: var(--frame-case);
+  --col-label: 320px;
+  --col-label-case: 372px;
+  /* Shared rule inset inside the spine (Figma case: 372 + 8).
+     Mid-width overrides shrink --col-label-case; the rule stays in the gap. */
+  --rule-x: calc(var(--col-label-case) + 8px);
+  /* Measured off the full-frame Figma gutter. NOT part of --space-*: it is a
+     layout constant, and rounding it to 16 or 20 would move the spine. */
+  --col-gap: 17px;
+  --col-content: 492px;
+  --edge: var(--space-24);
+
+  --slot-radius: var(--radius-slot);
+  /* HTML case cards only. Exported images keep their own corners. */
+  --case-radius: var(--slot-radius);
+}
