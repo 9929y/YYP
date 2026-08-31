@@ -1010,6 +1010,21 @@ if (useDist) {
   }
 }
 
+// CASE_TYPE_PAGES must never name a migrated page. The map is keyed on filename,
+// so a slug that moved to Astro keeps matching and keeps pulling yy-case-type.css
+// onto a page that bakes the same tokens into its own stylesheet. Once this map is
+// empty, yy-case-type.css and its loader can be deleted.
+for (const project of projectsMod.projects) {
+  if (project.engine !== 'astro' || !project.href) continue;
+  const key = `'${toDisk(project.href)}'`;
+  const map = chromeJs.slice(chromeJs.indexOf('CASE_TYPE_PAGES'));
+  if (map.slice(0, map.indexOf('};')).includes(key)) {
+    errors.push(
+      `yy-chrome.js: CASE_TYPE_PAGES still lists ${project.href}, but that page is now Astro — remove the key`
+    );
+  }
+}
+
 // Migration state machine. A page is either Webflow (root .html ships) or Astro
 // (src/pages/ emits it and the root file is archived) — never both. When both
 // exist the dev server serves the archive and the build ships the Astro page, so

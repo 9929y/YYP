@@ -109,13 +109,14 @@
     'alzheimerdisease.html': true
   };
 
-  /* Light case + work-hub pages get the landing type/ink overlay.
-     Opus, Alzheimer, and McKinsey keep Webflow black/white; do not list them. */
+  /* Light case + work-hub pages still on the Webflow passthrough get the landing
+     type/ink overlay. Opus, Alzheimer and McKinsey keep Webflow black/white and
+     were never listed. Lark, MiFinance and Cummins were removed when they moved
+     to Astro: their pages bake the same tokens into their own stylesheets, so
+     the overlay had nothing left to restyle and was a wasted request.
+     Never list a page whose project is `engine: 'astro'` — check-site enforces it. */
   var CASE_TYPE_PAGES = {
     'projects.html': 1,
-    'larkdesign.html': 1,
-    'mifinance.html': 1,
-    'cummins-digitalization.html': 1,
     'tiktok-research.html': 1,
     'case-study-template.html': 1
   };
