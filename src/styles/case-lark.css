@@ -1,0 +1,722 @@
+/* case-lark.css — Lark Design case study, migrated off the Webflow sheet.
+
+   Layout, colour and image sizing ported from the rules that used to style
+   larkdesign.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus
+   the glass-card overrides for `.step-card-2` in assets/css/yy-case-layout.css.
+   Archive: larkdesign.webflow.html.
+
+   Type comes from the token scale, not the Webflow rules: larkdesign is listed
+   in CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already runs
+   with assets/css/yy-case-type.css layered over it, replacing every font-size,
+   weight, leading and tracking with --t-*/--lh-*. Porting the raw Webflow sizes
+   would have changed the page. With tokens baked in, the overlay is not needed.
+
+   ONE PRESERVED QUIRK WORTH REVISITING: the archive hides the nine impact
+   numbers below 767px (`.numbergrid { display: none }`), so phone visitors never
+   see the research counts or the conversion/engagement/safety lifts. That is
+   real content lost on the most-used breakpoint. It is reproduced here to keep
+   this migration a like-for-like move; changing it is a design decision. */
+
+.lrk {
+  --lrk-blue: #4b94ff;
+  --lrk-blue-deep: #096dff;
+  --lrk-blue-title: #487bc6;
+  --lrk-ink: #4b4b4b;
+  --lrk-ink-2: #343434;
+  --lrk-label: #626d86;
+
+  color: var(--lrk-ink-2);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.lrk__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 110vh;
+  min-height: 750px;
+  overflow: hidden;
+}
+
+.lrk__hero-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(5vw, 1fr) minmax(auto, 1400px) minmax(5vw, 1fr);
+  width: 100%;
+  background-image: linear-gradient(#b0c4ff8a 47%, #a5b8d18c 73%, #a1b4c08c),
+    linear-gradient(239deg, #ececec, #a8bff66e 23%, #8aabfaf5 33%, #b7ccfc3b 59%, #fff);
+}
+
+.lrk__hero-inner {
+  grid-column: 2 / 3;
+  display: grid;
+  align-items: center;
+  height: 100%;
+}
+
+.lrk__hero-intro {
+  z-index: 333;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 1fr;
+  max-width: 80%;
+  margin-left: 10%;
+  align-items: center;
+}
+
+.lrk__hero-copy {
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+  max-width: 120%;
+  text-align: left;
+}
+
+.lrk__hero-copy h1 {
+  margin: 0 0 16px;
+  color: var(--lrk-blue-title);
+  text-align: left;
+  font-size: var(--t-32);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+}
+
+.lrk__hero-note {
+  margin: 0;
+  max-width: 90%;
+  color: var(--lrk-ink-2);
+  text-align: left;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+.lrk__hero-logo {
+  width: 40%;
+  max-width: 100%;
+  margin-top: 16px;
+}
+
+.lrk__hero-shot {
+  max-width: 110%;
+  margin-left: -9%;
+}
+
+.lrk__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+}
+
+.lrk__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.lrk__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: var(--lrk-ink-2);
+  font-size: var(--t-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.lrk__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 100%;
+}
+
+.lrk__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.lrk__scroll-label span {
+  font-weight: 700;
+}
+
+.lrk__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* ------------------------------------------------------------- overview --- */
+
+.lrk__overview {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 15%;
+}
+
+.lrk__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  padding-block: 5%;
+}
+
+.lrk__collage {
+  display: block;
+  width: 70%;
+  max-width: 90%;
+  margin-inline: 15%;
+  padding-top: 26px;
+  padding-bottom: 5%;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------------- step cards ---- */
+
+.lrk__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+  padding: 0 10% 7%;
+}
+
+.lrk__step {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding-bottom: 30px;
+}
+
+.lrk__step-no {
+  color: var(--lrk-label);
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lrk__step h3 {
+  margin: 0 0 10px;
+  color: var(--lrk-blue);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lrk__step p {
+  margin: 0;
+  color: var(--lrk-ink-2);
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+/* ------------------------------------------------------- impact numbers --- */
+
+.lrk__impact {
+  position: relative;
+  background-image: linear-gradient(to top, #7497f796 5%, #fff);
+  padding-block: 5% 8%;
+}
+
+.lrk__impact-intro {
+  margin-inline: 7%;
+  padding: 0 10%;
+}
+
+.lrk__impact-intro h3 {
+  margin: 0 0 10px;
+  color: var(--lrk-blue);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lrk__impact-intro p {
+  max-width: 36em;
+  margin: 0;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+.lrk__numbers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 3em;
+  column-gap: 4px;
+  margin-bottom: 5%;
+  padding: 3% 5% 0;
+}
+
+.lrk__number {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 5px;
+  align-items: baseline;
+}
+
+.lrk__number-value {
+  color: var(--lrk-blue);
+  font-size: var(--t-48);
+  font-weight: 600;
+  line-height: var(--lh-display);
+  letter-spacing: -0.04em;
+}
+
+.lrk__number-label {
+  color: var(--lrk-ink-2);
+  font-size: var(--t-13);
+  font-weight: 500;
+  line-height: var(--lh-caption);
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------- screen mosaic ---- */
+
+.lrk__mosaic {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  width: 100%;
+  padding: 12px 5%;
+  background-color: #e9e9e9;
+  overflow: hidden;
+}
+
+.lrk__mosaic > div {
+  width: 33.33%;
+  padding: 12px;
+}
+
+.lrk__mosaic img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: -4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ------------------------------------------------------------- sections --- */
+
+.lrk__challenge {
+  position: relative;
+  padding-block: 5%;
+}
+
+.lrk__challenge--tinted {
+  background-color: #fff;
+  background-image: linear-gradient(#c0d6f5, #fff 32%);
+}
+
+.lrk__solution {
+  background-color: #fff;
+  padding-bottom: 10%;
+}
+
+.lrk__design {
+  padding-bottom: 10%;
+}
+
+.lrk__design--tinted {
+  background-color: #fff;
+  background-image: linear-gradient(#fff 12%, #a1c6f9);
+}
+
+.lrk__block {
+  margin-inline: 7%;
+  padding: 5% 10% 0;
+}
+
+.lrk__eyebrow {
+  margin: 0 0 10px;
+  color: var(--lrk-blue);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lrk__block h2 {
+  margin: 28px 0 12px;
+  color: var(--lrk-ink-2);
+  text-align: left;
+  font-size: var(--t-25);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.03em;
+}
+
+.lrk__block h3 {
+  margin: 0 0 10px;
+  color: var(--lrk-blue);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lrk__block p {
+  max-width: 36em;
+  margin: 0 0 1.15em;
+  text-align: left;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+.lrk__block p strong,
+.lrk__block h2 strong {
+  font-weight: 600;
+}
+
+.lrk__banner {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lrk__figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  padding: 5% 20% 0;
+}
+
+.lrk__figure--wide {
+  padding-inline: 10%;
+}
+
+.lrk__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A centred figure with its caption underneath. */
+.lrk__noted {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 5%;
+}
+
+.lrk__noted img {
+  display: block;
+  width: 100%;
+  max-width: 80%;
+  height: auto;
+  padding: 0 5% 3%;
+}
+
+.lrk__caption {
+  margin: 0;
+  color: var(--lrk-ink);
+  text-align: center;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+/* Insight tiles: illustration, title, note — laid out in columns. */
+.lrk__insights {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto auto auto;
+  column-gap: 40px;
+  row-gap: 10px;
+  padding-inline: 10%;
+}
+
+.lrk__insights--pair {
+  grid-template-columns: 1fr 1fr;
+}
+
+.lrk__insights--triple {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.lrk__insights img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 0 10% 2%;
+  box-sizing: border-box;
+}
+
+.lrk__insights h3 {
+  margin: 0 0 4px;
+  color: var(--lrk-blue-deep);
+  text-align: left;
+  font-size: var(--t-16);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+}
+
+.lrk__insights p {
+  margin: 0;
+  color: var(--lrk-ink);
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+.lrk__insights--triple p {
+  text-align: center;
+}
+
+/* Two-up comparisons: before/after workflows, paired charts. */
+.lrk__compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-top: 1%;
+  padding-inline: 15%;
+}
+
+.lrk__compare img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding-bottom: 2%;
+}
+
+.lrk__compare .lrk__caption {
+  text-align: left;
+}
+
+/* ---------------------------------------------------------- final design -- */
+
+.lrk__final {
+  padding-block: 10%;
+}
+
+.lrk__final h2 {
+  margin: 0 0 16px;
+  color: var(--lrk-ink);
+  text-align: center;
+  font-size: var(--t-40);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.04em;
+}
+
+.lrk__final-stack {
+  display: grid;
+  gap: 16px;
+  margin-block: 3% 5%;
+  padding-inline: 5%;
+}
+
+.lrk__final-stack img,
+.lrk__team img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lrk__team {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+/* ------------------------------------------------------------- prev/next -- */
+
+.lrk__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 0;
+  border-top: 1px solid var(--hair);
+}
+
+.lrk__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: var(--lrk-ink-2);
+  font-size: var(--t-13);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.lrk__nav a:hover {
+  opacity: 0.64;
+}
+
+.lrk__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: var(--rule);
+}
+
+.lrk__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile -- */
+
+@media screen and (max-width: 991px) {
+  .lrk__hero-intro {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    margin-left: 0;
+    padding-inline: 7%;
+  }
+
+  .lrk__hero-shot {
+    max-width: 95%;
+    margin-inline: auto;
+  }
+
+  .lrk__overview {
+    padding-inline: 7%;
+  }
+
+  .lrk__pair {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .lrk__steps {
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+    padding-left: 12%;
+  }
+
+  .lrk__step {
+    border-bottom: 1px solid rgba(136, 158, 168, 0.2);
+    padding-block: 3% 2%;
+  }
+
+  .lrk__step:last-child {
+    border-bottom: 0;
+  }
+
+  .lrk__mosaic > div {
+    padding: 8px;
+  }
+
+  .lrk__mosaic img {
+    border-radius: 5px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .lrk__hero {
+    height: auto;
+    min-height: 80vh;
+  }
+
+  .lrk__hero-cue {
+    display: none;
+  }
+
+  /* Faithful to the archive: the impact numbers are hidden on phones. See the
+     note at the top of this file — worth revisiting as a design decision. */
+  .lrk__numbers {
+    display: none;
+  }
+
+  .lrk__block {
+    margin-inline: 0;
+    padding: 32px 7% 0;
+  }
+
+  .lrk__figure,
+  .lrk__figure--wide {
+    padding: 32px 7% 0;
+  }
+
+  .lrk__insights,
+  .lrk__insights--pair,
+  .lrk__insights--triple {
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+    padding-inline: 7%;
+  }
+
+  .lrk__insights img {
+    padding-inline: 0;
+  }
+
+  .lrk__compare {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .lrk__mosaic > div {
+    width: 50%;
+    padding: 4px;
+  }
+
+  .lrk__mosaic img {
+    border-radius: 8px;
+  }
+
+  .lrk__team {
+    grid-template-columns: 1fr;
+  }
+
+  .lrk__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .lrk__nav-next {
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .lrk__mosaic > div {
+    width: 50%;
+  }
+
+  .lrk__mosaic img {
+    border-radius: 2px;
+  }
+
+  .lrk__noted img {
+    max-width: 100%;
+    padding-inline: 0;
+  }
+}

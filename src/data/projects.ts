@@ -171,7 +171,7 @@ export const projects: Project[] = [
     scope: 'Web&Mobile App',
     note: 'Reducing information gaps in Lark’s collaboration experience',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,

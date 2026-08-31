@@ -1,0 +1,481 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseImage from '../components/CaseImage.astro';
+import { media } from '../data/case-media/lark';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-lark.css';
+
+const project = getProject('larkdesign')!;
+const { prev, next } = neighbors('larkdesign');
+
+/** Six responsibilities. Source order is column-major (01/04, 02/05, 03/06). */
+const steps = [
+  {
+    no: '01',
+    title: 'User Insights & Ideation',
+    body: 'I partnered with two product managers and one data analyst to uncover insights and findings that address pain points for the user journey'
+  },
+  {
+    no: '04',
+    title: 'Design Execution',
+    body: 'Our team has developed six different devices. I proposed user journey maps and wireframes. I am especially in charge of mobile and web app interfaces'
+  },
+  {
+    no: '02',
+    title: 'Localization Strategy',
+    body: 'I designed new features to face the challenge of cut-throat competition and prevent potential data risks.'
+  },
+  {
+    no: '05',
+    title: 'Business&Design Balance',
+    body: 'I drove decision-making with product managing partners to balance achieving business goals, providing a positive user experience, and gaining buy-in from stakeholders.'
+  },
+  {
+    no: '03',
+    title: 'Scope Definition',
+    body: 'I defined core problems and formed prototypes to share UX strategy and design principles to spread ideas further and achieve alignments among teams.'
+  },
+  {
+    no: '06',
+    title: 'Proactivity&Leadership',
+    body: 'I prioritized and negotiated content strategy and design decisions for launch and beyond. I also coordinated the project timeline to ensure we met our milestones.'
+  }
+];
+
+/* Targets come from the PureCounter config in the archive, which configured nine
+   instances from a CDN script; assets/js/yy-count.js replaces it. Final values
+   are server-rendered so the numbers are right without JS. */
+const numbers = [
+  { value: 18, label: 'one-on-one Interviews' },
+  { value: 6, label: 'Expert Interviews' },
+  { value: 3000, label: 'Surveys' },
+  { value: 11, label: 'weekly Component Sync' },
+  { value: 6, label: 'Cross-team Sync' },
+  { value: 12, label: 'User Testings' },
+  { value: 45, label: '% increase in Conversion Rate' },
+  { value: 36, label: '% increase in Product Engagement' },
+  { value: 30, label: '% increase in Safety Perception' }
+];
+
+/** Typed as media keys so a renamed or missing image fails the build. */
+const mosaic: (keyof typeof media)[] = [
+  'screen-lark-signup-email-verification',
+  'screen-lark-add-team-member-invite-qr',
+  'screen-lark-desktop-login-email-step',
+  'screen-add-team-member-team-code-panel',
+  'screen-lark-login-welcome-email-entry',
+  'screen-lark-quick-add-menu',
+  'screen-registration-enter-name-step',
+  'screen-add-team-member-invite-by-phone-tooltip',
+  'screen-lark-inbox-first-launch-empty'
+];
+
+const finalDesign: (keyof typeof media)[] = [
+  'flow-lark-desktop-email-signup-3up',
+  'flow-lark-desktop-add-team-member-3up',
+  'flow-lark-desktop-invite-collaborators-3up',
+  'flow-lark-mobile-email-signup-5up',
+  'flow-lark-mobile-first-run-feature-tips-5up',
+  'flow-lark-mobile-invite-teammates-5up',
+  'flow-lark-mobile-add-external-contact-5up'
+];
+---
+
+<!--
+  Lark Design case study — migrated off the Webflow passthrough.
+  Archive: larkdesign.webflow.html (kept in git, never published).
+
+  Its own page rather than CaseStudyLayout: this one opens with a display
+  headline, a data disclaimer, the ByteDance/Lark lockup and a three-phone
+  mockup over a layered blue gradient.
+
+  Type comes from the token scale. larkdesign is in CASE_TYPE_PAGES in
+  yy-chrome.js, so the shipped page already runs with yy-case-type.css over it
+  replacing every Webflow font-size with --t-*/--lh-*.
+
+  The 17 lightboxes are gone by decision — plain inline figures now. The nine
+  counters no longer pull PureCounter from a CDN; assets/js/yy-count.js does the
+  same job locally and the values are server-rendered.
+
+  Preserved quirk: the archive hides the nine impact numbers below 767px. That
+  is reproduced in case-lark.css and flagged there — it loses real content on
+  phones, but changing it is a design decision rather than part of this move.
+-->
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <script slot="scripts" is:inline defer src="/assets/js/yy-count.js"></script>
+
+  <main class="lrk">
+    <section class="lrk__hero">
+      <div class="lrk__hero-grid">
+        <div class="lrk__hero-inner">
+          <div class="lrk__hero-intro">
+            <div class="lrk__hero-copy">
+              <h1>User Onboarding &amp; Team Formation</h1>
+              <p class="lrk__hero-note">
+                For data security, I have omitted confidential and private information in this
+                project. All the data in this project belongs to me
+              </p>
+              <CaseImage image={media['logo-bytedance-lark-lockup']} class="lrk__hero-logo" />
+            </div>
+            <CaseImage
+              image={media['hero-lark-onboarding-three-phone-mockup']}
+              class="lrk__hero-shot"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="lrk__hero-cue" aria-hidden="true">
+        <a class="lrk__scroll" href="#overview">
+          <span class="lrk__scroll-ring"></span>
+          <span class="lrk__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="lrk__hero-rule"></div>
+      </div>
+    </section>
+
+    <section class="lrk__overview" id="overview">
+      <div class="lrk__pair">
+        <div class="lrk__block rv" data-reveal="text" style="margin-inline:0;padding:0">
+          <h3>Overview</h3>
+          <p>
+            Lark is a collaboration office suite designed for business management and communication.
+            Launched in March 2019, this collaborative suite struggled to scale alongside the
+            diversification and fulfill the hyper-growth of user needs. In 2021, Lark's onboarding
+            phase was challenged by fundamental usability and data security risks.
+          </p>
+        </div>
+        <div class="lrk__block rv" data-reveal="text" style="margin-inline:0;padding:0">
+          <h3>My Role</h3>
+          <p>
+            As a UX designer, I worked cross-functionally with the development, ux content, and
+            product team to streamline and optimize the service of Lark Onboarding Process in
+            cross-platforms. I participated the end-to-end product development from research to
+            iterations, from painpoints to user feedbacks, from ideation to final product.
+          </p>
+        </div>
+      </div>
+      <CaseImage image={media['hero-lark-suite-product-collage']} class="lrk__collage" />
+    </section>
+
+    <section class="lrk__steps rv" data-reveal="text">
+      {steps.map((step) => (
+        <div class="lrk__step">
+          <span class="lrk__step-no">{step.no}</span>
+          <div>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="lrk__impact">
+      <div class="lrk__impact-intro rv" data-reveal="text">
+        <h3>Final Impact</h3>
+        <p>
+          Through qualitative and quantitative research, we defined the problem, reiterated the
+          wireframes, and ideated the final design with cross-team collaboration. Here is our
+          generalized achievement and impact:
+        </p>
+      </div>
+      <div class="lrk__numbers">
+        {numbers.map((n) => (
+          <div class="lrk__number">
+            <span class="lrk__number-value" data-count-to={n.value}>{n.value}</span>
+            <span class="lrk__number-label">{n.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <div class="lrk__mosaic">
+      {mosaic.map((key) => (
+        <div><CaseImage image={media[key]} /></div>
+      ))}
+    </div>
+
+    <section class="lrk__challenge">
+      <div class="lrk__block rv" data-reveal="text">
+        <h3>The Challenge</h3>
+        <p>
+          As a next-generation collaboration suite, Lark differs from other office tools in methods
+          of use, organization charts, and potential goals. However, <strong>The conversion rate of
+          new user to active user is lower than expected as user does not realize the full use of
+          Lark office tool.</strong>
+        </p>
+      </div>
+      <div class="lrk__figure lrk__figure--wide rv" data-reveal="media">
+        <CaseImage image={media['illustration-team-communication-challenge-spot']} />
+      </div>
+
+      <div class="lrk__block rv" data-reveal="text">
+        <h3>The Approach</h3>
+        <p>
+          At the outset of this project, we did not have a clear mission or pre-existing goal for the
+          design of the team onboarding process. Therefore, I partnered with data analysts, user
+          researchers, and product managers at different phases to embrace the evolving and changing
+          user needs within the onboarding process across user registration, function exploration,
+          member invitation, and team formation. Below is our research and design process:
+        </p>
+      </div>
+      <div class="lrk__figure"><CaseImage image={media['flow-team-onboarding-scope-and-process']} /></div>
+      <div class="lrk__figure"><CaseImage image={media['journey-team-onboarding-experience-map']} /></div>
+    </section>
+
+    <section>
+      <CaseImage image={media['hero-hmw-speed-up-login-tablets']} class="lrk__banner" />
+
+      <div class="lrk__challenge">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Discovery of Registration&amp;Login</p>
+          <h2>A Time-Consuming Process Detracts From Its User-Friendliness</h2>
+          <p>
+            We conducted customer and market research to drive our planning phase. The key insights
+            that define the pain points in the registration process are
+          </p>
+        </div>
+
+        <div class="lrk__insights lrk__insights--pair rv" data-reveal="media">
+          <CaseImage image={media['chart-registration-time-benchmark-37s-vs-121s']} />
+          <h3>Long Registration Time</h3>
+          <p>
+            Market research shows that the average registration time of DingDing, one of Lark’s
+            benchmarks, is 37.3s. However, our backend data shows that our users need 121.4s to
+            complete registration.
+          </p>
+          <CaseImage image={media['illustration-slow-registration-waiting-spot']} />
+          <h3>Privacy concern from users</h3>
+          <p>
+            Through customer interviews, our users are concerned that the platform is collecting
+            irrelevant information, such as gender, age, and personal interests, with one user
+            saying, "I feel exposed, and that makes user comfortable.
+          </p>
+        </div>
+      </div>
+
+      <div class="lrk__solution">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Solution of Registration &amp; Login</p>
+          <h2>Speeding up registration for efficiency</h2>
+          <p>
+            Our designers envision more efficiency for the user experience. However, the business
+            team was concerned that the new strategy would deter stakeholders. To gain buy-in, I
+            collaborated with two user researchers and conducted three interviews with SMB and TikTok
+            stakeholders that confirmed the appropriateness of our design decision.
+          </p>
+        </div>
+        <div class="lrk__compare rv" data-reveal="media">
+          <p class="lrk__caption">Old Workflow</p>
+          <p class="lrk__caption">New Workflow</p>
+          <CaseImage image={media['flow-registration-workflow-before']} />
+          <CaseImage image={media['flow-registration-workflow-after']} />
+        </div>
+      </div>
+
+      <div class="lrk__design">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Design of Registration&amp;Login</p>
+          <h2>A faster, more accessible and User-friendly Design</h2>
+        </div>
+        <div class="lrk__figure lrk__figure--wide">
+          <CaseImage image={media['flow-new-signup-flow-desktop-and-mobile-9up']} />
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <CaseImage image={media['hero-hmw-feature-exploration-iceberg']} class="lrk__banner" />
+
+      <div class="lrk__challenge lrk__challenge--tinted">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Discover of Feature Exploration</p>
+          <h2>User Prefer to Skip the Feature</h2>
+          <p>
+            Upon successful login, users will see eight pages of illustration in Lark's previous
+            feature tour. However, <strong>users do not want to spend time reading through pages of
+            instruction, so they choose to skip this section</strong>.
+          </p>
+        </div>
+        <div class="lrk__figure">
+          <CaseImage image={media['illustration-eight-page-feature-tour-skip-frustration']} />
+        </div>
+        <div class="lrk__block rv" data-reveal="text">
+          <p>
+            To verify my assumption, I asked the data team to read the information related to the
+            feature guidance step and visualized the data in the following pie chart:
+            <strong> Less than 10% of people will fully view 8-page feature instruction (orange part
+            in the chart).</strong>
+          </p>
+        </div>
+        <div class="lrk__noted rv" data-reveal="media">
+          <CaseImage image={media['chart-feature-tour-skip-behavior-breakdown']} />
+          <p class="lrk__caption">(A pie chart showing the use of contextual guidance)</p>
+        </div>
+
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">The Solution of Feature Exploration</p>
+          <h2>Anticipate user needs before starting the tour.</h2>
+          <p>
+            There is a misalignment between users’ preconceived assumptions about Lark and its true
+            potential. As an office platform, we see ourselves as a unique flagship, but users treat
+            it more traditionally. For example, data from the data analysis team shows that
+            <strong>over 40% of users know the characteristic of "cross-function"</strong> (see the
+            orange section in the first chart). However, <strong>the use on cross-function is lower
+            than 20%</strong> (see the orange section of the second chart).
+            <strong>Under such a situation, how should users fully realize the potential value of
+            lark?</strong>
+          </p>
+        </div>
+        <div class="lrk__compare rv" data-reveal="media">
+          <CaseImage image={media['chart-function-count-per-user-share']} />
+          <CaseImage image={media['chart-expected-function-share-by-feature']} />
+          <p class="lrk__caption">(A pie chart showing function usage of Lark in 2020 Jan)</p>
+          <p class="lrk__caption">(A pie chart showing function usage of Lark in 2020 June)</p>
+        </div>
+      </div>
+
+      <div class="lrk__solution">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">The solution of Feature Exploration</p>
+          <h2>Anticipate user needs before starting the tour.</h2>
+          <p>
+            With insights from competitor analysis and expert interviews, I determined that guiding
+            new users through their first platform use would be a better strategy for Lark. Then,
+            with further research, <strong>I applied personalized contextual guidance in user
+            experience to make it less noisy but more engaging</strong>.
+          </p>
+        </div>
+        <div class="lrk__noted rv" data-reveal="media">
+          <CaseImage image={media['chart-solution-assessment-radar-5axis']} />
+          <p class="lrk__caption">
+            (Solution assessment based on usability tests and customer feedback.)
+          </p>
+        </div>
+
+        <div class="lrk__block rv" data-reveal="text">
+          <h2>Adapt an appropriate guide for each main function</h2>
+        </div>
+        <div class="lrk__noted rv" data-reveal="media">
+          <CaseImage image={media['system-engagement-pyramid-guidance-strategy']} />
+          <p class="lrk__caption">
+            (How I approach the final design decision based on product assessment.)
+          </p>
+        </div>
+
+        <div class="lrk__block rv" data-reveal="text">
+          <h2>Conduct AB Testing to secure the final success</h2>
+          <p>
+            To ensure that this design strategy can be successfully applied to our platform, I also
+            conducted an AB Test with assistance from the product management and business development
+            teams to support our assumption. Finally, I made the final design decision based on the
+            expected result from the test result.
+          </p>
+        </div>
+        <div class="lrk__compare rv" data-reveal="media">
+          <CaseImage image={media['chart-instruction-read-efficiency-before']} />
+          <CaseImage image={media['chart-instruction-read-efficiency-after']} />
+        </div>
+      </div>
+
+      <div class="lrk__design lrk__design--tinted">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Design of Feature Exploration</p>
+          <h2>A provocative, enlightening, and efficient design</h2>
+        </div>
+        <div class="lrk__figure lrk__figure--wide">
+          <CaseImage image={media['flow-onboarding-guidance-touchpoints-map']} />
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <CaseImage image={media['hero-hmw-invite-under-competition-desktops']} class="lrk__banner" />
+
+      <div class="lrk__challenge">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Discover of member invitation</p>
+          <h2>An industry competition blocks user invite from other platforms</h2>
+          <p>
+            The hyper-growth of Lark sounded an alarm to other business platforms in China, such as
+            WeChat Work (Tencent) and DingDing (BABA). Those companies started acting to hinder the
+            path of Lark's expansion. They block the spread of Lark's invitation links on their
+            platforms. The lagging method of member invitation exacerbated the downstream trend of
+            new users joining
+          </p>
+        </div>
+        <div class="lrk__insights lrk__insights--triple rv" data-reveal="media">
+          <CaseImage image={media['illustration-blocked-link-404-spot']} />
+          <h3>Cannot Access Lark Through Links</h3>
+          <p>
+            Invitation Links sent from other platforms are blocked without notifications, which may
+            lead to credibility loss of the product.
+          </p>
+          <CaseImage image={media['illustration-bytedance-vs-tencent-user-loss-spot']} />
+          <h3>Competition Results in User Loss</h3>
+          <p>The competition between ByteDance and Tencent results in user loss in Lark.</p>
+          <CaseImage image={media['illustration-blocked-invite-access-vault-spot']} />
+          <h3>Privacy Concern from Users</h3>
+          <p>Potential users do not entrust our platform when privacy errors occur.</p>
+        </div>
+      </div>
+
+      <div class="lrk__solution">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Solution of Member Invitation</p>
+          <h2>Explore appropriate and popular methods in the Chinese social networking ecosystem</h2>
+          <p>
+            I start with a minimum quality bar to enable the invitation of users for all contexts. In
+            this case, we curated several ways to spread member invitation resources:
+          </p>
+        </div>
+        <div class="lrk__figure"><CaseImage image={media['chart-invitation-channel-penetration-fan']} /></div>
+        <div class="lrk__block rv" data-reveal="text">
+          <p>
+            With a clear information structure based on the penetration rate for each method and
+            information density, we have developed seven different design sketches for team member
+            invitations:
+          </p>
+        </div>
+        <div class="lrk__figure lrk__figure--wide">
+          <CaseImage image={media['wireframe-add-team-member-dialog-explorations']} />
+        </div>
+      </div>
+
+      <div class="lrk__design">
+        <div class="lrk__block rv" data-reveal="text">
+          <p class="lrk__eyebrow">Design of Member Invitation</p>
+          <h2>A guaranteed, diverse, and inclusive design</h2>
+        </div>
+        <div class="lrk__figure"><CaseImage image={media['screen-add-team-member-final-states-6up']} /></div>
+        <div class="lrk__figure"><CaseImage image={media['flow-join-or-upgrade-team-8up']} /></div>
+      </div>
+    </section>
+
+    <section class="lrk__final">
+      <h2>Final Design</h2>
+      <div class="lrk__final-stack rv" data-reveal="media">
+        {finalDesign.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+      <div class="lrk__team">
+        <CaseImage image={media['photo-feishu-ux-team-snow-letter-formation-aerial']} />
+        <CaseImage image={media['photo-feishu-ux-team-group-photo-night']} />
+      </div>
+    </section>
+
+    <nav class="lrk__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="lrk__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>

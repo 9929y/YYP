@@ -21,7 +21,8 @@ const UNPUBLISHED_HTML = new Set([
   'fashion.webflow.html',
   'alzheimerdisease.webflow.html',
   'mifinance.webflow.html',
-  'cummins-digitalization.webflow.html'
+  'cummins-digitalization.webflow.html',
+  'larkdesign.webflow.html'
 ]);
 
 function mime(file) {
