@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseImage from '../components/CaseImage.astro';
+import { media } from '../data/case-media/cummins';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-cummins.css';
+
+const project = getProject('cummins-digitalization')!;
+const { prev, next } = neighbors('cummins-digitalization');
+
+/*
+  Three tiles in the "Wireframe and Prototype ideation" showroom were not images
+  in the archive — their Webflow lightbox payload was a Vimeo prototype
+  recording, with the image only acting as a thumbnail. Dropping the lightbox
+  would have made those recordings unreachable, so the tile links out instead.
+  URLs are copied from the archive's w-json blocks.
+*/
+const sections = [
+  {
+    title: 'Building design system from 0 to 1',
+    body: [
+      'Within my previous experience of building design system for Mckinsey, I led the project of developing and implementing a comprehensive design system for Cummins Guidanz',
+      'I collaborated closely with cross-functional teams, including product managers, developers, and stakeholders, to align the design system with both user needs and business goals. This involved conducting audits of existing interfaces, identifying pain points, and creating reusable components such as buttons, forms, icons, and typography styles. Additionally, I established guidelines for accessibility, responsiveness, and branding to ensure a seamless user experience across devices and platforms'
+    ],
+    tiles: [
+      { image: media['system-guidanz-color-typography-responsive-specs'] },
+      { image: media['system-guidanz-design-system-grid-margin-spacing'] },
+      { image: media['system-guidanz-button-link-ios-component-specs'] },
+      { image: media['system-guidanz-android-components-and-global-header'] },
+      { image: media['system-guidanz-icon-library-pc-android-ios'] }
+    ]
+  },
+  {
+    title: 'Scenario Exploration',
+    body: [
+      'Since Guidanz is a complex digital tool, different actions and machine connections will result in diverse results and solutions. It is highly crucial for designer to comprehend the product rationale. So I initiate the "fireside" project to build and share the scenario statement with stakeholders and design team. This resource not only benefit for our designer to create the correct wireframe but also facilitate the product development process for dev and product team'
+    ],
+    tiles: [
+      { image: media['system-ecm-install-message-matrix-part1'] },
+      { image: media['system-ecm-install-message-matrix-part2'] },
+      { image: media['system-guidanz-status-message-display-spec'] },
+      { image: media['system-ecm-install-message-matrix-part3'] },
+      { image: media['system-calibration-recovery-screen-spec-j6j'] },
+      { image: media['system-calibration-recovery-screen-spec-j6f'] }
+    ]
+  },
+  {
+    title: 'Wireframe and Prototype ideation',
+    body: [
+      'As an independent contributor, I have led the design process for online/offline diagnostic session, parameter data visualization, and multi-module cal installation process, which are the main and crucial feature of Guidanz. In the process, I collaborate with product team and offshore development team to gain insights on user feedback and product rationale, to incorporate accessibility, convenience, efficiency and user-centered design into real product.'
+    ],
+    tiles: [
+      {
+        image: media['hifi-diagnostic-session-fault-solutions'],
+        video: 'https://vimeo.com/1063938416/5ded22af0a'
+      },
+      {
+        image: media['hifi-diagnostic-session-history'],
+        video: 'https://vimeo.com/1063938455/67a2e978ca'
+      },
+      {
+        image: media['hifi-add-symptom-code-modal'],
+        video: 'https://vimeo.com/1063938439/6c0219d768'
+      },
+      { image: media['flow-parameter-data-monitoring-3up'] },
+      { image: media['flow-multi-module-calibration-result-3up'] },
+      { image: media['flow-ecm-code-install-progress-3up'] }
+    ]
+  },
+  {
+    title: 'Market&User Research for MarketPlace',
+    body: [
+      'Beside Guidanz, I also led user research and competitive analysis for Cummins Marketplace, an online platform for customers and channel suppliers. Through user interviews, surveys through Qualtrics, and usability testing, roadmap review. I identified key pain points and needs, such as simplified navigation, better product discovery, and streamlined checkout. I also analyzed leading e-commerce platforms to benchmark best practices and uncover opportunities for differentiation. The insights from this research informed the design strategy, ensuring the platform was user-centered, competitive, and aligned with business goals.'
+    ],
+    tiles: [
+      { image: media['chart-marketplace-research-methods-summary'] },
+      { image: media['journey-marketplace-service-blueprint-overview'] },
+      { image: media['chart-marketplace-interview-participation'] },
+      { image: media['chart-marketplace-research-project-timeline'] },
+      { image: media['journey-marketplace-service-blueprint-four-stages'] }
+    ]
+  }
+];
+---
+
+<!--
+  Cummins Guidanz case study — migrated off the Webflow passthrough.
+  Archive: cummins-digitalization.webflow.html (kept in git, never published).
+
+  Its own page rather than CaseStudyLayout, same reasoning as the other cases:
+  this one opens with the Cummins mark over a red string-art photograph and a
+  display headline, not with an eyebrow/title/scope/note stack.
+
+  Type comes from the token scale. cummins is in CASE_TYPE_PAGES in yy-chrome.js,
+  so the shipped page already has yy-case-type.css over it replacing every
+  Webflow font-size with --t-*/--lh-*; porting the raw sizes would have changed
+  the page. With tokens baked in, the overlay is no longer needed here.
+
+  The 22 lightboxes are gone by decision — these are plain inline figures now.
+  The exception is three tiles whose lightbox payload was a Vimeo prototype
+  recording rather than an image; those link out so the recordings stay
+  reachable. Contrary to the migration notes, this page has no <video> element.
+-->
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <main class="cmi">
+    <section class="cmi__hero">
+      <div class="cmi__hero-grid">
+        <div class="cmi__hero-inner">
+          <div class="cmi__hero-intro">
+            <CaseImage image={media['logo-cummins-brand-logo']} class="cmi__hero-logo" priority />
+            <div class="cmi__hero-copy">
+              <h1>build efficient service tool and service for technician and distributor</h1>
+              <p class="cmi__hero-note">
+                For data security, I have omitted confidential information in this project. All the
+                data in this project belongs to me
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmi__hero-sill" aria-hidden="true"></div>
+
+      <div class="cmi__hero-cue" aria-hidden="true">
+        <a class="cmi__scroll" href="#overview">
+          <span class="cmi__scroll-ring"></span>
+          <span class="cmi__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="cmi__hero-rule"></div>
+      </div>
+    </section>
+
+    <div class="cmi__body">
+      <div class="cmi__pair" id="overview">
+        <div class="cmi__block rv" data-reveal="text">
+          <h2>Overview</h2>
+          <p>
+            <strong>Cummins Guidanz</strong> is a comprehensive digital platform designed to enhance
+            the service and maintenance experience for fleet managers, technicians, and equipment
+            owners. Developed by Cummins, a global leader in power solutions, Guidanz provides
+            real-time diagnostics, troubleshooting, and repair guidance for Cummins engines and
+            equipment. By leveraging advanced telematics and data analytics, Guidanz helps users
+            minimize downtime, optimize performance, and reduce maintenance costs.
+          </p>
+        </div>
+        <div class="cmi__block rv" data-reveal="text">
+          <h2>My Role</h2>
+          <p>
+            As a UIUX specialist, I collaborate with product owner, development team, and testing
+            team to optimize the user experience in diagnostic session, data analysis and module
+            management. Moreover, I also led the design system improvement work and user research of
+            Marketplace, a To-Customer sales platform.
+          </p>
+        </div>
+      </div>
+
+      {sections.map((section) => (
+        <section class="cmi__section">
+          <div class="cmi__block rv" data-reveal="text">
+            <h2>{section.title}</h2>
+            {section.body.map((para) => <p>{para}</p>)}
+          </div>
+          <div class="cmi__showroom rv" data-reveal="media">
+            {section.tiles.map((tile) =>
+              tile.video ? (
+                <a href={tile.video} target="_blank" rel="noopener noreferrer">
+                  <CaseImage image={tile.image} />
+                  <span class="cmi__play">Prototype ↗</span>
+                </a>
+              ) : (
+                <CaseImage image={tile.image} />
+              )
+            )}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <nav class="cmi__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="cmi__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>

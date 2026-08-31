@@ -231,7 +231,7 @@ export const projects: Project[] = [
     scope: 'Enterprise · Digitalization',
     note: 'Service tooling for people who use it all day.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: false,

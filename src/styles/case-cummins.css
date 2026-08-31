@@ -1,0 +1,388 @@
+/* case-cummins.css — Cummins Guidanz case study, migrated off the Webflow sheet.
+
+   Layout and colour ported from the rules that used to style
+   cummins-digitalization.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css.
+   Archive: cummins-digitalization.webflow.html.
+
+   Type comes from the token scale, not from the Webflow rules: cummins is listed
+   in CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already runs
+   with assets/css/yy-case-type.css layered over it, replacing every font-size,
+   weight, leading and tracking with --t-*/--lh-*. Porting the raw Webflow sizes
+   would have changed the page. With the tokens baked in here the page no longer
+   needs that overlay. */
+
+.cmi {
+  --cmi-accent: #e03400; /* was var(--coral-text) */
+  --cmi-ink: #111729; /* was var(--black) */
+  --cmi-rule: #c0c0c0; /* was var(--silver) */
+
+  color: var(--cmi-ink);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.cmi__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 110vh;
+  min-height: 750px;
+  overflow: hidden;
+}
+
+.cmi__hero-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(5vw, 1fr) minmax(auto, 1400px) minmax(5vw, 1fr);
+  width: 100%;
+  background-image: url('/assets/images/cummins/bg-red-string-art-fan-dark.webp');
+  background-position: 50%;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.cmi__hero-inner {
+  grid-column: 2 / 3;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  height: 100%;
+  padding-block: 36px 80px;
+}
+
+.cmi__hero-intro {
+  z-index: 333;
+  display: grid;
+  grid-template-columns: 0.5fr 0.75fr;
+  gap: 10px;
+  place-items: center;
+  width: 90%;
+}
+
+.cmi__hero-logo {
+  max-width: 40%;
+}
+
+.cmi__hero-copy {
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+  max-width: 100%;
+  text-align: left;
+}
+
+.cmi__hero-copy h1 {
+  margin: 0 0 16px;
+  color: var(--cmi-ink);
+  font-size: var(--t-32);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  word-spacing: 0.04em;
+}
+
+.cmi__hero-note {
+  margin: 0;
+  max-width: 90%;
+  color: var(--cmi-ink);
+  text-align: left;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+/* A white sill along the bottom of the hero, which is what separates the photo
+   band from the body of the page. */
+.cmi__hero-sill {
+  position: absolute;
+  inset: auto auto 0 0;
+  z-index: 10;
+  width: 100%;
+  min-height: 70px;
+  background-color: #fff;
+}
+
+.cmi__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+}
+
+.cmi__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.cmi__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: var(--cmi-ink);
+  font-size: var(--t-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cmi__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 100%;
+}
+
+.cmi__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.cmi__scroll-label span {
+  font-weight: 700;
+}
+
+.cmi__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* -------------------------------------------------------------- sections -- */
+
+.cmi__body {
+  margin-bottom: 3%;
+  padding-inline: 15%;
+}
+
+/* The opening pair: Overview and My Role side by side. */
+.cmi__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4rem;
+  row-gap: 1.25rem;
+  align-items: start;
+  margin-top: 5%;
+  padding-bottom: 5%;
+  padding-inline: 5%;
+}
+
+/* Every later section is one full-width column: title, body, then a showroom. */
+.cmi__section {
+  padding: 5% 0 2%;
+  border-top: 1px solid var(--cmi-rule);
+  border-bottom: 1px solid var(--cmi-rule);
+}
+
+.cmi__section:last-of-type {
+  margin-bottom: 15%;
+}
+
+.cmi__block h2 {
+  margin: 0 0 10px;
+  color: var(--cmi-accent);
+  text-align: left;
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cmi__block p {
+  max-width: 36em;
+  margin: 0 0 1.15em;
+  color: var(--cmi-ink);
+  text-align: left;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+.cmi__block p strong {
+  font-weight: 600;
+}
+
+/* Three-up grid of spec sheets and screens. */
+.cmi__showroom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.cmi__showroom img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Three of these tiles opened a Vimeo prototype recording in the Webflow
+   lightbox. The lightbox is gone, so the tile is a link instead — otherwise
+   those recordings would have become unreachable. */
+.cmi__showroom a {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.cmi__showroom a:hover {
+  opacity: 0.64;
+}
+
+.cmi__play {
+  position: absolute;
+  inset: auto auto 12px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: rgba(17, 23, 41, 0.82);
+  color: #fff;
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------- prev/next -- */
+
+.cmi__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 0;
+  border-top: 1px solid var(--hair);
+}
+
+.cmi__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: var(--cmi-ink);
+  font-size: var(--t-13);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.cmi__nav a:hover {
+  opacity: 0.64;
+}
+
+.cmi__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: var(--rule);
+}
+
+.cmi__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile -- */
+
+@media screen and (max-width: 1279px) {
+  .cmi__body {
+    padding-inline: 5%;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .cmi__hero {
+    height: auto;
+    min-height: 600px;
+  }
+
+  .cmi__hero-inner {
+    grid-template-columns: 1fr;
+    padding-block: 120px;
+  }
+
+  .cmi__hero-intro {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    width: 100%;
+    margin-block: 16% 10%;
+  }
+
+  .cmi__hero-logo {
+    max-width: 25%;
+  }
+
+  .cmi__pair {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .cmi__showroom {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .cmi__hero {
+    min-height: 60vh;
+    max-height: 100vh;
+  }
+
+  .cmi__hero-sill,
+  .cmi__hero-cue {
+    display: none;
+  }
+
+  .cmi__hero-note {
+    max-width: 100%;
+  }
+
+  .cmi__body {
+    padding-inline: 7%;
+  }
+
+  .cmi__pair {
+    padding-inline: 0;
+  }
+
+  .cmi__showroom {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .cmi__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .cmi__nav-next {
+    text-align: left;
+  }
+}
