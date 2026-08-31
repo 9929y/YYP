@@ -92,7 +92,7 @@ const CATEGORIES = [
   [/^--state-/, 'state'],
   [/^--focus-ring-/, 'state.focus'],
   [/^--z-/, 'layering'],
-  [/^--t-\d/, 'type.size'],
+  [/^--text-/, 'type.size'],
   [/^--lh-/, 'type.leading'],
   [/^--(frame|col|edge|rule-x)/, 'layout'],
   [/^--(slot|case)-radius/, 'radius']

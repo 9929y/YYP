@@ -27,6 +27,7 @@ Cloudflare quick tunnel to port 4800 (see `AGENTS.md` and `.cursor/rules/preview
 | `assets/` | Hand-managed images, video, fonts and the shared scripts. Served as a second public directory by `scripts/assets-passthrough.mjs`. |
 | `assets/css/yy-tokens.css` | The design tokens. Primitives → semantic, in one file. |
 | `docs/design-tokens.json` | Generated from that file by `npm run tokens`; the machine-readable form of the design system. |
+| `DESIGN-SYSTEM-BRIEF.md` | Hand-off document for the Figma side: how to mirror these tokens as Figma variables, and what not to build. Written to be pasted whole into another tool. |
 
 The nav and footer are not page markup: `assets/js/yy-chrome.js` builds both in
 Shadow DOM on every page, so no page stylesheet can reach them and every page
