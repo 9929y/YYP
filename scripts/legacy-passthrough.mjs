@@ -19,7 +19,8 @@ const GENERATED_HTML = new Set(['index.html', 'landing.html']);
 const UNPUBLISHED_HTML = new Set([
   'index.webflow.html',
   'fashion.webflow.html',
-  'alzheimerdisease.webflow.html'
+  'alzheimerdisease.webflow.html',
+  'mifinance.webflow.html'
 ]);
 
 function mime(file) {

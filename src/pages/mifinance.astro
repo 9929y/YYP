@@ -1,0 +1,405 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseImage from '../components/CaseImage.astro';
+import { media } from '../data/case-media/mifinance';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-mifinance.css';
+
+const project = getProject('mifinance')!;
+const { prev, next } = neighbors('mifinance');
+
+/** The four launch highlights: a screen, then the claim it illustrates. */
+const highlights = [
+  {
+    image: media['hifi-open-eaccount-bind-card-screen'],
+    title: 'Clear introduction\nwith goal-directed step',
+    body: 'The previous account opening process was presented in the form of an ”action bar," which confused users and made them doubt our product’s authenticity and value.'
+  },
+  {
+    image: media['system-account-opening-stepper-states'],
+    title: 'Real-time\nstep-by-step instruction',
+    body: 'People can follow the guide step-by-step when opening an account as it will show the current situation based on whether entered and completed.'
+  },
+  {
+    image: media['hifi-id-photo-upload-guidance-screen'],
+    title: 'Support users with\ndiagrammatic drawing',
+    body: 'It is easy to become frustrated with an unqualified shooting environment for ID and face verification. To prevent that operation in advance, we offer users clear graphics and text for guidance.'
+  },
+  {
+    image: media['hifi-face-verification-failed-dialog'],
+    title: 'Provide users with\n"to-do" when an error occurred',
+    body: 'Generated from previous data, we have a clear idea on why verification is not successful. Based on the analysis of those wrong operations, we pay efforts on the retention pages.'
+  }
+];
+
+/* Impact numbers. Targets come from the PureCounter config in the archive, which
+   configured five instances from a CDN script; assets/js/yy-count.js replaces it.
+   The final value is server-rendered, so the number is right without JS. */
+const metricsTop = [
+  { value: 12, unit: 'million', label: 'active customers in 2020' },
+  { value: 100, unit: '%', label: 'positive feedback from user testings' }
+];
+const metricsBottom = [
+  { value: 27, unit: '%', label: '% increase in Market Penetration' },
+  { value: 71, unit: '%', label: 'increase in conversion rate' },
+  { value: 43, unit: '%', label: 'increase in user positive feedback' }
+];
+
+const wireflow = [
+  { image: media['lowfi-eaccount-lowfi-wireflow-plan1'], caption: 'design for error message' },
+  { image: media['lowfi-eaccount-lowfi-wireflow-with-error-states'], caption: 'First Iteration' },
+  {
+    image: media['wireframe-retention-and-verification-failure-wireframes-iteration1'],
+    caption: 'Second Iteration'
+  },
+  { image: media['lowfi-eaccount-lowfi-wireflow-full'], caption: 'Final Low-fi' }
+];
+
+const screens = [
+  media['hifi-eaccount-open-screen-empty-state'],
+  media['hifi-eaccount-open-screen-with-bank-intro-banner'],
+  media['hifi-eaccount-open-screen-filled-state'],
+  media['hifi-id-photo-upload-screen'],
+  media['hifi-face-id-verification-screen']
+];
+---
+
+<!--
+  MiFinance case study — migrated off the Webflow passthrough.
+  Archive: mifinance.webflow.html (kept in git, never published).
+
+  Its own page rather than CaseStudyLayout: that layout emits an
+  eyebrow/title/scope/note hero, and this case opens with an isometric app
+  showcase, a display headline, a data disclaimer and the Xiaomi wordmark.
+
+  Type here comes from the token scale, not from the Webflow rules. mifinance is
+  listed in CASE_TYPE_PAGES in yy-chrome.js, so the shipped page already runs
+  with yy-case-type.css layered on top, replacing every Webflow font-size with
+  --t-*/--lh-*. Porting the raw Webflow sizes would have changed the page. Since
+  the tokens are baked in here, this page no longer needs that overlay.
+
+  The 14 Webflow lightboxes are gone by decision, not by omission — those images
+  are now plain inline figures. The five animated counters no longer pull
+  PureCounter from a CDN; assets/js/yy-count.js does the same job locally, and
+  the final numbers are server-rendered so they are correct without JS.
+
+  Image src/srcset/sizes/alt all come from src/data/case-media/mifinance.ts,
+  generated from the archive so nothing is retyped.
+-->
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <script slot="scripts" is:inline defer src="/assets/js/yy-count.js"></script>
+
+  <main class="mif">
+    <section class="mif__hero">
+      <div class="mif__hero-grid">
+        <div class="mif__hero-intro">
+          <CaseImage
+            image={media['hero-mi-finance-eaccount-app-showcase']}
+            class="mif__hero-shot"
+            priority
+          />
+          <div class="mif__hero-copy">
+            <h1>Create A Delightful User Experience for<br />Online Account Opening</h1>
+            <p class="mif__hero-note">
+              For data security, I have omitted confidential information in this project.<br />
+              All the data in this project belongs to me
+            </p>
+            <CaseImage image={media['logo-xiaomi-logo']} class="mif__hero-logo" />
+          </div>
+        </div>
+      </div>
+
+      <div class="mif__hero-cue" aria-hidden="true">
+        <a class="mif__scroll" href="#background">
+          <span class="mif__scroll-ring"></span>
+          <span class="mif__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down-2.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="mif__hero-rule"></div>
+      </div>
+    </section>
+
+    <section class="mif__intro" id="background">
+      <dl class="mif__meta">
+        <dt>Role</dt>
+        <dt>Duration</dt>
+        <dt>Scope</dt>
+        <dt>Team</dt>
+        <dd>UX Designer<br />User Researcher</dd>
+        <dd>3 Months</dd>
+        <dd>User Research<br />Prototyping&amp;Design</dd>
+        <dd>MI Design</dd>
+      </dl>
+
+      <dl class="mif__brief">
+        <dt>Background</dt>
+        <dd>
+          Mi Finance is a financial app pre-installed on all Xiaomi smartphones. In the summer of
+          2021, I interned as a UX designer in the Mi Design team. As the main designer for
+          optimizing account openings, I researched user feedback and competitive analysis, built
+          prototypes for end-to-end processes, and initiated the high-fi prototype for Mi Finance 6.
+        </dd>
+        <dt>Challenge</dt>
+        <dd>
+          According to regional regulations, users in our platform must create an e-bank account
+          before buying financial products from institutions. However, based on backend data,
+          <strong>over half of global users will pause the purchase process when they create an
+          e-bank account</strong>. When I first worked on the e-account opening process, the flow had
+          usability issues and an incoherent product interface.
+        </dd>
+      </dl>
+
+      <blockquote class="mif__pullquote rv" data-reveal="text">
+        “<em>The unpleasant experience on account opening process stops users from further
+        investment</em>”
+      </blockquote>
+    </section>
+
+    <section class="mif__highlights">
+      <div class="mif__highlights-grid">
+        {highlights.map((item) => (
+          <>
+            <CaseImage image={item.image} />
+            <div class="mif__highlight rv" data-reveal="text">
+              <h3>{item.title.split('\n').map((line, i) => (i === 0 ? line : <><br />{line}</>))}</h3>
+              <p>{item.body}</p>
+            </div>
+          </>
+        ))}
+      </div>
+    </section>
+
+    <section class="mif__metrics">
+      <dl class="mif__brief">
+        <dt>Metric of Success</dt>
+        <dd>
+          Upon the launching of MiFinance6.0, the product that I get involved in designing and
+          researching provides users with a clearer and more goal-oriented onboarding process for
+          account opening.
+        </dd>
+      </dl>
+
+      <div class="mif__counts mif__counts--two">
+        {metricsTop.map((m) => (
+          <div class="mif__count">
+            <span class="mif__count-value" data-count-to={m.value}>{m.value}</span>
+            <span class="mif__count-unit">{m.unit}</span>
+            <span class="mif__count-label">{m.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mif__counts mif__counts--three">
+        {metricsBottom.map((m) => (
+          <div class="mif__count">
+            <span class="mif__count-value" data-count-to={m.value}>{m.value}</span>
+            <span class="mif__count-unit">{m.unit}</span>
+            <span class="mif__count-label">{m.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mif__journey">
+      <dl class="mif__brief">
+        <dt>Mapping out</dt>
+        <dd>
+          Creating a positive user journey experience is our goal for iteration. I started to map out
+          and conduct research on the happy user journey in order to understand user's pain points
+          and gain points in the whole process.
+        </dd>
+      </dl>
+      <CaseImage image={media['journey-account-opening-journey-painpoints']} />
+    </section>
+
+    <section class="mif__research">
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Problem Discovery</p>
+        <h2>Poor guidance makes new users get lost in the path</h2>
+        <p>
+          To determine why the rate of suspension on investment is so high, I reach out to the
+          customer service team for long-term customer feedback on the process. Looking through the
+          data, we found that 72% of negative feedback comes from customers within 0 to 15 days of
+          use. Digging into negative feedback, users have commented that it is easy to get lost on
+          the platform.
+        </p>
+      </div>
+
+      <CaseImage image={media['illustration-lost-user-question-mark-spot']} class="mif__spot" />
+
+      <div class="mif__block rv" data-reveal="text">
+        <p>
+          By classifying usage levels, I discovered that new users who first purchase e-bank products
+          on the Mi Finance platform face this problem. Reflecting on the procedural problem, users
+          with limited experience on the Mi Finance platform may encounter poor experiences when
+          using the binding card, uploading ID, and verifying Face ID.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <div class="mif__figure-row">
+          <CaseImage image={media['chart-user-type-account-status-matrix']} />
+          <CaseImage image={media['flow-eaccount-task-matrix-with-screenshots']} />
+          <CaseImage image={media['flow-eaccount-task-matrix-by-user-group']} />
+        </div>
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Insight from research</p>
+        <h2>1. Competitive analysis show how other platforms guide users</h2>
+        <p>
+          Initially, I structured a study to learn from our competitors. To better understand the
+          user experience of account opening, a procedural operation, I began to research competitors
+          by studying the arrangement of the instruction page, the workflow for the end-to-end
+          process, and the over all interface appearance.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['competitive-china-fintech-eaccount-onboarding-comparison']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Insight from research</p>
+        <h2>2. Further research informs us that the UI is incoherent and losing visual accessibility</h2>
+        <p>
+          In every step of the account opening process, the buttons are presented with different
+          colors and inconsistent shapes in different stages, which can make the user feel confused
+          during the process.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['screen-legacy-account-opening-screens-cn']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <p>When coming to the instruction page, there are three typical visual issues:</p>
+        <p>
+          Problem 1: An account opening mixed with product purchase<br />
+          Problem 2: A 3-step instruction is not aligned with user actions.<br />
+          Problem 3: The active career information is greyed out, which may be misinterpreted as
+          unclickable status.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['screen-legacy-eaccount-entry-screens-annotated']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Insight from research</p>
+        <h2>3. Further research presents error messages which make users even more impatient</h2>
+        <p>
+          When facing error messages or failed operations, users do not knowhow to address the
+          situation. In short words, there are tons of reasons for failed actions. If users do not
+          have reasons to revise their wrong information, they will get lost in our app repeatedly.
+          So it is our gain points to guide user to the right path instead of wrong actions
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['system-eaccount-failure-message-audit']} />
+      </div>
+    </section>
+
+    <section class="mif__design">
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Initial Design</p>
+        <h2>Support users with a safe and easy journey</h2>
+        <p>
+          Our design target is to make users feel safe and valued when opening an e-account. Due to
+          restricted rules with the financial products, we are not allowed to disrupt the workflow of
+          this journey. So, instead, I brainstormed and came up with new features, redesigned the
+          process guidance, unified the visual appearance, created a clear structure, and set timely
+          reminders
+        </p>
+      </div>
+
+      <div class="mif__wireflow rv" data-reveal="media">
+        {wireflow.map((item) => (
+          <figure>
+            <CaseImage image={item.image} />
+            <figcaption>{item.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <p class="mif__eyebrow">Highlights</p>
+        <h2>Provides users with delightful and clear guidance</h2>
+        <p>
+          We began to explore different options to make users see into the future. The instruction
+          gives us a feasible solution to guide users step-by-step and inform them on what has been
+          done, what is happening now, and what to do next
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['system-eaccount-step-indicator-states']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <h2>Instructional widgets lead to success</h2>
+        <p>
+          Clear diagrams and understandable tips during the registration process result in lower
+          error rates and shorter operation times.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['lowfi-eaccount-guidance-screens-final-lowfi']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <h2>Offers users clear instructions when failures occur</h2>
+        <p>
+          When an operation fails, we express the reason to our users so they can understand the
+          condition comprehensively and have clear guidance on how to proceed. We have also designed
+          a "retaining page" to give users more space for consideration and increase the rate of
+          successful applications.
+        </p>
+      </div>
+
+      <div class="mif__figure">
+        <CaseImage image={media['hifi-failure-and-retention-dialog-designs']} />
+      </div>
+
+      <div class="mif__block rv" data-reveal="text">
+        <h2>Bring in a unified and promising brand image</h2>
+        <p>
+          Followed by our new design library, I updated the visual appearance and unified our
+          component library to make the process consistent and coherent.<br />
+          While determining how to make complex information more approachable, I explored a
+          lightweight path to make the experience well-suited for beginner investors.
+        </p>
+      </div>
+
+      <div class="mif__screens">
+        <div class="mif__screens-grid rv" data-reveal="media">
+          {screens.map((image) => <CaseImage image={image} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="mif__final">
+      <div class="mif__block rv" data-reveal="text">
+        <h2>Final Design and Workflow</h2>
+      </div>
+      <CaseImage image={media['flow-final-eaccount-flow-map']} />
+    </section>
+
+    <nav class="mif__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="mif__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>

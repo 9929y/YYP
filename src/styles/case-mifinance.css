@@ -1,0 +1,651 @@
+/* case-mifinance.css — MiFinance case study, migrated off the Webflow sheet.
+
+   Layout, colour and image sizing are ported from the rules that used to style
+   mifinance.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css.
+   Archive: mifinance.webflow.html — diff against it before changing numbers.
+
+   TYPE IS DELIBERATELY NOT THE WEBFLOW TYPE. mifinance is listed in
+   CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already has
+   assets/css/yy-case-type.css layered over it, overriding every font-size,
+   weight, leading and tracking with the landing tokens. Porting the raw Webflow
+   sizes would have *changed* the page. The token values below are what this page
+   actually renders today, taken straight from that overlay — which is also the
+   target state, so this page needs no overlay and is not added to the allowlist.
+
+   Colour literals are intentional here; folding them into semantic tokens is the
+   design-system pass, not this one. */
+
+.mif {
+  --mif-accent: #e03400; /* was var(--coral-text) */
+  --mif-accent-warm: #ff6040;
+  --mif-ink: #434342; /* was var(--grey-layer) */
+  --mif-ink-2: #343434;
+  --mif-ink-3: #767676;
+  --mif-count-label: #606670;
+
+  color: var(--mif-ink-2);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.mif__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 110vh;
+  min-height: 750px;
+  overflow: hidden;
+}
+
+.mif__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(349deg, #f67e0dad, #fff);
+}
+
+.mif__hero-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(5vw, 1fr) minmax(auto, 1400px) minmax(5vw, 1fr);
+  width: 100%;
+}
+
+.mif__hero-intro {
+  grid-column: 2 / 3;
+  z-index: 333;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 10px;
+  place-items: center start;
+  align-content: center;
+  height: 100%;
+}
+
+.mif__hero-shot {
+  width: auto;
+  max-width: 140%;
+  margin-inline: -10%;
+  position: relative;
+  left: 5%;
+  object-fit: fill;
+}
+
+.mif__hero-copy {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.mif__hero-copy h1 {
+  margin: 0 0 16px;
+  color: var(--mif-ink);
+  font-size: var(--t-32);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  word-spacing: 0.04em;
+}
+
+.mif__hero-note {
+  margin: 0;
+  color: var(--mif-ink-3);
+  text-align: center;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+.mif__hero-logo {
+  width: 30%;
+  max-width: 30%;
+  margin-top: 24px;
+}
+
+/* Hairline + scroll cue against the right edge, same recipe as the other cases. */
+.mif__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+}
+
+.mif__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(67, 67, 66, 0.2);
+}
+
+.mif__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: var(--mif-ink);
+  font-size: var(--t-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.mif__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(67, 67, 66, 0.3);
+  border-radius: 100%;
+}
+
+.mif__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.mif__scroll-label span {
+  font-weight: 700;
+}
+
+.mif__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* --------------------------------------------------------------- intro ---- */
+
+.mif__intro,
+.mif__metrics {
+  margin-block: 10%;
+}
+
+.mif__meta,
+.mif__brief {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 60px;
+  text-align: left;
+}
+
+.mif__meta {
+  row-gap: 5px;
+  padding-left: 15%;
+  padding-right: 10%;
+}
+
+.mif__brief {
+  row-gap: 60px;
+  padding-block: 5%;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.mif__meta dt,
+.mif__brief dt {
+  color: var(--mif-accent);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mif__meta dd {
+  margin: 0;
+  color: var(--mif-ink);
+  font-size: var(--t-16);
+  line-height: 1.4;
+}
+
+.mif__brief dt {
+  grid-column: span 1;
+}
+
+.mif__brief dd {
+  grid-column: span 3;
+  margin: 0;
+  color: var(--mif-ink-2);
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+.mif__brief dd strong {
+  font-weight: 600;
+}
+
+/* Display-scale pull quote. No attribution in the source, and the quote body
+   carries its own emphasis, so this is a slot, not a string prop. */
+.mif__pullquote {
+  margin: 40px 0 0;
+  padding-inline: 20% 10%;
+  color: var(--mif-ink);
+  font-family: Georgia, Times, 'Times New Roman', serif;
+  font-size: var(--t-25);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.03em;
+}
+
+/* ------------------------------------------------------ highlights band ---- */
+
+.mif__highlights {
+  background-image: linear-gradient(#ff6f440f, #ff6f440f);
+  padding-block: 10%;
+}
+
+.mif__highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 5px;
+  row-gap: 5em;
+  align-items: center;
+  padding-inline: 15%;
+}
+
+.mif__highlights-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mif__highlight {
+  max-width: 80%;
+  padding-inline: 5%;
+}
+
+.mif__highlight h3 {
+  margin: 0 0 12px;
+  color: var(--mif-accent-warm);
+  text-align: center;
+  font-size: var(--t-25);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.03em;
+}
+
+.mif__highlight p {
+  margin: 0;
+  color: var(--mif-ink-2);
+  text-align: center;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+/* ------------------------------------------------------------- metrics ---- */
+
+.mif__counts {
+  display: grid;
+  gap: 16px;
+}
+
+.mif__counts--two {
+  grid-template-columns: 1fr 1fr;
+  padding: 0 20% 3%;
+}
+
+.mif__counts--three {
+  grid-template-columns: repeat(3, 1fr);
+  margin-inline: 5%;
+}
+
+.mif__count {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 0;
+  place-items: center;
+  text-align: center;
+}
+
+.mif__count-value,
+.mif__count-unit {
+  color: var(--mif-accent);
+  font-size: var(--t-32);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.04em;
+}
+
+/* The value and its unit are two cells; keep the pair reading as one number. */
+.mif__count-value {
+  justify-self: end;
+}
+
+.mif__count-unit {
+  justify-self: start;
+  padding-left: 0.15em;
+}
+
+.mif__count-label {
+  grid-column: 1 / -1;
+  padding-bottom: 5%;
+  color: var(--mif-count-label);
+  font-size: var(--t-13);
+  font-weight: 500;
+  line-height: var(--lh-caption);
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------- body sections -- */
+
+.mif__journey {
+  padding-bottom: 10%;
+}
+
+.mif__journey img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 2% 15% 0;
+  box-sizing: border-box;
+}
+
+.mif__block {
+  margin-inline: 7%;
+  padding: 5% 10% 0;
+}
+
+.mif__block h2 {
+  margin: 28px 0 12px;
+  color: var(--mif-ink-2);
+  text-align: left;
+  font-size: var(--t-25);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.03em;
+}
+
+/* The orange eyebrow above a section title — the un-extracted `.eyebrow`
+   recipe: uppercase, 0.12em tracking, caption size, weight 600. */
+.mif__eyebrow {
+  margin: 0 0 10px;
+  color: var(--mif-accent-warm);
+  font-size: var(--t-13);
+  font-weight: 600;
+  line-height: var(--lh-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mif__block p {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 1.15em;
+  color: var(--mif-ink-2);
+  text-align: left;
+  font-size: var(--t-16);
+  line-height: var(--lh-body);
+}
+
+.mif__block p strong {
+  font-weight: 600;
+}
+
+.mif__figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  padding: 5% 15% 0;
+}
+
+.mif__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mif__figure-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+.mif__spot {
+  display: block;
+  max-width: 80%;
+  height: auto;
+  margin: 0 auto;
+  padding: 0 10% 2%;
+}
+
+/* -------------------------------------------------------------- wireflow -- */
+
+/* Four low-fi iterations side by side with a caption under each. The archive
+   used Webflow's 12-column row helpers at 3/2/3/4 columns. */
+.mif__wireflow {
+  display: grid;
+  grid-template-columns: 3fr 2fr 3fr 4fr;
+  gap: 16px;
+  align-items: end;
+  margin-inline: 5%;
+}
+
+.mif__wireflow figure {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.mif__wireflow img {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 1px 1px 7px #8b8b8b;
+}
+
+.mif__wireflow figcaption {
+  color: var(--mif-ink-3);
+  text-align: left;
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+}
+
+/* ------------------------------------------------------------ screen band -- */
+
+.mif__screens {
+  background-image: url('/assets/images/bg/bg-horizontal-gradient-stripe-band.webp');
+  background-position: 0 0;
+  background-size: cover;
+  margin-top: 3%;
+  margin-bottom: 5%;
+}
+
+.mif__screens-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  align-items: center;
+  margin-inline: 5%;
+  padding-block: 5%;
+}
+
+.mif__screens-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Alternating lift: the archive raised every second screen and shadowed the
+   others, which is what gives the row its stagger. */
+.mif__screens-grid img:nth-child(odd) {
+  box-shadow: 0 1px 9px #909090;
+}
+
+.mif__screens-grid img:nth-child(even) {
+  margin-top: 77px;
+}
+
+.mif__final img {
+  display: block;
+  width: 90%;
+  max-width: 90%;
+  height: auto;
+  margin: 0 5% 10%;
+}
+
+/* ------------------------------------------------------------- prev/next -- */
+
+.mif__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 0;
+  border-top: 1px solid var(--hair);
+}
+
+.mif__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: var(--mif-ink-2);
+  font-size: var(--t-13);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.mif__nav a:hover {
+  opacity: 0.64;
+}
+
+.mif__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: var(--rule);
+}
+
+.mif__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile -- */
+
+@media screen and (max-width: 991px) {
+  .mif__hero-intro {
+    grid-template-columns: 1fr;
+    place-items: center;
+  }
+
+  .mif__hero-shot {
+    max-width: 100vw;
+    margin-inline: 0;
+    left: 0;
+  }
+
+  .mif__highlights-grid {
+    grid-template-columns: 1fr 1fr;
+    padding-inline: 7%;
+  }
+
+  .mif__highlight {
+    max-width: none;
+  }
+
+  .mif__screens-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mif__screens-grid img:nth-child(even) {
+    margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .mif__hero {
+    height: auto;
+    min-height: 0;
+    padding-block: 96px;
+  }
+
+  .mif__hero-shot {
+    max-width: 80vw;
+  }
+
+  .mif__hero-cue {
+    display: none;
+  }
+
+  .mif__meta,
+  .mif__brief {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    padding-inline: 7%;
+  }
+
+  .mif__brief dt,
+  .mif__brief dd {
+    grid-column: 1 / -1;
+  }
+
+  .mif__pullquote {
+    margin-top: 2%;
+    padding: 2% 7%;
+    font-size: var(--t-20);
+  }
+
+  .mif__highlights-grid,
+  .mif__counts--two,
+  .mif__counts--three,
+  .mif__wireflow,
+  .mif__figure-row,
+  .mif__screens-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mif__counts--two,
+  .mif__counts--three {
+    padding-inline: 7%;
+    margin-inline: 0;
+  }
+
+  .mif__block {
+    margin-inline: 0;
+    padding: 32px 7% 0;
+  }
+
+  .mif__figure,
+  .mif__journey img {
+    padding: 32px 7% 0;
+  }
+
+  .mif__spot {
+    max-width: 100%;
+    padding-inline: 0;
+  }
+
+  .mif__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .mif__nav-next {
+    text-align: left;
+  }
+}

@@ -1,0 +1,32 @@
+---
+import type { CaseImage } from '../data/case-media/mifinance';
+
+interface Props {
+  image: CaseImage;
+  class?: string;
+  /** Only the hero image of a page should set this. */
+  priority?: boolean;
+}
+
+const { image, class: className, priority = false } = Astro.props;
+---
+
+{/*
+  Renders one archived case-study image with its exact src/srcset/sizes/alt.
+
+  In the Webflow pages most of these sat inside `<a class="w-lightbox">` wrappers
+  that opened a full-screen viewer. That viewer needed jQuery plus the Webflow
+  runtime, neither of which Astro pages load, and the lightbox was dropped from
+  the migration deliberately — these are now plain inline figures.
+*/}
+<img
+  class={className}
+  src={image.src}
+  alt={image.alt}
+  width={image.width}
+  sizes={image.sizes}
+  srcset={image.srcset}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding="async"
+  fetchpriority={priority ? 'high' : undefined}
+/>

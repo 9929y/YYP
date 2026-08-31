@@ -208,7 +208,7 @@ export const projects: Project[] = [
     scope: 'Interaction & Craft',
     note: 'Account flows where the detail is the point.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: false,
