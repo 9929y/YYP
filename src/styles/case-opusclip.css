@@ -1,0 +1,555 @@
+/* case-opusclip.css — Opus Clip case study, migrated off the Webflow sheet.
+
+   Archive: ai-driven-product-design.webflow.html.
+
+   Like McKinsey, this page KEEPS THE WEBFLOW TYPE: ai-driven-product-design is
+   deliberately absent from CASE_TYPE_PAGES in assets/js/yy-chrome.js, whose own
+   comment records that Opus, Alzheimer and McKinsey keep Webflow black/white.
+   The shipped page never had yy-case-type.css over it, so the rem sizes below
+   are the real ones. Moving this page onto the token scale is a design change.
+
+   It IS the sole member of DARK_NAV_PAGES and is in DARK_FOOTER. Both maps are
+   keyed on the filename, which still resolves after the migration, so the nav
+   and footer keep their dark treatment with no change to yy-chrome.js.
+
+   Preserved quirk, same as Lark: the four impact numbers are hidden below 767px
+   (`.numbergrid { display: none }`). Reproduced to keep this a like-for-like
+   move; worth revisiting as a design decision. */
+
+.ops {
+  --ops-accent: #8d75ff; /* was var(--spark-library-foreground-interactive) */
+  --ops-accent-soft: #debbfd; /* was var(--zi) */
+  --ops-ink: #e3e3e3; /* was var(--gainsboro) */
+  --ops-ink-bright: #f3f3f3;
+  --ops-count: #4b94ff;
+  --ops-count-label: #606670;
+
+  background-color: #000;
+  color: var(--ops-ink);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.ops__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 110vh;
+  min-height: 750px;
+  margin-bottom: 60px;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.ops__hero-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ops__hero-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ops__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+}
+
+.ops__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ops__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: #fff;
+  font-size: 0.6875rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.ops__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 100%;
+}
+
+.ops__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.ops__scroll-label span {
+  font-weight: 700;
+}
+
+.ops__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* -------------------------------------------------------------- typography */
+
+.ops__label {
+  margin: 0 0 8px;
+  color: var(--ops-accent);
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Centred, uppercased section marker — the page's recurring eyebrow. */
+.ops__section-label {
+  margin: 0 0 7%;
+  color: var(--ops-accent);
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ops__subhead {
+  max-width: 100%;
+  margin: 0 0 2%;
+  padding-inline: 10%;
+  color: #fff;
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.ops p {
+  max-width: 36em;
+  margin: 0 0 1.15em;
+  color: var(--ops-ink-bright);
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.ops p strong {
+  font-weight: 600;
+}
+
+.ops__prose--inset p {
+  padding-inline: 10%;
+  max-width: none;
+}
+
+/* --------------------------------------------------------------- intro ---- */
+
+.ops__intro {
+  width: 100%;
+  margin-block: 5% 10%;
+  padding-inline: 15%;
+}
+
+.ops__intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4rem;
+  row-gap: 1.25rem;
+  align-items: start;
+  margin-top: 5%;
+  padding-inline: 5%;
+}
+
+.ops__intro-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ops__block {
+  margin-block: 10% 5%;
+  padding: 0 5% 10%;
+}
+
+.ops__block img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-block: 5% 15%;
+}
+
+/* -------------------------------------------------------------- design ---- */
+
+.ops__design {
+  padding-inline: 10%;
+}
+
+/* Feature title beside its screen recording. */
+.ops__design-grid {
+  display: grid;
+  grid-template-columns: 0.75fr 1fr;
+  gap: 4px;
+  align-items: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding-left: 5%;
+}
+
+.ops__design-grid h2 {
+  margin-top: 10%;
+  color: var(--ops-ink);
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+.ops__clip {
+  margin-bottom: 10%;
+  padding-top: 5%;
+}
+
+/* 16:10 frame, matching the inline style the archive shipped with each embed. */
+.ops__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.ops__video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------- research --- */
+
+.ops__section {
+  margin-bottom: 10%;
+  padding-top: 5%;
+}
+
+.ops__prose {
+  margin: 0 5% 5%;
+}
+
+.ops__stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3em;
+  margin: 0 15% 5%;
+  padding-left: 10%;
+  padding-right: 15%;
+}
+
+.ops__stack img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ops__stack--flush {
+  padding-inline: 0;
+}
+
+.ops__stack--flush img {
+  margin-bottom: 10%;
+}
+
+.ops__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2em;
+  margin: 0 15% 5%;
+}
+
+.ops__grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* -------------------------------------------------------- highlights ------ */
+
+.ops__highlights {
+  margin: 5% 0 25%;
+  padding-inline: 15%;
+}
+
+.ops__highlight {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 15%;
+}
+
+.ops__highlight--text-first {
+  grid-template-columns: 0.25fr 1fr;
+}
+
+.ops__highlight--media-first {
+  grid-template-columns: 0.75fr 0.25fr;
+}
+
+.ops__highlight img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ops__highlight h2 {
+  margin: 0 0 8px;
+  color: var(--ops-accent-soft);
+  text-align: center;
+  font-size: 1.5625rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.ops__highlight p {
+  margin: 0;
+}
+
+.ops__final {
+  margin-block: 5% 15%;
+  padding-inline: 5%;
+}
+
+.ops__final-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-inline: 10%;
+  margin-bottom: 16px;
+}
+
+.ops__final-row--single {
+  grid-template-columns: 1fr;
+}
+
+/* --------------------------------------------------------------- impact --- */
+
+.ops__impact {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+  padding-block: 5%;
+}
+
+.ops__numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 3em;
+  column-gap: 4px;
+  margin-bottom: 5%;
+  padding-top: 3%;
+}
+
+.ops__number {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 5px;
+  align-items: baseline;
+}
+
+.ops__number-value {
+  color: var(--ops-count);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1em;
+}
+
+.ops__number-label {
+  color: var(--ops-count-label);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.ops__nda {
+  margin: 10% 10% 0;
+  color: #adadad;
+  text-align: center;
+  max-width: none;
+}
+
+/* ------------------------------------------------------------- prev/next -- */
+
+.ops__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 64px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.ops__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.ops__nav a:hover {
+  opacity: 0.64;
+}
+
+.ops__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.ops__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile -- */
+
+@media screen and (max-width: 1279px) {
+  .ops__intro,
+  .ops__highlights {
+    padding-inline: 5%;
+  }
+
+  .ops__design-grid {
+    margin-inline: 5% 10%;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .ops__hero {
+    height: auto;
+    min-height: 600px;
+  }
+
+  .ops__highlight--text-first {
+    grid-template-columns: 0.5fr 1fr;
+  }
+
+  .ops__highlight--media-first {
+    grid-template-columns: 1fr 0.5fr;
+  }
+
+  .ops__grid {
+    grid-template-columns: 1fr;
+    margin-inline: 10%;
+  }
+
+  .ops__stack {
+    padding-inline: 0;
+    margin-inline: 10%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .ops__hero {
+    min-height: 60vh;
+    max-height: 100vh;
+    margin-bottom: 0;
+  }
+
+  .ops__hero-cue {
+    display: none;
+  }
+
+  /* Faithful to the archive: the impact numbers are hidden on phones. See the
+     note at the top of this file — worth revisiting as a design decision. */
+  .ops__numbers {
+    display: none;
+  }
+
+  .ops__intro,
+  .ops__highlights,
+  .ops__design,
+  .ops__final {
+    padding-inline: 7%;
+  }
+
+  .ops__intro-grid,
+  .ops__design-grid,
+  .ops__highlight--text-first,
+  .ops__highlight--media-first,
+  .ops__final-row {
+    grid-template-columns: 1fr;
+    margin-inline: 0;
+    padding-left: 0;
+  }
+
+  .ops__prose,
+  .ops__stack,
+  .ops__grid {
+    margin-inline: 0;
+  }
+
+  .ops__block {
+    padding-inline: 0;
+  }
+
+  .ops__subhead,
+  .ops__prose--inset p {
+    padding-inline: 0;
+  }
+
+  .ops__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .ops__nav-next {
+    text-align: left;
+  }
+}
+
+/* Visually hidden but readable by screen readers — this page's only h1, since
+   the hero is a showreel rather than a titled block. */
+.ops .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

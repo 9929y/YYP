@@ -23,7 +23,8 @@ const UNPUBLISHED_HTML = new Set([
   'mifinance.webflow.html',
   'cummins-digitalization.webflow.html',
   'larkdesign.webflow.html',
-  'mckinseyecommerce.webflow.html'
+  'mckinseyecommerce.webflow.html',
+  'ai-driven-product-design.webflow.html'
 ]);
 
 function mime(file) {

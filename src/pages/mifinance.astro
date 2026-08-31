@@ -62,9 +62,7 @@ const screens = [
   media['hifi-id-photo-upload-screen'],
   media['hifi-face-id-verification-screen']
 ];
----
-
-<!--
+/*
   MiFinance case study — migrated off the Webflow passthrough.
   Archive: mifinance.webflow.html (kept in git, never published).
 
@@ -75,7 +73,7 @@ const screens = [
   Type here comes from the token scale, not from the Webflow rules. mifinance is
   listed in CASE_TYPE_PAGES in yy-chrome.js, so the shipped page already runs
   with yy-case-type.css layered on top, replacing every Webflow font-size with
-  --t-*/--lh-*. Porting the raw Webflow sizes would have changed the page. Since
+  --t-* / --lh-*. Porting the raw Webflow sizes would have changed the page. Since
   the tokens are baked in here, this page no longer needs that overlay.
 
   The 14 Webflow lightboxes are gone by decision, not by omission — those images
@@ -85,7 +83,9 @@ const screens = [
 
   Image src/srcset/sizes/alt all come from src/data/case-media/mifinance.ts,
   generated from the archive so nothing is retyped.
--->
+*/
+---
+
 <BaseLayout
   title={`${project.title} — Yanice Yang`}
   description={project.description ?? project.note}

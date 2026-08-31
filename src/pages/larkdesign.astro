@@ -79,9 +79,7 @@ const finalDesign: (keyof typeof media)[] = [
   'flow-lark-mobile-invite-teammates-5up',
   'flow-lark-mobile-add-external-contact-5up'
 ];
----
-
-<!--
+/*
   Lark Design case study — migrated off the Webflow passthrough.
   Archive: larkdesign.webflow.html (kept in git, never published).
 
@@ -91,7 +89,7 @@ const finalDesign: (keyof typeof media)[] = [
 
   Type comes from the token scale. larkdesign is in CASE_TYPE_PAGES in
   yy-chrome.js, so the shipped page already runs with yy-case-type.css over it
-  replacing every Webflow font-size with --t-*/--lh-*.
+  replacing every Webflow font-size with --t-* / --lh-*.
 
   The 17 lightboxes are gone by decision — plain inline figures now. The nine
   counters no longer pull PureCounter from a CDN; assets/js/yy-count.js does the
@@ -100,7 +98,9 @@ const finalDesign: (keyof typeof media)[] = [
   Preserved quirk: the archive hides the nine impact numbers below 767px. That
   is reproduced in case-lark.css and flagged there — it loses real content on
   phones, but changing it is a design decision rather than part of this move.
--->
+*/
+---
+
 <BaseLayout
   title={`${project.title} — Yanice Yang`}
   description={project.description ?? project.note}

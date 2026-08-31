@@ -1,0 +1,380 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseImage from '../components/CaseImage.astro';
+import { media } from '../data/case-media/opusclip';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-opusclip.css';
+
+const project = getProject('ai-driven-product-design')!;
+const { prev, next } = neighbors('ai-driven-product-design');
+
+/** The four feature recordings, in source order. */
+const designClips = [
+  { title: 'Generate resources within AI prompts', src: '/assets/videos/AI-Prompt.mov' },
+  { title: 'AI generating storyboard&voiceover', src: '/assets/videos/generate-footage.mov' },
+  { title: 'Enhancing storyline with AI power', src: '/assets/videos/add-AI-video.mov' },
+  { title: 'Final touchup through manual control', src: '/assets/videos/edit-footage.mov' }
+];
+
+const competitors: (keyof typeof media)[] = [
+  'competitive-veed-teardown',
+  'competitive-captions-teardown-3up',
+  'competitive-riverside-teardown-3up',
+  'competitive-descript-teardown'
+];
+
+const quotes: (keyof typeof media)[] = [
+  'persona-user-quote-june-vlogger',
+  'persona-user-quote-nick-content-creator',
+  'persona-user-quote-lexi-digital-marketer'
+];
+
+const abTests: (keyof typeof media)[] = [
+  'hifi-ab-test-video-creation-entry-2up',
+  'hifi-ab-test-clip-selection-2up',
+  'hifi-ab-test-create-storyboard-2up',
+  'hifi-ab-test-refine-storyboard-2up'
+];
+
+/* Targets from the PureCounter config in the archive; yy-count.js replaces the
+   CDN script and the final values are server-rendered. */
+const numbers = [
+  { value: 97, label: '% positive and active feedback' },
+  { value: 92, label: '% user change to new user flows in 30 days' },
+  { value: 63, label: '% user show willingness to pay for it' },
+  { value: 63, label: '% user actively use product in 7 days' }
+];
+
+const highlights = [
+  {
+    title: 'AI-Powered Search\nby prompting',
+    body: 'When the user needs to search for some specific topics, they can enter prompts in the search section, then the relevant clips will be displayed for the user to select',
+    image: 'screen-ai-prompt-search-entry' as keyof typeof media,
+    mediaFirst: false
+  },
+  {
+    title: 'Control over AI outputs',
+    body: 'When AI selects the content for the user, user can still do filtering and create storyboard based on her/his own preference',
+    image: 'screen-ai-search-clip-results-selection' as keyof typeof media,
+    mediaFirst: true
+  },
+  {
+    title: 'Generate storyboard based on AI prompts',
+    body: 'After compiling the clips, user can input prompts to generate the draft within AI power',
+    image: 'screen-prompt-generated-storyboard-scenes' as keyof typeof media,
+    mediaFirst: false
+  },
+  {
+    title: 'Customize the voiceover based on user preference',
+    body: 'Offering user the control in the whole AI process is crucial to gain user retention and satisfaction',
+    image: 'screen-storyboard-scene-inline-edit' as keyof typeof media,
+    mediaFirst: true
+  }
+];
+/*
+  Opus Clip case study — migrated off the Webflow passthrough. Last of the six,
+  because it is the dark page, the sole member of DARK_NAV_PAGES, and landing
+  slot #1, so a regression here is the most visible.
+  Archive: ai-driven-product-design.webflow.html (kept in git, never published).
+
+  THE HERO IS A SUBSTITUTION AND NEEDS SIGN-OFF. The archive's hero was a
+  Webflow Lottie player pointed at a 6.8 MB JSON file, loaded eagerly, rendered
+  through the Webflow runtime this page no longer loads. Reproducing it would
+  mean shipping that 6.8 MB plus a ~250 KB player for a four-second,
+  non-looping animation. Instead the hero now plays
+  assets/videos/case-opusclip-marquee.mp4 — the same Opus Clip showreel, already
+  in the repo and already this project's media on the landing page — scroll-gated
+  through the shared .media--video contract with the existing poster frame. The
+  Lottie JSON is untouched in assets/lottie/ if this should be reverted.
+
+  This page keeps the Webflow type: ai-driven-product-design is deliberately
+  absent from CASE_TYPE_PAGES in yy-chrome.js, so the shipped page never had
+  yy-case-type.css over it.
+
+  DARK_NAV_PAGES and DARK_FOOTER are keyed on the filename, which still resolves
+  after the migration, so the nav and footer keep their dark treatment.
+
+  The four counters no longer pull PureCounter from a CDN. The seven body videos
+  keep their sources but follow the repo's motion contract (data-play="scroll",
+  no autoplay) rather than the archive's unconditional autoplay — seven
+  auto-playing videos is a lot of bandwidth, and yy-scroll.js already gates
+  .media--video video for every other case page.
+*/
+---
+
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <script slot="scripts" is:inline defer src="/assets/js/yy-count.js"></script>
+
+  <main class="ops">
+    {/* The archive carried this visually-hidden h1 because the hero is a
+        showreel with no visible title. Without it the page has no h1 at all. */}
+    <h1 class="sr-only">AI-driven product design</h1>
+
+    <section class="ops__hero">
+      <div class="ops__hero-media media media--video">
+        <video
+          data-play="scroll"
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="/assets/images/home/case-opusclip-frame.jpg"
+          aria-label="Opus Clip showreel"
+        >
+          <source src="/assets/videos/case-opusclip-marquee.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="ops__hero-cue" aria-hidden="true">
+        <a class="ops__scroll" href="#overview">
+          <span class="ops__scroll-ring"></span>
+          <span class="ops__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="ops__hero-rule"></div>
+      </div>
+    </section>
+
+    <div class="ops__intro" id="overview">
+      <div class="ops__intro-grid">
+        <div class="rv" data-reveal="text">
+          <h2 class="ops__label">Overview</h2>
+          <p>
+            Opus Clip planned to launch its new function, introducing key feature to <strong>enable
+            users to create a video that perfectly aligns with their needs using only a
+            prompt</strong>. By supporting this new use case, Opus Clip will provide a more powerful
+            and flexible tool for video creation, catering to both creative and professional needs.
+          </p>
+          <p>
+            With the new function users simply provide a prompt, and the AI handles the heavy
+            lifting. It identifies relevant content primarily from their video library—or online
+            resources if needed—and generates a video. Users only need to make minor adjustments,
+            reducing the time required to just a few minutes to 20 minutes.
+          </p>
+        </div>
+        <div class="ops__intro-stack rv" data-reveal="text">
+          <div>
+            <h2 class="ops__label">Role</h2>
+            <p>
+              As a designer, I fully participated in the project from 0 to 1, driving an end-to-end
+              design through learning from product managers to understand the requirement, conducting
+              user research and competitive analysis to gain insights, and building wireframes and
+              prototypes.
+            </p>
+          </div>
+          <div>
+            <h2 class="ops__label">Timeline</h2>
+            <p>Dec,2024 - March 2025</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ops__block rv" data-reveal="text">
+        <h2 class="ops__label">Introduction</h2>
+        <p>
+          <strong>Opus Clip, an AI-driven platform known for helping users transform long videos into
+          short, engaging clips, has garnered a strong user base of 6 million.</strong> Unlike
+          traditional video editing tools, OpusClip offers a seamless, user-friendly experience.
+          Within AI power, it drastically reduces editing costs compared to manual video editing and
+          produces multiple short clips for users to select and refine.
+        </p>
+        <p>
+          By aligning with business and engineering goals, the design team pivoted to real user needs
+          through a two-month design process. Instead of generating entirely new videos, I designed a
+          footage-to-video feature from 0 to 1, <strong>enabling OpusClip users to seamlessly
+          transform their existing footage into compelling AI-driven voiceover video.</strong>
+        </p>
+        <CaseImage image={media['hero-opusclip-footage-to-video-intro']} />
+      </div>
+
+      <div class="ops__block rv" data-reveal="text">
+        <h3 class="ops__label">The Challenge</h3>
+        <p>
+          Learned from the PRD and internal user portal, Users are looking for a feature that
+          <strong>allows them to create videos simply by providing a prompt or script</strong>. AI
+          would then assist by gathering relevant materials and producing a video.
+        </p>
+        <CaseImage image={media['icon-challenge-callout-lightbulb']} />
+      </div>
+    </div>
+
+    <section class="ops__design">
+      <h3 class="ops__section-label">Design</h3>
+      {designClips.map((clip) => (
+        <div class="ops__design-grid">
+          <h2>{clip.title}</h2>
+          <div class="ops__clip">
+            <div class="ops__video media media--video">
+              <video data-play="scroll" muted loop playsinline preload="none" aria-label={clip.title}>
+                <source src={clip.src} type="video/quicktime" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="ops__section">
+      <div class="ops__prose ops__prose--inset rv" data-reveal="text">
+        <h3 class="ops__section-label">Research</h3>
+        <h3 class="ops__subhead">What the competitors design:</h3>
+        <p>
+          From competitive analysis, I have gained the insights that current competitors are using
+          different strategies to minimize the learning curve of using AI power. At the same time,
+          the AI generated materials are not 100% satisfied. <strong>From UX perspective, the
+          simplification of user flow and dashboard UI is the key point to retain users.</strong>
+        </p>
+      </div>
+
+      <div class="ops__grid rv" data-reveal="media">
+        {competitors.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+
+      <div class="ops__prose ops__prose--inset rv" data-reveal="text">
+        <h3 class="ops__subhead">What our users said:</h3>
+        <p>
+          Within 10+ user reviews and 500+ user surveys from active users, I have gained further
+          insights: <strong>Users are willing to embrace AI power in video editing process especially
+          using prompts, however, the AI output are not always ideal.</strong> Moreover,
+          <strong>users prefer to use AI to generate a draft instead of the fine-tuned
+          video</strong>. In this stage, I initiated user research with active users in our platform
+          to test our concept and learn user habits and pain points. Here is their feedbacks:
+        </p>
+      </div>
+
+      <div class="ops__stack rv" data-reveal="media">
+        {quotes.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+
+      <div class="ops__prose ops__prose--inset rv" data-reveal="text">
+        <h3 class="ops__section-label">Insights&amp;ideation</h3>
+        <p>
+          After learning from the research, I gained insights and opportunities on how we can build
+          the final product. So I break down the problems into two phase in the user journey and
+          tried to figure out the opportunity we can equip AI function with the current product:
+        </p>
+        <h3 class="ops__subhead">
+          Fast Key-word based search is the most efficient way to facilitate the collecting process
+          for content creators
+        </h3>
+      </div>
+
+      <div class="ops__stack ops__stack--flush rv" data-reveal="media">
+        <CaseImage image={media['flow-footage-to-video-search-to-storyboard-2up']} />
+        <h3 class="ops__subhead">
+          Our user trusts AI to generate the storyline through compiling clips into a new story
+        </h3>
+        <CaseImage image={media['screen-ai-storyline-generation-annotated']} />
+        <h3 class="ops__subhead">
+          Manual control is the key for user to feel safe in storyline generation process
+        </h3>
+        <CaseImage image={media['screen-manual-clip-reorder-and-edit']} />
+      </div>
+    </section>
+
+    <section class="ops__section">
+      <div class="ops__prose ops__prose--inset rv" data-reveal="text">
+        <h3 class="ops__section-label">Validation</h3>
+        <h3 class="ops__subhead">What the AB testing tells:</h3>
+        <p>
+          In order to ensure the final product meets user expectations, I then bring design options
+          from concepts and conduct an AB testing with 10+ users.
+        </p>
+        <p>The key findings are listed below:</p>
+        <p>
+          · <strong>'Start from videos' at search homepage</strong>: User can play to preview, Offer
+          autosaved projects or AI suggested clips<br />
+          · <strong>'Add to cart' needs to be consistent</strong>: Keep overall layout consistent to
+          minimize learning curve<br />
+          · <strong>AI generating storyboard</strong>: Maintain the key features "Clips cart", "Add",
+          "Go back"<br />
+          · <strong>Automated voiceover edit</strong>: an efficient and easy way to edit voiceover
+          within prompt inputs
+        </p>
+      </div>
+
+      <div class="ops__grid rv" data-reveal="media">
+        {abTests.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+    </section>
+
+    <section class="ops__highlights">
+      <h3 class="ops__section-label">Highlights</h3>
+      {highlights.map((item) => (
+        <div
+          class={`ops__highlight ${item.mediaFirst ? 'ops__highlight--media-first' : 'ops__highlight--text-first'} rv`}
+          data-reveal="text"
+        >
+          {item.mediaFirst && <CaseImage image={media[item.image]} />}
+          <div>
+            <h2>
+              {item.title.split('\n').map((line, i) => (i === 0 ? line : <><br />{line}</>))}
+            </h2>
+            <p>{item.body}</p>
+          </div>
+          {!item.mediaFirst && <CaseImage image={media[item.image]} />}
+        </div>
+      ))}
+    </section>
+
+    <section class="ops__final">
+      <h3 class="ops__section-label">Final Design</h3>
+      <div class="ops__final-row">
+        {['1', '2'].map((n) => (
+          <div class="ops__video media media--video">
+            <video data-play="scroll" muted loop playsinline preload="none" aria-label={`Opus Clip final design walkthrough ${n}`}>
+              <source src={`/assets/videos/${n}.mp4`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        ))}
+      </div>
+      <div class="ops__final-row ops__final-row--single">
+        <div class="ops__video media media--video">
+          <video data-play="scroll" muted loop playsinline preload="none" aria-label="Opus Clip final design walkthrough 3">
+            <source src="/assets/videos/3.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="ops__impact">
+      <div class="ops__prose ops__prose--inset rv" data-reveal="text">
+        <h3 class="ops__section-label">Impact</h3>
+        <h3 class="ops__subhead">In Beta Testing stage:</h3>
+        <p>
+          The beta version design has been tested among 200 internal testing users. Based on
+          qualitative and quantitative research, the product team has validated it as PMF (Product
+          Market Fit)
+        </p>
+        <div class="ops__numbers">
+          {numbers.map((n) => (
+            <div class="ops__number">
+              <span class="ops__number-value" data-count-to={n.value}>{n.value}</span>
+              <span class="ops__number-label">{n.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="ops__nda">
+        * Since this project has not yet launched, I changed the style of the user interface to meet
+        NDA standard.
+      </p>
+    </section>
+
+    <nav class="ops__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="ops__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>

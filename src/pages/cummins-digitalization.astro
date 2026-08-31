@@ -81,9 +81,7 @@ const sections = [
     ]
   }
 ];
----
-
-<!--
+/*
   Cummins Guidanz case study — migrated off the Webflow passthrough.
   Archive: cummins-digitalization.webflow.html (kept in git, never published).
 
@@ -93,14 +91,16 @@ const sections = [
 
   Type comes from the token scale. cummins is in CASE_TYPE_PAGES in yy-chrome.js,
   so the shipped page already has yy-case-type.css over it replacing every
-  Webflow font-size with --t-*/--lh-*; porting the raw sizes would have changed
+  Webflow font-size with --t-* / --lh-*; porting the raw sizes would have changed
   the page. With tokens baked in, the overlay is no longer needed here.
 
   The 22 lightboxes are gone by decision — these are plain inline figures now.
   The exception is three tiles whose lightbox payload was a Vimeo prototype
   recording rather than an image; those link out so the recordings stay
   reachable. Contrary to the migration notes, this page has no <video> element.
--->
+*/
+---
+
 <BaseLayout
   title={`${project.title} — Yanice Yang`}
   description={project.description ?? project.note}

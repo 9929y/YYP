@@ -71,7 +71,7 @@ export const projects: Project[] = [
     note: 'Turning prompt-based generation into an intent-led video workflow',
     description: 'AI-driven product design for Opus Clip, from a prompt to a finished cut.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'dark',
     featuredOnLanding: true,

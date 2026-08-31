@@ -7,7 +7,7 @@
    Type comes from the token scale, not from the Webflow rules: cummins is listed
    in CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already runs
    with assets/css/yy-case-type.css layered over it, replacing every font-size,
-   weight, leading and tracking with --t-*/--lh-*. Porting the raw Webflow sizes
+   weight, leading and tracking with --t-* / --lh-*. Porting the raw Webflow sizes
    would have changed the page. With the tokens baked in here the page no longer
    needs that overlay. */
 
