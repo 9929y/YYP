@@ -133,7 +133,7 @@ export const projects: Project[] = [
     scope: 'Mobile App',
     note: 'Helping an established organization build its first digital commerce business from the ground up.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,

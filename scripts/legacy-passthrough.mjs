@@ -22,7 +22,8 @@ const UNPUBLISHED_HTML = new Set([
   'alzheimerdisease.webflow.html',
   'mifinance.webflow.html',
   'cummins-digitalization.webflow.html',
-  'larkdesign.webflow.html'
+  'larkdesign.webflow.html',
+  'mckinseyecommerce.webflow.html'
 ]);
 
 function mime(file) {

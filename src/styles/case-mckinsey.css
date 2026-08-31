@@ -1,0 +1,691 @@
+/* case-mckinsey.css — McKinsey live-shopping case study, migrated off Webflow.
+
+   Ported from the rules that used to style mckinseyecommerce.html in
+   assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus the glass-card
+   treatment for `.shadow-card` in assets/css/yy-case-layout.css.
+   Archive: mckinseyecommerce.webflow.html.
+
+   UNLIKE MiFinance, Cummins and Lark, THIS PAGE KEEPS THE WEBFLOW TYPE.
+   mckinseyecommerce is deliberately NOT in CASE_TYPE_PAGES in
+   assets/js/yy-chrome.js — that map's own comment records that Opus, Alzheimer
+   and McKinsey keep Webflow black/white and are excluded. So the shipped page
+   never had yy-case-type.css over it, and the sizes below are the Webflow rem
+   values rather than --t-* tokens. Folding this page into the token scale is a
+   design change, not a migration step. */
+
+.mck {
+  --mck-accent: #e62600; /* was var(--orange-red) */
+  --mck-accent-2: #e03400; /* was var(--coral-text) */
+  --mck-ink: #4b4b4b;
+  --mck-ink-2: #343434;
+  --mck-muted: #767676;
+  --mck-meta: rgba(0, 0, 0, 0.76); /* was var(--spark-library-foreground-secondary) */
+
+  color: var(--mck-ink-2);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.mck__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 110vh;
+  min-height: 750px;
+  overflow: hidden;
+}
+
+.mck__hero-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(5vw, 1fr) minmax(auto, 1400px) minmax(5vw, 1fr);
+  width: 100%;
+  background-color: #000;
+  background-image: url('/assets/images/mckinsey/bg-navy-wireframe-curve-lines.webp');
+  background-position: 0 0;
+  background-size: cover;
+}
+
+.mck__hero-inner {
+  grid-column: 2 / 3;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  align-items: center;
+  height: 100%;
+  padding-block: 36px 80px;
+}
+
+.mck__hero-intro {
+  z-index: 333;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 10px;
+  place-items: center end;
+  max-width: 100%;
+}
+
+.mck__hero-logo {
+  max-width: 100%;
+}
+
+.mck__hero-copy {
+  display: grid;
+  gap: 5px;
+  justify-items: start;
+  max-width: 100%;
+}
+
+.mck__hero-copy h1 {
+  margin: 0;
+  padding: 0;
+  color: #e1edff;
+  text-align: left;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.mck__hero-note {
+  margin: 0;
+  max-width: 90%;
+  padding-top: 4px;
+  color: #e5e5e5;
+  text-align: left;
+  font-size: 0.8125rem;
+  line-height: 1.6em;
+}
+
+.mck__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+}
+
+.mck__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.mck__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: #fff;
+  font-size: 0.6875rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.mck__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 100%;
+}
+
+.mck__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.mck__scroll-label span {
+  font-weight: 700;
+}
+
+.mck__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* ------------------------------------------------------------ overview ---- */
+
+.mck__intro {
+  margin-bottom: 3%;
+  padding-inline: 15%;
+}
+
+.mck__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4rem;
+  row-gap: 1.25rem;
+  align-items: start;
+  margin-top: 5%;
+  padding-bottom: 5%;
+  padding-inline: 5%;
+}
+
+.mck__facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  padding-inline: 5%;
+  padding-bottom: 5%;
+}
+
+.mck__label {
+  margin: 0 0 8px;
+  color: var(--mck-accent-2);
+  text-align: left;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.mck__label--live {
+  color: var(--mck-accent);
+  font-weight: 600;
+}
+
+.mck__fact-value {
+  margin: 0;
+  color: var(--mck-meta);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.mck__banner {
+  display: block;
+  width: 100%;
+}
+
+/* -------------------------------------------------------------- prose ----- */
+
+.mck__block {
+  margin-inline: 0;
+  padding: 0 20% 3%;
+}
+
+.mck__block--tight {
+  padding-bottom: 0;
+}
+
+.mck__block h2 {
+  max-width: 100%;
+  margin: 0;
+  padding-bottom: 2%;
+  color: var(--mck-ink);
+  text-align: left;
+  font-size: 1.5625rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.mck__block p {
+  max-width: 36em;
+  margin: 0 0 1.15em;
+  color: var(--mck-ink-2);
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.mck__block p strong {
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------- grids ---- */
+
+/* Four framed design problems: illustration, illustration, note, note. */
+.mck__problems {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 5px;
+  padding: 0 15% 10%;
+}
+
+.mck__problems img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding-inline: 5%;
+  padding-bottom: 2%;
+  box-sizing: border-box;
+}
+
+.mck__note {
+  margin-bottom: 5%;
+  padding-inline: 5%;
+  color: var(--mck-muted);
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.mck__note strong {
+  font-weight: 600;
+}
+
+/* Nine competitive-analysis tiles. */
+.mck__mosaic {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  width: 100%;
+  padding: 12px 10%;
+  overflow: hidden;
+}
+
+.mck__mosaic > div {
+  width: 33.33%;
+  padding: 12px;
+}
+
+.mck__mosaic img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mck__personas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-inline: 10%;
+}
+
+.mck__personas img {
+  display: block;
+  width: 100%;
+  max-width: 70%;
+  height: auto;
+  margin-inline: auto;
+}
+
+/* Brand-direction board above three style tiles. */
+.mck__styles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 3% 15% 5%;
+}
+
+.mck__styles img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mck__styles > :first-child {
+  grid-column: 1 / -1;
+}
+
+/* Single-hand study: wide diagram beside its caption. */
+.mck__reach {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  column-gap: 20px;
+  row-gap: 50px;
+  align-items: center;
+  margin: 5% 20%;
+}
+
+.mck__reach img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding-inline: 5%;
+  box-sizing: border-box;
+}
+
+.mck__reach p {
+  margin: 0;
+  color: var(--mck-ink);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.mck__stack {
+  margin-inline: 10%;
+}
+
+.mck__stack img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mck__stack img + img {
+  padding: 5% 25% 0;
+  box-sizing: border-box;
+}
+
+.mck__flows {
+  display: grid;
+  gap: 16px;
+  padding-inline: 15%;
+}
+
+.mck__flows img {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 5px 10px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mck__triptych {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-inline: 10%;
+}
+
+.mck__triptych img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mck__findings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 3% 15% 5%;
+}
+
+.mck__findings img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The three prototype recordings. Kept as real embeds — unlike the Cummins
+   prototypes, these were inline iframes in the page, not lightbox payloads. */
+.mck__prototypes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 5% 15% 0;
+  padding-bottom: 10%;
+}
+
+.mck__prototype {
+  position: relative;
+  /* 940 x 1810 from the archive's iframe attributes. */
+  aspect-ratio: 940 / 1810;
+}
+
+.mck__prototype iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ------------------------------------------------------------ takeaways --- */
+
+.mck__takeaways {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-inline: 15%;
+  padding-bottom: 10%;
+}
+
+.mck__card {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 28px 32px;
+  border-radius: var(--case-radius);
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  backdrop-filter: blur(16px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(36, 34, 32, 0.05),
+    0 1px 2px rgba(62, 65, 116, 0.07),
+    0 2px 8px -2px rgba(62, 65, 116, 0.09),
+    0 12px 36px -8px rgba(62, 65, 116, 0.2);
+}
+
+.mck__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.mck__card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .mck__card {
+    background: rgba(255, 255, 255, 0.88);
+  }
+}
+
+.mck__card h3 {
+  margin: 0 0 16px;
+  color: #5f4d4d;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.mck__card p {
+  margin: 0 0 1.15em;
+  color: var(--mck-ink-2);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.mck__card p:last-child {
+  margin-bottom: 0;
+}
+
+/* ------------------------------------------------------------- prev/next -- */
+
+.mck__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 0;
+  border-top: 1px solid var(--hair);
+}
+
+.mck__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: var(--mck-ink-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.mck__nav a:hover {
+  opacity: 0.64;
+}
+
+.mck__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: var(--rule);
+}
+
+.mck__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile -- */
+
+@media screen and (max-width: 1279px) {
+  .mck__intro {
+    padding-inline: 5%;
+  }
+
+  .mck__block {
+    margin-inline: 7%;
+    padding-inline: 10%;
+  }
+
+  .mck__hero-copy h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .mck__hero {
+    height: auto;
+    min-height: 600px;
+  }
+
+  .mck__hero-inner {
+    grid-template-columns: 1fr;
+    padding-block: 120px;
+  }
+
+  .mck__hero-intro {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    place-items: start;
+    padding-inline: 7%;
+  }
+
+  .mck__hero-logo {
+    max-width: 80%;
+  }
+
+  .mck__pair,
+  .mck__facts {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .mck__problems {
+    padding-inline: 7%;
+  }
+
+  .mck__note {
+    font-size: 0.8125rem;
+  }
+
+  .mck__personas,
+  .mck__styles,
+  .mck__triptych,
+  .mck__findings,
+  .mck__takeaways,
+  .mck__prototypes {
+    grid-template-columns: 1fr;
+    margin-inline: 15%;
+  }
+
+  .mck__personas img {
+    max-width: 100%;
+  }
+
+  .mck__reach {
+    grid-template-columns: 1fr;
+    margin-inline: 10%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .mck__hero {
+    min-height: 50vh;
+    max-height: 60vh;
+  }
+
+  .mck__hero-cue {
+    display: none;
+  }
+
+  .mck__hero-copy h1 {
+    font-size: 1.5625rem;
+  }
+
+  .mck__intro,
+  .mck__block {
+    margin-inline: 0;
+    padding-inline: 7%;
+  }
+
+  .mck__pair,
+  .mck__facts {
+    grid-template-columns: 1fr;
+    padding-inline: 0;
+  }
+
+  .mck__problems {
+    grid-template-columns: 1fr;
+  }
+
+  .mck__mosaic > div {
+    width: 50%;
+    padding: 4px;
+  }
+
+  .mck__personas,
+  .mck__styles,
+  .mck__triptych,
+  .mck__findings,
+  .mck__takeaways,
+  .mck__prototypes,
+  .mck__flows,
+  .mck__stack {
+    margin-inline: 7%;
+    padding-inline: 0;
+  }
+
+  .mck__stack img + img {
+    padding-inline: 0;
+  }
+
+  .mck__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .mck__nav-next {
+    text-align: left;
+  }
+}

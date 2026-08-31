@@ -1,0 +1,457 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseImage from '../components/CaseImage.astro';
+import { media } from '../data/case-media/mckinsey';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-mckinsey.css';
+
+const project = getProject('mckinseyecommerce')!;
+const { prev, next } = neighbors('mckinseyecommerce');
+
+const facts = [
+  { label: 'Industry', value: 'Ecommerce' },
+  { label: 'Role', value: 'UX Designer' },
+  { label: 'Form', value: 'Mobile&Web' },
+  { label: 'Duration', value: '3 Months' }
+];
+
+const competitive: (keyof typeof media)[] = [
+  'competitive-ia-fullscreen-video-and-calendar',
+  'competitive-ia-discover-page',
+  'competitive-userflow-onboarding-instructions',
+  'competitive-userflow-payment-and-scroll-gestures',
+  'competitive-interaction-pattern-gestures',
+  'competitive-interaction-engagement-modals-loading',
+  'competitive-interaction-animation-treatment',
+  'competitive-feature-set-pin-qa-filters',
+  /* The archive renders this file twice in the mosaic; kept so the grid still
+     reads as nine tiles. */
+  'competitive-feature-set-pin-qa-filters'
+];
+
+const personas: (keyof typeof media)[] = [
+  'persona-betty-genz-shopper',
+  'persona-claire-tiktok-influencer',
+  'persona-coco-livestream-manager'
+];
+
+const ideation: (keyof typeof media)[] = [
+  'flow-liveshop-mvp-flow-buyer',
+  'flow-liveshop-mvp-flow-seller',
+  'flow-liveshop-mvp-flow-buyer-seller-combined',
+  'flow-livestream-shopping-three-flow-feature-map'
+];
+
+const wireframes: (keyof typeof media)[] = [
+  'wireframe-liveshop-buyer-lowfi-wireframe-map',
+  'wireframe-liveshop-seller-manager-lowfi-wireframes',
+  'wireframe-liveshop-beta-lowfi-wireframe-map'
+];
+
+/* Four landing concepts; the multicolor headline appears twice in the archive. */
+const concepts: (keyof typeof media)[] = [
+  'hifi-liveshop-landing-concept-blob-collage',
+  'hifi-liveshop-landing-concept-multicolor-headline',
+  'hifi-liveshop-landing-concept-multicolor-headline',
+  'hifi-liveshop-landing-concept-green-wave'
+];
+
+const findings: (keyof typeof media)[] = [
+  'chart-concept-testing-goals-and-scope',
+  'chart-discover-flow-findings',
+  'chart-purchase-flow-findings',
+  'chart-save-favorites-flow-findings',
+  'chart-events-calendar-flow-findings',
+  'chart-additional-insights-to-validate'
+];
+
+/* Real inline embeds in the archive, not lightbox payloads. Attributes copied
+   from the iframes verbatim, minus autoplay: three auto-playing videos on one
+   page is a lot of bandwidth for a visitor who may never scroll this far, and
+   the poster frame plus a play control conveys the same thing. */
+const prototypes = [
+  { id: '1063037751', title: 'Live shopping prototype — buyer view' },
+  { id: '1063037743', title: 'Liveshopping prototype — seller view' },
+  { id: '1063037734', title: 'Liveshop viewing prototype' }
+];
+
+const takeaways = [
+  {
+    title: 'Perks of communication and collaboration',
+    body: [
+      "Working in a consulting environment required me to quickly adapt to a wide range of industries, clients, and project scope. I have get connected with 30+ people from our team and client team in the first day of joining the project. After that, I, as a designer, will connect with client's team to gain design support, this honed my communication skills, as I had to effectively translate complex business goals into intuitive design solutions while aligning with stakeholders who often had limited design expert."
+    ]
+  },
+  {
+    title: 'Challenges on unclear target and new field',
+    body: [
+      'Consulting projects are fast-paced and often involve diving into unfamiliar domains. This environment pushed me to develop rapid learning skills, enabling me to quickly grasp industry-specific challenges and user needs.',
+      'At the same time, I need to help the client define the scope and clarify the blockers, this experience strengthened my ability to think critically, prioritize effectively, and deliver impactful results in condensed timeline'
+    ]
+  },
+  {
+    title: 'Balancing Strong Business Goal with Design',
+    body: [
+      'Consulting experience required me to constantly align my design decisions with broader business strategies and measurable outcomes. This dual focus taught me to advocate for user-centered design while demonstrating its value in achieving business goals, a skill that required clear communication, negotiation, and the ability to present design rationale in a way that resonated with non-design stakeholders.'
+    ]
+  }
+];
+---
+
+<!--
+  McKinsey live-shopping case study — migrated off the Webflow passthrough.
+  Archive: mckinseyecommerce.webflow.html (kept in git, never published).
+
+  This page KEEPS THE WEBFLOW TYPE, unlike MiFinance, Cummins and Lark.
+  mckinseyecommerce is deliberately absent from CASE_TYPE_PAGES in yy-chrome.js
+  — that map's own comment records that Opus, Alzheimer and McKinsey keep
+  Webflow black/white — so the shipped page never had yy-case-type.css over it.
+  Moving it onto the token scale would be a design change, not a migration step.
+
+  The 28 lightboxes are gone by decision; those images are plain inline figures.
+  The three prototype recordings are different: they were real inline Vimeo
+  iframes in the page body, so they stay as embeds. They no longer autoplay —
+  see the note in the frontmatter.
+
+  Two images are rendered twice in the archive (a competitive-analysis tile and
+  a landing concept). Both repeats are preserved so the grids keep their shape.
+-->
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <main class="mck">
+    <section class="mck__hero">
+      <div class="mck__hero-grid">
+        <div class="mck__hero-inner">
+          <div class="mck__hero-intro">
+            <CaseImage image={media['logo-mckinsey-design-wordmark']} class="mck__hero-logo" priority />
+            <div class="mck__hero-copy">
+              <h1>build a live-streamed e-commerce platform for Gen Z</h1>
+              <p class="mck__hero-note">
+                For data security, I have omitted confidential information in this project. All the
+                data in this project belongs to me
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mck__hero-cue" aria-hidden="true">
+        <a class="mck__scroll" href="#overview">
+          <span class="mck__scroll-ring"></span>
+          <span class="mck__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="mck__hero-rule"></div>
+      </div>
+    </section>
+
+    <div class="mck__intro" id="overview">
+      <div class="mck__pair">
+        <div class="rv" data-reveal="text">
+          <h2 class="mck__label">Overview</h2>
+          <div class="mck__block" style="padding:0;margin:0">
+            <p>
+              I worked at McKinsey&amp;Company in New York City as an UX designer to help our client
+              set a design strategic direction, build digital products and explore design solutions
+              for their specific needs. One of the client project I actively participate is to
+              <strong>deliver GenZ value for one of the world's biggest e-commerce company through
+              designing a live-streamed platform.</strong>
+            </p>
+          </div>
+        </div>
+        <div class="rv" data-reveal="text">
+          <h2 class="mck__label">My Role</h2>
+          <div class="mck__block" style="padding:0;margin:0">
+            <p>
+              As a designer, I conducted user research and competitive analysis to gain insights for
+              conceptualization. Moreover, I prioritize features and build user flows to meet MVP
+              target. Finally, we research, craft, validate, build and pilot MVP products which
+              launched in 2023. At the same time, I collaborated with developers and business
+              analysis to "coach" our client on how to build a business-driven product
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <dl class="mck__facts rv" data-reveal="text">
+        {facts.map((fact) => (
+          <div>
+            <dt class="mck__label">{fact.label}</dt>
+            <dd class="mck__fact-value">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <CaseImage image={media['hifi-liveshop-buyer-app-hifi-8up']} class="mck__banner" />
+
+    <section>
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Core Challenge</h3>
+        <h2>How to create the most entertaining "live" shoppable moments for Gen Z</h2>
+        <p>
+          Before initiating the project, I, along with business team, had a meeting with our client
+          to understand what they want to build and how can we help them in an efficient way. Our
+          client, which is one of the world pioneer e-commerce platform, wants to enlarge their
+          market through livestream channels. With further discussion and market analysis, we decide
+          to build an e-commerce mobile platform with main feature of livestream for Gen Z to shop
+          while browsing.
+        </p>
+        <p>
+          After identifying the core challenge, I started to think, as a UX designer, how can I
+          utilize design impact to realize the goal within other business and development
+          contribution. <strong>To start with, I break out the challenge into 4 design problems:</strong>
+        </p>
+      </div>
+
+      <div class="mck__problems rv" data-reveal="media">
+        <CaseImage image={media['illustration-man-picking-color-swatches-spot']} />
+        <CaseImage image={media['illustration-screen-to-screen-workflow-spot']} />
+        <p class="mck__note">1. What <strong>Color Story</strong> will make user get engaged in</p>
+        <p class="mck__note">2. What kind of <strong>user flow</strong> make user easier to shop</p>
+        <CaseImage image={media['illustration-woman-arranging-ui-panels-spot']} />
+        <CaseImage image={media['illustration-linked-content-cards-spot']} />
+        <p class="mck__note">3. What <strong>features</strong> should be prioritized in MVP</p>
+        <p class="mck__note">
+          4. How to make the <strong>interactions</strong> fun and engaging for Gen Z users
+        </p>
+      </div>
+
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Research</h3>
+        <h2>Competitive Analysis to identify design opportunities</h2>
+        <p>
+          At the beginning of this project, I conducted extensive preliminary research, encompassing
+          a variety of methodologies such as <strong>user research</strong>,
+          <strong>competitive analysis</strong>, and <strong>trend analysis</strong>. These efforts
+          were aimed at uncovering the pain points, motivations, and expectations of key
+          stakeholders—ranging from influencers and live stream hosts to Gen Z consumers.
+        </p>
+        <p>
+          Complementing this, my competitive analysis of leading platforms like TikTok Shop,
+          Instagram Live, and Youtube Live revealed emerging trends and best practices for the five
+          design problems I try to explore:
+        </p>
+      </div>
+
+      <div class="mck__mosaic">
+        {competitive.map((key) => (
+          <div><CaseImage image={media[key]} /></div>
+        ))}
+      </div>
+
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Research</h3>
+        <h2>Interviews to understand common pattern of users</h2>
+        <p>
+          Through <strong>user interviews</strong> and <strong>qualitative surveys</strong>, I help
+          our client target the main user group and gained insights into how users want to interact
+          with live shopping platforms, their pain points, and the potential needs.
+          Here are the three main groups our product planned to serve:
+        </p>
+      </div>
+
+      <div class="mck__personas rv" data-reveal="media">
+        {personas.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+    </section>
+
+    <section>
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">InsightsⅠ</h3>
+        <h2>
+          Warm and vibrant Color represents the culture of Gen Z while warm color boosts the desire
+          of shopping
+        </h2>
+        <p>
+          While browsing trend analysis in research phase, I found that reports from McKinsey &amp;
+          Company highlight that Gen Z values personalization, interactivity, and social
+          responsibility. Moreover, WGSN (a global trend forecasting agency) notes that
+          <strong>Gen Z is drawn to bright, bold colors (like neon) or even dynamic gradient</strong>.
+        </p>
+        <p>
+          At the same time, learned from competitive analysis (TikTok, Snapchat, Instagram, etc.),
+          <strong>warm tones can promote purchasing desire.</strong> Warm tones are naturally
+          eye-catching and stand out more than cooler tones. This makes them effective for drawing
+          attention to products, promotions, or calls-to-action.
+        </p>
+        <p>
+          After presenting the data and report analysis to our client, we decide to use a mixture of
+          warm color as the main color palette of the product. The use of bright, lively colors not
+          only reflects the youthful and dynamic nature of this demographic but also enhances
+          engagement and creates a visually appealing shopping experience. This step involved
+          <strong>exploring various design options and conducting quick usability tests to validate
+          the aesthetic and functional appeal</strong>.
+        </p>
+      </div>
+
+      <div class="mck__styles rv" data-reveal="media">
+        <CaseImage image={media['system-liveshop-brand-direction-board']} />
+        <CaseImage image={media['system-liveshop-style-tile-founders-grotesk']} />
+        <CaseImage image={media['system-liveshop-style-tile-inter']} />
+        <CaseImage image={media['system-liveshop-style-tile-gotham']} />
+      </div>
+
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">InsightsⅡ</h3>
+        <h2>Taking care of user habits in Single-hand mode is the key to retain users</h2>
+        <p>
+          Through surveys and behavioral observations, we found that Gen Z users prefer to shop or
+          browse information during fragmented free time. Moreover, they often use their phones with
+          one hand, as they are usually engaged in other activities simultaneously, such as taking
+          the subway or shopping at the grocery store. So it is crucial for designers to consider the
+          usability and accessibility of single-hand mode.
+        </p>
+        <p>
+          In order to pitch our client within the new designs, <strong>I initiated a team learning on
+          WCAG Compliance and NN Group regarding usability and accessibility</strong>. Furthermore, I
+          present the key result from rapid user testings and user behavior observations to ensure
+          that the design not only meets the standard ux requirement but also be gain acceptance and
+          satisfactions from users.
+        </p>
+      </div>
+
+      <div class="mck__reach rv" data-reveal="media">
+        <CaseImage image={media['wireframe-single-hand-key-zone-callouts']} />
+        <p>Adapting to users’ needs by creating bottom navigation panels and sticky menus</p>
+        <CaseImage image={media['wireframe-single-hand-reach-heatmap-action-menu']} />
+        <p>
+          Making important features reachable through centering the bottom and place them in the
+          natural space of thumb zone
+        </p>
+      </div>
+
+      <div class="mck__block mck__block--tight rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Insights Ⅲ</h3>
+        <h2>Streamlined the userflow so users can enjoy an immersive live-streamed experience</h2>
+        <p>
+          After conducting user interviews and user survey and analyzing from McKinsey customer
+          reports, I, along with the business analyst, have gained insights that Gen Z are a group
+          that are more preferred an immersive experience without any distractions when viewing
+          live-streaming. Data from digital product usage shows that Gen Z prefers simple, intuitive
+          interfaces but also desires high levels of personalization. Within those insights, we
+          decide to move forward to simplifying the user onboarding and shopping workflow and
+          categorized feature priority using Kano Model.
+        </p>
+      </div>
+
+      <div class="mck__stack rv" data-reveal="media">
+        <CaseImage image={media['flow-signup-to-one-click-purchase-flow']} />
+        <CaseImage image={media['chart-retention-activation-conversion-pyramid']} />
+      </div>
+    </section>
+
+    <section>
+      <div class="mck__block rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Product Ideation</h3>
+        <p>
+          The insights from this research phase not only informed my understanding of the live
+          streaming ecosystem but also provided a solid foundation for the subsequent design process.
+          By synthesizing these insights, I was able to define clear design opportunities, such as
+          enhancing interactivity, streamlining the purchasing journey, and creating tools that
+          empower both creators and consumers. These outcomes directly guided me to mapped out the
+          user journey and user flow for different user groups. At the same time, I collaborate with
+          the business team to prioritize and group different features in each sprint based on
+          business and design need.
+        </p>
+      </div>
+
+      <div class="mck__flows rv" data-reveal="media">
+        {ideation.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+    </section>
+
+    <section>
+      <div class="mck__block rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Design Process</h3>
+        <p>
+          I transitioned into the design phase, beginning with <strong>low-fidelity wireframes</strong>
+          to map out the core user flows and interface structure. These wireframes were iteratively
+          refined based on feedback and insights gathered during the research phase, ensuring
+          alignment with user needs and business goals.
+        </p>
+      </div>
+
+      <div class="mck__triptych rv" data-reveal="media">
+        {wireframes.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+
+      <div class="mck__findings rv" data-reveal="media">
+        {concepts.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+
+      <div class="mck__block rv" data-reveal="text">
+        <p>
+          Building on the insights from our comprehensive research and iterative design process, our
+          product successfully launched in 2023, delivering a seamless and engaging live shopping
+          experience tailored to the needs of influencers, Gen Z consumers, and live stream hosts.
+        </p>
+        <p>
+          The prototype below highlight the key features and interactions of the product,
+          demonstrating how our team transformed user insights into a dynamic and intuitive
+          interface. From vibrant visuals that resonate with Gen Z.
+        </p>
+      </div>
+
+      <div class="mck__prototypes">
+        {prototypes.map((clip) => (
+          <div class="mck__prototype">
+            <iframe
+              src={`https://player.vimeo.com/video/${clip.id}?muted=1&loop=1&autopause=0`}
+              title={clip.title}
+              loading="lazy"
+              allow="fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        ))}
+      </div>
+
+      <div class="mck__block rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">User Testing</h3>
+        <p>
+          During the beta phase of the product, we conducted <strong>8 user testing sessions</strong>
+          with potential users. These sessions were designed to gather actionable feedback on
+          usability, functionality, and overall user experience. Through a combination of
+          <strong>task-based testing</strong>, <strong>A/B testing</strong>, and
+          <strong>in-depth interviews</strong>, we identified key pain points and areas for
+          improvement in the whole user journey:
+        </p>
+      </div>
+
+      <div class="mck__findings rv" data-reveal="media">
+        {findings.map((key) => <CaseImage image={media[key]} />)}
+      </div>
+
+      <div class="mck__block rv" data-reveal="text">
+        <h3 class="mck__label mck__label--live">Takeaways</h3>
+        <p>
+          The experience in Mckinsey is different from my previous in-house design journey. These two
+          projects are jam-packed with a lot of exploration, trials and challenges in a short time.
+          And I, along with the whole team and our clients, finally get there!
+        </p>
+      </div>
+
+      <div class="mck__takeaways rv" data-reveal="text">
+        {takeaways.map((card) => (
+          <article class="mck__card">
+            <h3>{card.title}</h3>
+            {card.body.map((para) => <p>{para}</p>)}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <nav class="mck__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="mck__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>
