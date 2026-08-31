@@ -1,9 +1,19 @@
 ---
-/** Scaffold only — replace body sections before publishing any `engine: 'astro'` case.
- * TODO: AtlasNova is engine:astro but status:in-progress, so this route emits
- * zero pages today. The placeholder copy below ("Add the project's strongest
- * evidence artifact here", CaseStat value="—") would ship the moment it flips
- * to published — replace before going live. */
+/**
+ * Scaffold route for `engine: 'astro'` case studies that do not yet have a
+ * hand-written page.
+ *
+ * Migrated case studies each get their own `src/pages/<slug>.astro`, because the
+ * real pages are visually bespoke — different heroes, different section rhythms.
+ * This route must therefore yield to them: without the DEDICATED filter below,
+ * flipping a project to `engine: 'astro'` makes both this route and its own page
+ * emit the same filename, and one silently overwrites the other. That happened
+ * once, on alzheimerdisease, and shipped the placeholder copy over the real page.
+ *
+ * The placeholder body below is live the moment a project is `engine: 'astro'` +
+ * `published` + has an `href` and has no dedicated page. check-site.mjs fails the
+ * build if either placeholder string reaches dist.
+ */
 import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
 import CaseMetaGrid from '../components/CaseMetaGrid.astro';
 import CaseQuote from '../components/CaseQuote.astro';
@@ -14,9 +24,21 @@ import MediaVideo from '../components/MediaVideo.astro';
 import { astroCaseStudies, getProject } from '../data/projects';
 
 export function getStaticPaths() {
-  return astroCaseStudies().map((project) => ({
-    params: { slug: project.slug.replace(/\.html$/, '') }
-  }));
+  // Slugs that own a hand-written page in this directory. Vite resolves the glob
+  // at build time, so the list can never drift from the files actually present.
+  // Astro hoists getStaticPaths out of frontmatter scope, so this is computed
+  // here rather than in a module-level const.
+  const dedicated = new Set(
+    Object.keys(import.meta.glob('./*.astro'))
+      .map((file) => file.replace(/^\.\//, '').replace(/\.astro$/, ''))
+      .filter((name) => !name.startsWith('['))
+  );
+
+  return astroCaseStudies()
+    .filter((project) => !dedicated.has(project.slug))
+    .map((project) => ({
+      params: { slug: project.slug.replace(/\.html$/, '') }
+    }));
 }
 
 const project = getProject(Astro.params.slug);

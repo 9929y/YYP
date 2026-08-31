@@ -641,25 +641,33 @@ if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}ove
   errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
 }
 
-const caseLayoutPages = [
-  'ai-driven-product-design.html',
-  'mckinseyecommerce.html',
-  'larkdesign.html',
-  'cummins-digitalization.html',
-  'mifinance.html',
-  'alzheimerdisease.html',
-  'tiktok-research.html'
-];
+// Case pages still on the Webflow passthrough must link the overlay stylesheet.
+// Derived from projects.ts so migrating a page needs no edit here; once every
+// case study is `engine: 'astro'` this list empties and yy-case-layout.css can
+// be deleted outright.
+const caseLayoutPages = projectsMod.projects
+  .filter((p) => p.engine === 'webflow' && p.kind === 'slot' && p.href)
+  .map((p) => toDisk(p.href));
 for (const name of caseLayoutPages) {
-  const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
+  const file = path.join(ROOT, name);
+  if (!fs.existsSync(file)) {
+    errors.push(`${name}: engine is webflow but the file is missing`);
+    continue;
+  }
+  const html = fs.readFileSync(file, 'utf8');
   if (!html.includes('yy-case-layout.css')) {
     errors.push(`${name}: missing yy-case-layout.css link`);
   }
 }
 
-const mckHtml = fs.readFileSync(path.join(ROOT, 'mckinseyecommerce.html'), 'utf8');
-if (/<body[^>]*\bblk\b/.test(mckHtml)) {
-  errors.push('mckinseyecommerce.html must be a light page — do not use body.blk (black ground + black .paragraph)');
+// Only meaningful while McKinsey is still a Webflow page; the Astro rewrite has
+// no <body class> to get wrong.
+const mckPath = path.join(ROOT, 'mckinseyecommerce.html');
+if (fs.existsSync(mckPath)) {
+  const mckHtml = fs.readFileSync(mckPath, 'utf8');
+  if (/<body[^>]*\bblk\b/.test(mckHtml)) {
+    errors.push('mckinseyecommerce.html must be a light page — do not use body.blk (black ground + black .paragraph)');
+  }
 }
 
 for (const panelName of ['work', 'about', 'resume']) {
@@ -976,6 +984,29 @@ for (const project of projectsMod.projects) {
   if (project.href && project.engine === 'webflow') {
     const page = path.join(ROOT, toDisk(project.href));
     if (!fs.existsSync(page)) errors.push(`${project.slug}: missing ${project.href}`);
+  }
+}
+
+// The [slug].astro scaffold ships placeholder copy the moment a project is
+// engine:'astro' + published + href and has no dedicated page. This fired for
+// real once: alzheimerdisease emitted twice and the scaffold overwrote the real
+// page. Fail the build rather than publish it.
+if (useDist) {
+  const placeholders = [
+    'strongest evidence artifact here',
+    'Primary outcome',
+    'Supporting outcome'
+  ];
+  for (const file of htmlFiles) {
+    if (path.basename(file) === 'case-study-template.html') continue;
+    const html = fs.readFileSync(file, 'utf8');
+    for (const needle of placeholders) {
+      if (html.includes(needle)) {
+        errors.push(
+          `${path.relative(distDir, file)}: ships [slug].astro placeholder copy (${needle})`
+        );
+      }
+    }
   }
 }
 

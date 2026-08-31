@@ -16,7 +16,11 @@ const GENERATED_HTML = new Set(['index.html', 'landing.html']);
  * filename (so the build ships the new one). Reviews happen on the dev server,
  * so a migration that leaves the root file in place looks like it did nothing.
  */
-const UNPUBLISHED_HTML = new Set(['index.webflow.html', 'fashion.webflow.html']);
+const UNPUBLISHED_HTML = new Set([
+  'index.webflow.html',
+  'fashion.webflow.html',
+  'alzheimerdisease.webflow.html'
+]);
 
 function mime(file) {
   return {

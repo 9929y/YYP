@@ -1,0 +1,471 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getProject, neighbors, publicUrl } from '../data/projects';
+import '../styles/case-alzheimer.css';
+
+const project = getProject('alzheimerdisease')!;
+const { prev, next } = neighbors('alzheimerdisease');
+
+const IMG = '/assets/images/alzheimer';
+
+/** Every srcset is copied from the archive unchanged — see the note below. */
+const journey = [
+  {
+    src: `${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning.webp`,
+    alt: 'Close-up of handwritten shadowing notes from 6am onward: caregiver waking',
+    sizes: '(max-width: 767px) 100vw, 561px',
+    srcset: `${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-500.webp 500w, ${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-800.webp 800w, ${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-1080.webp 1080w, ${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-1600.webp 1600w, ${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-2000.webp 2000w, ${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning-p-2600.webp 2600w`
+  },
+  {
+    src: `${IMG}/journey-caregiver-shadowing-timeline-notes-full-day.webp`,
+    alt: "Wall of handwritten sticky notes timestamping a caregiver's day",
+    sizes: '(max-width: 767px) 100vw, 540px',
+    srcset: `${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-500.webp 500w, ${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-800.webp 800w, ${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-1080.webp 1080w, ${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-1600.webp 1600w, ${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-2000.webp 2000w, ${IMG}/journey-caregiver-shadowing-timeline-notes-full-day-p-2600.webp 2600w`
+  },
+  {
+    src: `${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon.webp`,
+    alt: "Close-up of handwritten shadowing notes covering a caregiver's afternoon: feeding medicine",
+    sizes: '(max-width: 767px) 100vw, 559px',
+    srcset: `${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-500.webp 500w, ${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-800.webp 800w, ${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-1080.webp 1080w, ${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-1600.webp 1600w, ${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-2000.webp 2000w, ${IMG}/journey-caregiver-shadowing-timeline-notes-afternoon-p-2600.webp 2600w`
+  }
+];
+
+/** Insight Formation: four claim/illustration pairs, in source order. */
+const insights = [
+  {
+    lead: 'Caregivers‘ actions are perceived by families and patients',
+    mid: 'but ',
+    strong: 'their intentions are invisible',
+    tail: 'sometimes, they start with good intentions but actions may not lead to a good result',
+    src: `${IMG}/illustration-visible-vs-invisible-intentions.webp`,
+    alt: 'Hand-drawn diagram contrasting a small dashed circle of invisible intentions with a large solid',
+    srcset: `${IMG}/illustration-visible-vs-invisible-intentions-p-500.webp 500w, ${IMG}/illustration-visible-vs-invisible-intentions-p-800.webp 800w, ${IMG}/illustration-visible-vs-invisible-intentions-p-1080.webp 1080w, ${IMG}/illustration-visible-vs-invisible-intentions.webp 1140w`
+  },
+  {
+    lead: "when the caregiver's action is in sync with families, the result will be positive. But this situation does not happen very often as they do not show inner intentions to each other",
+    tail: 'etc adjustment on humidity or food intake',
+    src: `${IMG}/illustration-caregiver-family-overlap-coherent-actions.webp`,
+    alt: 'Hand-drawn diagram where a caregiver circle overlaps a dashed families circle',
+    srcset: `${IMG}/illustration-caregiver-family-overlap-coherent-actions-p-500.webp 500w, ${IMG}/illustration-caregiver-family-overlap-coherent-actions-p-800.webp 800w, ${IMG}/illustration-caregiver-family-overlap-coherent-actions.webp 890w`
+  },
+  {
+    lead: "Families‘ overall ideas seldom meet with the caregiver's",
+    tail: 'due to work attributes and lack of communication and understanding',
+    src: `${IMG}/illustration-caregiver-family-attention-curves.webp`,
+    alt: 'Hand-drawn pair of solid and dashed curves rising and falling out of phase along a shared baseline',
+    srcset: `${IMG}/illustration-caregiver-family-attention-curves-p-500.webp 500w, ${IMG}/illustration-caregiver-family-attention-curves-p-800.webp 800w, ${IMG}/illustration-caregiver-family-attention-curves.webp 1200w`
+  },
+  {
+    lead: 'Families‘ in-hospital time is limited',
+    tail: "but they usually use this fragment of time to\nevaluate caregiver's overall working quality",
+    src: `${IMG}/illustration-narrow-overlap-line-diagram.webp`,
+    alt: 'Minimal line drawing of a dashed line and two solid lines crossed by a single narrow vertical',
+    srcset: `${IMG}/illustration-narrow-overlap-line-diagram-p-500.webp 500w, ${IMG}/illustration-narrow-overlap-line-diagram-p-800.webp 800w, ${IMG}/illustration-narrow-overlap-line-diagram-p-1080.webp 1080w, ${IMG}/illustration-narrow-overlap-line-diagram.webp 1260w`
+  }
+];
+---
+
+<!--
+  Medical Assistive (Alzheimer) case study — migrated off the Webflow passthrough.
+  Archive: alzheimerdisease.webflow.html (kept in git, never published).
+
+  This page does NOT use CaseStudyLayout. That layout emits its own
+  eyebrow/title/scope/note hero, and this case opens with a full-bleed portrait
+  collage, a display headline and a scroll cue instead. Wrapping it would have
+  meant showing two heroes or gutting the layout for every other page.
+
+  Every img keeps the archive's exact src, srcset, sizes and alt. The srcset is
+  load-bearing beyond responsiveness: legacy-passthrough.mjs only copies a
+  `-p-<width>` variant into dist when a file textually references it.
+
+  No `yy-case` html class on purpose. yy-chrome.js loads the yy-case-type.css
+  overlay whenever that class is present, and its own comment records that Opus,
+  Alzheimer and McKinsey deliberately keep Webflow black/white and are excluded.
+  Adding the class here would have silently applied the type overlay to a page
+  the archive kept out of it. The dark surface is carried by this page's own CSS
+  and the data-surface attribute instead.
+
+  Two anomalies in the archive were corrected rather than reproduced; both are
+  called out in src/styles/case-alzheimer.css and in the commit message. The
+  larger one: the first full-bleed band pointed at a malformed background-image
+  URL, so it silently fell back to a studio photo of three models in black
+  outfits — an asset from an unrelated page. It now shows the hospital ward
+  contact sheet that the second band already used.
+-->
+<BaseLayout
+  title={`${project.title} — Yanice Yang`}
+  description={project.description ?? project.note}
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <main class="alz" data-surface="inverse">
+    <section class="alz__hero">
+      <div class="alz__hero-grid">
+        <div class="alz__hero-intro">
+          <img
+            class="alz__hero-portrait"
+            src={`${IMG}/hero-alzheimer-patient-portrait-collage.webp`}
+            width="716"
+            sizes="(max-width: 767px) 100vw, 716px"
+            srcset={`${IMG}/hero-alzheimer-patient-portrait-collage-p-500.webp 500w, ${IMG}/hero-alzheimer-patient-portrait-collage-p-800.webp 800w, ${IMG}/hero-alzheimer-patient-portrait-collage-p-1080.webp 1080w, ${IMG}/hero-alzheimer-patient-portrait-collage.webp 1163w`}
+            alt="Collage of black-and-white portraits of elderly people with anxious or confused expressions under"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <div class="alz__hero-copy">
+            <h1>Communicative System<br />Between Caregivers and Patients</h1>
+            <p class="alz__hero-lede">
+              Through promoting communication between caregivers and patient families,<br />
+              Create a delightful healthcare experience to improve the life quality of Alzheimer patients
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alz__hero-cue" aria-hidden="true">
+        <a class="alz__scroll" href="#user-research">
+          <span class="alz__scroll-ring"></span>
+          <span class="alz__scroll-label">
+            <span>Scroll</span>
+            <img src="/assets/images/ui/icon-chevron-down-2.svg" loading="lazy" alt="" />
+          </span>
+        </a>
+        <div class="alz__hero-rule"></div>
+      </div>
+    </section>
+
+    <section class="alz__intro">
+      <dl class="alz__meta">
+        <dt>Role</dt>
+        <dt>Scope</dt>
+        <dt>Duration</dt>
+        <dt>Form</dt>
+        <dd>Product Designer</dd>
+        <dd>Research&amp;Design</dd>
+        <dd>3 Months</dd>
+        <dd>Wearable Device</dd>
+      </dl>
+
+      <dl class="alz__brief">
+        <dt>Project Overview</dt>
+        <dd>
+          <strong>
+            Hospitalizations of Alzheimer patients are negatively impacted by the discordance
+            between the pace of families and that of the caregiver
+          </strong>
+          In China, a huge number of Alzheimer's patients are undergoing hospitalization with care
+          from caregivers. Research shows that the living quality of the patient is limited by the
+          disagreement between family members and caregivers. How can we mitigate the issues between
+          these two sides? The main objective of this project is to improve patients' care
+          experience through mitigating the issues between families and caregivers.
+        </dd>
+        <dt>Design Scope</dt>
+        <dd>
+          <strong>
+            Forming a service that unifies the discordance emerged in this specific experience
+          </strong>
+          As a family member of Alzheimer's patient in a late period, I closely observe my
+          grandfather's in ward experience and the caring behavior of his care worker. To steer the
+          overall experience for the patient, the caregiver, and the family into a more friendly and
+          efficient one. I build a communication system through wearable devices which will set up a
+          mutual trust through releasing signals as intention and promote communication to reach an
+          ideal consensus for medical care.
+        </dd>
+      </dl>
+    </section>
+
+    <div class="alz__band">
+      <div
+        class="alz__band-media"
+        style={`background-image: url(${IMG}/photo-hospital-ward-observation-contact-sheet.webp)`}
+        role="img"
+        aria-label="Contact sheet of hospital ward observation photographs"
+      ></div>
+    </div>
+
+    <section class="alz__island" id="user-research">
+      <div class="alz__block rv" data-reveal="text">
+        <h2>User Research</h2>
+        <p>
+          Through 3 rounds interviews with the families and caregivers of AL patients, I learned the
+          daily routine, conflicts, and workload for a patient's daily life
+        </p>
+      </div>
+
+      <div class="alz__wide rv" data-reveal="media">
+        <img
+          src={`${IMG}/chart-caregiver-interview-quotes-affinity-board.webp`}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 2809px) 100vw, 2809px"
+          srcset={`${IMG}/chart-caregiver-interview-quotes-affinity-board-p-500.webp 500w, ${IMG}/chart-caregiver-interview-quotes-affinity-board-p-800.webp 800w, ${IMG}/chart-caregiver-interview-quotes-affinity-board-p-1080.webp 1080w, ${IMG}/chart-caregiver-interview-quotes-affinity-board-p-1600.webp 1600w, ${IMG}/chart-caregiver-interview-quotes-affinity-board-p-2000.webp 2000w, ${IMG}/chart-caregiver-interview-quotes-affinity-board-p-2600.webp 2600w, ${IMG}/chart-caregiver-interview-quotes-affinity-board.webp 2809w`}
+          alt="Miro affinity board of about 36 colour-coded sticky notes holding verbatim quotes from caregivers"
+        />
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <p>
+          Furthermore, we gained more insights into <strong>why conflicts between caregivers and
+          patients families occurred frequently</strong> through forming user journeys on a daily
+          routine.
+        </p>
+      </div>
+
+      <div class="alz__triptych rv" data-reveal="media">
+        {journey.map((img) => (
+          <img
+            src={img.src}
+            loading="lazy"
+            decoding="async"
+            sizes={img.sizes}
+            srcset={img.srcset}
+            alt={img.alt}
+          />
+        ))}
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3>Families cannot perceive the overall situation of the patients remotely</h3>
+        <p>
+          Through talking with the families of AL patients, I concluded their life situation as
+          Work-Home-(Hospital). They are full with workload and life pressure. It is hard for them to
+          accompany patients all the time. In this case, the family cannot totally trust the
+          caregiver as they are unfamiliar with them and they cannot pay attention to the ward all
+          the time. If there is any mistake occurs, they will blame the caregiver directly as they
+          cannot find any other factors.
+        </p>
+        <blockquote class="alz__quote">
+          <p>
+            “I am a primary teacher, my work time is from 7am in the morning to 7pm at night. Every
+            time when I head to the hospital, my mom already fall asleep and the caregiver was in a
+            rest. I cannot know what happened all day.”
+          </p>
+          <p>
+            “Both me and my brother are busy in work and our kids, that is why we ask a caregiver for
+            help. We pay a higher wage for her is asking for a higher quality work, which means least
+            mistakes as possible.”
+          </p>
+        </blockquote>
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3>Caregivers are immersed in high-demand and time-consuming work</h3>
+        <p>
+          Interviewing with the caregivers of AL patients, I found that their workload is beyond my
+          expectation. They not only need to fully care for patients' living but also put the effort
+          into letting patients keep a good mood and healthy intake. When something emergent
+          happened, they are at a loss and the blame from families makes the situation get worse.
+        </p>
+        <blockquote class="alz__quote">
+          <p>
+            “My work is not limited to care for living of the patient, but also for a healthier
+            lifestyle for their living quality.”
+          </p>
+          <p>
+            “Their families do not know how hard and busy when we are working, we are working full
+            time, it is not only what they perceive but a huge amount workload behind their sights.”
+          </p>
+        </blockquote>
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h2>Case Observation</h2>
+        <p>
+          I deepen my research through a close view on a specific case: my grandfather's
+          hospitalization as an Alzheimer patient
+        </p>
+      </div>
+
+      <div class="alz__band">
+        <div
+          class="alz__band-media"
+          style={`background-image: url(${IMG}/photo-hospital-ward-observation-contact-sheet.webp)`}
+          role="img"
+          aria-label="Contact sheet of hospital ward observation photographs"
+        ></div>
+      </div>
+    </section>
+
+    <section class="alz__dark">
+      <div class="alz__block rv" data-reveal="text">
+        <h3>
+          Those unperceived workloads blocks families' understanding on caregiver's daily work
+        </h3>
+        <p>
+          Through a 24-hour observation, I found that the caregiver is under high pressure for both
+          working time and workload. They not only need to be alerted if there is anything bad
+          happened but also need to follow families' idea which may seem unclear (like temperature
+          control high/low)The workload for caregivers are extremely high as they need to care for
+          patients all the time and may not be able to check messages anytime and anywhere
+        </p>
+      </div>
+
+      <div class="alz__charts rv" data-reveal="media">
+        <div class="alz__charts-grid">
+          <img
+            src={`${IMG}/chart-caregiver-daily-time-schedule.webp`}
+            loading="lazy"
+            decoding="async"
+            sizes="(max-width: 1719px) 100vw, 1719px"
+            srcset={`${IMG}/chart-caregiver-daily-time-schedule-p-500.png 500w, ${IMG}/chart-caregiver-daily-time-schedule-p-800.png 800w, ${IMG}/chart-caregiver-daily-time-schedule-p-1080.png 1080w, ${IMG}/chart-caregiver-daily-time-schedule-p-1600.png 1600w, ${IMG}/chart-caregiver-daily-time-schedule.webp 1719w`}
+            alt="Horizontal timeline bar chart breaking a caregiver's 7am-to-10pm day into cleaning"
+          />
+          <img
+            src={`${IMG}/chart-caregiver-tasks-perceived-vs-unperceived.webp`}
+            loading="lazy"
+            decoding="async"
+            sizes="(max-width: 1831px) 100vw, 1831px"
+            srcset={`${IMG}/chart-caregiver-tasks-perceived-vs-unperceived-p-500.png 500w, ${IMG}/chart-caregiver-tasks-perceived-vs-unperceived-p-800.png 800w, ${IMG}/chart-caregiver-tasks-perceived-vs-unperceived-p-1080.png 1080w, ${IMG}/chart-caregiver-tasks-perceived-vs-unperceived-p-1600.png 1600w, ${IMG}/chart-caregiver-tasks-perceived-vs-unperceived.webp 1831w`}
+            alt="Butterfly chart splitting a caregiver's daily tasks either side of a centre line into work"
+          />
+        </div>
+      </div>
+
+      <div class="alz__block">
+        <h2 class="alz__insight-title">Insight Formation</h2>
+      </div>
+
+      <div class="alz__pairs rv" data-reveal="text">
+        {insights.map((item) => (
+          <>
+            <p>
+              {item.lead}
+              {item.strong && (
+                <>
+                  <br />{item.mid}<strong>{item.strong}</strong>
+                </>
+              )}
+              <br />{item.tail}
+            </p>
+            <img
+              src={item.src}
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 479px) 0px, 100vw"
+              srcset={item.srcset}
+              alt={item.alt}
+            />
+          </>
+        ))}
+      </div>
+
+      <div class="alz__ideation rv" data-reveal="text">
+        <h2>
+          Ideation on <strong>how might we promote collaboration and communication. between
+          caregivers and patient families</strong>
+        </h2>
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3><strong>1.0 Build signal system to help them entrust each other with remote distance</strong></h3>
+        <p>
+          when the caregiver is at work, the lightening system will tell families in remote places<br />
+          Signals for both sides can build a bridge for their confidence and understanding
+        </p>
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3>
+          2.0 Analysis on workload and overall conditions help caregivers gain more respect and
+          understanding
+        </h3>
+        <p>
+          Through visualized and readable analysis on caregiver's work gathered by data on the
+          lighting system, families and caregivers will gain the direct message efficiently<br />
+          it is easy for families to use the analysis know what work needs to be improved and spend
+          more time
+        </p>
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3>3.0 Promote collaborations through communications</h3>
+        <p>
+          Start by using unclear words to achieve goals.<br />
+          With more and more talks built, they will form unique clear words<br />
+          Build visualization system for clear and specific comprehension
+        </p>
+        <img
+          src={`${IMG}/illustration-unclear-to-clear-words-through-collaboration.webp`}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 479px) 0px, 100vw"
+          srcset={`${IMG}/illustration-unclear-to-clear-words-through-collaboration-p-500.webp 500w, ${IMG}/illustration-unclear-to-clear-words-through-collaboration-p-800.webp 800w, ${IMG}/illustration-unclear-to-clear-words-through-collaboration-p-1080.webp 1080w, ${IMG}/illustration-unclear-to-clear-words-through-collaboration-p-1600.webp 1600w, ${IMG}/illustration-unclear-to-clear-words-through-collaboration-p-2000.webp 2000w, ${IMG}/illustration-unclear-to-clear-words-through-collaboration.webp 2072w`}
+          alt="Diagram of a cloud-shaped blob of unclear words turning"
+        />
+      </div>
+
+      <div class="alz__block rv" data-reveal="text">
+        <h3><strong>4.0 Pave the path to the successful collaboration through diverse trials</strong></h3>
+        <p>
+          Try various methods and Leave a plan B for every task<br />
+          Create space for creativity and habits formulation<br />
+          Form meeting habits for reflections&amp;feedbacks
+        </p>
+        <img
+          src={`${IMG}/illustration-diverse-trials-to-success-through-collaboration.webp`}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 479px) 0px, 100vw"
+          srcset={`${IMG}/illustration-diverse-trials-to-success-through-collaboration-p-500.webp 500w, ${IMG}/illustration-diverse-trials-to-success-through-collaboration-p-800.webp 800w, ${IMG}/illustration-diverse-trials-to-success-through-collaboration-p-1080.webp 1080w, ${IMG}/illustration-diverse-trials-to-success-through-collaboration-p-1600.webp 1600w, ${IMG}/illustration-diverse-trials-to-success-through-collaboration-p-2000.webp 2000w, ${IMG}/illustration-diverse-trials-to-success-through-collaboration.webp 2470w`}
+          alt="Bubble diagram where a dense cluster of plans narrows through collaboration into a smaller cluster"
+        />
+      </div>
+    </section>
+
+    <section class="alz__final">
+      <h2>Prototype Process</h2>
+      <img
+        src={`${IMG}/lowfi-hand-sketch-app-concepts.webp`}
+        loading="lazy"
+        decoding="async"
+        sizes="(max-width: 479px) 0px, 100vw"
+        srcset={`${IMG}/lowfi-hand-sketch-app-concepts-p-500.webp 500w, ${IMG}/lowfi-hand-sketch-app-concepts-p-800.webp 800w, ${IMG}/lowfi-hand-sketch-app-concepts-p-1080.webp 1080w, ${IMG}/lowfi-hand-sketch-app-concepts-p-1600.webp 1600w, ${IMG}/lowfi-hand-sketch-app-concepts-p-2000.webp 2000w, ${IMG}/lowfi-hand-sketch-app-concepts-p-2600.webp 2600w, ${IMG}/lowfi-hand-sketch-app-concepts.webp 3044w`}
+        alt="Whiteboard sketches of app concepts: calendar"
+      />
+      <img
+        src={`${IMG}/wireframe-grayscale-ui-component-wireframes.webp`}
+        width="1323"
+        loading="lazy"
+        decoding="async"
+        sizes="100vw"
+        srcset={`${IMG}/wireframe-grayscale-ui-component-wireframes-p-500.webp 500w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-800.webp 800w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-1080.webp 1080w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-1600.webp 1600w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-2000.webp 2000w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-2600.webp 2600w, ${IMG}/wireframe-grayscale-ui-component-wireframes-p-3200.webp 3200w`}
+        alt="Greyscale wireframe sheet with a date picker"
+      />
+      <img
+        src={`${IMG}/system-lighting-and-data-visualization-components.webp`}
+        loading="lazy"
+        decoding="async"
+        sizes="(max-width: 479px) 100vw, 300px"
+        srcset={`${IMG}/system-lighting-and-data-visualization-components-p-500.webp 500w, ${IMG}/system-lighting-and-data-visualization-components-p-800.webp 800w, ${IMG}/system-lighting-and-data-visualization-components-p-1080.webp 1080w, ${IMG}/system-lighting-and-data-visualization-components-p-1600.webp 1600w, ${IMG}/system-lighting-and-data-visualization-components-p-2000.webp 2000w, ${IMG}/system-lighting-and-data-visualization-components-p-2600.webp 2600w, ${IMG}/system-lighting-and-data-visualization-components-p-3200.webp 3200w`}
+        alt="Dark component sheet: lighting signals for working"
+      />
+    </section>
+
+    <section class="alz__reflection">
+      <div class="alz__pair-grid rv" data-reveal="media">
+        <img
+          src={`${IMG}/photo-caregiver-assisting-patient-in-wheelchair.webp`}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 479px) 0px, 100vw"
+          srcset={`${IMG}/photo-caregiver-assisting-patient-in-wheelchair-p-500.webp 500w, ${IMG}/photo-caregiver-assisting-patient-in-wheelchair-p-800.webp 800w, ${IMG}/photo-caregiver-assisting-patient-in-wheelchair-p-1080.webp 1080w, ${IMG}/photo-caregiver-assisting-patient-in-wheelchair-p-1600.webp 1600w, ${IMG}/photo-caregiver-assisting-patient-in-wheelchair.webp 1792w`}
+          alt="A uniformed caregiver steadies the head of an elderly patient seated in a wheelchair beside a"
+        />
+        <img
+          src={`${IMG}/photo-patient-in-bed-with-vital-monitor.webp`}
+          loading="lazy"
+          decoding="async"
+          sizes="(max-width: 479px) 0px, 100vw"
+          srcset={`${IMG}/photo-patient-in-bed-with-vital-monitor-p-500.webp 500w, ${IMG}/photo-patient-in-bed-with-vital-monitor-p-800.webp 800w, ${IMG}/photo-patient-in-bed-with-vital-monitor-p-1080.webp 1080w, ${IMG}/photo-patient-in-bed-with-vital-monitor-p-1600.webp 1600w, ${IMG}/photo-patient-in-bed-with-vital-monitor.webp 1792w`}
+          alt="An elderly patient lies in a hospital bed beside a vital-signs monitor showing live readings"
+        />
+      </div>
+    </section>
+
+    <nav class="alz__nav" aria-label="Adjacent case studies">
+      {prev ? <a href={publicUrl(prev.href)}>Previous</a> : <span />}
+      {next ? <a class="alz__nav-next" href={publicUrl(next.href)}>Next Project</a> : <span />}
+    </nav>
+  </main>
+</BaseLayout>

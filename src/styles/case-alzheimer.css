@@ -1,0 +1,605 @@
+/* case-alzheimer.css — Alzheimer case study, migrated off the Webflow sheet.
+
+   Every value is ported from the rules that used to style alzheimerdisease.html
+   in assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus the two hand-written
+   overrides for this page in assets/css/yy-case-layout.css (the dark prev/next
+   bar and `.body.al .ural .headingpt.al` going #2c2c2c on the white island).
+   The archive is alzheimerdisease.webflow.html — diff against it before changing
+   numbers.
+
+   Deliberate departures from the archive, all visual-only and listed so review
+   can catch them:
+   1. `.headingpt.white` carried `top: -700%` and `.headingpt.al.white` carried
+      `top: 46%`; the 3-class rule won, so the heading sat a fraction of a line
+      low. Ported as the settled position, not as the offset hack.
+   2. The first full-bleed banner used `.background.action-background`, whose
+      background-image URL is malformed in the source sheet (an unbalanced quote
+      around a .bin filename). The declaration is dropped by every parser, so the
+      band fell back to `.background`'s image — a studio photo of three models in
+      black, on an Alzheimer case page. Ported as the hospital contact sheet the
+      second band uses. See the note in alzheimerdisease.astro.
+
+   Colours are literals on purpose: this page predates the token system and the
+   design-system revamp will fold them in. Do not "tidy" them into --ink/--ground
+   here; that is a separate, deliberate pass. */
+
+.alz {
+  --alz-ground: #2c2c2c;
+  --alz-ink: #e3e3e3; /* was var(--gainsboro) */
+  --alz-ink-bright: #eef0f6; /* was var(--grey) */
+  --alz-island-ink: #343434;
+
+  background-color: var(--alz-ground);
+  color: var(--alz-ink);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.alz__hero {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 105vh;
+  min-height: 750px;
+  overflow: hidden;
+}
+
+/* Painted under the content. The archive also had a black-to-white gradient on
+   the grid wrapper, but an absolutely-positioned sibling covered it completely,
+   so it never reached the screen and is not ported. */
+.alz__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(#0f111a, #515a75);
+}
+
+.alz__hero-grid {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 3fr 0.65fr;
+  row-gap: 48px;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+}
+
+.alz__hero-intro {
+  grid-column: 2 / 3;
+  z-index: 333;
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 10px;
+  place-items: center start;
+  align-content: start;
+  max-width: 100%;
+  max-height: 110vh;
+  background-image: linear-gradient(#58617d, #000);
+}
+
+.alz__hero-portrait {
+  position: relative;
+  bottom: 42px;
+  max-width: 100%;
+  height: 90%;
+  margin-left: -10%;
+}
+
+.alz__hero-copy {
+  align-self: center;
+  width: 100%;
+  margin-block: 50% 41%;
+}
+
+.alz__hero-copy h1 {
+  margin: 0;
+  color: #fff;
+  text-align: left;
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.25em;
+}
+
+.alz__hero-lede {
+  margin-bottom: 0;
+  padding-block: 2%;
+  text-align: left;
+  font-size: 1rem;
+}
+
+/* The hairline and scroll cue that sit against the right edge of the hero. */
+.alz__hero-cue {
+  position: absolute;
+  inset: 0 15% 0 auto;
+  z-index: 25;
+  display: grid;
+  grid-template-rows: 100px 24px 100px auto;
+  align-content: end;
+  place-items: end center;
+  width: 1px;
+  margin-right: 50px;
+  row-gap: 0;
+  column-gap: 16px;
+}
+
+.alz__hero-rule {
+  grid-row: 4;
+  width: 1px;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.alz__scroll {
+  grid-row: 3;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 36px auto;
+  grid-template-columns: 1fr 1fr;
+  width: 100px;
+  height: 100px;
+  color: #fff;
+  font-size: 0.6875rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.alz__scroll-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 100%;
+}
+
+.alz__scroll-label {
+  grid-area: 2 / 1 / 3 / 3;
+  justify-self: end;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 18px;
+  place-items: center stretch;
+  height: 100%;
+  padding-right: 44px;
+  white-space: nowrap;
+  line-height: 1.2em;
+}
+
+.alz__scroll-label span {
+  font-weight: 700;
+}
+
+.alz__scroll-label img {
+  justify-self: end;
+  width: 12px;
+  min-width: 12px;
+}
+
+/* --------------------------------------------------------------- intro ---- */
+
+.alz__intro {
+  margin-block: 10%;
+}
+
+.alz__meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 60px;
+  row-gap: 5px;
+  padding-left: 15%;
+  padding-right: 10%;
+  text-align: left;
+}
+
+.alz__meta dt {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.alz__meta dd {
+  margin: 0;
+  color: var(--alz-ink);
+  font-size: 1rem;
+  line-height: 1.3;
+  padding-block: 2%;
+}
+
+/* Label in column one, body across the remaining three — the archive's
+   `span 3` node rules, restated as an ordinary grid. */
+.alz__brief {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 60px;
+  row-gap: 60px;
+  padding-block: 5%;
+  padding-left: 15%;
+  padding-right: 15%;
+  text-align: left;
+}
+
+.alz__brief dt {
+  grid-column: span 1;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.alz__brief dd {
+  grid-column: span 3;
+  margin: 0;
+  color: var(--alz-ink);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.alz__brief dd strong {
+  display: block;
+  margin-bottom: 1.15em;
+}
+
+/* -------------------------------------------------------- full-bleed band -- */
+
+.alz__band {
+  position: relative;
+  min-height: 775px;
+  height: 90%;
+  overflow: hidden;
+}
+
+.alz__band-media {
+  position: absolute;
+  inset: 0;
+  background-position: 0 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: var(--alz-ground);
+}
+
+/* ------------------------------------------------- white research island --- */
+
+.alz__island {
+  background-color: #fff;
+  color: var(--alz-island-ink);
+  padding-top: 10%;
+}
+
+.alz__block {
+  margin-inline: 7%;
+  padding: 5% 10% 0;
+  text-align: center;
+}
+
+.alz__block h2 {
+  margin: 0;
+  padding-bottom: 2%;
+  text-align: left;
+  font-size: 1.5625rem;
+  font-weight: 600;
+  line-height: 1.25em;
+}
+
+.alz__island .alz__block h2 {
+  color: #2c2c2c;
+}
+
+.alz__block h3 {
+  margin: 0;
+  padding-block: 2%;
+  text-align: left;
+  font-size: 1.5625rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.alz__block p {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.alz__wide {
+  margin-inline: 20%;
+  margin-bottom: 2%;
+}
+
+.alz__wide img,
+.alz__island > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.alz__triptych {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 0;
+  row-gap: 16px;
+}
+
+.alz__triptych img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alz__quote {
+  margin: 1px;
+  padding: 0;
+  border: 0;
+  font-family: Georgia, Times, 'Times New Roman', serif;
+  font-style: italic;
+  text-align: left;
+}
+
+.alz__quote p {
+  font-family: inherit;
+  font-style: inherit;
+}
+
+.alz__quote p + p {
+  margin-top: 1.15em;
+}
+
+/* ----------------------------------------------------- dark analysis run --- */
+
+.alz__dark {
+  margin-bottom: 0;
+}
+
+.alz__dark .alz__block h2,
+.alz__dark .alz__block h3 {
+  color: var(--alz-ink-bright);
+}
+
+.alz__dark .alz__block p {
+  color: var(--alz-ink);
+}
+
+.alz__charts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  padding: 5% 15% 0;
+}
+
+.alz__charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.alz__charts-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The archive nudged this heading down a fraction of a line with a percentage
+   `top`; ported as its settled position. */
+.alz__insight-title {
+  width: 70%;
+  margin-left: 15%;
+  padding-top: 0.5em;
+}
+
+/* Four text/illustration pairs, text left, illustration right. */
+.alz__pairs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.alz__pairs p {
+  max-width: none;
+  margin: 0;
+  padding-block: 15%;
+  color: var(--alz-ink-bright);
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.alz__pairs img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.alz__ideation {
+  padding: 5% 10% 0;
+}
+
+.alz__ideation h2 {
+  margin: 0;
+  color: var(--alz-ink-bright);
+  text-align: left;
+  font-size: 1.5625rem;
+  font-weight: 600;
+  line-height: 1.25em;
+}
+
+/* --------------------------------------------------------- prototype run --- */
+
+.alz__final {
+  margin-top: 0;
+  padding-top: 10%;
+}
+
+.alz__final h2 {
+  margin: 0;
+  padding: 2% 10% 0;
+  color: var(--alz-ink-bright);
+  text-align: left;
+  font-size: 1.5625rem;
+  font-weight: 600;
+  line-height: 1.25em;
+}
+
+.alz__final img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.alz__reflection {
+  margin-bottom: 25%;
+}
+
+.alz__pair-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.alz__pair-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------- prev/next -
+   The archive's footer prev/next bar. On dark pages the shared stylesheet left
+   it white-on-white, which yy-case-layout.css patched; ported here already
+   corrected rather than patched after the fact. */
+
+.alz__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 48px 7% 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.alz__nav a {
+  position: relative;
+  padding-bottom: 12px;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.alz__nav a:hover {
+  opacity: 0.64;
+}
+
+.alz__nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.alz__nav-next {
+  text-align: right;
+}
+
+/* ---------------------------------------------------------------- mobile --- */
+
+@media screen and (max-width: 991px) {
+  .alz__hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .alz__hero-intro {
+    grid-column: 1 / -1;
+    padding-inline: 7%;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .alz__hero {
+    height: auto;
+    min-height: 0;
+    padding-block: 96px;
+  }
+
+  .alz__hero-intro {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+
+  .alz__hero-portrait {
+    bottom: 0;
+    height: auto;
+    margin-left: 0;
+  }
+
+  .alz__hero-copy {
+    margin-block: 32px;
+  }
+
+  .alz__hero-copy h1 {
+    font-size: 2rem;
+  }
+
+  .alz__hero-cue {
+    display: none;
+  }
+
+  .alz__meta,
+  .alz__brief {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    padding-inline: 7%;
+  }
+
+  .alz__brief dt,
+  .alz__brief dd {
+    grid-column: 1 / -1;
+  }
+
+  .alz__block {
+    margin-inline: 0;
+    padding: 32px 7% 0;
+  }
+
+  .alz__wide {
+    margin-inline: 7%;
+  }
+
+  .alz__triptych,
+  .alz__charts-grid,
+  .alz__pairs,
+  .alz__pair-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .alz__pairs p {
+    padding-block: 24px;
+  }
+
+  .alz__charts {
+    padding: 32px 7% 0;
+  }
+
+  .alz__insight-title {
+    width: auto;
+    margin-left: 0;
+  }
+
+  .alz__band {
+    min-height: 320px;
+  }
+
+  .alz__nav {
+    grid-template-columns: 1fr;
+    padding-inline: 7%;
+  }
+
+  .alz__nav-next {
+    text-align: left;
+  }
+}

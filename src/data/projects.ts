@@ -254,7 +254,7 @@ export const projects: Project[] = [
     scope: 'Health · Wearable',
     note: 'A wearable for care, designed around the carer as much as the patient.',
     status: 'published',
-    engine: 'webflow',
+    engine: 'astro',
     kind: 'slot',
     theme: 'dark',
     featuredOnLanding: false,
