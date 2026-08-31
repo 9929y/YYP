@@ -271,23 +271,6 @@ export const projects: Project[] = [
     nextSlug: 'ai-driven-product-design'
   },
   {
-    slug: 'tiktok-research',
-    title: 'TikTok Research',
-    href: 'tiktok-research.html',
-    scope: 'Quantitative research & analysis',
-    note: 'Global platform research case study.',
-    status: 'published',
-    engine: 'webflow',
-    kind: 'slot',
-    theme: 'light',
-    featuredOnLanding: false,
-    featuredOnIndex: false,
-    featuredOnProjects: true,
-    landingOrder: 80,
-    prevSlug: undefined,
-    nextSlug: undefined
-  },
-  {
     slug: 'fashion',
     title: 'Fashion',
     href: 'fashion.html',

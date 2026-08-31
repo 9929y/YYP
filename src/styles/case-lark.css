@@ -53,8 +53,28 @@
     linear-gradient(239deg, #ececec, #a8bff66e 23%, #8aabfaf5 33%, #b7ccfc3b 59%, #fff);
 }
 
+/* The archive layered a blue string-art fan over the hero gradients
+   (`.background-wrapper-3.lk > .background-2.contact-background`): an absolutely
+   positioned band, cover-sized, inset 58% from the top and 36% from the bottom.
+   It sits above the gradients and below the content, which carries its own
+   stacking context. */
+.lrk__hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin-block: 58% 36%;
+  background-image: url('/assets/images/bg/bg-blue-string-art-fan.webp');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  pointer-events: none;
+}
+
 .lrk__hero-inner {
   grid-column: 2 / 3;
+  position: relative;
+  z-index: 10;
   display: grid;
   align-items: center;
   height: 100%;
@@ -644,6 +664,11 @@
   .lrk__hero {
     height: auto;
     min-height: 80vh;
+  }
+
+  /* The archive drops this image below the tablet break. */
+  .lrk__hero::after {
+    background-image: none;
   }
 
   .lrk__hero-cue {

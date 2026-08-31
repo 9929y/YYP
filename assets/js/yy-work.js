@@ -50,13 +50,6 @@
       sub: 'Benefit for medical realm'
     },
     {
-      href: 'tiktok-research.html',
-      cover: 'assets/images/tiktok/hero-tiktok-safety-strategy-cover.webp',
-      pos: '0%',
-      title: 'Global Platform Research Case Study',
-      sub: 'Quantitative research & analysis'
-    },
-    {
       href: null,
       cover: 'assets/images/lark/illustration-lark-education-class-collaboration-cover.webp',
       pos: '50%',

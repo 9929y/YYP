@@ -308,12 +308,15 @@ const knownGenerated = useDist
   : new Set(['index.html', 'landing.html', ...astroGenerated]);
 
 for (const file of htmlFiles) {
+  // `<slug>.webflow.html` archives are rollback snapshots listed in
+  // UNPUBLISHED_HTML — they never ship, so a reference in one to an asset that
+  // has since been deleted is history, not a broken link.
+  if (path.basename(file).endsWith('.webflow.html')) continue;
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
 }
 
 const requiredAssets = [
   'assets/css/yy-tokens.css',
-  'assets/css/yy-case-layout.css',
   'assets/css/yy-chrome.css',
   'assets/css/yy-resume.css',
   'assets/css/yy-motion.css',
@@ -359,8 +362,7 @@ for (const [flowPage, swatch] of [
   ['ai-driven-product-design.html', '#d4c8ff'],
   ['mifinance.html', '#e8710a'],
   ['cummins-digitalization.html', '#980000'],
-  ['alzheimerdisease.html', '#8eb0f0'],
-  ['tiktok-research.html', '#3d5a6c']
+  ['alzheimerdisease.html', '#8eb0f0']
 ]) {
   if (!chromeJs.includes("'" + flowPage + "'") || !chromeJs.includes("'" + swatch + "'")) {
     errors.push(`yy-chrome.js FLOW_PALETTES must map ${flowPage} to base ${swatch}`);
@@ -568,97 +570,10 @@ if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
   errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
 }
 
-const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
-if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
-  errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
-}
-if (!caseLayoutCss.includes('.div-block-37') || !caseLayoutCss.includes('max-width: none')) {
-  errors.push('yy-case-layout.css must make one-column case text full width');
-}
-if (!caseLayoutCss.includes('.layout125_component.mck1.mck2:not(.b1)')) {
-  errors.push('yy-case-layout.css must preserve two-column intro grids');
-}
-if (!caseLayoutCss.includes('.hero-intro-2.mck')) {
-  errors.push('yy-case-layout.css must stack McKinsey/Cummins heroes as one column');
-}
-if (
-  !caseLayoutCss.includes('.body.blk .footer-section') ||
-  !caseLayoutCss.includes('.body.al .footer-section')
-) {
-  errors.push('yy-case-layout.css must drop the white prev/next bar on dark case pages');
-}
-if (!caseLayoutCss.includes('.ural .headingpt.al')) {
-  errors.push('yy-case-layout.css must keep Alzheimer ural headings dark on the white island');
-}
-if (!caseLayoutCss.includes('.heading-medium-3.counttext')) {
-  errors.push('yy-case-layout.css must lighten Opus impact captions on black');
-}
-if (
-  !caseLayoutCss.includes('.shadow-card') ||
-  !caseLayoutCss.includes('.step-card-2') ||
-  !caseLayoutCss.includes('backdrop-filter: blur(16px)')
-) {
-  errors.push('yy-case-layout.css must frost shadow-card as white glass');
-}
-if (/\.step-card-2\s*\{[^}]*backdrop-filter:\s*blur/.test(caseLayoutCss)) {
-  errors.push('yy-case-layout.css must not blur Lark step-card-2 — radius only, keep blue wash visible');
-}
-if (!caseLayoutCss.includes('.section7') || !caseLayoutCss.includes('overflow: visible')) {
-  errors.push('yy-case-layout.css must not let .section7 clip McKinsey glass backdrops');
-}
-if (
-  !caseLayoutCss.includes('grid-template-rows: 1fr 1fr') ||
-  !caseLayoutCss.includes('align-items: stretch')
-) {
-  errors.push('yy-case-layout.css must keep same-section cards equal height');
-}
-if (
-  !caseLayoutCss.includes('.step-card-2 .subtitle-4') ||
-  !caseLayoutCss.includes('justify-content: flex-start')
-) {
-  errors.push('yy-case-layout.css must top-align card copy');
-}
-if (
-  !caseLayoutCss.includes('border-radius: var(--case-radius)') ||
-  !caseLayoutCss.includes('.shadow-card') ||
-  !caseLayoutCss.includes('.step-card-2')
-) {
-  errors.push('yy-case-layout.css must keep --case-radius on HTML cards only');
-}
-if (caseLayoutCss.includes('.grid-img') && /grid-img[\s\S]{0,120}border-radius:\s*0/.test(caseLayoutCss)) {
-  errors.push('yy-case-layout.css must not override Webflow .grid-img corners');
-}
-if (caseLayoutCss.includes('.body.blk .shadow-card') && caseLayoutCss.includes('rgba(16, 16, 14')) {
-  errors.push('yy-case-layout.css must not force dark glass cards on .body.blk / .body.al pages');
-}
-if (caseLayoutCss.includes('.image-57') && /image-57[\s\S]{0,200}border-radius/.test(caseLayoutCss)) {
-  errors.push('yy-case-layout.css must not override Webflow .image-57 corners or shadow');
-}
-if (!caseLayoutCss.includes('.body.blk yy-footer') || !caseLayoutCss.includes('background-color: transparent')) {
-  errors.push('yy-case-layout.css must not force a white yy-footer band on dark case pages');
-}
-if (/overflow:\s*hidden/.test(caseLayoutCss) && /lightbox-link-4[\s\S]{0,280}overflow:\s*hidden/.test(caseLayoutCss)) {
-  errors.push('yy-case-layout.css must not clip .lightbox-link-4 — that squares bitmap shadows');
-}
-
-// Case pages still on the Webflow passthrough must link the overlay stylesheet.
-// Derived from projects.ts so migrating a page needs no edit here; once every
-// case study is `engine: 'astro'` this list empties and yy-case-layout.css can
-// be deleted outright.
-const caseLayoutPages = projectsMod.projects
-  .filter((p) => p.engine === 'webflow' && p.kind === 'slot' && p.href)
-  .map((p) => toDisk(p.href));
-for (const name of caseLayoutPages) {
-  const file = path.join(ROOT, name);
-  if (!fs.existsSync(file)) {
-    errors.push(`${name}: engine is webflow but the file is missing`);
-    continue;
-  }
-  const html = fs.readFileSync(file, 'utf8');
-  if (!html.includes('yy-case-layout.css')) {
-    errors.push(`${name}: missing yy-case-layout.css link`);
-  }
-}
+// assets/css/yy-case-layout.css is gone. It only restyled Webflow classes on the
+// passthrough case pages; the last of those (tiktok-research) was deleted and
+// every case study is now Astro with its own stylesheet. The assertions that
+// pinned that file's contents went with it.
 
 // Only meaningful while McKinsey is still a Webflow page; the Astro rewrite has
 // no <body class> to get wrong.

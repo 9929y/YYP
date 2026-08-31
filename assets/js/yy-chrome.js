@@ -78,8 +78,7 @@
     'ai-driven-product-design.html': { base: '#d4c8ff', alt: '#e8e6f2', idle: '#c5c0d4' },
     'mifinance.html':                { base: '#e8710a', alt: '#9a958e', idle: '#ebe8e4' },
     'cummins-digitalization.html':   { base: '#980000', alt: '#9a9290', idle: '#ebe7e6' },
-    'alzheimerdisease.html':         { base: '#8eb0f0', alt: '#d8dce4', idle: '#b0b4bc' },
-    'tiktok-research.html':          { base: '#3d5a6c', alt: '#9aa3ad', idle: '#e6e8eb' }
+    'alzheimerdisease.html':         { base: '#8eb0f0', alt: '#d8dce4', idle: '#b0b4bc' }
   };
 
   function loadFlow() {
@@ -117,7 +116,6 @@
      Never list a page whose project is `engine: 'astro'` — check-site enforces it. */
   var CASE_TYPE_PAGES = {
     'projects.html': 1,
-    'tiktok-research.html': 1,
     'case-study-template.html': 1
   };
 

@@ -329,14 +329,18 @@ const highlights = [
     <section class="ops__final">
       <h3 class="ops__section-label">Final Design</h3>
       <div class="ops__final-row">
-        {['1', '2'].map((n) => (
-          <div class="ops__video media media--video">
-            <video data-play="scroll" muted loop playsinline preload="none" aria-label={`Opus Clip final design walkthrough ${n}`}>
-              <source src={`/assets/videos/${n}.mp4`} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        ))}
+        <div class="ops__video media media--video">
+          <video data-play="scroll" muted loop playsinline preload="none" aria-label="Opus Clip final design walkthrough 1">
+            <source src="/assets/videos/1.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="ops__video media media--video">
+          <video data-play="scroll" muted loop playsinline preload="none" aria-label="Opus Clip final design walkthrough 2">
+            <source src="/assets/videos/2.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </div>
       <div class="ops__final-row ops__final-row--single">
         <div class="ops__video media media--video">
