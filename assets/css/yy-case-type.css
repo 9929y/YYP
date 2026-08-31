@@ -14,7 +14,7 @@
 html.yy-case-type body,
 html.yy-case-type .body {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -24,7 +24,7 @@ html.yy-case-type .heading-xl,
 html.yy-case-type .heading-xl-2,
 html.yy-case-type .xxl-heading-2 {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
-  font-size: var(--t-40) !important;
+  font-size: var(--text-display) !important;
   font-weight: 600 !important;
   font-style: normal !important;
   line-height: var(--lh-tight) !important;
@@ -36,7 +36,7 @@ html.yy-case-type .xxl-heading-2 {
 }
 
 /* Hero H1s: unify Cummins (.bold-text.cmi) and Xiaomi/others (.heading-xl).
-   Was ~40px via --t-40 on .heading-xl vs ~2rem authored on Cummins — too large
+   Was ~40px via --text-display on .heading-xl vs ~2rem authored on Cummins — too large
    at 1440px and inconsistent. */
 html.yy-case-type .inner-page-hero-2 .heading-xl,
 html.yy-case-type .inner-page-hero-2 .heading-xl.mi,
@@ -44,7 +44,7 @@ html.yy-case-type .inner-page-hero-2 .heading-xl.al,
 html.yy-case-type .inner-page-hero-2 h1.cmi,
 html.yy-case-type .inner-page-hero-2 .bold-text.cmi {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
-  font-size: var(--t-32) !important;
+  font-size: var(--text-heading) !important;
   font-weight: 600 !important;
   font-style: normal !important;
   line-height: var(--lh-tight) !important;
@@ -57,7 +57,7 @@ html.yy-case-type .inner-page-hero-2 .bold-text.cmi {
 html.yy-case-type .heading-xl.count4,
 html.yy-case-type .heading-xl-2.count4,
 html.yy-case-type .xxl-heading-2.count4 {
-  font-size: var(--t-48) !important;
+  font-size: var(--text-figure) !important;
   line-height: var(--lh-display) !important;
   margin-top: 0 !important;
   margin-bottom: 8px !important;
@@ -69,7 +69,7 @@ html.yy-case-type .heading-medium-4,
 html.yy-case-type .heading-4,
 html.yy-case-type .xxl-heading-2.change {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
-  font-size: var(--t-25) !important;
+  font-size: var(--text-title) !important;
   font-weight: 600 !important;
   font-style: normal !important;
   line-height: var(--lh-heading) !important;
@@ -83,7 +83,7 @@ html.yy-case-type .xxl-heading-2.change {
 /* ---- labels / small headings (eyebrow recipe) --------------------------- */
 html.yy-case-type .heading-medium-3 {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
-  font-size: var(--t-13) !important;
+  font-size: var(--text-caption) !important;
   font-weight: 600 !important;
   font-style: normal !important;
   line-height: var(--lh-caption) !important;
@@ -106,7 +106,7 @@ html.yy-case-type .heading-medium-3.counttext {
 html.yy-case-type .heading-medium-3.ai._1,
 html.yy-case-type .heading-medium-3.ai._2,
 html.yy-case-type .heading-medium-3.ai.mid {
-  font-size: var(--t-25) !important;
+  font-size: var(--text-title) !important;
   font-weight: 600 !important;
   line-height: var(--lh-heading) !important;
   letter-spacing: -0.03em !important;
@@ -121,7 +121,7 @@ html.yy-case-type .paragraph.white,
 html.yy-case-type .paragraph.addpad,
 html.yy-case-type p.paragraph {
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif !important;
-  font-size: var(--t-16) !important;
+  font-size: var(--text-body) !important;
   font-weight: 400 !important;
   line-height: var(--lh-body) !important;
   letter-spacing: 0 !important;
@@ -138,13 +138,13 @@ html.yy-case-type .bold-text-11 {
 }
 
 html.yy-case-type .body-display-2 {
-  font-size: var(--t-16) !important;
+  font-size: var(--text-body) !important;
   font-weight: 400 !important;
   line-height: var(--lh-body) !important;
 }
 
 html.yy-case-type .body-display-2.light {
-  font-size: var(--t-13) !important;
+  font-size: var(--text-caption) !important;
   line-height: var(--lh-caption) !important;
 }
 
@@ -159,14 +159,14 @@ html.yy-case-type .hero-intro-2.text-color-white .body-display-2.light {
 
 /* ---- projects hub cards ------------------------------------------------- */
 html.yy-case-type .text-gradient-name {
-  font-size: var(--t-20) !important;
+  font-size: var(--text-lead) !important;
   font-weight: 600 !important;
   line-height: var(--lh-heading) !important;
   letter-spacing: -0.03em !important;
 }
 
 html.yy-case-type .text-gradient-class {
-  font-size: var(--t-13) !important;
+  font-size: var(--text-caption) !important;
   font-weight: 500 !important;
   line-height: var(--lh-caption) !important;
   letter-spacing: 0 !important;
@@ -179,7 +179,7 @@ html.yy-case-type .text-block-19,
 html.yy-case-type .text-block-20 {
   letter-spacing: -0.02em !important;
   text-transform: none !important;
-  font-size: var(--t-13) !important;
+  font-size: var(--text-caption) !important;
   font-weight: 600 !important;
 }
 
@@ -190,5 +190,5 @@ html.yy-case-type .text-block-21 {
 }
 
 html.yy-case-type .circle-button-3 {
-  font-size: var(--t-11) !important;
+  font-size: var(--text-micro) !important;
 }

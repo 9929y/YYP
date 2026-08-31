@@ -8,7 +8,7 @@
   color: var(--ink);
   background: var(--ground);
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-body);
 }
 
@@ -42,7 +42,7 @@ html.yy-case body {
 
 .cs__eyebrow {
   margin: 0 0 10px;
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -50,7 +50,7 @@ html.yy-case body {
 
 .cs__title {
   margin: 0;
-  font-size: var(--t-40);
+  font-size: var(--text-display);
   line-height: var(--lh-display);
   letter-spacing: -0.04em;
   font-weight: 600;
@@ -60,7 +60,7 @@ html.yy-case body {
 .cs__scope,
 .cs__note {
   margin: 12px 0 0;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-heading);
   color: var(--ink-2);
   max-width: none;
@@ -74,7 +74,7 @@ html.yy-case body {
 
 .cs__body :where(h2) {
   margin: 0;
-  font-size: var(--t-25);
+  font-size: var(--text-title);
   line-height: var(--lh-heading);
   letter-spacing: -0.03em;
 }
@@ -101,7 +101,7 @@ html.yy-case body {
 }
 
 .case-section__eyebrow {
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -122,7 +122,7 @@ html.yy-case body {
 }
 
 .case-meta dt {
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -137,7 +137,7 @@ html.yy-case body {
 .media figcaption,
 .media-pair figcaption {
   padding: 12px 16px;
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
   color: var(--ink-3);
 }
@@ -180,13 +180,13 @@ html.yy-case body {
 .case-quote blockquote {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: var(--t-25);
+  font-size: var(--text-title);
   line-height: var(--lh-body);
   color: var(--ink);
 }
 
 .case-quote figcaption {
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   color: var(--ink-3);
 }
 
@@ -198,7 +198,7 @@ html.yy-case body {
 }
 
 .case-stat strong {
-  font-size: var(--t-48);
+  font-size: var(--text-figure);
   line-height: var(--lh-display);
 }
 
@@ -219,7 +219,7 @@ html.yy-case body {
   margin-top: 96px;
   padding-top: 28px;
   border-top: 1px solid var(--hair);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
 }
 
 .cs__nav a {
@@ -236,7 +236,7 @@ html.yy-case body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-3);
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
 }
 
 .media {
@@ -265,5 +265,5 @@ html.yy-case body {
 }
 
 @media (max-width: 560px) {
-  .cs__title { font-size: var(--t-32); }
+  .cs__title { font-size: var(--text-heading); }
 }

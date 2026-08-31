@@ -12,7 +12,7 @@
     background: var(--ground);
     color: var(--ink);
     font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-    font-size: var(--t-16);
+    font-size: var(--text-body);
     line-height: var(--lh-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -58,21 +58,13 @@
   }
 
   /* ---------- hero canvas (ShaderGradient + frosted cover) ---------- */
-  /* Landing-only type scale (~12.5% under the shared tokens) so exported
-     case-study pages that also load yy-tokens keep their prior sizes. */
+  /* The landing type ladder is NOT here. It lives in assets/css/yy-tokens.css
+     as the `html.yy-landing` mode, next to the role definitions it overrides —
+     a page file redefining a shared token reads as a bug, a declared mode does
+     not. What stays here is this page's own layout and scroll state. */
   html.yy-landing {
     position: relative;
     background: var(--ground);
-    --t-11: 10px;
-    --t-13: 11px;
-    --t-16: 14px;
-    --t-20: 18px;
-    --t-21: 21px;
-    --t-25: 22px;
-    --t-32: 28px;
-    --t-40: 35px;
-    --t-48: 42px;
-    --t-64: 56px;
     /* ≥10% side gutters on all but phone; phone keeps 20px below. */
     --edge: 10vw;
     /* Tighter spine: label + gap hug the rule; media column gets the rest. */
@@ -411,17 +403,18 @@
 
   .hero__meta {
     margin: 0;
-    font-size: var(--t-13);
+    font-size: var(--text-caption);
     line-height: 1.45;
     color: var(--ink-3);
   }
 
-  /* Hero H1: scaled landing --t-64 (56). Width still overflows the content col. */
+  /* Hero H1: --text-hero, which is 56px in the landing mode. Width still
+     overflows the content column. */
   .hero__title {
     position: relative;
     margin: 0;
     padding-top: 1px;
-    font-size: clamp(var(--t-32), 3.9vw, var(--t-64));
+    font-size: clamp(var(--text-heading), 3.9vw, var(--text-hero));
     line-height: 1;
     letter-spacing: -0.04em;
     font-weight: 600;
@@ -442,7 +435,7 @@
 
   @media (min-width: 1160px) {
     .hero__title {
-      font-size: var(--t-64);
+      font-size: var(--text-hero);
       letter-spacing: -0.04em;
     }
   }
@@ -492,7 +485,7 @@
 
   .eyebrow {
     margin: 0;
-    font-size: var(--t-11);
+    font-size: var(--text-micro);
     line-height: 1.45;
     letter-spacing: .12em;
     text-transform: uppercase;
@@ -570,7 +563,7 @@
   .case__name {
     margin: 0;
     max-width: 100%;
-    font-size: var(--t-20);
+    font-size: var(--text-lead);
     line-height: 1.25;
     letter-spacing: -0.03em;
     font-weight: 600;
@@ -580,7 +573,7 @@
 
   .case__scope {
     margin: 6px 0 0;
-    font-size: var(--t-13);
+    font-size: var(--text-caption);
     line-height: 1.45;
     color: var(--ink-3);
     max-width: 16em;
@@ -596,7 +589,7 @@
     padding-top: 0;
     max-width: 18em;
     width: 100%;
-    font-size: var(--t-16);
+    font-size: var(--text-body);
     font-weight: 500;
     line-height: 1.45;
     letter-spacing: 0;
@@ -761,7 +754,7 @@
 
   .ph__file {
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: var(--t-13);
+    font-size: var(--text-caption);
     color: var(--ink-2);
   }
 
@@ -770,20 +763,20 @@
 
   .end__line {
     margin: 0;
-    font-size: var(--t-32);
+    font-size: var(--text-heading);
     line-height: var(--lh-tight);
     letter-spacing: -.03em;
     font-weight: 600;
     max-width: min(24ch, var(--col-content));
   }
-  @media (min-width: 992px) { .end__line { font-size: var(--t-48); } }
+  @media (min-width: 992px) { .end__line { font-size: var(--text-figure); } }
 
   .end__links {
     margin: 32px 0 0;
     display: flex;
     flex-wrap: wrap;
     gap: 20px 28px;
-    font-size: var(--t-16);
+    font-size: var(--text-body);
   }
 
   /* Measured on kedavra: every text link hover is exactly `opacity: 1 -> 0.64`.
@@ -900,7 +893,7 @@
     :root { --edge: 20px; }
     .hero { padding: 88px 0 56px; }
     .hero__title {
-      font-size: var(--t-32);
+      font-size: var(--text-heading);
       letter-spacing: -.04em;
       width: 100%;
     }

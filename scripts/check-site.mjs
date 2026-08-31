@@ -538,7 +538,7 @@ if (!/brand-orb[\s\S]{0,120}36px/.test(chromeJs)) {
 const caseTypeCssPath = path.join(ROOT, 'assets/css/yy-case-type.css');
 const caseTypeCss = fs.existsSync(caseTypeCssPath) ? fs.readFileSync(caseTypeCssPath, 'utf8') : '';
 const caseTypeCssCode = caseTypeCss.replace(/\/\*[\s\S]*?\*\//g, '');
-if (!caseTypeCss.includes('--t-16') || !caseTypeCss.includes('--lh-body')) {
+if (!caseTypeCss.includes('--text-body') || !caseTypeCss.includes('--lh-body')) {
   errors.push('yy-case-type.css must use landing typography tokens');
 }
 if (!caseTypeCss.includes('.heading-xl') || !caseTypeCss.includes('.headingpt') || !caseTypeCss.includes('.heading-medium-3')) {
@@ -636,6 +636,67 @@ for (const [token, why] of [
   if (!tokensCss.includes(token + ':')) {
     errors.push(`yy-tokens.css missing ${token} — ${why}`);
   }
+}
+
+// ---- type scale ------------------------------------------------------------
+// The ladder used to be named for pixel values (--t-16, --t-40 …) while the
+// landing page redefined every rung ~12.5% down, so the names reported the wrong
+// number on the most-viewed page and could not be synced to Figma at all. The
+// roles below replaced them. These three assertions exist so that cannot come
+// back by habit.
+const TEXT_ROLES = [
+  '--text-micro',
+  '--text-caption',
+  '--text-body',
+  '--text-lead',
+  '--text-title',
+  '--text-heading',
+  '--text-display',
+  '--text-figure',
+  '--text-hero'
+];
+for (const role of TEXT_ROLES) {
+  if (!tokensCss.includes(`${role}:`)) {
+    errors.push(`yy-tokens.css missing ${role} — the type ladder is named by role, not by px`);
+  }
+}
+
+const styleSheets = [
+  ...fs.readdirSync(path.join(ROOT, 'assets/css')).map((f) => `assets/css/${f}`),
+  ...fs.readdirSync(path.join(ROOT, 'src/styles')).map((f) => `src/styles/${f}`)
+].filter((f) => f.endsWith('.css'));
+
+for (const rel of styleSheets) {
+  const css = fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/--t-\d+\s*[:)]/.test(css)) {
+    errors.push(`${rel}: --t-<px> type tokens are gone — use a --text-* role`);
+  }
+  // The second ladder is a declared mode in yy-tokens.css. A page file setting
+  // a --text-* role is the old lie coming back under a new name.
+  if (rel !== 'assets/css/yy-tokens.css' && /--text-[a-z]+\s*:/.test(css)) {
+    errors.push(`${rel}: must not redeclare a --text-* role — add a mode in yy-tokens.css instead`);
+  }
+}
+
+// Match the RULE, not the string: the comment above the roles names
+// `html.yy-landing` in prose, so a substring test passes even after the mode
+// itself has been deleted. That false negative was real — this assertion did not
+// fire when the block was removed to test it.
+const tokensCode = tokensCss.replace(/\/\*[\s\S]*?\*\//g, '');
+const landingMode = /html\.yy-landing\s*\{([^}]*)\}/.exec(tokensCode);
+if (!landingMode) {
+  errors.push('yy-tokens.css must carry the landing type mode as a real html.yy-landing rule');
+} else {
+  for (const role of TEXT_ROLES) {
+    if (!landingMode[1].includes(`${role}:`)) {
+      errors.push(`yy-tokens.css landing mode is missing ${role} — a mode must set every rung`);
+    }
+  }
+}
+
+const tokenManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/design-tokens.json'), 'utf8'));
+if (!Array.isArray(tokenManifest.modes) || tokenManifest.modes.length === 0) {
+  errors.push('docs/design-tokens.json has no modes — the Figma side needs the landing ladder as a mode');
 }
 
 if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {

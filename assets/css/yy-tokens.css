@@ -148,16 +148,35 @@
   --color-frost-rgb: 255, 250, 250; /* panel frost — a third white (3 uses) */
 
   /* ---- type sizes ----
-     The site's shipped 8 steps. Named by value because that is what they are;
-     the role-based names are the semantic layer's job. */
+     Named by value because that is what they are; the role names are the
+     semantic layer's job.
+
+     TWO LADDERS, one grid. The document ladder (11…64) is what the case
+     studies, the resume panel and the work index render. The landing ladder
+     (10…56) runs ~12.5% under it, rung for rung, and exists because the
+     homepage sets its type in a 492px measure against a full-bleed canvas —
+     the document sizes read as shouting there. Both are real and shipped;
+     neither is a scaled-down copy the browser could compute, because the
+     rounding was chosen by eye per rung (16→14, not 16→14.0).
+
+     Every size below is consumed through a --text-* role in the semantic layer.
+     Nothing should reference --size-* directly. */
+  --size-10: 10px;
   --size-11: 11px;
   --size-13: 13px;
+  --size-14: 14px;
   --size-16: 16px;
+  --size-18: 18px;
   --size-20: 20px;
+  --size-22: 22px;
   --size-25: 25px;
+  --size-28: 28px;
   --size-32: 32px;
+  --size-35: 35px;
   --size-40: 40px;
+  --size-42: 42px;
   --size-48: 48px;
+  --size-56: 56px;
   --size-64: 64px;
 
   /* ---- leading, by ROLE not by size ----
@@ -320,21 +339,32 @@
   --z-cursor: 9800;
 
   /* ---- type, by role ----
-     `--t-*` are the literal-size aliases the pages use today. They are kept
-     because src/styles/landing.css redefines the whole ladder ~12.5% down for
-     the landing scale, which means the NAMES CURRENTLY LIE THERE: --t-16 is
-     14px on the landing page. Resolving that (role names plus a Figma mode per
-     scale) is a follow-up; it touches every page and is not a zero-pixel
-     change like this file is. */
-  --t-11: var(--size-11);
-  --t-13: var(--size-13);
-  --t-16: var(--size-16);
-  --t-20: var(--size-20);
-  --t-25: var(--size-25);
-  --t-32: var(--size-32);
-  --t-40: var(--size-40);
-  --t-48: var(--size-48);
-  --t-64: var(--size-64);
+     These replaced a --t-<px> ladder whose names lied: the landing page
+     redefined every rung ~12.5% down, so `--t-16` was 16px on a case study and
+     14px on the homepage. A name that reports the wrong number is worse than an
+     opaque one, and it was unsyncable — a Figma variable cannot hold two
+     values under one name.
+
+     So the rung is named for the job it does, and the two ladders are two MODES
+     over the same nine names. `:root` is the document mode; the
+     `html.yy-landing` block below is the landing mode. In Figma this is one
+     collection with two modes, not two collections.
+
+     The role names are honest about what they are: the bottom four describe
+     content (micro / caption / body / lead) because those rungs really do serve
+     one job each. The top five are scale steps, because a 32px rung is a case
+     hero on one page and a count-up figure on another, and pretending otherwise
+     would mean inventing a role per page. `--text-figure` earns its name — four
+     of its five uses are numerals. */
+  --text-micro: var(--size-11);   /* eyebrows, scroll cues, nav direction */
+  --text-caption: var(--size-13); /* captions, labels, meta, small headings */
+  --text-body: var(--size-16);    /* prose, and the page's root font-size */
+  --text-lead: var(--size-20);    /* card names, resume job titles */
+  --text-title: var(--size-25);   /* section h2, pull quotes */
+  --text-heading: var(--size-32); /* case-study h1 */
+  --text-display: var(--size-40); /* case titles, the resume name */
+  --text-figure: var(--size-48);  /* stat figures and count-ups */
+  --text-hero: var(--size-64);    /* the landing headline, and only that */
 
   --lh-display: var(--leading-100);
   --lh-tight: var(--leading-115);
@@ -372,4 +402,29 @@
   --slot-radius: var(--radius-slot);
   /* HTML case cards only. Exported images keep their own corners. */
   --case-radius: var(--slot-radius);
+}
+
+/* ============================================================================
+   LANDING MODE
+
+   The second of the two type ladders described above. It is here, beside the
+   role definitions, rather than in src/styles/landing.css, for one reason: a
+   value that overrides a token from somewhere else in the codebase is
+   indistinguishable from a bug. Declared here it is a mode, scripts/build-tokens.mjs
+   emits it as one, and the Figma side gets a mode instead of a contradiction.
+
+   Nothing but type belongs in this block. The landing page's other overrides
+   (--edge, --col-gap, the canvas and cover variables) are page layout and
+   scroll state, and stay in landing.css where they are read.
+   ============================================================================ */
+html.yy-landing {
+  --text-micro: var(--size-10);
+  --text-caption: var(--size-11);
+  --text-body: var(--size-14);
+  --text-lead: var(--size-18);
+  --text-title: var(--size-22);
+  --text-heading: var(--size-28);
+  --text-display: var(--size-35);
+  --text-figure: var(--size-42);
+  --text-hero: var(--size-56);
 }

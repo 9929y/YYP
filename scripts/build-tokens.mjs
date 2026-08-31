@@ -11,9 +11,7 @@
  *   · 28 legacy variables inherited from the old export (--coral-text, --grey …)
  *   · 31 page-local variables (--ops-accent, --mif-ink-2 …), same naming shape
  *     but scoped to one page
- *   · scope overrides that redeclare a real token under a different value,
- *     including src/styles/landing.css redefining the whole --t-* ladder ~12.5%
- *     down, so --t-16 is 14px there
+ *   · scope overrides that redeclare a real token under a different value
  *
  * Anything reading the CSS has to guess which is which, and will guess wrong.
  * This file removes the guess: one artifact, every token, with its layer,
@@ -28,6 +26,44 @@ import path from 'node:path';
 const ROOT = process.cwd();
 const SOURCE = 'assets/css/yy-tokens.css';
 const OUTPUT = 'docs/design-tokens.json';
+
+/**
+ * A non-:root block in the source file is a MODE: the same token under a
+ * different value, declared deliberately and in one place. The type ladder is
+ * the only one today — the landing page runs ~12.5% under the document scale,
+ * rung for rung. A mode is not a scope override: an override is a page file
+ * quietly contradicting the system (a bug, until proven otherwise), a mode is
+ * the system saying this token has two values and here is when each applies.
+ * Figma models a mode natively; it cannot model an override at all.
+ */
+function modeBlocks(css) {
+  /* Comments are masked to same-length spaces rather than removed, so a
+     selector never swallows the banner above it while every byte offset still
+     points at the original text. */
+  const masked = css.replace(/\/\*[\s\S]*?\*\//g, (c) => ' '.repeat(c.length));
+  const out = [];
+  /* `}` and `;` are excluded from the selector, so a match can never span the
+     previous rule's closing brace and no delimiter prefix is needed. */
+  const re = /([^\s@{};][^{};]*?)\s*\{/g;
+  let m;
+  while ((m = re.exec(masked))) {
+    const selector = m[1].trim();
+    const start = m.index + m[0].length;
+    let depth = 1;
+    let j = start;
+    while (depth > 0 && j < masked.length) {
+      if (masked[j] === '{') depth += 1;
+      else if (masked[j] === '}') depth -= 1;
+      j += 1;
+    }
+    re.lastIndex = j;
+    if (!selector || selector.includes(':root')) continue;
+    const body = css.slice(start, j - 1);
+    if (!/--[\w-]+\s*:/.test(body)) continue;
+    out.push({ selector, body, before: css.slice(0, m.index) });
+  }
+  return out;
+}
 
 /** Which :root block a token came from decides its layer. */
 const LAYERS = [
@@ -103,9 +139,9 @@ function cleanNote(note) {
   const text = note
     .split('\n')
     .map((l) => l.replace(/^\s*\*?\s?/, '').trim())
-    .filter((l) => !/^-{2,}.*-{2,}$/.test(l))
+    .filter((l) => !/^[-=]{2,}.*[-=]{2,}$/.test(l) && !/^[-=]{4,}$/.test(l))
     .join(' ')
-    .replace(/-{4,}/g, ' ')
+    .replace(/[-=]{4,}/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
   return text.length > 12 ? text : '';
@@ -176,6 +212,35 @@ function scopeOverrides() {
   return out;
 }
 
+/**
+ * Emit one entry per mode block, with each token's value resolved through the
+ * mode itself, so a reader never has to re-derive what the override means.
+ */
+function modeSets(css, byName) {
+  return modeBlocks(css).map((block) => {
+    const local = new Map(byName);
+    const tokens = parseBlock(block.body, 'semantic');
+    for (const token of tokens) local.set(token.name, token);
+
+    /* The banner comment directly above the block is its documentation: first
+       ALL-CAPS line is the mode's name, the prose under it is the why. */
+    const banner = [...block.before.matchAll(/\/\*([\s\S]*?)\*\//g)].pop();
+    const lines = banner ? banner[1].split('\n').map((l) => l.trim()) : [];
+    const heading = lines.find((l) => /^[A-Z][A-Z ]{3,}$/.test(l)) || '';
+
+    return {
+      selector: block.selector,
+      name: heading ? heading.toLowerCase() : block.selector,
+      note: cleanNote(lines.filter((l) => l !== heading).join('\n')),
+      tokens: tokens.map((token) => ({
+        name: token.name,
+        value: token.value,
+        resolved: resolve(token.name, local)
+      }))
+    };
+  });
+}
+
 function build() {
   const css = fs.readFileSync(path.join(ROOT, SOURCE), 'utf8');
   const tokens = [];
@@ -208,11 +273,14 @@ function build() {
     /* Breakpoints cannot be CSS custom properties — a media query cannot read
        one — so they are carried here instead of being lost. */
     breakpoints: [1280, 992, 991, 900, 878, 877, 768, 767, 560, 479],
-    /* Tokens that a page stylesheet redeclares under a different value. Without
-       this, `resolved` is a half-truth: the ladder below means --t-16 is 16px
-       everywhere except the landing page, where it is 14px. A Figma variable
-       cannot hold two values, so each of these is a mode, a separate token, or a
-       bug — never something to copy across at face value. */
+    /* Declared modes: the same token under a second value, on purpose. Build
+       each of these as a Figma mode on the collection that owns the token —
+       never as a second token with a decorated name. */
+    modes: modeSets(css, byName),
+    /* Tokens that a PAGE stylesheet redeclares under a different value. Unlike
+       a mode, nothing here is sanctioned: each one is a mode that should be
+       promoted into the source file, a separate token, or a bug. Do not copy any
+       of it into Figma at face value. */
     scopeOverrides: scopeOverrides(),
     tokens
   };

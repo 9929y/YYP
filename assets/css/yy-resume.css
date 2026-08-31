@@ -8,7 +8,7 @@
   --resume-brand-cyan: #63d9ef;
   color: var(--ink);
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -68,7 +68,7 @@
 .resume-eyebrow {
   margin: 0;
   color: var(--ink-3);
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   font-weight: 600;
   line-height: var(--lh-caption);
   letter-spacing: 0.12em;
@@ -85,7 +85,7 @@
   margin: 0;
   max-width: var(--col-content);
   font-family: Caveat, "Plus Jakarta Sans", cursive;
-  font-size: clamp(var(--t-40), 4vw, 52px);
+  font-size: clamp(var(--text-display), 4vw, 52px);
   font-weight: 500;
   line-height: var(--lh-display);
   letter-spacing: 0;
@@ -94,7 +94,7 @@
 .resume__title {
   margin: 12px 0 0;
   color: var(--ink-2);
-  font-size: var(--t-20);
+  font-size: var(--text-lead);
   font-weight: 500;
   line-height: var(--lh-heading);
   letter-spacing: -0.02em;
@@ -104,7 +104,7 @@
 .resume__range {
   margin: 8px 0 0;
   color: var(--ink-3);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -194,7 +194,7 @@
 
 .resume-card h3 {
   margin: 0;
-  font-size: var(--t-20);
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: var(--lh-heading);
   letter-spacing: -0.03em;
@@ -212,7 +212,7 @@
 .resume-job__role {
   margin: 0;
   color: var(--ink-2);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -222,7 +222,7 @@
   gap: 4px 18px;
   margin: 8px 0 0;
   color: var(--ink-3);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -259,7 +259,7 @@
 .resume-entry__heading span,
 .resume-entry .resume-entry__meta {
   color: var(--ink-3);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -277,7 +277,7 @@
   border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 999px;
   color: var(--ink-2);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -314,7 +314,7 @@
 
 @media (max-width: 560px) {
   .resume { padding: 0 20px 96px; }
-  .resume__name { font-size: var(--t-40); }
+  .resume__name { font-size: var(--text-display); }
   .resume-job__header { grid-template-columns: 1fr; gap: 6px; }
   .resume-section__body { gap: 18px; }
   .resume-card { padding: 18px 20px; border-radius: 20px; }

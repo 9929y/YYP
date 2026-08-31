@@ -17,7 +17,7 @@
 
   color: var(--cmi-ink);
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -80,7 +80,7 @@
 .cmi__hero-copy h1 {
   margin: 0 0 16px;
   color: var(--cmi-ink);
-  font-size: var(--t-32);
+  font-size: var(--text-heading);
   font-weight: 600;
   line-height: var(--lh-tight);
   letter-spacing: -0.02em;
@@ -92,7 +92,7 @@
   max-width: 90%;
   color: var(--cmi-ink);
   text-align: left;
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   line-height: var(--lh-caption);
 }
 
@@ -135,7 +135,7 @@
   width: 100px;
   height: 100px;
   color: var(--cmi-ink);
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
@@ -206,7 +206,7 @@
   margin: 0 0 10px;
   color: var(--cmi-accent);
   text-align: left;
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   font-weight: 600;
   line-height: var(--lh-caption);
   letter-spacing: 0.12em;
@@ -218,7 +218,7 @@
   margin: 0 0 1.15em;
   color: var(--cmi-ink);
   text-align: left;
-  font-size: var(--t-16);
+  font-size: var(--text-body);
   line-height: var(--lh-body);
 }
 
@@ -264,7 +264,7 @@
   border-radius: 999px;
   background-color: rgba(17, 23, 41, 0.82);
   color: #fff;
-  font-size: var(--t-11);
+  font-size: var(--text-micro);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -284,7 +284,7 @@
   position: relative;
   padding-bottom: 12px;
   color: var(--cmi-ink);
-  font-size: var(--t-13);
+  font-size: var(--text-caption);
   font-weight: 600;
   letter-spacing: -0.02em;
   text-decoration: none;
