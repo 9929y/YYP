@@ -1,31 +1,26 @@
+/**
+ * assets-passthrough — makes the hand-managed `assets/` tree behave like a
+ * second public directory, in dev and in the build.
+ *
+ * `assets/` is not `public/`: it holds ~1 GB of image variants of which only a
+ * fraction is referenced, and its paths are baked into stylesheets, data files
+ * and page markup as `/assets/...`. Astro would copy the whole tree verbatim.
+ * So this integration
+ *
+ *   · serves `/assets/*` straight from the repo during `astro dev`, and
+ *   · copies `assets/` into `dist/` at build time, skipping any `-p-<width>`
+ *     responsive variant that nothing in the repo actually references.
+ *
+ * The variant filter is why srcset strings must stay literal in the source. A
+ * srcset built by concatenation (`${DIR}/photo-p-${w}.webp`) contains no
+ * matchable path, so those variants are silently left out of `dist/` and the
+ * browser falls back to the full-size file.
+ */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = process.cwd();
-/** HTML emitted by Astro — never overwrite with a root passthrough copy. */
-const GENERATED_HTML = new Set(['index.html', 'landing.html']);
-/**
- * Kept in git for rollback reference, but never published.
- *
- * Every page migrated to Astro is renamed `<slug>.webflow.html` and listed here
- * in the same commit. That rename is not bookkeeping — without it the dev server
- * and the build disagree: the middleware below answers `/<slug>.html` from the
- * repo root *before* Astro's router (so dev shows the old page), while
- * `astro:build:done` skips the root copy when Astro already emitted that
- * filename (so the build ships the new one). Reviews happen on the dev server,
- * so a migration that leaves the root file in place looks like it did nothing.
- */
-const UNPUBLISHED_HTML = new Set([
-  'index.webflow.html',
-  'fashion.webflow.html',
-  'alzheimerdisease.webflow.html',
-  'mifinance.webflow.html',
-  'cummins-digitalization.webflow.html',
-  'larkdesign.webflow.html',
-  'mckinseyecommerce.webflow.html',
-  'ai-driven-product-design.webflow.html'
-]);
 
 function mime(file) {
   return {
@@ -97,42 +92,26 @@ function copyAssetsFiltered(src, dest, refs) {
   }
 }
 
-export default function legacyPassthrough() {
+export default function assetsPassthrough() {
   return {
-    name: 'legacy-passthrough',
+    name: 'assets-passthrough',
     hooks: {
       'astro:config:setup'({ updateConfig }) {
         updateConfig({
           vite: {
             plugins: [
               {
-                name: 'serve-workspace-legacy',
+                name: 'serve-workspace-assets',
                 configureServer(server) {
                   server.middlewares.use((req, res, next) => {
                     if (req.method !== 'GET' && req.method !== 'HEAD') return next();
                     const url = decodeURIComponent((req.url || '/').split('?')[0]);
-
-                    // Let Astro own the homepage and the /landing.html redirect stub.
-                    if (
-                      url === '/' ||
-                      url === '/index' ||
-                      url === '/index.html' ||
-                      url === '/landing' ||
-                      url === '/landing.html'
-                    ) {
+                    const rel = url.replace(/^\//, '');
+                    if (!rel.startsWith('assets/') || rel.includes('..') || path.isAbsolute(rel)) {
                       return next();
                     }
-
-                    const rel = url.replace(/^\//, '');
-                    if (!rel || rel.includes('..') || path.isAbsolute(rel)) return next();
-
                     const fromRoot = path.join(ROOT, rel);
-                    const isAsset = rel === 'assets' || rel.startsWith('assets/');
-                    const isHtml =
-                      rel.endsWith('.html') &&
-                      !GENERATED_HTML.has(path.basename(rel)) &&
-                      !UNPUBLISHED_HTML.has(path.basename(rel));
-                    if ((isAsset || isHtml) && fs.existsSync(fromRoot) && fs.statSync(fromRoot).isFile()) {
+                    if (fs.existsSync(fromRoot) && fs.statSync(fromRoot).isFile()) {
                       return send(res, fromRoot);
                     }
                     return next();
@@ -146,13 +125,6 @@ export default function legacyPassthrough() {
       'astro:build:done': async ({ dir }) => {
         const out = fileURLToPath(dir);
         copyAssetsFiltered(path.join(ROOT, 'assets'), path.join(out, 'assets'), referencedAssets());
-        for (const name of fs.readdirSync(ROOT)) {
-          if (!name.endsWith('.html')) continue;
-          if (GENERATED_HTML.has(name) || UNPUBLISHED_HTML.has(name)) continue;
-          const dest = path.join(out, name);
-          if (fs.existsSync(dest)) continue;
-          fs.copyFileSync(path.join(ROOT, name), dest);
-        }
       }
     }
   };

@@ -100,28 +100,18 @@
     (document.head || document.body || HTML).appendChild(s);
   }
 
-  /* Dark case pages keep a black ground through the credit row.
-     Whitelist by filename — Opus + Alzheimer only. McKinsey is a light page
-     (body.blk was black-on-black with .paragraph = black). */
+  /* Dark case pages keep a black ground through the credit row. Opus Clip and
+     the medical wearable only; McKinsey reads as a light page despite its
+     subject matter. Keyed by filename, like DARK_NAV_PAGES and FLOW_PALETTES —
+     see the note on those maps. */
   var DARK_FOOTER = {
     'ai-driven-product-design.html': true,
     'alzheimerdisease.html': true
   };
 
-  /* Light case + work-hub pages still on the Webflow passthrough get the landing
-     type/ink overlay. Opus, Alzheimer and McKinsey keep Webflow black/white and
-     were never listed. Lark, MiFinance and Cummins were removed when they moved
-     to Astro: their pages bake the same tokens into their own stylesheets, so
-     the overlay had nothing left to restyle and was a wasted request.
-     Never list a page whose project is `engine: 'astro'` — check-site enforces it. */
-  var CASE_TYPE_PAGES = {
-    'projects.html': 1,
-    'case-study-template.html': 1
-  };
-
-  /* The shared navigation now owns three content surfaces. Their final content
-     will arrive independently; keeping the panel keys here gives every Astro
-     and legacy page the same shell and state machine today. */
+  /* The shared navigation owns three content surfaces. Their final content will
+     arrive independently; keeping the panel keys here gives every page the same
+     shell and state machine today. */
   var NAV = [
     { panel: 'work',   label: 'Work' },
     { panel: 'about',  label: 'About' },
@@ -140,41 +130,23 @@
   ];
 
   /* --------------------------------------------------------------------------
-     Step 1 — hide the legacy chrome from CSS parsed before <body> exists.
+     Step 1 — the rules that must exist before <body> is parsed.
 
-     `.navbar` is `position: fixed; height: 80px` (stylesheet :2593), i.e. it is
-     OUT OF FLOW — hiding it moves nothing, so this costs zero layout shift.
-     `display:none` also removes it from the a11y tree, so there is no second
-     `banner` landmark, while leaving the element in the DOM for Webflow's nav
-     module and for the two `#w-node-…` grid-placement rules that target it.
+     `scrollbar-gutter` is reserved up front so opening a panel (which locks
+     scrolling) never shifts the page sideways by the scrollbar width. The type
+     overlay is opt-in per document: a page asks for it with `html.yy-case`,
+     which its layout sets. Never key it by filename — a renamed page would keep
+     matching and pull the overlay onto a stylesheet that already bakes the same
+     tokens. BaseLayout.astro carries a byte-equivalent copy of the boot CSS so
+     this script can stay `defer`; keep the two in step.
      -------------------------------------------------------------------------- */
   HTML.className += ' yy-chrome';
-  var typeBoot = '';
-  if (CASE_TYPE_PAGES[currentPage()] || /\byy-case\b/.test(HTML.className)) {
-    HTML.className += ' yy-case-type';
-    /* Work hub only: inline white ground before CSS loads. Case studies keep
-       Webflow-authored page colors (Lark blue wash, etc.). */
-    if (currentPage() === 'projects.html') {
-      typeBoot =
-        'html.yy-case-type,html.yy-case-type body' +
-        '{background-color:#fff!important;color:#242220!important}';
-    }
-  }
+  if (/\byy-case\b/.test(HTML.className)) HTML.className += ' yy-case-type';
 
   var boot = document.createElement('style');
   boot.textContent =
     'html.yy-chrome{scrollbar-gutter:stable}' +
-    'html.yy-chrome .navbar.w-nav{display:none}' +
-    'html.yy-chrome .footer-credit-wrapper{display:none}' +
-    'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}' +
-    /* Credit-only Webflow shells (projects, about, archived home). Case pages
-       keep `.four-column` prev/next as in-page content, not as a second footer. */
-    'html.yy-chrome .footer-section:not(:has(.four-column)){display:none}' +
-    'html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)){display:none}' +
-    'html.yy-chrome .footer-section{border-top:none;padding-top:48px;padding-bottom:0}' +
-    /* Kill Webflow page preloaders before IX2 can flash display:flex. */
-    '.preloader-lark{display:none!important}' +
-    typeBoot;
+    'html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}';
   (document.head || HTML).appendChild(boot);
 
   if (!document.querySelector('link[href*="yy-tokens.css"]')) {
@@ -227,10 +199,9 @@
 
      Three traps, each verified the hard way:
 
-     1. `all: initial` does NOT reset custom properties. Webflow declares 23 of
-        them on :root (`--black: #111729`, …) and they inherit straight through
-        a shadow boundary. Every variable of ours is `--yy-` prefixed so a
-        collision is impossible.
+     1. `all: initial` does NOT reset custom properties. Anything a page puts on
+        :root inherits straight through a shadow boundary. Every variable of
+        ours is `--yy-` prefixed so a collision is impossible.
      2. `all: initial` sets `display: inline; position: static`. Both must be
         restated or the fixed capsule silently becomes inline text.
      3. `all: initial` resets font-family to the browser serif. @font-face is
@@ -739,16 +710,15 @@
 
   /* --------------------------------------------------------------------------
      Skip-link target. There is no <main> anywhere on this site, so this is a
-     documented fallback chain. It must NEVER overwrite an existing id — most
-     containers here carry `#w-node-…` ids that Webflow's own grid rules and
-     IX2 triggers select on. We only mint an id when the element has none.
+     documented fallback chain. It must NEVER overwrite an existing id — a page
+     may already be selecting on it from its own stylesheet or script. We only
+     mint an id when the element has none.
      -------------------------------------------------------------------------- */
   var NOT_CONTENT = /^(SCRIPT|STYLE|LINK|NOSCRIPT|YY-NAV|YY-FOOTER)$/;
 
   function skipTarget() {
-    /* Measured: 0 of 11 pages has <main>, .main-wrapper or .page-wrapper. The
-       only reliable structure is "body > .navbar, then the content". So walk
-       body's children and take the first one that is not chrome, not the
+    /* Measured: no page has <main>, .main-wrapper or .page-wrapper. So walk
+       body's children and take the first one that is not chrome, not a
        preloader, and not a visually-hidden heading. Never match `.body` — that
        IS <body>, the node we insert the nav into. */
     var el = document.querySelector('main, [role="main"]');
@@ -1433,39 +1403,16 @@
     setupPanel(navHost);
 
     /* ---- footer ----
-       Credit only. Always append to <body>, same as the Astro landing.
-       Nesting inside `.footer-section` / `.grid-wrapper` inherited Webflow
-       5vw gutters and made case footers look like a different component.
-
-       `.four-column` is NEVER hidden — the prev/next project links in it are
-       content, not chrome. */
+       Credit only, and always appended to <body> rather than nested inside a
+       page's own layout: nesting it inherited that page's gutters and made the
+       same component look different from one case study to the next. */
     var footHTML =
       '<footer class="ft">' +
         '<p class="credit">© Yanice Yang 2026</p>' +
       '</footer>';
 
     var host = shadow('yy-footer', footHTML);
-    if (DARK_FOOTER[here]) {
-      host.classList.add('is-dark');
-      /* Light-DOM patch: Webflow's .footer-section is hard-coded #fff and
-         would leave a white band under dark case pages. Keep prev/next
-         (four-column) as content; only retint the section + link chrome. */
-      var darkFoot = document.createElement('style');
-      darkFoot.textContent =
-        'html.yy-chrome .footer-section{' +
-        'background-color:#000!important;' +
-        'border-top-color:rgba(255,255,255,.12)!important;' +
-        '}' +
-        'html.yy-chrome .footer-section .footer-link,' +
-        'html.yy-chrome .footer-section .text-block-19,' +
-        'html.yy-chrome .footer-section .text-block-20{' +
-        'color:#fff!important;' +
-        '}' +
-        'html.yy-chrome .footer-section .hover-line-fill-3{' +
-        'background-color:#fff!important;' +
-        '}';
-      (document.head || HTML).appendChild(darkFoot);
-    }
+    if (DARK_FOOTER[here]) host.classList.add('is-dark');
     document.body.appendChild(host);
   }
 

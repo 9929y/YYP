@@ -80,11 +80,13 @@ if (!fs.existsSync(path.join(ROOT, 'src/pages/index.astro'))) {
 if (fs.existsSync(path.join(ROOT, 'landing.html'))) {
   errors.push('root landing.html must not exist — Astro owns / and /landing.html');
 }
-if (fs.existsSync(path.join(ROOT, 'index.html'))) {
-  errors.push('root index.html must not exist — Astro emits it; archive is index.webflow.html');
-}
-if (!fs.existsSync(path.join(ROOT, 'index.webflow.html'))) {
-  errors.push('index.webflow.html missing — keep the pre-cutover Webflow homepage for rollback');
+// Every page is an Astro route now. A .html file at the repo root would be
+// served by nothing in the build and by nothing in dev, so it can only be a
+// stale copy someone is about to edit by mistake.
+for (const name of fs.readdirSync(ROOT)) {
+  if (name.endsWith('.html')) {
+    errors.push(`root ${name} must not exist — pages live in src/pages/ and Astro emits them`);
+  }
 }
 
 const resumePagePath = path.join(ROOT, 'src/pages/resume.astro');
@@ -254,18 +256,12 @@ if (useDist) {
     if (!indexHtml.includes('yy-landing')) {
       errors.push('dist/index.html is not the Astro homepage (missing yy-landing)');
     }
-    if (indexHtml.includes('data-wf-page')) {
-      errors.push('dist/index.html still looks like the Webflow homepage');
-    }
   }
   const distLanding = path.join(distDir, 'landing.html');
   if (!fs.existsSync(distLanding)) {
     errors.push('dist/landing.html missing — compatibility redirect stub required');
   } else if (!isRedirectStub(fs.readFileSync(distLanding, 'utf8'))) {
     errors.push('dist/landing.html should redirect to /');
-  }
-  if (fs.existsSync(path.join(distDir, 'index.webflow.html'))) {
-    errors.push('dist/index.webflow.html must not exist — the archive is kept in git, not published');
   }
   if (fs.existsSync(path.join(distDir, 'resume.html'))) {
     errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
@@ -299,19 +295,14 @@ if (useDist) {
 const toDisk = projectsMod.diskPath || ((src) => String(src).replace(/^\//, ''));
 const optionalMissing = new Set();
 
-// Migrated pages only exist after a build, so a link to one is not a broken
-// link. Derived from projects.ts rather than listed, so migrating a page costs
-// one `engine` flip instead of an edit here.
+// Pages only exist after a build, so a link to one is not a broken link when
+// scanning sources. Derived from projects.ts rather than listed by hand.
 const astroGenerated = projectsMod.astroGeneratedHtml ? projectsMod.astroGeneratedHtml() : [];
 const knownGenerated = useDist
   ? new Set()
   : new Set(['index.html', 'landing.html', ...astroGenerated]);
 
 for (const file of htmlFiles) {
-  // `<slug>.webflow.html` archives are rollback snapshots listed in
-  // UNPUBLISHED_HTML — they never ship, so a reference in one to an asset that
-  // has since been deleted is history, not a broken link.
-  if (path.basename(file).endsWith('.webflow.html')) continue;
   checkHtmlFile(file, root, optionalMissing, knownGenerated);
 }
 
@@ -347,8 +338,8 @@ for (const asset of requiredAssets) {
 
 const chromeJsPath = path.join(ROOT, 'assets/js/yy-chrome.js');
 const chromeJs = fs.readFileSync(chromeJsPath, 'utf8');
-if (!chromeJs.includes('html.yy-chrome .navbar.w-nav{display:none}')) {
-  errors.push('yy-chrome.js must hide the legacy Webflow navbar');
+if (!chromeJs.includes('html.yy-chrome{scrollbar-gutter:stable}')) {
+  errors.push('yy-chrome.js must reserve the scrollbar gutter before <body> parses');
 }
 if (!chromeJs.includes('yy-cursor.css') || !chromeJs.includes('yy-cursor.js')) {
   errors.push('yy-chrome.js must load the shared cursor sheet and script on every page');
@@ -433,8 +424,8 @@ if (!chromeJs.includes('© Yanice Yang 2026') || chromeJs.includes('setupFooterP
 if (chromeJs.includes('insertBefore(host, credit')) {
   errors.push('yy-chrome.js must not nest the shared footer next to .footer-credit-wrapper');
 }
-if (!chromeJs.includes('.footer-section:not(:has(.four-column))')) {
-  errors.push('yy-chrome.js must hide credit-only Webflow footer shells');
+if (!chromeJs.includes("html.yy-panel-open,html.yy-panel-open body{overflow:hidden!important}")) {
+  errors.push('yy-chrome.js must lock scrolling while a nav panel is open');
 }
 if (!chromeJs.includes(':host(yy-footer){') || !chromeJs.includes('background: #fff;')) {
   errors.push('yy-footer host must paint a light band by default so light pages match landing chrome');
@@ -452,10 +443,10 @@ if (!chromeCss.includes('html.yy-chrome .paragraph') || !chromeCss.includes('max
 }
 
 if (!chromeJs.includes('yy-motion.css')) {
-  errors.push('yy-chrome.js must load yy-motion.css so Webflow pages share landing recipes');
+  errors.push('yy-chrome.js must load yy-motion.css so every page shares the landing recipes');
 }
 if (!chromeJs.includes('yy-case-type.css')) {
-  errors.push('yy-chrome.js must load yy-case-type.css on case / projects pages');
+  errors.push('yy-chrome.js must load yy-case-type.css on documents carrying html.yy-case');
 }
 
 const motionCssPath = path.join(ROOT, 'assets/css/yy-motion.css');
@@ -519,12 +510,11 @@ if (cursorJs.includes('moves === 0') && cursorJs.includes('standDown()')) {
 if (!cursorJs.includes('yy-cursor-ready')) {
   errors.push('yy-cursor.js must set html.yy-cursor-ready so the system arrow stays hidden before the first move');
 }
-if (
-  /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
-  /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs) ||
-  /CASE_TYPE_PAGES[\s\S]*mckinseyecommerce\.html/.test(chromeJs)
-) {
-  errors.push('Opus, Alzheimer, and McKinsey must keep Webflow black/white type — omit them from CASE_TYPE_PAGES');
+// The type overlay is opt-in per document via `html.yy-case`, never by filename.
+// A filename map here would silently re-apply the overlay to a page that already
+// bakes the same tokens into its own stylesheet.
+if (chromeJs.includes('CASE_TYPE_PAGES')) {
+  errors.push('yy-chrome.js must not key the type overlay by filename — use the yy-case document class');
 }
 if (!/brand-orb[\s\S]{0,120}36px/.test(chromeJs)) {
   errors.push('yy-chrome.js Orbit brand-orb must be 36px');
@@ -559,9 +549,9 @@ if (/margin:\s*0\s+0\s+/.test(caseTypeCssCode)) {
 }
 
 // ---- raw-colour ratchet ------------------------------------------------------
-// Every colour on a design-system surface should come from a token. 78 raw hex
-// values predate the token layer, most of them in the case-study stylesheets
-// ported straight off Webflow. Banning them outright would fail today, so this
+// Every colour on a design-system surface should come from a token. The raw hex
+// values counted here predate the token layer, most of them in the case-study
+// stylesheets. Banning them outright would fail today, so this
 // is a ratchet instead: the count may fall, never rise. Lower the budget when
 // you retire some.
 //
@@ -637,20 +627,9 @@ if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
   errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
 }
 
-// assets/css/yy-case-layout.css is gone. It only restyled Webflow classes on the
-// passthrough case pages; the last of those (tiktok-research) was deleted and
-// every case study is now Astro with its own stylesheet. The assertions that
-// pinned that file's contents went with it.
-
-// Only meaningful while McKinsey is still a Webflow page; the Astro rewrite has
-// no <body class> to get wrong.
-const mckPath = path.join(ROOT, 'mckinseyecommerce.html');
-if (fs.existsSync(mckPath)) {
-  const mckHtml = fs.readFileSync(mckPath, 'utf8');
-  if (/<body[^>]*\bblk\b/.test(mckHtml)) {
-    errors.push('mckinseyecommerce.html must be a light page — do not use body.blk (black ground + black .paragraph)');
-  }
-}
+// assets/css/yy-case-layout.css is gone. It restyled the exported markup on the
+// pages that had not been rewritten yet; every case study is now an Astro page
+// with its own stylesheet, so the assertions that pinned that file went with it.
 
 for (const panelName of ['work', 'about', 'resume']) {
   if (!chromeJs.includes(`panel: '${panelName}'`)) {
@@ -963,14 +942,10 @@ for (const project of projectsMod.projects) {
       if (!fs.existsSync(path.join(ROOT, toDisk(src)))) errors.push(`${project.slug}: missing ${src}`);
     }
   }
-  if (project.href && project.engine === 'webflow') {
-    const page = path.join(ROOT, toDisk(project.href));
-    if (!fs.existsSync(page)) errors.push(`${project.slug}: missing ${project.href}`);
-  }
 }
 
 // The [slug].astro scaffold ships placeholder copy the moment a project is
-// engine:'astro' + published + href and has no dedicated page. This fired for
+// published with an href and has no dedicated page. This fired for
 // real once: alzheimerdisease emitted twice and the scaffold overwrote the real
 // page. Fail the build rather than publish it.
 if (useDist) {
@@ -992,39 +967,14 @@ if (useDist) {
   }
 }
 
-// CASE_TYPE_PAGES must never name a migrated page. The map is keyed on filename,
-// so a slug that moved to Astro keeps matching and keeps pulling yy-case-type.css
-// onto a page that bakes the same tokens into its own stylesheet. Once this map is
-// empty, yy-case-type.css and its loader can be deleted.
+// Every published project must have a page in src/pages/ (or be picked up by the
+// [slug].astro scaffold, which the placeholder guard above keeps out of dist).
 for (const project of projectsMod.projects) {
-  if (project.engine !== 'astro' || !project.href) continue;
-  const key = `'${toDisk(project.href)}'`;
-  const map = chromeJs.slice(chromeJs.indexOf('CASE_TYPE_PAGES'));
-  if (map.slice(0, map.indexOf('};')).includes(key)) {
-    errors.push(
-      `yy-chrome.js: CASE_TYPE_PAGES still lists ${project.href}, but that page is now Astro — remove the key`
-    );
-  }
-}
-
-// Migration state machine. A page is either Webflow (root .html ships) or Astro
-// (src/pages/ emits it and the root file is archived) — never both. When both
-// exist the dev server serves the archive and the build ships the Astro page, so
-// a review on the tunnel shows the pre-migration page and the migration looks
-// like a no-op. See the UNPUBLISHED_HTML comment in scripts/legacy-passthrough.mjs.
-const passthroughSrc = fs.readFileSync(path.join(ROOT, 'scripts/legacy-passthrough.mjs'), 'utf8');
-for (const project of projectsMod.projects) {
-  if (project.engine !== 'astro' || !project.href) continue;
-  const legacy = toDisk(project.href);
-  const archive = legacy.replace(/\.html$/, '.webflow.html');
-  if (fs.existsSync(path.join(ROOT, legacy))) {
-    errors.push(`${project.slug}: engine is astro but root ${legacy} still exists — rename it to ${archive}`);
-  }
-  if (fs.existsSync(path.join(ROOT, archive)) && !passthroughSrc.includes(archive)) {
-    errors.push(`${archive} must be listed in UNPUBLISHED_HTML in scripts/legacy-passthrough.mjs`);
-  }
-  if (useDist && fs.existsSync(path.join(distDir, archive))) {
-    errors.push(`dist/${archive} must not exist — archives are kept in git, not published`);
+  if (project.status !== 'published' || !project.href) continue;
+  const page = path.join(ROOT, 'src/pages', toDisk(project.href).replace(/\.html$/, '.astro'));
+  const scaffolded = fs.existsSync(path.join(ROOT, 'src/pages/[slug].astro'));
+  if (!fs.existsSync(page) && !scaffolded) {
+    errors.push(`${project.slug}: published but src/pages/${toDisk(project.href).replace(/\.html$/, '.astro')} is missing`);
   }
 }
 

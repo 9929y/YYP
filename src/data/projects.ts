@@ -271,6 +271,23 @@ export const projects: Project[] = [
     nextSlug: 'ai-driven-product-design'
   },
   {
+    /* Research, not a case study: it has an index card but no page of its own
+       yet, which is why href is null and the card renders unlinked. */
+    slug: 'lark-education-field-study',
+    title: 'Lark Education Field Study',
+    href: null,
+    scope: 'Research',
+    note: 'Qualitative and quantitative field study of Lark in classrooms.',
+    status: 'in-progress',
+    engine: 'astro',
+    kind: 'slot',
+    theme: 'light',
+    featuredOnLanding: false,
+    featuredOnIndex: false,
+    featuredOnProjects: true,
+    landingOrder: 80
+  },
+  {
     slug: 'fashion',
     title: 'Fashion',
     href: 'fashion.html',

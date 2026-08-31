@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getProject, publicUrl } from '../data/projects';
+import '../styles/projects.css';
+/*
+  Work index. The last exported page to move onto Astro.
+
+  Card copy is local to this page on purpose. The name and tag under each card
+  ("AI-powered Video Tool" / "Launch new features with AI") are index-page
+  copy, not the project's own title and note, and projects.ts already carries
+  three near-duplicate strings per project. What is NOT local is the URL: every
+  card resolves its href through getProject(), so a slug that stops existing is
+  a build error here instead of a dead link in production.
+
+  The wearable card's background was broken in the exported stylesheet — an
+  unbalanced quote around a .bin filename meant every parser dropped the
+  declaration and the card rendered blank white. It now uses the same cover the
+  landing page uses for that project.
+*/
+
+interface Card {
+  slug: string;
+  name: string;
+  tag: string;
+  image: string;
+  alt: string;
+}
+
+const cards: Card[] = [
+  {
+    slug: 'ai-driven-product-design',
+    name: 'AI-powered Video Tool',
+    tag: 'Launch new features with AI',
+    image: '/assets/images/opusclip/hero-opusclip-ai-video-editing-cover.webp',
+    alt: 'Opus Clip AI video editing interface'
+  },
+  {
+    slug: 'mckinseyecommerce',
+    name: 'Digital Consulting UXD',
+    tag: 'build a product from 0 to 1',
+    image: '/assets/images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp',
+    alt: 'McKinsey live-streamed ecommerce concept illustration'
+  },
+  {
+    slug: 'larkdesign',
+    name: 'All-in-One Office Tool UXD',
+    tag: 'Product Ideations and iterations',
+    image: '/assets/images/lark/illustration-bytedance-workspace-modules-ring.webp',
+    alt: 'Ring of ByteDance workspace modules'
+  },
+  {
+    slug: 'cummins-digitalization',
+    name: 'Cummins Digital Tool UXD',
+    tag: 'Design system, ideation and research',
+    image: '/assets/images/cummins/hero-cummins-diagnostic-session-screens.webp',
+    alt: 'Cummins diagnostic session screens'
+  },
+  {
+    slug: 'mifinance',
+    name: 'Financial Digital Tool UXD',
+    tag: 'Accessibility & UX improvement',
+    image: '/assets/images/mifinance/screen-mi-finance-e-account-screens-stack.webp',
+    alt: 'Stack of Mi Finance e-account screens'
+  },
+  {
+    slug: 'alzheimerdisease',
+    name: 'Wearable Communication Device',
+    tag: 'Benefit for medical realm',
+    image: '/assets/images/home/hero-alzheimer-care-wearable-card-cover.webp',
+    alt: 'Care wearable concept for people living with Alzheimer’s'
+  },
+  {
+    slug: 'lark-education-field-study',
+    name: 'Lark Education Field Study',
+    tag: 'Qualitative & quantitative · in progress',
+    image: '/assets/images/lark/illustration-lark-education-class-collaboration-cover.webp',
+    alt: 'Classroom collaboration in Lark Education'
+  }
+];
+
+const resolved = cards.map((card) => {
+  const project = getProject(card.slug);
+  if (!project) throw new Error(`projects.astro: unknown slug "${card.slug}"`);
+  return { ...card, href: project.href ? publicUrl(project.href) : null };
+});
+---
+
+<BaseLayout
+  title="Projects — Yanice Yang"
+  description="Selected product design work: AI tooling, enterprise services, commerce and health."
+  reveal={true}
+  lenis={true}
+  chrome={true}
+>
+  <div class="projects">
+    <header class="projects__hero">
+      <img
+        class="projects__hero-photo"
+        src="/assets/images/bg/photo-beijing-skyline-sunset-through-window.webp"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+      />
+      <div class="projects__hero-scrim" aria-hidden="true"></div>
+      <div class="projects__hero-inner">
+        <h1 class="projects__title">Projects</h1>
+      </div>
+    </header>
+
+    <ul class="projects__grid">
+      {
+        resolved.map((card) => {
+          /* A card with no page yet is the same box without the anchor, so the
+             tag is chosen rather than the whole card being written twice. */
+          const Card = card.href ? 'a' : 'div';
+          return (
+            <li class="projects__item">
+              <Card class="pcard" href={card.href ?? undefined}>
+                <div class="pcard__media">
+                  <img src={card.image} alt={card.alt} loading="lazy" decoding="async" />
+                </div>
+                <div class="pcard__foot">
+                  <div class={card.href ? 'pcard__name' : 'pcard__name pcard__name--unlinked'}>
+                    {card.name}
+                  </div>
+                  <div class="pcard__tagwrap">
+                    <div class="pcard__tag">{card.tag}</div>
+                  </div>
+                </div>
+              </Card>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</BaseLayout>

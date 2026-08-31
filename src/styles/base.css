@@ -1,0 +1,31 @@
+/* base.css — the normalize every page needs, loaded once by BaseLayout.
+
+   These four rules used to arrive with the legacy shared stylesheet that the
+   old exported pages linked. Astro pages never linked it, so each migrated page
+   silently lost them: an 8px body margin, content-box sizing, and images with
+   no max-width. Three case stylesheets had already re-declared box-sizing
+   locally to work around it. This puts the rules back in one place.
+
+   Everything here is deliberately zero- or low-specificity so a page stylesheet
+   always wins without !important: `:where()` on the element selectors, nothing
+   on a class. Do not grow this file into a design layer — colour, type and
+   spacing belong to yy-tokens.css and to the page's own stylesheet. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+/* max-width stops a full-resolution export from forcing a horizontal scrollbar;
+   vertical-align kills the inline descender gap under an image in a text flow.
+   `:where` keeps specificity at 0, so `.slot img { display: block }` and friends
+   still win with no ordering rules to remember. */
+:where(img) {
+  max-width: 100%;
+  vertical-align: middle;
+}

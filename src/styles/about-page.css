@@ -1,0 +1,348 @@
+/* about-page.css — /aboutme.html.
+
+   Ported from the exported markup, whose rules lived in the shared legacy
+   stylesheet under .header / .section-10 / .container-4 / .container-5 /
+   .row-header / .row-split-content / .display-2xl / .display-sm / .paragraph /
+   .heading-medium / .btn / .hero-img-content. Every number below is that
+   number; the names are new because the old ones described the export.
+
+   Two things worth knowing before changing sizes here:
+
+   1. The type gets SMALLER above 1280px, not larger. `.display-2xl` is 3rem up
+      to 1279px and 2rem from 1280px; the intro paragraph goes 1.25rem → 1rem
+      the same way. That is authored, not a bug: the wide layout puts the text
+      in a 568px column beside the portrait, and the narrow layout gives it the
+      full width. Reproduced exactly.
+   2. Prose is 13px below 992px. The shared sheet carried a note that this was
+      a deliberate fix — long prose had been rendering at the 11px caption step
+      on a 390px-wide phone, which is unreadable. Do not "round it up" to 14px
+      without re-measuring.
+
+   Colours are literals on purpose: the design-system revamp will fold this page
+   in as its own pass. Do not tidy them into --ink / --ground here. */
+
+.about-page {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #242220;
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------ scaffold ---- */
+
+.about-page__section {
+  position: relative;
+  padding-block: 9vh;
+}
+
+.about-page__section--flush {
+  padding-bottom: 0;
+}
+
+/* Two containers, not one: the hero column is a percentage gutter that keeps
+   the portrait clear of the edge, the story columns below are a fixed 32px. */
+.about-page__wide {
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 10%;
+}
+
+.about-page__narrow {
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+.about-page__col {
+  max-width: 568px;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.about-page__hero {
+  position: relative;
+  padding-block: 0;
+}
+
+.about-page__hero-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 64px;
+  row-gap: 48px;
+}
+
+.about-page__place {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.about-page__place svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+}
+
+/* overflow:hidden on the wrapper is what makes a line-mask entrance possible;
+   it is inherited from the export and costs nothing when nothing animates. */
+.about-page__line {
+  overflow: hidden;
+}
+
+.about-page__line--last {
+  margin-bottom: 24px;
+}
+
+.about-page__display {
+  margin: 0;
+  color: #131520;
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* "Hello," was a div in the export, so it never picked up the h1 weight and
+   rendered at 400 against the name's 600. That contrast is authored — keep it
+   whichever element the line ends up on. */
+.about-page__display--soft {
+  font-weight: 400;
+}
+
+.about-page__intro {
+  margin-top: 0;
+  margin-bottom: 64px;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.about-page__portrait-stack {
+  position: relative;
+  perspective: 1000px;
+}
+
+.about-page__portrait {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.about-page__portrait img {
+  display: block;
+  width: 100%;
+}
+
+/* Purely decorative aurora, deliberately bleeding out of the box on two sides.
+   pointer-events:none was an inline <style> in the export; it belongs here. */
+.about-page__glow {
+  position: absolute;
+  inset: auto 0% -55% -55%;
+  width: 170%;
+  max-width: none;
+  pointer-events: none;
+  transform: translate3d(0, 0, 40px);
+  transform-style: preserve-3d;
+}
+
+/* -------------------------------------------------------------- button ---- */
+
+.about-page__btns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin: -6px;
+}
+
+.about-page__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 6px;
+  padding: 8px;
+  color: #131520;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.about-page__btn svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+}
+
+.about-page__btn:hover {
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------- prose ---- */
+
+.about-page__p {
+  max-width: 36em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.about-page__h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* The section title sits indented from the grid below it, not aligned to it. */
+.about-page__h2--indent {
+  margin-bottom: 3%;
+  margin-left: 10%;
+}
+
+.about-page__h3 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: #131520;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------- stories ---- */
+
+.about-page__story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 64px;
+  row-gap: 48px;
+  margin-bottom: 10%;
+}
+
+.about-page__story-media {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px;
+}
+
+.about-page__story-media img {
+  display: block;
+  width: 100%;
+  max-height: 100%;
+}
+
+/* --------------------------------------------------------- breakpoints ---- */
+
+@media screen and (min-width: 1280px) {
+  .about-page__wide {
+    padding-top: 10%;
+  }
+
+  .about-page__display {
+    font-size: 2rem;
+  }
+
+  .about-page__intro {
+    font-size: 1rem;
+  }
+
+  .about-page__h3 {
+    font-size: 1.5625rem;
+  }
+
+  .about-page__h2--indent {
+    margin-left: 15%;
+    padding-bottom: 2%;
+  }
+
+  .about-page__story {
+    column-gap: 96px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .about-page__hero-row {
+    column-gap: 48px;
+  }
+
+  .about-page__p {
+    font-size: 0.8125rem;
+  }
+
+  .about-page__h3 {
+    font-size: 1.5625rem;
+  }
+
+  .about-page__story {
+    column-gap: 32px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .about-page__section {
+    padding-block: 64px;
+  }
+
+  .about-page__section--flush {
+    padding-bottom: 0;
+  }
+
+  .about-page__wide,
+  .about-page__narrow {
+    padding-inline: 20px;
+  }
+
+  .about-page__hero-row,
+  .about-page__story {
+    grid-template-columns: 1fr;
+  }
+
+  .about-page__story {
+    row-gap: 32px;
+  }
+
+  .about-page__intro {
+    margin-bottom: 32px;
+  }
+
+  .about-page__h2 {
+    font-size: 1.5625rem;
+  }
+
+  .about-page__h3 {
+    font-size: 1.25rem;
+  }
+
+  .about-page__btn {
+    padding-inline: 2px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .about-page__section {
+    overflow: hidden;
+  }
+
+  .about-page__wide,
+  .about-page__narrow {
+    padding-right: 24px;
+  }
+
+  .about-page__btns {
+    margin-inline: 0;
+  }
+
+  .about-page__h2 {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+}

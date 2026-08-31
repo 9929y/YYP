@@ -1,4 +1,6 @@
 ---
+import '../styles/base.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -35,15 +37,10 @@ const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).joi
     <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
     <style is:inline>
       /* Anti-flash rules, lifted from yy-chrome.js so the chrome script can defer.
-         Must stay byte-equivalent to the boot rules in yy-chrome.js. */
+         Must stay equivalent to the boot rules in yy-chrome.js — check-site
+         asserts both halves. */
       html.yy-chrome { scrollbar-gutter: stable }
-      html.yy-chrome .navbar.w-nav { display: none }
-      html.yy-chrome .footer-credit-wrapper { display: none }
       html.yy-panel-open, html.yy-panel-open body { overflow: hidden !important }
-      html.yy-chrome .footer-section:not(:has(.four-column)) { display: none }
-      html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)) { display: none }
-      html.yy-chrome .footer-section { border-top: none; padding-top: 48px; padding-bottom: 0 }
-      .preloader-lark { display: none !important }
     </style>
     <link rel="preload" href="/assets/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/assets/fonts/plus-jakarta-sans-600.woff2" as="font" type="font/woff2" crossorigin />

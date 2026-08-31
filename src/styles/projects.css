@@ -1,0 +1,235 @@
+/* projects.css — the work index at /projects.html.
+
+   Ported from the exported markup this page used to be, whose rules lived in
+   the shared legacy stylesheet under .inner-page-hero / .contactgrid-wrapper /
+   .grid-gradients / .card-gradient / .card-bottom-text / .text-gradient-*.
+   Numbers below are those numbers; the class names are new because the old ones
+   described the export, not the page.
+
+   One deliberate simplification, called out so review can catch it: the hero
+   used to be a three-column grid (250px | 1fr | 250px) holding a single
+   centred cell, wrapped in two more nested boxes that each contributed a
+   padding-top at a different breakpoint. The rendered result was one centred
+   title over a scrimmed photo, so that is what this is. The stacked paddings
+   (80 / 100 / 140 / 20px by breakpoint) collapse into the min-height plus one
+   padding-block here.
+
+   Colours are literals on purpose: this page is next in line for the design
+   system revamp, and folding it onto tokens now would pre-empt that pass with
+   guesses. Do not "tidy" them into --ink / --ground here. */
+
+.projects {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #242220;
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.projects__hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 650px;
+  padding-block: 80px;
+  overflow: hidden;
+}
+
+.projects__hero-photo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-position: 50% 35%;
+}
+
+/* The scrim darkens more as the viewport narrows: on a phone the title sits
+   over the busiest part of the skyline. Four authored steps, kept as authored. */
+.projects__hero-scrim {
+  position: absolute;
+  inset: 0;
+  background-color: #2b2b2b61;
+}
+
+.projects__hero-inner {
+  position: relative;
+  z-index: 1;
+  padding-inline: 40px;
+  color: #fff;
+  text-align: center;
+}
+
+.projects__title {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+/* --------------------------------------------------------------- cards ---- */
+
+.projects__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 2rem;
+  row-gap: 4rem;
+  width: 80vw;
+  margin-inline: 10vw;
+  padding-block: 10vh 20vh;
+  list-style: none;
+}
+
+.projects__item {
+  display: flex;
+}
+
+/* The card is a link when the project has a page and a plain block when it does
+   not, so the box lives on .pcard and the element type carries only the
+   semantics. No hover treatment: the export drove hovers from IX2 data-w-id
+   attributes whose keyframes are gone with the runtime, and inventing one here
+   would be a design decision this page's revamp should make, not this port. */
+.pcard {
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  width: 100%;
+  height: 55vh;
+  overflow: hidden;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 5px 6px 5px #0003;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pcard__media {
+  min-height: 20vh;
+  overflow: hidden;
+}
+
+.pcard__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pcard__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 25%;
+  padding: 1.5rem 0.75rem;
+}
+
+.pcard__name {
+  color: #101828;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* "unable" in the export: a project with no page yet, greyed so the card reads
+   as a placeholder rather than a broken link. */
+.pcard__name--unlinked {
+  color: #949494;
+}
+
+.pcard__tagwrap {
+  background-color: #f5f5f5;
+  border-radius: 1rem;
+}
+
+.pcard__tag {
+  padding: 4px 8px;
+  color: #000;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  text-align: left;
+  text-transform: lowercase;
+}
+
+@media screen and (min-width: 1280px) {
+  .projects__hero-scrim {
+    background-color: #27272780;
+  }
+
+  .projects__grid {
+    width: 70vw;
+    margin-inline: 15vw;
+  }
+
+  .pcard {
+    height: auto;
+    max-height: 100%;
+    box-shadow: 5px 7px 5px #0003;
+  }
+
+  .pcard__foot {
+    height: auto;
+    box-shadow: 8px 8px 5px #24242469;
+  }
+
+  .pcard__name {
+    text-align: center;
+    align-self: center;
+    font-weight: 600;
+  }
+
+  .pcard__name--unlinked {
+    color: #686868;
+  }
+
+  .pcard__tagwrap {
+    align-self: center;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .projects__grid {
+    grid-template-columns: repeat(2, 1fr);
+    width: 90vw;
+    margin-inline: 5vw;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .projects__hero-scrim {
+    background-color: #0000006b;
+  }
+
+  .projects__title {
+    font-size: 2.5rem;
+  }
+
+  .projects__grid {
+    grid-template-columns: 1fr;
+    row-gap: 2rem;
+    width: 80vw;
+    margin-inline: 10vw;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .projects__hero {
+    min-height: 300px;
+    padding-block: 104px 36px;
+  }
+
+  .projects__hero-scrim {
+    background-color: #0a101d8f;
+  }
+
+  .projects__hero-inner {
+    padding-inline: 0;
+  }
+
+  .pcard {
+    height: 45vh;
+  }
+}
