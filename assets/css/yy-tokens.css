@@ -176,7 +176,7 @@
   --weight-400: 400;
   --weight-500: 500;
   --weight-600: 600;
-  --weight-700: 700;
+  --weight-700: 700;  /* used exactly once, the About signature; new work stops at 600 */
 
   /* ---- tracking ----
      Was written as bare em values 28 times across the stylesheets. */
@@ -203,7 +203,8 @@
   --space-16: 16px;
   --space-20: 20px;
   --space-24: 24px;
-  --space-28: 28px;
+  --space-28: 28px;  /* the most-used spacing value on the site (16 uses); a
+                        scale that rounds this away strands all 16 */
   --space-32: 32px;
   --space-40: 40px;
   --space-48: 48px;
