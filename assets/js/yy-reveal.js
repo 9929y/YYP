@@ -8,18 +8,17 @@
      · Explicit: [data-reveal] (except none / intro-*) and .rv
      · Landing (html.yy-landing): explicit only — never auto-collect (hero intro
        is a CSS timeline; auto-collect would steal those nodes).
-     · Other pages: if nothing is marked, auto-collect images + text that IX2
-       does not own, stamp .yy-rv.
+     · Other pages: if nothing is marked, auto-collect images + text and
+       stamp .yy-rv.
 
    data-reveal="none" excludes a node (and descendants via closest).
    data-reveal-mode="inout" re-hides on leave; default is once (enter only).
-   IX2 [data-w-id] is never a target; neither are containers that wrap IX2.
    ============================================================================ */
 (function () {
   'use strict';
 
   var html = document.documentElement;
-  var SKIP = 'yy-nav,yy-footer,.sr-only,.navbar,.preloader-lark,.w-lightbox-backdrop,.footer-credit-wrapper';
+  var SKIP = 'yy-nav,yy-footer,.sr-only';
   var io = null;
   var observed = typeof WeakSet === 'function' ? new WeakSet() : null;
   var observedFallback = observed ? null : [];
@@ -37,19 +36,6 @@
       e = e.parentElement;
     }
     return false;
-  }
-
-  function ownedByIx2(el) {
-    var e = el;
-    while (e && e !== document.body) {
-      if (e.hasAttribute && e.hasAttribute('data-w-id')) return true;
-      e = e.parentElement;
-    }
-    return false;
-  }
-
-  function wrapsIx2(el) {
-    return !!(el.querySelector && el.querySelector('[data-w-id]'));
   }
 
   function recipeOf(el) {
@@ -82,7 +68,7 @@
   }
 
   function eligible(el) {
-    return el && !el.closest(SKIP) && !ownedByIx2(el) && !wrapsIx2(el) &&
+    return el && !el.closest(SKIP) &&
       !skipMarked(el) && !isObserved(el);
   }
 
@@ -118,7 +104,7 @@
     var out = [];
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
-      if (el.closest(SKIP) || ownedByIx2(el) || wrapsIx2(el) || skipMarked(el)) continue;
+      if (el.closest(SKIP) || skipMarked(el)) continue;
       out.push(el);
     }
     return out;
@@ -187,7 +173,7 @@
       '.yy-rv:not(.in), .rv:not(.in), [data-reveal]:not(.in):not([data-reveal="none"]):not([data-reveal^="intro-"])'
     );
     for (var s = 0; s < pend.length; s++) {
-      if (skipMarked(pend[s]) || ownedByIx2(pend[s]) || wrapsIx2(pend[s])) continue;
+      if (skipMarked(pend[s])) continue;
       var r = pend[s].getBoundingClientRect();
       if (r.top < innerHeight + 48 && r.bottom > -48) {
         pend[s].style.setProperty('--d', '0ms');

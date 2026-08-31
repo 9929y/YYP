@@ -1,16 +1,15 @@
-/* case-opusclip.css — Opus Clip case study, migrated off the Webflow sheet.
+/* case-opusclip.css — Opus Clip case study.
 
-   Archive: ai-driven-product-design.webflow.html.
+   Ported from the exported markup this page used to be; that page is in git
+   history (before the Astro rewrite) if a number ever needs checking.
 
-   Like McKinsey, this page KEEPS THE WEBFLOW TYPE: ai-driven-product-design is
-   deliberately absent from CASE_TYPE_PAGES in assets/js/yy-chrome.js, whose own
-   comment records that Opus, Alzheimer and McKinsey keep Webflow black/white.
-   The shipped page never had yy-case-type.css over it, so the rem sizes below
-   are the real ones. Moving this page onto the token scale is a design change.
+   Like McKinsey, this page KEEPS ITS ORIGINAL TYPE: the type overlay was never
+   applied to it — McKinsey, Opus Clip and the medical wearable kept their
+   authored black/white treatment — so the rem sizes below are the real ones.
+   Moving this page onto the token scale is a design change.
 
-   It IS the sole member of DARK_NAV_PAGES and is in DARK_FOOTER. Both maps are
-   keyed on the filename, which still resolves after the migration, so the nav
-   and footer keep their dark treatment with no change to yy-chrome.js.
+   It IS the sole member of DARK_NAV_PAGES and is in DARK_FOOTER in
+   assets/js/yy-chrome.js, so the nav and footer keep their dark treatment.
 
    Preserved quirk, same as Lark: the four impact numbers are hidden below 767px
    (`.numbergrid { display: none }`). Reproduced to keep this a like-for-like
@@ -239,7 +238,7 @@
   padding-top: 5%;
 }
 
-/* 16:10 frame, matching the inline style the archive shipped with each embed. */
+/* 16:10 frame, matching the inline style the original page shipped with each embed. */
 .ops__video {
   position: relative;
   width: 100%;
@@ -491,7 +490,7 @@
     display: none;
   }
 
-  /* Faithful to the archive: the impact numbers are hidden on phones. See the
+  /* Faithful to the original page: the impact numbers are hidden on phones. See the
      note at the top of this file — worth revisiting as a design decision. */
   .ops__numbers {
     display: none;

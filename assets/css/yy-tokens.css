@@ -19,7 +19,7 @@
      768   case-note static copy on coarse pointers
      767   type step (hero 40 -> 64)
      560   chrome capsule / landing edge
-     479   Webflow mobile
+     479   small phone
    ============================================================================ */
 
 @font-face {
@@ -114,8 +114,8 @@
    radius, weight, tracking, shadow, glass, z-index, interaction state) are new
    and unused until page stylesheets adopt them.
 
-   Legacy Webflow pages keep their own colour system; nothing here may be
-   applied to those pages as a colour overlay.
+   Case-study pages keep their own colour system in their own stylesheets;
+   nothing here may be applied to them as a colour overlay.
    ============================================================================ */
 
 /* ------------------------------------------------------------- PRIMITIVES -- */

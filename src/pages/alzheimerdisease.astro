@@ -8,7 +8,7 @@ const { prev, next } = neighbors('alzheimerdisease');
 
 const IMG = '/assets/images/alzheimer';
 
-/** Every srcset is copied from the archive unchanged — see the note below. */
+/** Every srcset is copied from the original page unchanged — see the note below. */
 const journey = [
   {
     src: `${IMG}/journey-caregiver-shadowing-timeline-notes-early-morning.webp`,
@@ -64,26 +64,26 @@ const insights = [
   }
 ];
 /*
-  Medical Assistive (Alzheimer) case study — migrated off the Webflow passthrough.
-  Archive: alzheimerdisease.webflow.html (kept in git, never published).
+  Medical Assistive (Alzheimer) case study. Rewritten from the exported markup
+  this page used to be; that page is in git history if a value needs checking.
 
   This page does NOT use CaseStudyLayout. That layout emits its own
   eyebrow/title/scope/note hero, and this case opens with a full-bleed portrait
   collage, a display headline and a scroll cue instead. Wrapping it would have
   meant showing two heroes or gutting the layout for every other page.
 
-  Every img keeps the archive's exact src, srcset, sizes and alt. The srcset is
-  load-bearing beyond responsiveness: legacy-passthrough.mjs only copies a
+  Every img keeps the original's exact src, srcset, sizes and alt. The srcset is
+  load-bearing beyond responsiveness: assets-passthrough.mjs only copies a
   `-p-<width>` variant into dist when a file textually references it.
 
   No `yy-case` html class on purpose. yy-chrome.js loads the yy-case-type.css
-  overlay whenever that class is present, and its own comment records that Opus,
-  Alzheimer and McKinsey deliberately keep Webflow black/white and are excluded.
-  Adding the class here would have silently applied the type overlay to a page
-  the archive kept out of it. The dark surface is carried by this page's own CSS
-  and the data-surface attribute instead.
+  overlay whenever that class is present, and this page — like Opus Clip and
+  McKinsey — deliberately keeps its authored black/white treatment. Adding the
+  class here would have silently restyled a page that was never in that set. The
+  dark surface is carried by this page's own CSS and the data-surface attribute
+  instead.
 
-  Two anomalies in the archive were corrected rather than reproduced; both are
+  Two anomalies in the original were corrected rather than reproduced; both are
   called out in src/styles/case-alzheimer.css and in the commit message. The
   larger one: the first full-bleed band pointed at a malformed background-image
   URL, so it silently fell back to a studio photo of three models in black

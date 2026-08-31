@@ -36,7 +36,7 @@ html.yy-case-type .xxl-heading-2 {
 }
 
 /* Hero H1s: unify Cummins (.bold-text.cmi) and Xiaomi/others (.heading-xl).
-   Was ~40px via --t-40 on .heading-xl vs ~2rem Webflow on Cummins — too large
+   Was ~40px via --t-40 on .heading-xl vs ~2rem authored on Cummins — too large
    at 1440px and inconsistent. */
 html.yy-case-type .inner-page-hero-2 .heading-xl,
 html.yy-case-type .inner-page-hero-2 .heading-xl.mi,

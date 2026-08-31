@@ -10,10 +10,10 @@ const { prev, next } = neighbors('cummins-digitalization');
 
 /*
   Three tiles in the "Wireframe and Prototype ideation" showroom were not images
-  in the archive — their Webflow lightbox payload was a Vimeo prototype
-  recording, with the image only acting as a thumbnail. Dropping the lightbox
-  would have made those recordings unreachable, so the tile links out instead.
-  URLs are copied from the archive's w-json blocks.
+  in the original page — their lightbox payload was a Vimeo prototype recording,
+  with the image only acting as a thumbnail. Dropping the lightbox would have
+  made those recordings unreachable, so the tile links out instead. URLs are
+  copied from that page's embedded JSON.
 */
 const sections = [
   {
@@ -82,17 +82,17 @@ const sections = [
   }
 ];
 /*
-  Cummins Guidanz case study — migrated off the Webflow passthrough.
-  Archive: cummins-digitalization.webflow.html (kept in git, never published).
+  Cummins Guidanz case study. Rewritten from the exported markup this page used
+  to be; that page is in git history if a value ever needs checking.
 
   Its own page rather than CaseStudyLayout, same reasoning as the other cases:
   this one opens with the Cummins mark over a red string-art photograph and a
   display headline, not with an eyebrow/title/scope/note stack.
 
-  Type comes from the token scale. cummins is in CASE_TYPE_PAGES in yy-chrome.js,
-  so the shipped page already has yy-case-type.css over it replacing every
-  Webflow font-size with --t-* / --lh-*; porting the raw sizes would have changed
-  the page. With tokens baked in, the overlay is no longer needed here.
+  Type comes from the token scale: the shipped page already had the type overlay
+  (assets/css/yy-case-type.css) over it, replacing every original font-size with
+  --t-* / --lh-*, so porting the raw sizes would have changed the page. With
+  tokens baked in, the overlay is no longer needed here.
 
   The 22 lightboxes are gone by decision — these are plain inline figures now.
   The exception is three tiles whose lightbox payload was a Vimeo prototype

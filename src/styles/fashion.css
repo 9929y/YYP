@@ -1,12 +1,12 @@
-/* fashion.css — the fashion gallery, migrated off the Webflow shared stylesheet.
+/* fashion.css — the fashion gallery.
 
-   Every value here was lifted from the rules that used to style
-   fashion.html: .container-w1 / .p-xl-start.p-xl-end / .sticky-image-wrapper /
-   .portfolio-bg-wrapper / .portfolio-bg-blurry / .portfolio-image-wrapper /
-   .portfolio-image in assets/css/123-782b5b.webflow.shared.a9431a3c9.css.
-   The archive is fashion.webflow.html — diff against it before changing numbers.
+   Every value here was lifted from the rules that used to style this page when
+   it was exported markup on the shared stylesheet: .container-w1 /
+   .p-xl-start.p-xl-end / .sticky-image-wrapper / .portfolio-bg-wrapper /
+   .portfolio-bg-blurry / .portfolio-image-wrapper / .portfolio-image. That page
+   is in git history (before the Astro rewrite) if a number needs checking.
 
-   Two Webflow classes collapsed to nothing and are deliberately not ported:
+   Two of those classes collapsed to nothing and are deliberately not ported:
    .gutter-outside had no standalone rule, and .p-xl-start's 8.5em top padding
    was cancelled by the .p-xl-start.p-xl-end compound the page also carried.
    So the outer container is only a centered 110em max-width. */
@@ -65,7 +65,7 @@
 }
 
 /* Below the tablet break the runway collapses: the image stops sticking and the
-   page becomes an ordinary scroll. Matches the Webflow breakpoints exactly. */
+   page becomes an ordinary scroll. Matches the original breakpoints exactly. */
 @media screen and (max-width: 767px) {
   .fashion__stage {
     height: auto;

@@ -1,6 +1,5 @@
 /* ============================================================================
-   yy-motion.css — named enter/exit recipes for landing, Astro pages, and
-   Webflow case gaps (what IX2 does not own).
+   yy-motion.css — named enter/exit recipes, shared by every page.
 
    ONE-SHOT default enter: edit the :root --reveal-text-* block below.
    Media inherits those tokens. Page fades are --page-fade-*.
@@ -168,11 +167,6 @@ html.yy-reveal [data-reveal="none"] {
   transition: none;
 }
 
-/* Never show legacy Webflow preloaders — IX2 page-finish path is unused here. */
-.preloader-lark {
-  display: none !important;
-}
-
 /* ---------------------------------------------------------------------------
    Landing hero intro — CSS timeline, not IntersectionObserver.
    Same 250ms fade-up as the default enter recipe.
@@ -251,13 +245,4 @@ html.yy-landing [data-reveal="intro-headline"] {
   }
 }
 
-/* IX2 failsafe: if the Webflow runtime never arrives, reveal its nodes rather
-   than leaving them invisible forever. Inert when IX2 runs — it writes inline
-   styles that win over this animation. */
-@media (prefers-reduced-motion: no-preference) {
-  html.w-mod-js:not(.w-mod-ix) [data-w-id][style*="opacity:0"] {
-    animation: yy-ix2-failsafe 1ms linear 3s forwards;
-  }
-}
-@keyframes yy-ix2-failsafe { to { opacity: 1; } }
 

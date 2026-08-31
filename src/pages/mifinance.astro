@@ -32,7 +32,7 @@ const highlights = [
   }
 ];
 
-/* Impact numbers. Targets come from the PureCounter config in the archive, which
+/* Impact numbers. Targets come from the PureCounter config in the original page, which
    configured five instances from a CDN script; assets/js/yy-count.js replaces it.
    The final value is server-rendered, so the number is right without JS. */
 const metricsTop = [
@@ -63,26 +63,26 @@ const screens = [
   media['hifi-face-id-verification-screen']
 ];
 /*
-  MiFinance case study — migrated off the Webflow passthrough.
-  Archive: mifinance.webflow.html (kept in git, never published).
+  MiFinance case study. Rewritten from the exported markup this page used to
+  be; that page is in git history if a value ever needs checking.
 
   Its own page rather than CaseStudyLayout: that layout emits an
   eyebrow/title/scope/note hero, and this case opens with an isometric app
   showcase, a display headline, a data disclaimer and the Xiaomi wordmark.
 
-  Type here comes from the token scale, not from the Webflow rules. mifinance is
-  listed in CASE_TYPE_PAGES in yy-chrome.js, so the shipped page already runs
-  with yy-case-type.css layered on top, replacing every Webflow font-size with
-  --t-* / --lh-*. Porting the raw Webflow sizes would have changed the page. Since
-  the tokens are baked in here, this page no longer needs that overlay.
+  Type here comes from the token scale, not from the original rules. The shipped
+  page already ran with the type overlay (assets/css/yy-case-type.css) on top,
+  replacing every original font-size with --t-* / --lh-*, so porting the raw
+  sizes would have changed the page. The tokens are baked in here, so this page
+  no longer needs that overlay.
 
-  The 14 Webflow lightboxes are gone by decision, not by omission — those images
+  The 14 lightboxes are gone by decision, not by omission — those images
   are now plain inline figures. The five animated counters no longer pull
   PureCounter from a CDN; assets/js/yy-count.js does the same job locally, and
   the final numbers are server-rendered so they are correct without JS.
 
   Image src/srcset/sizes/alt all come from src/data/case-media/mifinance.ts,
-  generated from the archive so nothing is retyped.
+  generated from the original markup so nothing is retyped.
 */
 ---
 

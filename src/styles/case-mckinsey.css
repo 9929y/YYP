@@ -1,17 +1,15 @@
-/* case-mckinsey.css — McKinsey live-shopping case study, migrated off Webflow.
+/* case-mckinsey.css — McKinsey live-shopping case study.
 
-   Ported from the rules that used to style mckinseyecommerce.html in
-   assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus the glass-card
-   treatment for `.shadow-card` in assets/css/yy-case-layout.css.
-   Archive: mckinseyecommerce.webflow.html.
+   Ported from the rules that used to style this page when it was exported
+   markup on the shared stylesheet, plus the glass-card treatment it carried for
+   `.shadow-card`. That page is in git history (before the Astro rewrite) if a
+   number ever needs checking.
 
-   UNLIKE MiFinance, Cummins and Lark, THIS PAGE KEEPS THE WEBFLOW TYPE.
-   mckinseyecommerce is deliberately NOT in CASE_TYPE_PAGES in
-   assets/js/yy-chrome.js — that map's own comment records that Opus, Alzheimer
-   and McKinsey keep Webflow black/white and are excluded. So the shipped page
-   never had yy-case-type.css over it, and the sizes below are the Webflow rem
-   values rather than --t-* tokens. Folding this page into the token scale is a
-   design change, not a migration step. */
+   UNLIKE MiFinance, Cummins and Lark, THIS PAGE KEEPS ITS ORIGINAL TYPE. The
+   type overlay was never applied to it — McKinsey, Opus Clip and the medical
+   wearable kept their authored black/white treatment — so the sizes below are
+   the original rem values rather than --t-* tokens. Folding this page into the
+   token scale is a design change, not a migration step. */
 
 .mck {
   --mck-accent: #e62600; /* was var(--orange-red) */
@@ -432,7 +430,7 @@
 
 .mck__prototype {
   position: relative;
-  /* 940 x 1810 from the archive's iframe attributes. */
+  /* 940 x 1810 from the original page's iframe attributes. */
   aspect-ratio: 940 / 1810;
 }
 

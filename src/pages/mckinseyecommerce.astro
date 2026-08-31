@@ -24,7 +24,7 @@ const competitive: (keyof typeof media)[] = [
   'competitive-interaction-engagement-modals-loading',
   'competitive-interaction-animation-treatment',
   'competitive-feature-set-pin-qa-filters',
-  /* The archive renders this file twice in the mosaic; kept so the grid still
+  /* The original page renders this file twice in the mosaic; kept so the grid still
      reads as nine tiles. */
   'competitive-feature-set-pin-qa-filters'
 ];
@@ -48,7 +48,7 @@ const wireframes: (keyof typeof media)[] = [
   'wireframe-liveshop-beta-lowfi-wireframe-map'
 ];
 
-/* Four landing concepts; the multicolor headline appears twice in the archive. */
+/* Four landing concepts; the multicolor headline appears twice in the original page. */
 const concepts: (keyof typeof media)[] = [
   'hifi-liveshop-landing-concept-blob-collage',
   'hifi-liveshop-landing-concept-multicolor-headline',
@@ -65,7 +65,7 @@ const findings: (keyof typeof media)[] = [
   'chart-additional-insights-to-validate'
 ];
 
-/* Real inline embeds in the archive, not lightbox payloads. Attributes copied
+/* Real inline embeds in the original page, not lightbox payloads. Attributes copied
    from the iframes verbatim, minus autoplay: three auto-playing videos on one
    page is a lot of bandwidth for a visitor who may never scroll this far, and
    the poster frame plus a play control conveys the same thing. */
@@ -97,21 +97,20 @@ const takeaways = [
   }
 ];
 /*
-  McKinsey live-shopping case study — migrated off the Webflow passthrough.
-  Archive: mckinseyecommerce.webflow.html (kept in git, never published).
+  McKinsey live-shopping case study. Rewritten from the exported markup this
+  page used to be; that page is in git history if a value needs checking.
 
-  This page KEEPS THE WEBFLOW TYPE, unlike MiFinance, Cummins and Lark.
-  mckinseyecommerce is deliberately absent from CASE_TYPE_PAGES in yy-chrome.js
-  — that map's own comment records that Opus, Alzheimer and McKinsey keep
-  Webflow black/white — so the shipped page never had yy-case-type.css over it.
-  Moving it onto the token scale would be a design change, not a migration step.
+  This page KEEPS ITS ORIGINAL TYPE, unlike MiFinance, Cummins and Lark. The
+  type overlay was never applied to it — McKinsey, Opus Clip and the medical
+  wearable kept their authored black/white treatment. Moving it onto the token
+  scale would be a design change, not a migration step.
 
   The 28 lightboxes are gone by decision; those images are plain inline figures.
   The three prototype recordings are different: they were real inline Vimeo
   iframes in the page body, so they stay as embeds. They no longer autoplay —
   see the note in the frontmatter.
 
-  Two images are rendered twice in the archive (a competitive-analysis tile and
+  Two images are rendered twice in the original page (a competitive-analysis tile and
   a landing concept). Both repeats are preserved so the grids keep their shape.
 */
 ---

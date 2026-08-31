@@ -1,161 +1,80 @@
-# Yanice Yang — portfolio (lightweight-cleaned)
+# Yanice Yang — portfolio
 
-A tidied copy of the faithful Webflow clone. **Rendering is 100% identical** to
-the original — this pass only cleaned up how the code is organized, not how it
-looks or behaves. The Webflow animation runtime is kept on purpose so every
-animation stays pixel-for-pixel the same.
-
-## What changed (code only)
-
-- **Assets organized by type** under `assets/`:
-  `images/` (1087) · `videos/` (7) · `lottie/` (2) · `js/` (11) · `css/` (1)
-- **Cleaner filenames** — dropped the random 8-char hash prefix the mirror added.
-- **Formatted** — all 11 HTML pages and the CSS are pretty-printed and readable
-  (e.g. `index.html` went from 2 minified lines to ~284 readable ones).
-- **Trimmed fonts** — removed 3 webfonts with zero references (Cairo, Caveat
-  Brush, Space Mono); 8 used families kept.
-- **Dropped 3 unused font `.zip` archives.** Correction (2026-08-17): they were
-  *not* unreferenced — three `@font-face` rules pointed at them with
-  `format("undefined")`. No rule ever used those family names, so nothing 404'd,
-  but the dangling rules survived this pass. They were removed later; see below.
-
-## Image pass — WebP + resolution cap (2026-08-17)
-
-**321 MB -> 96 MB of images (-70%).** Every reference rewritten in place; still no
-build step.
-
-- **981 of 1041** PNG/JPEG converted to WebP at `cwebp -q 82`. The other **60**
-  are kept as-is because WebP came out *larger* — small flat-colour icons where
-  PNG already wins.
-- **54 images were above 3200px wide** and got capped there first. The worst was
-  10822x8369 (90 megapixels) for a slot the page renders at 1143px. 3200 matches
-  Webflow's own largest generated variant (`-p-3200`).
-- **1275 references** rewritten across 11 HTML pages and the shared CSS, plus
-  **18 `srcset` width descriptors** corrected for the images that shrank.
-
-Verified after: 1160 references resolve, zero broken, zero orphans, and the
-heaviest page (`larkdesign.html`) went 83.2 MB -> 24.7 MB of images.
-
-Originals are recoverable from git history — they were committed before this pass.
-
-## What was deliberately kept
-
-- Webflow runtime JS + jQuery + the webfont loader (these drive every animation;
-  removing them would change behavior).
-- `w-node-*` / `data-wf-*` attributes (the CSS grid placement depends on them).
+A static portfolio site: Astro 5, plain CSS with custom properties, a few React
+islands, deployed to Vercel. Every page is an Astro route in `src/pages/`.
 
 ## Run locally
 
-The site is an Astro static build. The live homepage is generated from
-`src/pages/index.astro`. Legacy Webflow case pages and the archived homepage
-(`index.webflow.html`) are copied into `dist/` unchanged. `/landing.html`
-redirects to `/`.
-
 ```bash
 npm install
-npm run dev        # http://127.0.0.1:4800  (Astro homepage at /)
+npm run dev        # http://127.0.0.1:4800
 npm run build      # writes dist/ — this is what Vercel publishes
-npm test           # project schema + asset/link checks (no dist required)
+npm test           # token manifest freshness + project schema + asset/link checks
 npm run check      # astro check + the same site checks against dist/
 ```
 
 Agents must not record or screenshot this project. Review in-progress work on the
 Cloudflare quick tunnel to port 4800 (see `AGENTS.md` and `.cursor/rules/preview-only.mdc`).
 
-How to add pages, case studies, motion, and React islands: `docs/EXTENDING.md`.
-Pre-migration URL/script baseline: `docs/BASELINE.md`.
+## How it is laid out
 
-The old no-build server still works for legacy files only (it will not emit the
-Astro homepage):
+| Path | What lives there |
+|---|---|
+| `src/pages/` | One file per URL. `[slug].astro` is a scaffold for case studies with no hand-written page; it emits nothing today. |
+| `src/layouts/` | `BaseLayout` (every page) and `CaseStudyLayout` (the scaffold route). |
+| `src/styles/` | `base.css` (the shared normalize) plus one stylesheet per page. |
+| `src/data/` | `projects.ts` is the single source of truth for slugs, hrefs and landing order. `motion.ts` owns which runtime may animate which property. |
+| `assets/` | Hand-managed images, video, fonts and the shared scripts. Served as a second public directory by `scripts/assets-passthrough.mjs`. |
+| `assets/css/yy-tokens.css` | The design tokens. Primitives → semantic, in one file. |
+| `docs/design-tokens.json` | Generated from that file by `npm run tokens`; the machine-readable form of the design system. |
 
-```bash
-python3 -m http.server 4800   # then open http://localhost:4800
-```
+The nav and footer are not page markup: `assets/js/yy-chrome.js` builds both in
+Shadow DOM on every page, so no page stylesheet can reach them and every page
+gets the same chrome.
 
-## Verified
+Responsive image variants keep a `-p-<width>` suffix and sit beside the original.
+`assets-passthrough.mjs` only ships a variant that some file textually
+references, so a `srcset` built by string concatenation silently de-ships its
+own variants — keep srcset strings literal.
 
-Homepage, the AI case study (7 videos), and the Lark case study were checked
-after cleanup: CSS applies, all images/videos load, Lottie + Webflow animations
-run, and no broken references remain.
+How to add pages, case studies, motion and React islands: `docs/EXTENDING.md`.
 
 ## Image catalog
 
-`docs/CATALOG.md` describes all 261 distinct images — what each one
-shows, the job it does on the page, and whether it can be reused elsewhere.
-`docs/images-manifest.json` is the same data one record per image, with the
+`docs/CATALOG.md` describes all 261 distinct images — what each one shows, the
+job it does on the page, and whether it can be reused elsewhere.
+`docs/images-manifest.json` is the same data, one record per image, with the
 pre-rename filename kept in `legacy` so anything can be traced back through git.
 
 Files live in per-case-study folders under names that say what they are:
 `lark/flow-lark-mobile-add-external-contact-5up.webp` rather than
-`62f86a4a9fb1b00887d462c0_Group_538.webp`. Responsive variants keep the Webflow
-`-p-NNN` suffix and sit beside their original.
+`62f86a4a9fb1b00887d462c0_Group_538.webp`.
 
-## Deploy state (verified 2026-08-17)
+## History worth keeping
 
-**All 11 pages in this working tree are byte-identical to yaniceyang.com.**
-Checked page by page with `curl` + `diff` on 2026-08-17.
+The site began as an exported static mirror of an earlier build: eleven HTML
+files driven by one 19,487-line stylesheet and a third-party animation runtime.
+It has been rewritten page by page into Astro; the last two pages moved in
+2026-08, and the export, its stylesheet and its runtime were deleted with them.
+Anything you need from the old markup is in git history.
 
-The earlier note here — that the live site still served the pre-cleanup clone —
-is obsolete. The cleaned structure has been live since at least 2026-08-11
-(Vercel `last-modified`), serving `assets/images/<webflow-id>_name.png` paths.
+Three passes over that mirror produced numbers still worth knowing:
 
-**Deploys are not automatic on push.** `main` had carried an unreleased
-placeholder project card since 2026-07-06 — six weeks of `[New Project Title —
-待填充]` sitting one deploy away from the homepage's first slot. It has been
-removed (`new-project.html` deleted, card dropped from `index.html`), which is
-what brings this tree back in line with production. If you push, push the deploy
-too, and diff against live afterwards.
+**Images (321 MB → 96 MB, −70%).** 981 of 1041 PNG/JPEG files converted to WebP
+at `cwebp -q 82`; the other 60 stayed as-is because WebP came out larger (small
+flat-colour icons where PNG already wins). 54 images were above 3200px wide and
+were capped there — the worst was 10822×8369, 90 megapixels, for a slot that
+renders at 1143px.
 
-## Font pass (2026-08-17)
+**Fonts.** Eight Google families / 52 weight variants were being loaded, four of
+them used nowhere. The site now self-hosts a subset: Plus Jakarta Sans 400/500/
+600/700 and Caveat 500. Three dangling `@font-face` rules pointing at deleted
+`.zip` files went at the same time.
 
-Every page loaded **8 Google families / 52 weight variants**; four of them —
-Merriweather, Lato, Inconsolata, Pacifico — were used **nowhere on the site**.
-Removed from the `WebFont.load` call on all 11 pages, leaving 4 families / 29
-variants. The Google request no longer mentions them; rendering is unchanged
-(verified via computed styles: Montserrat 87 nodes, Georgia 4, Caveat 1 on
-mckinseyecommerce.html, identical before and after).
-
-Also deleted the **3 dangling `@font-face` rules** — Pacifico, "Caveat Pacifico",
-"Caveat Pacifico Varela Round" — each pointing at a `.zip` that no longer exists,
-with `format("undefined")` and unquoted multi-word family names. No rule used
-those names, so they never produced a request; they were dead weight.
-
-Weights were left alone: `<em>` appears 14 times and `.italic-text*` classes 14
-times, so Montserrat's italics are genuinely in use and trimming them would not
-have been the zero-risk change it looks like.
-
-Full typography audit and the proposed 8-step type scale:
-`AI_materials_library/01_projects/portfolio_ux/05_type_audit_and_scale.md`
-
-## Mobile legibility fix (2026-08-17)
-
-Below 992px the site rendered real content text at sizes no one can read: an
-`<h1>` at **6.4px** (larkdesign's counter labels), body paragraphs at **7px**
-(ai-driven-product-design), card headings at **8px**. At 479px, 92 elements sat
-under 10px. On desktop, none did — which is why this had gone unnoticed.
-
-Twenty rules were retuned, all of them inside `≤991px` / `≤767px` / `≤479px`
-media queries. **Desktop is untouched**: measured across all 11 pages at 1440px,
-the font-size distribution is identical before and after — same 26 sizes, same
-450 elements, same count for every size.
-
-| | before | after |
-|---|---|---|
-| smallest size at 479px | 6.4px | **10px** |
-| elements under 11px at 479px | 110 | **6** |
-
-Targets come from the agreed scale: 11px for captions and labels, 13px for body
-copy and headings. Checked at 375px on all 11 pages: no page overflows
-horizontally and no text is clipped, including the counter labels that grew 72%.
-
-Two `em`-based rules (`.paragraph.white`, `.paragraph.white._1`) became `rem` on
-the way — `em` multiplies against the parent and was the least predictable size
-source in the file.
-
-Still 10px and deliberately left alone: the "Scroll" button label
-(`.circle-button-2` / `-3`) and the footer credit (`.footer-credit-wrapper`,
-8px). Both are base rules, so changing them would alter desktop too — a
-different decision from this one.
-
-Method and full mapping:
-`AI_materials_library/01_projects/portfolio_ux/05_type_audit_and_scale.md`
+**Mobile legibility.** Below 992px the site had been rendering real content at
+sizes no one can read: an `<h1>` at 6.4px, body paragraphs at 7px, card headings
+at 8px; 110 elements under 11px at 479px. Twenty rules were retuned inside the
+`≤991px` / `≤767px` / `≤479px` media queries and desktop was left untouched
+(measured: identical font-size distribution at 1440px before and after). The
+floor is now 10px, and prose on a phone is 13px — that is a deliberate value, not
+a rounding artefact. Do not raise it without re-measuring.

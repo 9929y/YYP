@@ -1,17 +1,17 @@
-/* case-lark.css — Lark Design case study, migrated off the Webflow sheet.
+/* case-lark.css — Lark Design case study.
 
-   Layout, colour and image sizing ported from the rules that used to style
-   larkdesign.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus
-   the glass-card overrides for `.step-card-2` in assets/css/yy-case-layout.css.
-   Archive: larkdesign.webflow.html.
+   Layout, colour and image sizing ported from the rules that used to style this
+   page when it was exported markup on the shared stylesheet, plus the glass-card
+   overrides it carried for `.step-card-2`. That page is in git history (before
+   the Astro rewrite) if a number ever needs checking.
 
-   Type comes from the token scale, not the Webflow rules: larkdesign is listed
-   in CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already runs
-   with assets/css/yy-case-type.css layered over it, replacing every font-size,
-   weight, leading and tracking with --t-* / --lh-*. Porting the raw Webflow sizes
-   would have changed the page. With tokens baked in, the overlay is not needed.
+   Type comes from the token scale, not those original rules: the shipped page
+   already ran with the type overlay (assets/css/yy-case-type.css) layered over
+   it, replacing every font-size, weight, leading and tracking with
+   --t-* / --lh-*. Porting the raw original sizes would have changed the page.
+   With tokens baked in, the overlay is not needed.
 
-   ONE PRESERVED QUIRK WORTH REVISITING: the archive hides the nine impact
+   ONE PRESERVED QUIRK WORTH REVISITING: the original hid the nine impact
    numbers below 767px (`.numbergrid { display: none }`), so phone visitors never
    see the research counts or the conversion/engagement/safety lifts. That is
    real content lost on the most-used breakpoint. It is reproduced here to keep
@@ -53,7 +53,7 @@
     linear-gradient(239deg, #ececec, #a8bff66e 23%, #8aabfaf5 33%, #b7ccfc3b 59%, #fff);
 }
 
-/* The archive layered a blue string-art fan over the hero gradients
+/* The original page layered a blue string-art fan over the hero gradients
    (`.background-wrapper-3.lk > .background-2.contact-background`): an absolutely
    positioned band, cover-sized, inset 58% from the top and 36% from the bottom.
    It sits above the gradients and below the content, which carries its own
@@ -666,7 +666,7 @@
     min-height: 80vh;
   }
 
-  /* The archive drops this image below the tablet break. */
+  /* The original page drops this image below the tablet break. */
   .lrk__hero::after {
     background-image: none;
   }
@@ -675,7 +675,7 @@
     display: none;
   }
 
-  /* Faithful to the archive: the impact numbers are hidden on phones. See the
+  /* Faithful to the original page: the impact numbers are hidden on phones. See the
      note at the top of this file — worth revisiting as a design decision. */
   .lrk__numbers {
     display: none;

@@ -7,7 +7,7 @@
    point the resume icon at hello.cv, while the seven case pages point that
    same "Resume"-labelled icon at Instagram. One component, one link set.
 
-   HOW IT LOADS  (mirrors the w-mod-js IIFE already in every <head>)
+   HOW IT LOADS
    Synchronous script in <head>. It stamps `html.yy-chrome`, injects two hide
    rules inline (no network round-trip, so the old nav never flashes), then
    loads yy-chrome.css and mounts once the body is parsed.
@@ -717,19 +717,16 @@
   var NOT_CONTENT = /^(SCRIPT|STYLE|LINK|NOSCRIPT|YY-NAV|YY-FOOTER)$/;
 
   function skipTarget() {
-    /* Measured: no page has <main>, .main-wrapper or .page-wrapper. So walk
-       body's children and take the first one that is not chrome, not a
-       preloader, and not a visually-hidden heading. Never match `.body` — that
-       IS <body>, the node we insert the nav into. */
+    /* Most pages have no <main>, so walk body's children and take the first
+       one that is not chrome and not a visually-hidden heading. Never match
+       `.body` — that IS <body>, the node we insert the nav into. */
     var el = document.querySelector('main, [role="main"]');
     if (!el) {
       var kids = document.body.children;
       for (var i = 0; i < kids.length; i++) {
         var k = kids[i];
         if (NOT_CONTENT.test(k.tagName)) continue;
-        if (k.classList.contains('navbar') ||
-            k.classList.contains('preloader-lark') ||
-            k.classList.contains('sr-only')) continue;
+        if (k.classList.contains('sr-only')) continue;
         el = k;
         break;
       }

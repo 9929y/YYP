@@ -57,7 +57,7 @@
                                     unstable below iOS 16 and native already
                                     feels right on a phone */
         anchors: true,           /* index.html's #one..#six depend on this */
-        allowNestedScroll: true, /* Webflow lightboxes scroll inside themselves */
+        allowNestedScroll: true, /* nested scrollers must keep their own scroll */
         autoRaf: true,
         respectReducedMotion: true
       });

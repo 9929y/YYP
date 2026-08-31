@@ -1,16 +1,15 @@
-/* case-mifinance.css — MiFinance case study, migrated off the Webflow sheet.
+/* case-mifinance.css — MiFinance case study.
 
    Layout, colour and image sizing are ported from the rules that used to style
-   mifinance.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css.
-   Archive: mifinance.webflow.html — diff against it before changing numbers.
+   this page when it was exported markup on the shared stylesheet. That page is
+   in git history (before the Astro rewrite) if a number ever needs checking.
 
-   TYPE IS DELIBERATELY NOT THE WEBFLOW TYPE. mifinance is listed in
-   CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already has
-   assets/css/yy-case-type.css layered over it, overriding every font-size,
-   weight, leading and tracking with the landing tokens. Porting the raw Webflow
-   sizes would have *changed* the page. The token values below are what this page
-   actually renders today, taken straight from that overlay — which is also the
-   target state, so this page needs no overlay and is not added to the allowlist.
+   TYPE IS DELIBERATELY NOT THE ORIGINAL TYPE. The shipped page already had the
+   type overlay (assets/css/yy-case-type.css) layered over it, overriding every
+   font-size, weight, leading and tracking with the landing tokens. Porting the
+   raw original sizes would have *changed* the page. The token values below are
+   what this page actually renders today, taken straight from that overlay —
+   which is also the target state, so this page needs no overlay.
 
    Colour literals are intentional here; folding them into semantic tokens is the
    design-system pass, not this one. */
@@ -433,8 +432,8 @@
 
 /* -------------------------------------------------------------- wireflow -- */
 
-/* Four low-fi iterations side by side with a caption under each. The archive
-   used Webflow's 12-column row helpers at 3/2/3/4 columns. */
+/* Four low-fi iterations side by side with a caption under each. The original page
+   used the export's 12-column row helpers at 3/2/3/4 columns. */
 .mif__wireflow {
   display: grid;
   grid-template-columns: 3fr 2fr 3fr 4fr;
@@ -490,7 +489,7 @@
   border-radius: 10px;
 }
 
-/* Alternating lift: the archive raised every second screen and shadowed the
+/* Alternating lift: the original page raised every second screen and shadowed the
    others, which is what gives the row its stagger. */
 .mif__screens-grid img:nth-child(odd) {
   box-shadow: 0 1px 9px #909090;

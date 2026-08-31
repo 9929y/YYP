@@ -1,7 +1,7 @@
 /* ============================================================================
    yy-cursor.css — 12px difference-dot on every page (desktop + fine pointer).
 
-   Loaded by yy-chrome.js so Webflow cases get the same disc as the homepage.
+   Loaded by yy-chrome.js so every page gets the same disc as the homepage.
    mix-blend-mode: difference stays on #yy-cursor itself (a body child).
    ============================================================================ */
 

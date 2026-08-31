@@ -1,5 +1,4 @@
 export type ProjectStatus = 'published' | 'in-progress';
-export type ProjectEngine = 'webflow' | 'astro';
 export type ProjectKind = 'slot' | 'panel' | 'gallery';
 export type ProjectTheme = 'light' | 'dark';
 
@@ -40,7 +39,6 @@ export interface Project {
   scope: string;
   note: string;
   status: ProjectStatus;
-  engine: ProjectEngine;
   kind: ProjectKind;
   theme: ProjectTheme;
   featuredOnLanding: boolean;
@@ -56,7 +54,7 @@ export interface Project {
   video?: ProjectVideo;
   acts?: string[];
   panelFoot?: string;
-  /** Explicit Webflow footer neighbours. New Astro pages may omit these. */
+  /** Explicit prev/next neighbours for the case-study footer. Optional. */
   prevSlug?: string;
   nextSlug?: string;
 }
@@ -71,7 +69,6 @@ export const projects: Project[] = [
     note: 'Turning prompt-based generation into an intent-led video workflow',
     description: 'AI-driven product design for Opus Clip, from a prompt to a finished cut.',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'dark',
     featuredOnLanding: true,
@@ -103,7 +100,6 @@ export const projects: Project[] = [
     scope: 'Web App',
     note: 'Designing a brand kit that helps SMB build up visual language across marketing assets',
     status: 'in-progress',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,
@@ -133,7 +129,6 @@ export const projects: Project[] = [
     scope: 'Mobile App',
     note: 'Helping an established organization build its first digital commerce business from the ground up.',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,
@@ -171,7 +166,6 @@ export const projects: Project[] = [
     scope: 'Web&Mobile App',
     note: 'Reducing information gaps in Lark’s collaboration experience',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: true,
@@ -208,7 +202,6 @@ export const projects: Project[] = [
     scope: 'Interaction & Craft',
     note: 'Account flows where the detail is the point.',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: false,
@@ -231,7 +224,6 @@ export const projects: Project[] = [
     scope: 'Enterprise · Digitalization',
     note: 'Service tooling for people who use it all day.',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: false,
@@ -254,7 +246,6 @@ export const projects: Project[] = [
     scope: 'Health · Wearable',
     note: 'A wearable for care, designed around the carer as much as the patient.',
     status: 'published',
-    engine: 'astro',
     kind: 'slot',
     theme: 'dark',
     featuredOnLanding: false,
@@ -279,7 +270,6 @@ export const projects: Project[] = [
     scope: 'Research',
     note: 'Qualitative and quantitative field study of Lark in classrooms.',
     status: 'in-progress',
-    engine: 'astro',
     kind: 'slot',
     theme: 'light',
     featuredOnLanding: false,
@@ -294,7 +284,6 @@ export const projects: Project[] = [
     scope: 'Gallery',
     note: 'Fashion work, linked from About and the shared footer.',
     status: 'published',
-    engine: 'astro',
     kind: 'gallery',
     theme: 'light',
     featuredOnLanding: false,
@@ -331,23 +320,21 @@ export function landingProjects(): Project[] {
  *
  * `gallery` is excluded on purpose: a photo gallery has no eyebrow, scope, meta
  * grid or prev/next, so it gets its own page in src/pages/ instead. Without this
- * guard, flipping such a project to `engine: 'astro'` both wraps it in the
- * case-study chrome and collides with that hand-written route.
+ * guard a gallery would be wrapped in the case-study chrome AND collide with
+ * that hand-written route.
  */
 export function astroCaseStudies(): Project[] {
   return projects.filter(
-    (p) => p.engine === 'astro' && p.status === 'published' && p.href && p.kind !== 'gallery'
+    (p) => p.status === 'published' && p.href && p.kind !== 'gallery'
   );
 }
 
 /**
  * Filenames Astro emits, so callers stop treating them as missing files on disk.
- * Migrated pages live in src/pages/ and only exist after a build.
+ * Pages live in src/pages/ and only exist after a build.
  */
 export function astroGeneratedHtml(): string[] {
-  return projects
-    .filter((p) => p.engine === 'astro' && p.status === 'published' && p.href)
-    .map((p) => p.href as string);
+  return projects.filter((p) => p.status === 'published' && p.href).map((p) => p.href as string);
 }
 
 export function neighbors(slug: string): { prev?: Project; next?: Project } {

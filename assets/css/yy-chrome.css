@@ -2,7 +2,7 @@
    yy-chrome.css — light-DOM half of the shared chrome layer
 
    The nav and footer themselves live in Shadow DOM (see yy-chrome.js), where
-   the 19,000-line Webflow stylesheet cannot reach them. This file holds only
+   no page stylesheet can reach them. This file holds only
    the handful of rules that must apply to the PAGE, not to the chrome:
    focus rings, anchor offset, and the reduced-motion guard.
 
@@ -31,9 +31,9 @@
 /* ---------------------------------------------------------------------------
    1. Focus ring
 
-   The Webflow sheet has ZERO :focus-visible rules in 19,487 lines — the only
-   :focus rules are widget internals. This is purely additive: it cannot
-   repaint content, only outline it when keyboard focus lands.
+   The site had no :focus-visible rules at all before this one — keyboard focus
+   was invisible everywhere. This is purely additive: it cannot repaint content,
+   only outline it when keyboard focus lands.
    --------------------------------------------------------------------------- */
 a:focus-visible,
 button:focus-visible,
@@ -58,12 +58,12 @@ button:focus-visible,
       (origin/revamp/design-system:assets/css/ds-retrofit.css:154-171)
 
    ⚠️ The usual `*, *::before, *::after { animation-duration: 0.01ms }` recipe
-   is actively dangerous in this repo. Webflow's IX2 engine animates elements
-   marked with `data-w-id`, and several pages ship an inline `opacity: 0` guard
-   keeping those elements hidden until IX2 runs. Neutralising IX2's animations
-   would leave that content PERMANENTLY INVISIBLE rather than merely still.
+   is dangerous whenever content starts at `opacity: 0` and is revealed by an
+   animation: neutralising that animation leaves the content PERMANENTLY
+   INVISIBLE rather than merely still. yy-motion.css keeps its hidden state
+   gated on html.yy-reveal for exactly this reason.
 
-   So: kill our own transitions, and leave anything IX2 owns alone.
+   So: kill our own transitions, and never blanket-disable animation.
    --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

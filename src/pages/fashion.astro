@@ -2,20 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/fashion.css';
 /*
-  Fashion gallery — first page migrated off the Webflow passthrough.
-  Archive: fashion.webflow.html (kept in git, never published).
+  Fashion gallery. First page rewritten from the exported markup this site used
+  to be; that page is in git history if a value ever needs checking.
 
   This is `kind: 'gallery'`, not a case study, so it gets its own page rather
   than routing through [slug].astro / CaseStudyLayout — a photo collage has no
   eyebrow, scope, meta grid or prev/next.
 
-  Both <img> keep the exact src/srcset/sizes/alt from the archive. The srcset is
-  load-bearing beyond responsiveness: legacy-passthrough.mjs only copies a
+  Both <img> keep the exact src/srcset/sizes/alt from the original page. The srcset is
+  load-bearing beyond responsiveness: assets-passthrough.mjs only copies a
   `-p-<width>.webp` variant into dist when some file textually references it, so
   dropping a srcset silently de-ships those files.
 
-  Webflow IX2 (the old data-w-id on the wrapper) is gone with the Webflow
-  runtime. The sticky-scroll effect itself was always CSS — see fashion.css.
+  The old interaction runtime (the data-w-id attribute on the wrapper) is gone.
+  The sticky-scroll effect itself was always CSS — see fashion.css.
 */
 ---
 

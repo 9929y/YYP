@@ -8,7 +8,7 @@
  * of thing look identical:
  *
  *   · the 160 real tokens in yy-tokens.css
- *   · 28 legacy Webflow variables (--coral-text, --grey, --black …)
+ *   · 28 legacy variables inherited from the old export (--coral-text, --grey …)
  *   · 31 page-local variables (--ops-accent, --mif-ink-2 …), same naming shape
  *     but scoped to one page
  *   · scope overrides that redeclare a real token under a different value,

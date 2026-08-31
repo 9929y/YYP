@@ -36,7 +36,7 @@ const abTests: (keyof typeof media)[] = [
   'hifi-ab-test-refine-storyboard-2up'
 ];
 
-/* Targets from the PureCounter config in the archive; yy-count.js replaces the
+/* Targets from the PureCounter config in the original page; yy-count.js replaces the
    CDN script and the final values are server-rendered. */
 const numbers = [
   { value: 97, label: '% positive and active feedback' },
@@ -72,14 +72,13 @@ const highlights = [
   }
 ];
 /*
-  Opus Clip case study — migrated off the Webflow passthrough. Last of the six,
-  because it is the dark page, the sole member of DARK_NAV_PAGES, and landing
-  slot #1, so a regression here is the most visible.
-  Archive: ai-driven-product-design.webflow.html (kept in git, never published).
+  Opus Clip case study. Rewritten last of the six, because it is the dark page,
+  the sole member of DARK_NAV_PAGES, and landing slot #1, so a regression here
+  is the most visible. The page it replaces is in git history.
 
-  THE HERO IS A SUBSTITUTION AND NEEDS SIGN-OFF. The archive's hero was a
-  Webflow Lottie player pointed at a 6.8 MB JSON file, loaded eagerly, rendered
-  through the Webflow runtime this page no longer loads. Reproducing it would
+  THE HERO IS A SUBSTITUTION AND NEEDS SIGN-OFF. The original hero was a Lottie
+  player pointed at a 6.8 MB JSON file, loaded eagerly, rendered through a
+  runtime this page no longer loads. Reproducing it would
   mean shipping that 6.8 MB plus a ~250 KB player for a four-second,
   non-looping animation. Instead the hero now plays
   assets/videos/case-opusclip-marquee.mp4 — the same Opus Clip showreel, already
@@ -87,16 +86,15 @@ const highlights = [
   through the shared .media--video contract with the existing poster frame. The
   Lottie JSON is untouched in assets/lottie/ if this should be reverted.
 
-  This page keeps the Webflow type: ai-driven-product-design is deliberately
-  absent from CASE_TYPE_PAGES in yy-chrome.js, so the shipped page never had
-  yy-case-type.css over it.
+  This page keeps its original type: the type overlay
+  (assets/css/yy-case-type.css) was never applied to it.
 
-  DARK_NAV_PAGES and DARK_FOOTER are keyed on the filename, which still resolves
-  after the migration, so the nav and footer keep their dark treatment.
+  DARK_NAV_PAGES and DARK_FOOTER in yy-chrome.js are keyed on the filename, and
+  this page's filename is unchanged, so the nav and footer stay dark.
 
   The four counters no longer pull PureCounter from a CDN. The seven body videos
   keep their sources but follow the repo's motion contract (data-play="scroll",
-  no autoplay) rather than the archive's unconditional autoplay — seven
+  no autoplay) rather than the original's unconditional autoplay — seven
   auto-playing videos is a lot of bandwidth, and yy-scroll.js already gates
   .media--video video for every other case page.
 */
@@ -112,7 +110,7 @@ const highlights = [
   <script slot="scripts" is:inline defer src="/assets/js/yy-count.js"></script>
 
   <main class="ops">
-    {/* The archive carried this visually-hidden h1 because the hero is a
+    {/* The original page carried this visually-hidden h1 because the hero is a
         showreel with no visible title. Without it the page has no h1 at all. */}
     <h1 class="sr-only">AI-driven product design</h1>
 

@@ -1,18 +1,18 @@
 ---
 /**
- * Scaffold route for `engine: 'astro'` case studies that do not yet have a
- * hand-written page.
+ * Scaffold route for case studies that do not yet have a hand-written page.
  *
- * Migrated case studies each get their own `src/pages/<slug>.astro`, because the
- * real pages are visually bespoke — different heroes, different section rhythms.
- * This route must therefore yield to them: without the DEDICATED filter below,
- * flipping a project to `engine: 'astro'` makes both this route and its own page
- * emit the same filename, and one silently overwrites the other. That happened
- * once, on alzheimerdisease, and shipped the placeholder copy over the real page.
+ * Every published case study today gets its own `src/pages/<slug>.astro`,
+ * because the real pages are visually bespoke — different heroes, different
+ * section rhythms. This route must therefore yield to them: without the
+ * DEDICATED filter below, a project with both a dedicated page and this route
+ * emits the same filename twice and one silently overwrites the other. That
+ * happened once, on alzheimerdisease, and shipped placeholder copy over the
+ * real page. This route emits zero pages today.
  *
- * The placeholder body below is live the moment a project is `engine: 'astro'` +
- * `published` + has an `href` and has no dedicated page. check-site.mjs fails the
- * build if either placeholder string reaches dist.
+ * The placeholder body below goes live the moment a project is `published` with
+ * an `href` and no dedicated page. check-site.mjs fails the build if either
+ * placeholder string reaches dist.
  */
 import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
 import CaseMetaGrid from '../components/CaseMetaGrid.astro';

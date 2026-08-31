@@ -6,7 +6,7 @@
 
 ## Goal
 
-Improve what visitors read and how clearly in-progress work reads, while reducing duplication and dead code in the Astro stack — without changing listing logic, Webflow case bodies, or chrome architecture.
+Improve what visitors read and how clearly in-progress work reads, while reducing duplication and dead code in the Astro stack — without changing listing logic, case-study bodies, or chrome architecture.
 
 ## Title policy (mixed, intentional)
 
@@ -16,7 +16,7 @@ Improve what visitors read and how clearly in-progress work reads, while reducin
 | `BaseLayout` default meta description | **Product designer** (sentence case) | Align default OG/meta with homepage when pages omit overrides |
 | About panel (`yy-about.js`) lead | **User Experience Designer** → tighten to **UX designer** in body copy only; lead can stay “UX Designer” | Legacy About voice; case studies historically say “UX designer” in role context |
 | `landing.astro` redirect stub `<title>` | **Product Designer** | Match live homepage, not stale “UX Designer” |
-| Webflow case pages | **No edits** | Role titles are project-specific (e.g. MiFinance “UX Designer”, Alzheimer “Product Designer”) |
+| Case-study pages | **No edits** | Role titles are project-specific (e.g. MiFinance “UX Designer”, Alzheimer “Product Designer”) |
 
 **Rule:** Do not global-find-replace “UX” → “Product” on legacy HTML. Only fix surfaces the site owns going forward (Astro + chrome JS strings).
 
@@ -93,7 +93,7 @@ Keep subs short; do not rename URLs or slugs.
 
 ### P3 — Leave alone (documented)
 
-- Webflow case study body copy (grammar issues exist but are historical project voice).
+- Case-study body copy (grammar issues exist but are historical project voice).
 - `projects.html` listing order/content (separate migration).
 - Homepage vs Work panel project set mismatch (requires Approach A data work).
 
@@ -121,7 +121,7 @@ Extract inner media block (`video` / `img` + `.ph` placeholder) to a shared frag
 
 ### P3 — Stub case template clarity
 
-`src/pages/[slug].astro` ships placeholder “Evidence / Decision / Outcome” sections. Add a one-line comment at top: *“Scaffold only — replace before publishing any `engine: 'astro'` case.”* No user-facing change.
+`src/pages/[slug].astro` ships placeholder “Evidence / Decision / Outcome” sections. Add a one-line comment at top: *“Scaffold only — replace before publishing any published case.”* No user-facing change.
 
 ---
 
@@ -161,7 +161,7 @@ No screenshots/recordings per `preview-only.mdc`.
 - “In progress” labelling consistent on homepage slot and Work panel.
 - `ProjectSlot.astro` has a single media-rendering path.
 - `npm test` and `npm run check` pass.
-- No change to Webflow case HTML bodies or project listing logic.
+- No change to case-study bodies or project listing logic.
 
 ---
 

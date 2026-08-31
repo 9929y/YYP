@@ -5,7 +5,7 @@
  * effect failed because reveal and scroll both wrote `filter`.
  *
  * Recipes live in assets/css/yy-motion.css. yy-reveal.js only toggles `.in`.
- * Webflow IX2 on [data-w-id] is a separate writer — do not compete.
+ * Any page-level animation runtime is a separate writer — do not compete.
  *
  * CSS custom properties in assets/css/yy-tokens.css are the visual authority.
  * Numbers here are the same values for islands that cannot read CSS vars.
@@ -19,7 +19,6 @@ export const motionOwnership = {
   hover: ['transform', 'opacity'],
   cursor: ['transform', 'width', 'height', 'background-color', 'color'],
   chromeCapsule: ['width', 'max-width', 'height', 'padding'],
-  ix2: ['any property on [data-w-id] — do not compete'],
   lenis: ['scroll position'],
   flow: ['canvas pixels only'],
   page: ['root opacity via View Transitions; yy-nav / yy-footer named snapshots']
@@ -76,7 +75,7 @@ export const breakpoints = {
   caseNoteStatic: 768,
   typeStep: 767,
   chromeCapsule: 560,
-  webflowMobile: 479
+  mobile: 479
 } as const;
 
 export const reducedMotionPolicy = {

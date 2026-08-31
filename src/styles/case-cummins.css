@@ -1,15 +1,14 @@
-/* case-cummins.css — Cummins Guidanz case study, migrated off the Webflow sheet.
+/* case-cummins.css — Cummins Guidanz case study.
 
-   Layout and colour ported from the rules that used to style
-   cummins-digitalization.html in assets/css/123-782b5b.webflow.shared.a9431a3c9.css.
-   Archive: cummins-digitalization.webflow.html.
+   Layout and colour ported from the rules that used to style this page when it
+   was exported markup on the shared stylesheet. That page is in git history
+   (before the Astro rewrite) if a number ever needs checking.
 
-   Type comes from the token scale, not from the Webflow rules: cummins is listed
-   in CASE_TYPE_PAGES in assets/js/yy-chrome.js, so the shipped page already runs
-   with assets/css/yy-case-type.css layered over it, replacing every font-size,
-   weight, leading and tracking with --t-* / --lh-*. Porting the raw Webflow sizes
-   would have changed the page. With the tokens baked in here the page no longer
-   needs that overlay. */
+   Type comes from the token scale, not from those original rules: the shipped
+   page already ran with the type overlay (assets/css/yy-case-type.css) layered
+   over it, replacing every font-size, weight, leading and tracking with
+   --t-* / --lh-*. Porting the raw original sizes would have changed the page.
+   With the tokens baked in here the page no longer needs that overlay. */
 
 .cmi {
   --cmi-accent: #e03400; /* was var(--coral-text) */
@@ -241,7 +240,7 @@
   height: auto;
 }
 
-/* Three of these tiles opened a Vimeo prototype recording in the Webflow
+/* Three of these tiles opened a Vimeo prototype recording in the old
    lightbox. The lightbox is gone, so the tile is a link instead — otherwise
    those recordings would have become unreachable. */
 .cmi__showroom a {

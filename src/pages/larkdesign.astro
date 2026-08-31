@@ -42,7 +42,7 @@ const steps = [
   }
 ];
 
-/* Targets come from the PureCounter config in the archive, which configured nine
+/* Targets come from the PureCounter config in the original page, which configured nine
    instances from a CDN script; assets/js/yy-count.js replaces it. Final values
    are server-rendered so the numbers are right without JS. */
 const numbers = [
@@ -80,22 +80,22 @@ const finalDesign: (keyof typeof media)[] = [
   'flow-lark-mobile-add-external-contact-5up'
 ];
 /*
-  Lark Design case study — migrated off the Webflow passthrough.
-  Archive: larkdesign.webflow.html (kept in git, never published).
+  Lark Design case study. Rewritten from the exported markup this page used to
+  be; that page is in git history if a value ever needs checking.
 
   Its own page rather than CaseStudyLayout: this one opens with a display
   headline, a data disclaimer, the ByteDance/Lark lockup and a three-phone
   mockup over a layered blue gradient.
 
-  Type comes from the token scale. larkdesign is in CASE_TYPE_PAGES in
-  yy-chrome.js, so the shipped page already runs with yy-case-type.css over it
-  replacing every Webflow font-size with --t-* / --lh-*.
+  Type comes from the token scale: the shipped page already ran with the type
+  overlay (assets/css/yy-case-type.css) over it, replacing every original
+  font-size with --t-* / --lh-*.
 
   The 17 lightboxes are gone by decision — plain inline figures now. The nine
   counters no longer pull PureCounter from a CDN; assets/js/yy-count.js does the
   same job locally and the values are server-rendered.
 
-  Preserved quirk: the archive hides the nine impact numbers below 767px. That
+  Preserved quirk: the original page hides the nine impact numbers below 767px. That
   is reproduced in case-lark.css and flagged there — it loses real content on
   phones, but changing it is a design decision rather than part of this move.
 */

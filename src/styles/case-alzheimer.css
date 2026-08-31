@@ -1,13 +1,12 @@
-/* case-alzheimer.css — Alzheimer case study, migrated off the Webflow sheet.
+/* case-alzheimer.css — Alzheimer case study.
 
-   Every value is ported from the rules that used to style alzheimerdisease.html
-   in assets/css/123-782b5b.webflow.shared.a9431a3c9.css, plus the two hand-written
-   overrides for this page in assets/css/yy-case-layout.css (the dark prev/next
-   bar and `.body.al .ural .headingpt.al` going #2c2c2c on the white island).
-   The archive is alzheimerdisease.webflow.html — diff against it before changing
-   numbers.
+   Every value is ported from the rules that used to style this page when it was
+   exported markup on the shared stylesheet, plus the two hand-written overrides
+   it carried (the dark prev/next bar and `.body.al .ural .headingpt.al` going
+   #2c2c2c on the white island). That page is in git history (before the Astro
+   rewrite) if a number ever needs checking.
 
-   Deliberate departures from the archive, all visual-only and listed so review
+   Deliberate departures from the original page, all visual-only and listed so review
    can catch them:
    1. `.headingpt.white` carried `top: -700%` and `.headingpt.al.white` carried
       `top: 46%`; the 3-class rule won, so the heading sat a fraction of a line
@@ -46,7 +45,7 @@
   overflow: hidden;
 }
 
-/* Painted under the content. The archive also had a black-to-white gradient on
+/* Painted under the content. The original page also had a black-to-white gradient on
    the grid wrapper, but an absolutely-positioned sibling covered it completely,
    so it never reached the screen and is not ported. */
 .alz__hero::before {
@@ -209,7 +208,7 @@
   padding-block: 2%;
 }
 
-/* Label in column one, body across the remaining three — the archive's
+/* Label in column one, body across the remaining three — the original page's
    `span 3` node rules, restated as an ordinary grid. */
 .alz__brief {
   display: grid;
@@ -385,7 +384,7 @@
   height: auto;
 }
 
-/* The archive nudged this heading down a fraction of a line with a percentage
+/* The original page nudged this heading down a fraction of a line with a percentage
    `top`; ported as its settled position. */
 .alz__insight-title {
   width: 70%;
@@ -470,7 +469,7 @@
 }
 
 /* ---------------------------------------------------------------- prev/next -
-   The archive's footer prev/next bar. On dark pages the shared stylesheet left
+   The original page's footer prev/next bar. On dark pages the shared stylesheet left
    it white-on-white, which yy-case-layout.css patched; ported here already
    corrected rather than patched after the fact. */
 

@@ -58,7 +58,7 @@
   }
 
   /* ---------- hero canvas (ShaderGradient + frosted cover) ---------- */
-  /* Landing-only type scale (~12.5% under the shared tokens) so Webflow
+  /* Landing-only type scale (~12.5% under the shared tokens) so exported
      case-study pages that also load yy-tokens keep their prior sizes. */
   html.yy-landing {
     position: relative;

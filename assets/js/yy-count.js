@@ -1,8 +1,8 @@
 /* yy-count.js — count-up for case-study impact numbers.
 
-   Replaces the PureCounter build the Webflow pages pulled from a jsDelivr CDN
+   Replaces the PureCounter build these pages used to pull from a jsDelivr CDN
    at runtime. Same behaviour (count once, when the number scrolls into view),
-   without the third-party request or the jQuery/Webflow runtime around it.
+   without the third-party request or the jQuery runtime around it.
 
    Markup contract: an element carrying `data-count-to="<number>"`. Its text is
    replaced with the running value and settles on the target. Optional

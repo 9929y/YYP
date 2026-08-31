@@ -1,6 +1,6 @@
-/* Generated from mckinseyecommerce.webflow.html — do not hand-edit.
-   Each image's exact src/srcset/sizes/alt from the archive. The srcset is
-   load-bearing beyond responsiveness: legacy-passthrough.mjs only copies a
+/* Generated from the page's pre-rewrite markup — do not hand-edit.
+   Each image's exact src/srcset/sizes/alt from the original page. The srcset is
+   load-bearing beyond responsiveness: assets-passthrough.mjs only copies a
    `-p-<width>` variant into dist when a file textually references it. */
 
 import type { CaseImage } from './mifinance';

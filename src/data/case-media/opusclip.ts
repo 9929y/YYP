@@ -1,5 +1,5 @@
-/* Generated from ai-driven-product-design.webflow.html — do not hand-edit.
-   Each image's exact src/srcset/sizes/alt from the archive. */
+/* Generated from the page's pre-rewrite markup — do not hand-edit.
+   Each image's exact src/srcset/sizes/alt from the original page. */
 
 import type { CaseImage } from './mifinance';
 

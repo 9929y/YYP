@@ -89,9 +89,9 @@
 
 /* The card is a link when the project has a page and a plain block when it does
    not, so the box lives on .pcard and the element type carries only the
-   semantics. No hover treatment: the export drove hovers from IX2 data-w-id
-   attributes whose keyframes are gone with the runtime, and inventing one here
-   would be a design decision this page's revamp should make, not this port. */
+   semantics. No hover treatment: the export drove card hovers from its own
+   animation runtime, whose keyframes went with it, and inventing one here would
+   be a design decision this page's revamp should make, not this port. */
 .pcard {
   display: grid;
   grid-template-rows: 3fr 1fr;

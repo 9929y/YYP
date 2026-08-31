@@ -14,9 +14,9 @@ const { image, class: className, priority = false } = Astro.props;
 {/*
   Renders one archived case-study image with its exact src/srcset/sizes/alt.
 
-  In the Webflow pages most of these sat inside `<a class="w-lightbox">` wrappers
-  that opened a full-screen viewer. That viewer needed jQuery plus the Webflow
-  runtime, neither of which Astro pages load, and the lightbox was dropped from
+  In the exported pages most of these sat inside lightbox wrappers that opened a
+  full-screen viewer. That viewer needed jQuery plus the export's own animation
+  runtime, neither of which these pages load, and the lightbox was dropped from
   the migration deliberately — these are now plain inline figures.
 */}
 <img
