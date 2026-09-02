@@ -513,6 +513,19 @@ if (cursorJs.includes('moves === 0') && cursorJs.includes('standDown()')) {
 if (!cursorJs.includes('yy-cursor-ready')) {
   errors.push('yy-cursor.js must set html.yy-cursor-ready so the system arrow stays hidden before the first move');
 }
+const cursorCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-cursor.css'), 'utf8');
+if (!/#yy-cursor\.on\.is-chip[\s\S]{0,400}width:\s*(auto|max-content)/.test(cursorCss)) {
+  errors.push('yy-cursor chip hover must size to content instead of a fixed circle');
+}
+if (!/#yy-cursor\.on\.is-chip \.yy-cursor__t[\s\S]{0,200}white-space:\s*pre-line/.test(cursorCss)) {
+  errors.push('yy-cursor chip label must wrap with pre-line so AtlasNova can sit on two lines');
+}
+if (!cursorCss.includes('#yy-cursor.on.is-chip') || !/#yy-cursor\.on\.is-chip[\s\S]{0,400}border-radius:\s*999px/.test(cursorCss)) {
+  errors.push('coming-soon cursor must stay a pill chip, not the large view circle');
+}
+if (cursorJs.includes('data-cursor-chips') || cursorJs.includes('yy-cursor__chip') || cursorCss.includes('is-stack')) {
+  errors.push('yy-cursor must not keep unused chip-stack typing');
+}
 if (
   /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||
   /CASE_TYPE_PAGES[\s\S]*alzheimerdisease\.html/.test(chromeJs) ||
@@ -904,6 +917,24 @@ if (landingFeatured.length !== 4) {
   if (order.join(',') !== expected.join(',')) {
     errors.push(`landing order must be ${expected.join(' → ')} (got ${order.join(' → ')})`);
   }
+}
+
+const atlasnova = projectsMod.getProject('atlasnova');
+const atlasnovaLabel = 'It will be ready on September 4th.\nThank you for waiting.';
+if (!atlasnova || atlasnova.cursorLabel !== atlasnovaLabel) {
+  errors.push('AtlasNova hover chip must read "It will be ready on September 4th. Thank you for waiting." on two lines');
+}
+if (/on process|in progress/i.test(atlasnova?.cursorLabel || '')) {
+  errors.push('AtlasNova must not use an in-progress / on-process cursor label');
+}
+if (atlasnova && 'cursorChips' in atlasnova && atlasnova.cursorChips) {
+  errors.push('AtlasNova must use one two-line chip, not extra cursorChips');
+}
+if (!slotAstro.includes('data-cursor-label={cursorLabel}')) {
+  errors.push('ProjectSlot.astro must pass cursorLabel onto the static AtlasNova slot');
+}
+if (slotAstro.includes('data-cursor-chips')) {
+  errors.push('ProjectSlot.astro must not emit data-cursor-chips');
 }
 
 const opusMarquee = path.join(ROOT, 'assets/videos/case-opusclip-marquee.mp4');

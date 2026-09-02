@@ -56,13 +56,20 @@ html.yy-cursor-live #yy-cursor { opacity: 1; }
 }
 
 #yy-cursor.on.is-chip {
-  width: 124px;
-  height: 40px;
-  padding: 0 16px;
+  width: max-content;
+  height: auto;
+  min-height: 40px;
+  padding: 8px 16px;
   border-radius: 999px;
   font-size: 13px;
   letter-spacing: -.02em;
   font-weight: 500;
+  line-height: 1.35;
+}
+
+#yy-cursor.on.is-chip .yy-cursor__t {
+  white-space: pre-line;
+  text-align: center;
 }
 
 .yy-cursor__t {

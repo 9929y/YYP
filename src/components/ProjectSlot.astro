@@ -14,6 +14,8 @@ const href = project.href ? publicUrl(project.href) : undefined;
 const label = `${project.title} case study`;
 const play = project.video?.play ?? 'scroll';
 const showMedia = project.kind !== 'panel' && !!(project.video || project.cover);
+const cursorLabel =
+  project.cursorLabel ?? (project.status === 'in-progress' ? 'in progress' : undefined);
 ---
 
 {
@@ -33,8 +35,8 @@ const showMedia = project.kind !== 'panel' && !!(project.video || project.cover)
       class:list={['slot', 'slot--static']}
       role="group"
       aria-label={project.title}
-      data-cursor-label={project.status === 'in-progress' ? 'in progress' : undefined}
-      data-cursor-chip={project.status === 'in-progress' ? 'true' : undefined}
+      data-cursor-label={cursorLabel}
+      data-cursor-chip={cursorLabel ? 'true' : undefined}
       data-status={project.status}
     >
       <SlotMedia project={project} play={play} priority={priority} />

@@ -59,6 +59,8 @@ export interface Project {
   /** Explicit Webflow footer neighbours. New Astro pages may omit these. */
   prevSlug?: string;
   nextSlug?: string;
+  /** Cursor hover label. In-progress slots default to "in progress". */
+  cursorLabel?: string;
 }
 
 export const projects: Project[] = [
@@ -103,6 +105,7 @@ export const projects: Project[] = [
     scope: 'Web App',
     note: 'Designing a brand kit that helps SMB build up visual language across marketing assets',
     status: 'in-progress',
+    cursorLabel: 'It will be ready on September 4th.\nThank you for waiting.',
     engine: 'astro',
     kind: 'slot',
     theme: 'light',
