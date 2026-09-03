@@ -6,65 +6,7 @@
   var SRC = (document.currentScript && document.currentScript.src) || '';
   var ROOT = SRC ? SRC.replace(/assets\/js\/yy-work\.js.*$/, '') : '';
 
-  var cards = [
-    {
-      href: 'ai-driven-product-design.html',
-      cover: 'assets/images/opusclip/hero-opusclip-ai-video-editing-cover.webp',
-      pos: '50%',
-      title: 'Opus Clip · Video creation beyond prompts',
-      sub: 'Launch new features with AI'
-    },
-    {
-      href: 'mckinseyecommerce.html',
-      cover: 'assets/images/mckinsey/illustration-mckinsey-design-ecommerce-cover.webp',
-      pos: '50% 0',
-      title: 'McKinsey · Live shopping from 0 to 1',
-      sub: 'Build a product from 0 to 1'
-    },
-    {
-      href: 'larkdesign.html',
-      cover: 'assets/images/lark/illustration-bytedance-workspace-modules-ring.webp',
-      pos: '50%',
-      title: 'Lark · Team onboarding',
-      sub: 'Product ideation and iterations'
-    },
-    {
-      href: 'cummins-digitalization.html',
-      cover: 'assets/images/cummins/hero-cummins-diagnostic-session-screens.webp',
-      pos: '50% 100%',
-      title: 'Cummins Digital Tool UXD',
-      sub: 'Design system, ideation and research'
-    },
-    {
-      href: 'mifinance.html',
-      cover: 'assets/images/mifinance/screen-mi-finance-e-account-screens-stack.webp',
-      pos: '50%',
-      title: 'Financial Digital Tool UXD',
-      sub: 'Accessibility & UX improvement'
-    },
-    {
-      href: 'alzheimerdisease.html',
-      cover: 'assets/images/home/hero-alzheimer-care-wearable-card-cover.webp',
-      pos: '100%',
-      title: 'Wearable Communication Device',
-      sub: 'Benefit for medical realm'
-    },
-    {
-      href: 'tiktok-research.html',
-      cover: 'assets/images/tiktok/hero-tiktok-safety-strategy-cover.webp',
-      pos: '0%',
-      title: 'Global Platform Research Case Study',
-      sub: 'Quantitative research & analysis'
-    },
-    {
-      href: null,
-      cover: 'assets/images/lark/illustration-lark-education-class-collaboration-cover.webp',
-      pos: '50%',
-      title: 'Lark Education Field Study',
-      sub: 'Qualitative & quantitative · in progress',
-      unable: true
-    }
-  ];
+  var cardsLoad = null;
 
   function esc(value) {
     return String(value == null ? '' : value)
@@ -74,21 +16,43 @@
       .replace(/"/g, '&quot;');
   }
 
+  function loadCards() {
+    if (cardsLoad) return cardsLoad;
+    cardsLoad = fetch(ROOT + 'projects-data.json', { credentials: 'same-origin' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('projects-data.json failed with ' + res.status);
+        return res.json();
+      })
+      .then(function (payload) {
+        return Array.isArray(payload.cards) ? payload.cards : [];
+      })
+      .catch(function (error) {
+        cardsLoad = null;
+        if (window.console) console.error('[yy-work] project data failed:', error);
+        return [];
+      });
+    return cardsLoad;
+  }
+
   function cardHTML(card) {
+    var title = card.title || card.slug || 'Project';
+    var sub = card.sub || card.note || card.status || '';
     var inner =
-      '<div class="card__media" style="background-image:url(\'' + esc(ROOT + card.cover) + '\')' +
-        (card.pos ? ';background-position:' + esc(card.pos) : '') + '"></div>' +
+      '<div class="card__media" style="background-image:url(\'' + esc(card.cover || '') + '\')"></div>' +
       '<div class="card__meta">' +
-        '<p class="card__title">' + esc(card.title) + '</p>' +
-        '<p class="card__sub">' + esc(card.sub) + '</p>' +
+        '<p class="card__title">' + esc(title) + '</p>' +
+        '<p class="card__sub">' + esc(sub) + '</p>' +
       '</div>';
-    if (card.unable) {
-      return '<article class="card card--unable" aria-label="' + esc(card.title) + '">' + inner + '</article>';
+    if (card.unavailable || !card.href) {
+      return '<article class="card card--unable" aria-label="' + esc(title) + '">' + inner + '</article>';
     }
     return '<a class="card" href="' + esc(card.href) + '" data-cursor-label="view">' + inner + '</a>';
   }
 
-  function render() {
+  function render(cards) {
+    if (!cards.length) {
+      return '<div class="work"><p class="work__empty" role="alert">Work is temporarily unavailable.</p></div>';
+    }
     return '<div class="work">' +
       '<div class="work__grid">' + cards.map(cardHTML).join('') + '</div>' +
     '</div>';
@@ -106,13 +70,15 @@
       function done() {
         if (settled) return;
         settled = true;
-        /* Paint markup only after CSS applies — never show unstyled HTML. */
-        var shell = document.createElement('div');
-        shell.innerHTML = render();
-        while (shell.firstChild) shadow.appendChild(shell.firstChild);
-        if (typeof window.__yyCursorBind === 'function') window.__yyCursorBind(shadow);
-        self.removeAttribute('data-yy-pending');
-        resolve();
+        loadCards().then(function (cards) {
+          /* Paint markup only after CSS applies — never show unstyled HTML. */
+          var shell = document.createElement('div');
+          shell.innerHTML = render(cards);
+          while (shell.firstChild) shadow.appendChild(shell.firstChild);
+          if (typeof window.__yyCursorBind === 'function') window.__yyCursorBind(shadow);
+          self.removeAttribute('data-yy-pending');
+          resolve();
+        });
       }
       sheet.addEventListener('load', done);
       sheet.addEventListener('error', done);

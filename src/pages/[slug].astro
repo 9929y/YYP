@@ -1,9 +1,4 @@
 ---
-/** Scaffold only — replace body sections before publishing any `engine: 'astro'` case.
- * TODO: AtlasNova is engine:astro but status:in-progress, so this route emits
- * zero pages today. The placeholder copy below ("Add the project's strongest
- * evidence artifact here", CaseStat value="—") would ship the moment it flips
- * to published — replace before going live. */
 import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
 import CaseMetaGrid from '../components/CaseMetaGrid.astro';
 import CaseQuote from '../components/CaseQuote.astro';
@@ -12,55 +7,66 @@ import CaseStat from '../components/CaseStat.astro';
 import MediaFigure from '../components/MediaFigure.astro';
 import MediaVideo from '../components/MediaVideo.astro';
 import { astroCaseStudies, getProject } from '../data/projects';
+import { getCaseStudyContent } from '../data/case-studies';
 
 export function getStaticPaths() {
-  return astroCaseStudies().map((project) => ({
-    params: { slug: project.slug.replace(/\.html$/, '') }
-  }));
+  return astroCaseStudies()
+    .filter((project) => getCaseStudyContent(project.slug))
+    .map((project) => ({
+      params: { slug: project.slug.replace(/\.html$/, '') }
+    }));
 }
 
 const project = getProject(Astro.params.slug);
 if (!project) {
   throw new Error(`Unknown Astro case study: ${Astro.params.slug}`);
 }
+const content = getCaseStudyContent(project.slug);
+if (!content) {
+  throw new Error(`Missing Astro case-study content: ${project.slug}`);
+}
 ---
 
 <CaseStudyLayout project={project}>
   <CaseMetaGrid
-    overview={project.note}
-    role={project.scope}
-    timeline={project.status === 'published' ? 'Published case study' : 'In progress'}
+    overview={content.meta.overview}
+    role={content.meta.role}
+    timeline={content.meta.timeline}
   />
 
-  <CaseSection id="evidence" eyebrow="01" title="Evidence">
-    {project.video ? (
-      <MediaVideo
-        src={project.video.src}
-        poster={project.video.poster}
-        label={project.video.label}
-        width={project.video.width}
-        height={project.video.height}
-      />
-    ) : project.cover ? (
-      <MediaFigure
-        src={project.cover.src}
-        alt={project.cover.alt}
-        width={project.cover.width}
-        height={project.cover.height}
-      />
-    ) : (
-      <p>Add the project’s strongest evidence artifact here.</p>
-    )}
-  </CaseSection>
+  {content.sections.map((section) => (
+    <CaseSection id={section.id} eyebrow={section.eyebrow} title={section.title}>
+      {section.body.map((paragraph) => <p>{paragraph}</p>)}
+      {section.media?.map((media) => (
+        media.type === 'video' ? (
+          <MediaVideo
+            src={media.src}
+            poster={media.poster}
+            label={media.label ?? media.caption ?? project.title}
+            width={media.width ?? 1440}
+            height={media.height ?? 1080}
+            caption={media.caption}
+          />
+        ) : (
+          <MediaFigure
+            src={media.src}
+            alt={media.alt ?? media.caption ?? project.title}
+            width={media.width}
+            height={media.height}
+            caption={media.caption}
+          />
+        )
+      ))}
+    </CaseSection>
+  ))}
 
-  <CaseSection id="decision" eyebrow="02" title="Decision">
-    <CaseQuote quote={project.note} attribution={`${project.title} · Project summary`} />
-  </CaseSection>
+  {content.quote && <CaseQuote quote={content.quote.quote} attribution={content.quote.attribution} />}
 
-  <CaseSection id="outcome" eyebrow="03" title="Outcome">
-    <div class="case-stat-grid">
-      <CaseStat value="—" label="Primary outcome" />
-      <CaseStat value="—" label="Supporting outcome" />
-    </div>
-  </CaseSection>
+  {content.stats && content.stats.length > 0 && (
+    <CaseSection id="outcome" eyebrow="Outcome" title="Signals">
+      <div class="case-stat-grid">
+        {content.stats.map((stat) => <CaseStat value={stat.value} label={stat.label} />)}
+      </div>
+    </CaseSection>
+  )}
 </CaseStudyLayout>

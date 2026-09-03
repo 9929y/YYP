@@ -36,19 +36,25 @@ as `index.webflow.html`.
 1. Append a record to `src/data/projects.ts`.
    - `engine: 'astro'` and `status: 'published'` with `href: 'your-slug.html'`
      makes `src/pages/[slug].astro` emit the page.
-   - `featuredOnLanding` controls the live homepage (`src/pages/index.astro`).
-     `featuredOnIndex` and `featuredOnProjects` are schema placeholders for
-     future Astro listings — only `featuredOnLanding` is read in code today.
+   - `featuredOnLanding` controls the live homepage (`src/pages/index.astro`);
+     `featuredOnProjects` controls the shared Work popup through
+     `/projects-data.json`.
      Keep flags honest; legacy surfaces still disagree on purpose (see
      `docs/BASELINE.md`).
-2. Put the narrative in the `[slug].astro` slot, using `MediaFigure` for images.
+2. Add the narrative to `src/data/case-studies.ts`. Published Astro cases fail
+   validation unless typed content exists for the slug.
 3. Cover images live under `assets/images/<slug>/` plus a 4:3 card at
    `assets/images/home/`. Update `docs/images-manifest.json` when you add files.
 4. Leave existing Webflow case HTML alone until you migrate that slug. The
    build will not overwrite an Astro-emitted HTML file with a legacy copy.
 
 AtlasNova is already in the data file as `in-progress` with no `href`. When it
-is ready: set `status: 'published'`, `href: 'atlasnova.html'`, and write the body.
+is ready: set `status: 'published'`, `href: 'atlasnova.html'`, and replace the
+draft content in `src/data/case-studies.ts`.
+
+The Work popup reads `/projects-data.json`, which is generated from
+`src/data/projects.ts`. Do not hardcode a second project card list in
+`assets/js/yy-work.js`.
 
 ## Add hover / scroll / animation
 

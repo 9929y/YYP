@@ -25,6 +25,10 @@ async function loadProjects() {
   return import(pathToFileURL(path.join(ROOT, 'src/data/projects.ts')).href);
 }
 
+async function loadCaseStudies() {
+  return import(pathToFileURL(path.join(ROOT, 'src/data/case-studies.ts')).href);
+}
+
 function resolveRef(file, ref, baseDir) {
   const clean = ref.split('?')[0].split('#')[0];
   if (!clean) return null;
@@ -71,6 +75,7 @@ function checkHtmlFile(file, baseDir, optionalMissing, knownGenerated) {
 }
 
 const projectsMod = await loadProjects();
+const caseStudiesMod = await loadCaseStudies();
 const schemaErrors = projectsMod.validateProjects();
 for (const e of schemaErrors) errors.push(`projects schema: ${e}`);
 
@@ -154,9 +159,14 @@ for (const marker of ["customElements.define('yy-about-content'", 'attachShadow'
 const workJs = fs.existsSync(path.join(ROOT, 'assets/js/yy-work.js'))
   ? fs.readFileSync(path.join(ROOT, 'assets/js/yy-work.js'), 'utf8')
   : '';
-for (const marker of ["customElements.define('yy-work-content'", 'attachShadow', 'ai-driven-product-design.html', 'Lark Education Field Study']) {
+for (const marker of ["customElements.define('yy-work-content'", 'attachShadow', 'projects-data.json', 'loadCards']) {
   if (!workJs.includes(marker)) {
     errors.push(`assets/js/yy-work.js missing ${marker}`);
+  }
+}
+for (const stale of ['Lark Education Field Study', 'mckinseyecommerce.html', 'ai-driven-product-design.html']) {
+  if (workJs.includes(stale)) {
+    errors.push(`assets/js/yy-work.js must not hardcode project data (${stale})`);
   }
 }
 if (workJs.includes('inner-page-hero') || workJs.includes('xxl-heading')) {
@@ -204,14 +214,37 @@ for (const selector of [
 const dynamicCasePath = path.join(ROOT, 'src/pages/[slug].astro');
 if (fs.existsSync(dynamicCasePath)) {
   const dynamicCaseSource = fs.readFileSync(dynamicCasePath, 'utf8');
-  if (dynamicCaseSource.includes('Case-study body goes here')) {
-    errors.push('src/pages/[slug].astro still contains the placeholder case-study body');
+  for (const placeholder of ['Case-study body goes here', 'Add the project', 'Primary outcome', 'Supporting outcome', 'CaseStat value="—"']) {
+    if (dynamicCaseSource.includes(placeholder)) {
+      errors.push(`src/pages/[slug].astro still contains placeholder case-study copy (${placeholder})`);
+    }
   }
   for (const component of ['CaseSection', 'CaseMetaGrid', 'CaseQuote', 'CaseStat']) {
     if (!dynamicCaseSource.includes(component)) {
       errors.push(`src/pages/[slug].astro does not compose ${component}`);
     }
   }
+}
+
+for (const project of projectsMod.projects) {
+  if (project.engine === 'astro' && project.status === 'published' && !caseStudiesMod.hasCaseStudyContent(project.slug)) {
+    errors.push(`${project.slug}: published Astro case study needs src/data/case-studies.ts content`);
+  }
+}
+
+const caseStudiesSource = fs.readFileSync(path.join(ROOT, 'src/data/case-studies.ts'), 'utf8');
+for (const placeholder of ['Add the project', 'Primary outcome', 'Supporting outcome', 'CaseStat value="—"']) {
+  if (caseStudiesSource.includes(placeholder)) {
+    errors.push(`src/data/case-studies.ts must not contain shippable placeholder copy (${placeholder})`);
+  }
+}
+
+const passthroughSource = fs.readFileSync(path.join(ROOT, 'scripts/legacy-passthrough.mjs'), 'utf8');
+if (!passthroughSource.includes('const LEGACY_HTML = new Set')) {
+  errors.push('legacy-passthrough.mjs must use an explicit LEGACY_HTML allowlist');
+}
+if (passthroughSource.includes("if (!name.endsWith('.html')) continue")) {
+  errors.push('legacy-passthrough.mjs must not publish every root .html file');
 }
 
 const mediaVideoPath = path.join(ROOT, 'src/components/MediaVideo.astro');
@@ -269,6 +302,17 @@ if (useDist) {
   }
   if (fs.existsSync(path.join(distDir, 'resume.html'))) {
     errors.push('dist/resume.html must not exist — Resume is embedded in the navigation popup');
+  }
+  const projectDataPath = path.join(distDir, 'projects-data.json');
+  if (!fs.existsSync(projectDataPath)) {
+    errors.push('dist/projects-data.json missing — Work popup must read the same project metadata as Astro');
+  } else {
+    const payload = JSON.parse(fs.readFileSync(projectDataPath, 'utf8'));
+    const workOrder = projectsMod.workProjects().map((p) => p.slug).join(',');
+    const payloadOrder = Array.isArray(payload.cards) ? payload.cards.map((p) => p.slug).join(',') : '';
+    if (payloadOrder !== workOrder) {
+      errors.push(`projects-data.json order must match workProjects() (got ${payloadOrder || 'empty'})`);
+    }
   }
   if (!fs.existsSync(path.join(distDir, 'assets/css/yy-tokens.css'))) {
     errors.push('dist/assets/css/yy-tokens.css missing');
