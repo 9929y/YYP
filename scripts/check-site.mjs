@@ -284,7 +284,7 @@ if (useDist) {
     for (const marker of ['case-meta', 'case-section', 'case-quote', 'case-stat']) {
       if (!templateHtml.includes(marker)) errors.push(`case-study-template.html missing ${marker}`);
     }
-    if (!templateHtml.includes('content="noindex"')) {
+    if (!/name=["']robots["'][^>]*noindex/i.test(templateHtml) && !/content=["'][^"']*noindex/i.test(templateHtml)) {
       errors.push('case-study-template.html must be noindex');
     }
     if (!templateHtml.includes('yy-case--dark')) {
@@ -484,6 +484,12 @@ const baseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/BaseLayout.astro
 if (!baseLayout.includes('yy-motion.css')) {
   errors.push('BaseLayout.astro must link yy-motion.css');
 }
+if (!/name=["']robots["']/.test(baseLayout) || !/noindex/.test(baseLayout) || !/nofollow/.test(baseLayout)) {
+  errors.push('BaseLayout.astro must always emit robots noindex,nofollow');
+}
+if (/\bnoindex &&/.test(baseLayout) || /noindex = false/.test(baseLayout)) {
+  errors.push('BaseLayout.astro must not gate robots noindex behind a prop defaulting to false');
+}
 
 const caseLayout = fs.readFileSync(path.join(ROOT, 'src/layouts/CaseStudyLayout.astro'), 'utf8');
 if (!caseLayout.includes('data-reveal="text"')) {
@@ -512,6 +518,22 @@ if (cursorJs.includes('moves === 0') && cursorJs.includes('standDown()')) {
 }
 if (!cursorJs.includes('yy-cursor-ready')) {
   errors.push('yy-cursor.js must set html.yy-cursor-ready so the system arrow stays hidden before the first move');
+}
+
+const robotsTxtPath = path.join(ROOT, 'public', 'robots.txt');
+const robotsTxt = fs.existsSync(robotsTxtPath) ? fs.readFileSync(robotsTxtPath, 'utf8') : '';
+if (!/User-agent:\s*\*/i.test(robotsTxt) || !/Disallow:\s*\//i.test(robotsTxt)) {
+  errors.push('public/robots.txt must disallow all crawlers');
+}
+
+const vercelJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+const vercelHeaders = JSON.stringify(vercelJson.headers || []);
+if (!/X-Robots-Tag/i.test(vercelHeaders) || !/noindex/i.test(vercelHeaders)) {
+  errors.push('vercel.json must send X-Robots-Tag: noindex on all routes');
+}
+const passthrough = fs.readFileSync(path.join(ROOT, 'scripts/legacy-passthrough.mjs'), 'utf8');
+if (!passthrough.includes('withNoindex') || !passthrough.includes('noindex, nofollow, noarchive')) {
+  errors.push('legacy-passthrough must stamp noindex on copied Webflow HTML');
 }
 if (
   /CASE_TYPE_PAGES[\s\S]*ai-driven-product-design\.html/.test(chromeJs) ||

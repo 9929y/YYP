@@ -6,6 +6,7 @@ interface Props {
   reveal?: boolean;
   lenis?: boolean;
   chrome?: boolean;
+  /** Kept so callers can pass it; the site is always noindex. */
   noindex?: boolean;
 }
 
@@ -15,8 +16,7 @@ const {
   htmlClass = '',
   reveal = false,
   lenis = true,
-  chrome = true,
-  noindex = false
+  chrome = true
 } = Astro.props;
 
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
@@ -29,7 +29,7 @@ const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).joi
     <title>{title}</title>
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     {description && <meta name="description" content={description} />}
-    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="robots" content="noindex, nofollow, noarchive" />
     <link rel="canonical" href={canonicalUrl} />
     <link href="/assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
     <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />

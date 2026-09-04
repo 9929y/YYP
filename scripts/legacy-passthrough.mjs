@@ -63,6 +63,14 @@ function referencedAssets() {
   return refs;
 }
 
+function withNoindex(html) {
+  const tag = '<meta name="robots" content="noindex, nofollow, noarchive" />';
+  if (/name=["']robots["']/i.test(html)) {
+    return html.replace(/<meta\b[^>]*name=["']robots["'][^>]*>/i, tag);
+  }
+  return html.replace(/<head\b[^>]*>/i, (open) => `${open}\n  ${tag}`);
+}
+
 function copyAssetsFiltered(src, dest, refs) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
@@ -132,7 +140,8 @@ export default function legacyPassthrough() {
           if (GENERATED_HTML.has(name) || UNPUBLISHED_HTML.has(name)) continue;
           const dest = path.join(out, name);
           if (fs.existsSync(dest)) continue;
-          fs.copyFileSync(path.join(ROOT, name), dest);
+          const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
+          fs.writeFileSync(dest, withNoindex(html));
         }
       }
     }
