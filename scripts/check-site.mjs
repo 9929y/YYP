@@ -586,7 +586,63 @@ if (!tokensCss.includes('--case-radius: var(--slot-radius)')) {
   errors.push('yy-tokens.css missing --case-radius alias of --slot-radius');
 }
 
+/* Site-wide page gutter: --edge lives only in yy-tokens (10vw / 20px ≤560). */
+if (!/--edge:\s*10vw/.test(tokensCss)) {
+  errors.push('yy-tokens.css must define --edge: 10vw as the site page gutter');
+}
+if (!/@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?--edge:\s*20px/.test(tokensCss)) {
+  errors.push('yy-tokens.css must set --edge: 20px at max-width 560px');
+}
+if (/--edge:\s*24px/.test(tokensCss)) {
+  errors.push('yy-tokens.css must not keep the old --edge: 24px default');
+}
+
+const landingCssForEdge = fs.readFileSync(path.join(ROOT, 'src/styles/landing.css'), 'utf8');
+if (/html\.yy-landing[\s\S]*?--edge:\s*10vw/.test(landingCssForEdge)) {
+  errors.push('landing.css must not re-define --edge (use yy-tokens.css only)');
+}
+
+const aboutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-about.css'), 'utf8');
+const aboutCssCode = aboutCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!/\.about\s*\{[^}]*padding[^;]*var\(--edge\)/.test(aboutCssCode)) {
+  errors.push('yy-about.css must use var(--edge) for horizontal page gutter');
+}
+if (/clamp\(\s*20px\s*,\s*4vw\s*,\s*56px\s*\)/.test(aboutCssCode)) {
+  errors.push('yy-about.css must not invent a competing horizontal clamp gutter');
+}
+
+const workCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-work.css'), 'utf8');
+const workCssCode = workCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!/\.work\s*\{[^}]*padding[^;]*var\(--edge\)/.test(workCssCode)) {
+  errors.push('yy-work.css must use var(--edge) for horizontal page gutter');
+}
+if (/\.work\s*\{[^}]*padding:\s*[^;]*5%/.test(workCssCode)) {
+  errors.push('yy-work.css must not use 5% horizontal padding (use --edge)');
+}
+
+const resumeCssCode = resumeCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!/\.resume\s*\{[^}]*padding[^;]*var\(--edge\)/.test(resumeCssCode)) {
+  errors.push('yy-resume.css must use var(--edge) for horizontal page gutter');
+}
+if (/clamp\(\s*20px\s*,\s*5vw\s*,\s*72px\s*\)/.test(resumeCssCode)) {
+  errors.push('yy-resume.css must not invent a competing horizontal clamp gutter');
+}
+if (/\.resume\s*\{[^}]*padding:\s*0\s+20px\s+/.test(resumeCssCode)) {
+  errors.push('yy-resume.css phone padding must use var(--edge), not hard-coded 20px');
+}
+
 const caseLayoutCss = fs.readFileSync(path.join(ROOT, 'assets/css/yy-case-layout.css'), 'utf8');
+const caseLayoutCssCode = caseLayoutCss.replace(/\/\*[\s\S]*?\*\//g, '');
+if (!/\.section-layout1\b[\s\S]*?padding-left:\s*var\(--edge\)/.test(caseLayoutCssCode)
+  || !/\.section-layout1\b[\s\S]*?padding-right:\s*var\(--edge\)/.test(caseLayoutCssCode)) {
+  errors.push('yy-case-layout.css must overlay .section-layout1 horizontal padding with var(--edge)');
+}
+if (!/@media\s+screen\s+and\s+\(\s*min-width:\s*1280px\s*\)[\s\S]*?\.section-layout1[\s\S]*?padding-left:\s*var\(--edge\)/.test(caseLayoutCssCode)) {
+  errors.push('yy-case-layout.css must override Webflow ≥1280 .section-layout1 15% padding with --edge');
+}
+if (!/@media\s+screen\s+and\s+\(\s*max-width:\s*479px\s*\)[\s\S]*?\.section-layout1[\s\S]*?padding-left:\s*var\(--edge\)/.test(caseLayoutCssCode)) {
+  errors.push('yy-case-layout.css must override Webflow ≤479 .section-layout1 0% padding with --edge');
+}
 if (!caseLayoutCss.includes('one-column') || !caseLayoutCss.includes('two-column')) {
   errors.push('yy-case-layout.css must keep one-column and two-column layouts separate');
 }

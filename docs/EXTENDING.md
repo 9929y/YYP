@@ -4,9 +4,19 @@ The site is an Astro static build with Webflow pages copied through unchanged.
 Add new work on the Astro side. Do not edit the 19k-line Webflow stylesheet.
 
 Nav and footer are one component (`assets/js/yy-chrome.js`) on every page,
-including case studies. Do not restyle Webflow case **body** padding to match
-the landing spine. Type size, leading, and ink (`assets/css/yy-case-type.css`)
-do overlay the case pages so they share the landing type system.
+including case studies.
+
+**Page gutter:** `--edge` in `assets/css/yy-tokens.css` is the only horizontal
+page inset (10vw; 20px at ≤560px). Landing `.wrap`, Astro `.cs`, chrome panels
+(Work / About / Resume), and Webflow `.section-layout1` (via
+`assets/css/yy-case-layout.css`) all consume it. Do not invent parallel
+`clamp()` / `%` gutters on those surfaces.
+
+**Webflow bodies:** Do not edit the 19k-line Webflow stylesheet. Outer case
+frame padding may be overlaid in `yy-case-layout.css` only. Nested section /
+image paddings stay as authored composition. Type size, leading, and ink
+(`assets/css/yy-case-type.css`) overlay case pages for the shared type system —
+that file must not set horizontal padding.
 
 ## Commands
 

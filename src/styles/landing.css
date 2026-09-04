@@ -73,8 +73,7 @@
     --t-40: 35px;
     --t-48: 42px;
     --t-64: 56px;
-    /* ≥10% side gutters on all but phone; phone keeps 20px below. */
-    --edge: 10vw;
+    /* --edge lives in yy-tokens.css (10vw / 20px ≤560). */
     /* Tighter spine: label + gap hug the rule; media column gets the rest. */
     --col-label-case: 300px;
     --col-gap: 12px;
@@ -896,8 +895,6 @@
   }
 
   @media (max-width: 560px) {
-    html.yy-landing,
-    :root { --edge: 20px; }
     .hero { padding: 88px 0 56px; }
     .hero__title {
       font-size: var(--t-32);

@@ -12,7 +12,7 @@
   width: 100%;
   max-width: 1120px;
   margin-inline: auto;
-  padding: 28px clamp(20px, 4vw, 56px) 80px;
+  padding: 28px var(--edge) 80px;
 }
 
 .about__hero {

@@ -56,8 +56,19 @@ IX2 bundles must not be consolidated:
 | 992 / 991 | Desktop-only cursor + ASCII flow |
 | 877 | Landing two-column collapse |
 | 767 | Hero type step |
-| 560 | Chrome capsule / landing edge |
-| 479 | Webflow mobile |
+| 560 | Chrome capsule / site `--edge` phone lock (20px) |
+| 479 | Webflow mobile (legacy; outer case gutter uses `--edge` via yy-case-layout) |
+
+## Page gutter
+
+`--edge` in `assets/css/yy-tokens.css` is the site-wide left/right page inset:
+
+- default: `10vw`
+- `max-width: 560px`: `20px`
+
+Consumers: landing `.wrap`, Astro case `.cs`, chrome Work/About/Resume panels,
+Webflow `.section-layout1` (overlay in `yy-case-layout.css`). Nested Webflow
+image/section paddings are composition, not the page gutter.
 
 ## Behaviour gates (must still hold)
 
