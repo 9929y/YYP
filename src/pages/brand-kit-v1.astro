@@ -1,6 +1,18 @@
 ---
 /** Brand Kit v1 — structure-only draft.
  *
+ * IDENTITY: this is the same project as `atlasnova` in src/data/projects.ts,
+ * not a second one. It is drafted as a standalone page on purpose. Giving
+ * atlasnova an `href` is what would leak this half-finished rebuild onto the
+ * live homepage: ProjectSlot renders a clickable `view` link as soon as href
+ * is set, instead of today's static `in progress` card. So the entry is left
+ * untouched while the UI, structure and information architecture are still
+ * being reworked here.
+ *
+ * TO PROMOTE, once this page is ready: set atlasnova's `href` and flip its
+ * `status` to 'published' (and rename this file to atlasnova.astro if you
+ * want the slug to match). Do NOT add a second project entry — one identity.
+ *
  * The section rhythm here is borrowed from the Opus Clip case study, but
  * nothing else is: no Webflow markup, no Webflow classes, and none of that
  * project's copy or assets. Everything is composed from the Astro
@@ -27,7 +39,7 @@ import type { Project } from '../data/projects';
 
 const project: Project = {
   slug: 'brand-kit-v1',
-  title: 'Brand Kit',
+  title: 'Brand Kit', // TODO(Lark 01) — display title for the hero
   href: 'brand-kit-v1.html',
   scope: 'TODO(Lark 02) — scope line',
   note: 'TODO(Lark 03) — one-sentence project note shown under the title.',
