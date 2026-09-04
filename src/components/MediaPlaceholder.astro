@@ -1,0 +1,28 @@
+---
+/** Stands in for artwork that has not been supplied yet.
+ *
+ * Renders no asset at all — the slot is drawn in CSS — so a page can be laid
+ * out and reviewed before any image or video exists. Swap one of these for a
+ * `MediaFigure` (or `MediaVideo`) once the real file lands; the surrounding
+ * markup does not change.
+ */
+interface Props {
+  /** What belongs in this slot, in the author's words. */
+  label: string;
+  /** Intended aspect ratio, e.g. "16 / 10". Keeps layout honest before art. */
+  ratio?: string;
+  kind?: 'image' | 'video';
+  caption?: string;
+}
+
+const { label, ratio = '16 / 10', kind = 'image', caption } = Astro.props;
+---
+
+<figure class="media media--placeholder rv" data-reveal="media" data-placeholder={kind}>
+  <div class="media-ph" style={`aspect-ratio: ${ratio};`} role="img" aria-label={`Placeholder — ${label}`}>
+    <span class="media-ph__kind">{kind === 'video' ? 'Video' : 'Image'} placeholder</span>
+    <span class="media-ph__label">{label}</span>
+    <span class="media-ph__ratio">{ratio.replace(/\s+/g, '')}</span>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

@@ -267,3 +267,100 @@ html.yy-case body {
 @media (max-width: 560px) {
   .cs__title { font-size: var(--t-32); }
 }
+
+/* Media rows: 2-, 3- and 4-up runs where several artifacts make one argument.
+   .media-pair__grid stays for the two-up pair; this handles the wider runs. */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+.media-grid[data-cols="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.media-grid[data-cols="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.media-grid > .media {
+  min-height: 0;
+  height: 100%;
+}
+
+.media-grid img,
+.media-grid video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder slots. Deliberately unfinished-looking: a dashed well that
+   states what belongs there, so an empty page never reads as a designed one. */
+.media-ph {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  width: 100%;
+  padding: 20px;
+  border: 1px dashed var(--ink-3);
+  background: var(--slot);
+  color: var(--ink-3);
+}
+
+.media-ph__kind {
+  font-size: var(--t-11);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.media-ph__label {
+  font-size: var(--t-13);
+  line-height: var(--lh-caption);
+  color: var(--ink-2);
+}
+
+.media-ph__ratio {
+  font-size: var(--t-11);
+  letter-spacing: 0.06em;
+}
+
+/* A titled run of copy plus its artifacts, repeated down a chapter. */
+.case-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cs__body :where(h3) {
+  margin: 0;
+  font-size: var(--t-20);
+  line-height: var(--lh-heading);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+/* Copy still waiting on source content. Visible on purpose. */
+.todo {
+  color: var(--ink-3);
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .media-grid[data-cols="3"],
+  .media-grid[data-cols="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .media-grid,
+  .media-grid[data-cols="3"],
+  .media-grid[data-cols="4"] {
+    grid-template-columns: 1fr;
+  }
+}

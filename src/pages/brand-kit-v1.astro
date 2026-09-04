@@ -1,0 +1,186 @@
+---
+/** Brand Kit v1 — structure-only draft.
+ *
+ * The section rhythm here is borrowed from the Opus Clip case study, but
+ * nothing else is: no Webflow markup, no Webflow classes, and none of that
+ * project's copy or assets. Everything is composed from the Astro
+ * case-study components, because every case is moving to Astro.
+ *
+ * State: every artwork slot is a MediaPlaceholder and every line of copy is
+ * a numbered TODO(Lark) waiting on the source document. Not linked from any
+ * navigation and noindex, so it cannot be reached or indexed while empty.
+ *
+ * Filling this in:
+ *   copy  — replace each <p class="todo"> / heading marked TODO(Lark) in the
+ *           numbered order below.
+ *   art   — swap a <MediaPlaceholder> for <MediaFigure src=… /> (or
+ *           <MediaVideo>) in place; the surrounding markup does not change.
+ */
+import CaseStudyLayout from '../layouts/CaseStudyLayout.astro';
+import CaseMetaGrid from '../components/CaseMetaGrid.astro';
+import CaseQuote from '../components/CaseQuote.astro';
+import CaseSection from '../components/CaseSection.astro';
+import CaseStat from '../components/CaseStat.astro';
+import MediaGrid from '../components/MediaGrid.astro';
+import MediaPlaceholder from '../components/MediaPlaceholder.astro';
+import type { Project } from '../data/projects';
+
+const project: Project = {
+  slug: 'brand-kit-v1',
+  title: 'Brand Kit',
+  href: 'brand-kit-v1.html',
+  scope: 'TODO(Lark 02) — scope line',
+  note: 'TODO(Lark 03) — one-sentence project note shown under the title.',
+  description: 'Brand Kit v1 — structure draft awaiting source copy.',
+  status: 'in-progress',
+  engine: 'astro',
+  kind: 'slot',
+  theme: 'dark',
+  featuredOnLanding: false,
+  featuredOnIndex: false,
+  featuredOnProjects: false,
+  landingOrder: 98
+};
+---
+
+<CaseStudyLayout project={project} noindex={true}>
+  {/* 04–06 */}
+  <CaseMetaGrid
+    overview="TODO(Lark 04) — Overview paragraph."
+    role="TODO(Lark 05) — Role paragraph."
+    timeline="TODO(Lark 06) — Timeline"
+  />
+
+  <CaseSection id="introduction" eyebrow="01" title="Introduction">
+    <p class="todo">TODO(Lark 07) — Introduction paragraph.</p>
+    <MediaPlaceholder label="Introduction — opening artifact" ratio="16 / 9" />
+  </CaseSection>
+
+  <CaseSection id="challenge" eyebrow="02" title="The Challenge">
+    <p class="todo">TODO(Lark 08) — The Challenge paragraph.</p>
+    <MediaPlaceholder label="The Challenge — supporting artifact" ratio="16 / 9" />
+  </CaseSection>
+
+  <CaseSection id="design" eyebrow="03" title="Design">
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 09) — Design moment 1 heading</h3>
+      <MediaPlaceholder kind="video" label="Design moment 1 — walkthrough" ratio="16 / 10" />
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 10) — Design moment 2 heading</h3>
+      <MediaPlaceholder kind="video" label="Design moment 2 — walkthrough" ratio="16 / 10" />
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 11) — Design moment 3 heading</h3>
+      <MediaPlaceholder kind="video" label="Design moment 3 — walkthrough" ratio="16 / 10" />
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 12) — Design moment 4 heading</h3>
+      <MediaPlaceholder kind="video" label="Design moment 4 — walkthrough" ratio="16 / 10" />
+    </div>
+  </CaseSection>
+
+  <CaseSection id="research" eyebrow="04" title="Research">
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 13) — Competitive analysis heading</h3>
+      <p class="todo">TODO(Lark 14) — Competitive analysis paragraph.</p>
+      <MediaGrid cols={4}>
+        <MediaPlaceholder label="Competitor 1" ratio="3 / 4" />
+        <MediaPlaceholder label="Competitor 2" ratio="3 / 4" />
+        <MediaPlaceholder label="Competitor 3" ratio="3 / 4" />
+        <MediaPlaceholder label="Competitor 4" ratio="3 / 4" />
+      </MediaGrid>
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 15) — User research heading</h3>
+      <p class="todo">TODO(Lark 16) — User research paragraph.</p>
+      <MediaGrid cols={3}>
+        <MediaPlaceholder label="User finding 1" ratio="4 / 3" />
+        <MediaPlaceholder label="User finding 2" ratio="4 / 3" />
+        <MediaPlaceholder label="User finding 3" ratio="4 / 3" />
+      </MediaGrid>
+    </div>
+  </CaseSection>
+
+  <CaseSection id="insights" eyebrow="05" title="Insights &amp; ideation">
+    <p class="todo">TODO(Lark 17) — Insights lead-in paragraph.</p>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 18) — Insight 1</h3>
+      <MediaPlaceholder label="Insight 1 — artifact" ratio="16 / 9" />
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 19) — Insight 2</h3>
+      <MediaPlaceholder label="Insight 2 — artifact" ratio="16 / 9" />
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 20) — Insight 3</h3>
+      <MediaPlaceholder label="Insight 3 — artifact" ratio="16 / 9" />
+    </div>
+  </CaseSection>
+
+  <CaseSection id="validation" eyebrow="06" title="Validation">
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 21) — Validation heading</h3>
+      <p class="todo">TODO(Lark 22) — Validation paragraph.</p>
+      <MediaGrid cols={4}>
+        <MediaPlaceholder label="Validation option A" ratio="3 / 4" />
+        <MediaPlaceholder label="Validation option B" ratio="3 / 4" />
+        <MediaPlaceholder label="Validation option C" ratio="3 / 4" />
+        <MediaPlaceholder label="Validation option D" ratio="3 / 4" />
+      </MediaGrid>
+    </div>
+  </CaseSection>
+
+  <CaseSection id="highlights" eyebrow="07" title="Highlights">
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 23) — Highlight 1 heading</h3>
+      <p class="todo">TODO(Lark 24) — Highlight 1 paragraph.</p>
+      <MediaGrid cols={2}>
+        <MediaPlaceholder label="Highlight 1 — view A" ratio="16 / 10" />
+        <MediaPlaceholder label="Highlight 1 — view B" ratio="16 / 10" />
+      </MediaGrid>
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 25) — Highlight 2 heading</h3>
+      <p class="todo">TODO(Lark 26) — Highlight 2 paragraph.</p>
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 27) — Highlight 3 heading</h3>
+      <p class="todo">TODO(Lark 28) — Highlight 3 paragraph.</p>
+      <MediaGrid cols={2}>
+        <MediaPlaceholder label="Highlight 3 — view A" ratio="16 / 10" />
+        <MediaPlaceholder label="Highlight 3 — view B" ratio="16 / 10" />
+      </MediaGrid>
+    </div>
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 29) — Highlight 4 heading</h3>
+      <p class="todo">TODO(Lark 30) — Highlight 4 paragraph.</p>
+    </div>
+  </CaseSection>
+
+  <CaseSection id="final-design" eyebrow="08" title="Final design">
+    <MediaPlaceholder kind="video" label="Final design — walkthrough 1" ratio="16 / 10" />
+    <MediaPlaceholder kind="video" label="Final design — walkthrough 2" ratio="16 / 10" />
+    <MediaPlaceholder kind="video" label="Final design — walkthrough 3" ratio="16 / 10" />
+  </CaseSection>
+
+  <CaseSection id="impact" eyebrow="09" title="Impact">
+    <div class="case-block">
+      <h3 class="todo">TODO(Lark 31) — Impact heading</h3>
+      <p class="todo">TODO(Lark 32) — Impact paragraph.</p>
+      <MediaGrid cols={3}>
+        <MediaPlaceholder label="Impact evidence 1" ratio="4 / 3" />
+        <MediaPlaceholder label="Impact evidence 2" ratio="4 / 3" />
+        <MediaPlaceholder label="Impact evidence 3" ratio="4 / 3" />
+      </MediaGrid>
+    </div>
+    <div class="case-stat-grid">
+      <CaseStat value="—" label="TODO(Lark 33) — primary metric" />
+      <CaseStat value="—" label="TODO(Lark 34) — supporting metric" />
+    </div>
+    <CaseQuote
+      quote="TODO(Lark 35) — closing quote or takeaway."
+      attribution="TODO(Lark 36) — attribution"
+    />
+  </CaseSection>
+</CaseStudyLayout>

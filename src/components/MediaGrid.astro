@@ -1,0 +1,13 @@
+---
+/** Row of media that share one width, for the 2-, 3- and 4-up runs a case
+ * study uses when several artifacts make one argument together. */
+interface Props {
+  cols?: 2 | 3 | 4;
+}
+
+const { cols = 2 } = Astro.props;
+---
+
+<div class="media-grid" data-cols={cols}>
+  <slot />
+</div>
