@@ -1,3 +1,43 @@
+# Yanice Yang Portfolio
+
+Portfolio site and interaction system for AI-first product/design work.
+
+Live site: [yaniceyang.com](https://yaniceyang.com)  
+Current public repo: [github.com/9929y/YYP](https://github.com/9929y/YYP)
+
+## Why This Repo Matters
+
+This repo is the implementation layer behind my portfolio: a case-study system for presenting AI product, UX, and build work with real content, responsive layout, media-heavy project pages, and verifiable front-end behavior.
+
+It shows how I work across design and implementation:
+
+- Translating portfolio positioning into a structured case-study system
+- Preserving visual fidelity while making the codebase easier to maintain
+- Optimizing image-heavy pages without breaking references or interaction behavior
+- Auditing mobile readability, type scale, responsive layout, and asset integrity
+- Keeping design-system decisions tied to code, content, and production constraints
+
+## What I Built / Maintained
+
+- Astro static site structure for the current portfolio homepage and case-study work
+- Legacy Webflow case pages preserved where fidelity mattered
+- Asset catalog and media cleanup process for a large image/video portfolio
+- Responsive/type QA passes across desktop and mobile breakpoints
+- Verification scripts for links, assets, schema, and production readiness
+
+## Stack
+
+`Astro` `React` `TypeScript` `Three.js` `Motion` `CSS` `Webflow runtime` `Vercel`
+
+## Reader Note
+
+The existing README below keeps the technical cleanup and verification history. It is intentionally detailed because the repo is also a working maintenance record for the live portfolio.
+
+---
+
+
+---
+
 # Yanice Yang — portfolio (lightweight-cleaned)
 
 A tidied copy of the faithful Webflow clone. **Rendering is 100% identical** to
