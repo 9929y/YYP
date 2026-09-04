@@ -1,5 +1,3 @@
-import { hasCaseStudyContent } from './case-studies.ts';
-
 export type ProjectStatus = 'published' | 'in-progress';
 export type ProjectEngine = 'webflow' | 'astro';
 export type ProjectKind = 'slot' | 'panel' | 'gallery';
@@ -286,12 +284,6 @@ export const projects: Project[] = [
     featuredOnIndex: false,
     featuredOnProjects: true,
     landingOrder: 80,
-    cover: {
-      src: 'assets/images/tiktok/hero-tiktok-safety-strategy-cover.webp',
-      alt: 'TikTok safety strategy research case study',
-      width: 1440,
-      height: 766
-    },
     prevSlug: undefined,
     nextSlug: undefined
   },
@@ -334,12 +326,6 @@ export function landingProjects(): Project[] {
     .sort((a, b) => a.landingOrder - b.landingOrder);
 }
 
-export function workProjects(): Project[] {
-  return projects
-    .filter((p) => p.kind !== 'panel' && (p.featuredOnProjects || p.featuredOnLanding))
-    .sort((a, b) => a.landingOrder - b.landingOrder);
-}
-
 export function astroCaseStudies(): Project[] {
   return projects.filter((p) => p.engine === 'astro' && p.status === 'published' && p.href);
 }
@@ -363,9 +349,6 @@ export function validateProjects(): string[] {
     if (p.status === 'published' && p.kind !== 'panel' && !p.href) {
       errors.push(`${p.slug}: published project needs href`);
     }
-    if (p.status === 'published' && p.engine === 'astro' && !hasCaseStudyContent(p.slug)) {
-      errors.push(`${p.slug}: published Astro case study needs typed content`);
-    }
     if (p.href && !p.href.endsWith('.html')) {
       errors.push(`${p.slug}: href must be a flat .html URL`);
     }
@@ -373,9 +356,6 @@ export function validateProjects(): string[] {
     if (p.nextSlug && !SLUG.has(p.nextSlug)) errors.push(`${p.slug}: unknown nextSlug ${p.nextSlug}`);
     if (p.kind === 'slot' && p.featuredOnLanding && !p.cover && !p.video) {
       errors.push(`${p.slug}: landing slot needs cover or video`);
-    }
-    if (p.kind === 'slot' && p.featuredOnProjects && !p.cover && !p.video) {
-      errors.push(`${p.slug}: Work popup slot needs cover or video`);
     }
     if (p.kind === 'panel' && (!p.acts || p.acts.length === 0)) {
       errors.push(`${p.slug}: panel needs acts`);
