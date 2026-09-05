@@ -1,0 +1,62 @@
+{
+  "brand": {
+    "label": "Yanice Yang",
+    "href": "/",
+    "orb": "/assets/images/ui/nav-orb.gif"
+  },
+  "primary": [
+    {
+      "label": "Work",
+      "href": "/work"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    },
+    {
+      "label": "Resume",
+      "href": "/resume"
+    }
+  ],
+  "legacyWebflowNav": [
+    {
+      "label": "Projects",
+      "href": "/work"
+    },
+    {
+      "label": "About",
+      "href": "/about"
+    }
+  ],
+  "social": [
+    {
+      "label": "Resume (hello.cv)",
+      "href": "https://302437672248143872.hello.cv/",
+      "icon": "/assets/images/ui/icon-resume.webp"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/yanice-yang",
+      "icon": "/assets/images/ui/icon-linkedin.webp"
+    },
+    {
+      "label": "Email",
+      "href": "mailto:yaniceydesign@gmail.com",
+      "icon": "/assets/images/ui/icon-email.webp"
+    }
+  ],
+  "footer": {
+    "credit": "© Yanice Yang 2026",
+    "prevLabel": "Previous",
+    "nextLabel": "Next Project"
+  },
+  "caseOrder": [
+    "ai-driven-product-design",
+    "mckinseyecommerce",
+    "larkdesign",
+    "mifinance",
+    "cummins-digitalization",
+    "alzheimerdisease",
+    "tiktok-research"
+  ]
+}

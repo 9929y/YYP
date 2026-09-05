@@ -26,6 +26,14 @@ If the tunnel terminal is not running, start:
 $HOME/.local/bin/cloudflared tunnel --url http://127.0.0.1:4800
 ```
 
-Prove behavior with `npm test`, `curl`, and the **preview link** — not with media.
+Prove behavior with `npm run check`, `curl`, and the **preview link** — not with media.
+
+## Rebuild rules
+
+- Words live in `src/content/`. Do not hard-code copy in components.
+- UI is being redesigned in Figma. Until a design is handed over, pages are placeholders; do not polish them.
+- Stack decisions (Astro + React islands + Tailwind v4 + shadcn conventions + motion) are documented in `README.md`; how to add components in `docs/EXTENDING.md`.
+- Open decisions about what replaces each Webflow behaviour are tracked in `docs/WEBFLOW_REPLACEMENT_INVENTORY.md`. Do not invent answers to those; ask.
+- The legacy Webflow export is on `main`, not on this branch. Never copy its CSS or JS back in.
 
 Production remains Vercel (`yaniceyang.com`). The tunnel is the working preview for in-progress work.

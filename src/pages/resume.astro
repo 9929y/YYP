@@ -1,0 +1,85 @@
+---
+/** PLACEHOLDER resume page. All data is frontmatter in src/content/pages/resume.md. */
+import { getEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const resume = await getEntry('pages', 'resume');
+if (!resume) throw new Error('src/content/pages/resume.md is missing');
+const { profile, workRange, jobs = [], education = [], awards = [], publications = [], skills = [] } = resume.data;
+---
+
+<BaseLayout title={`${resume.data.title} — Yanice Yang`} description={resume.data.description}>
+  <article class="mx-auto max-w-3xl px-6 py-24 space-y-16">
+    {profile && (
+      <header>
+        <h1 class="text-4xl font-semibold">{profile.name}</h1>
+        <p class="mt-2 text-lg">{profile.role}</p>
+        <p class="text-muted-foreground">{profile.location}</p>
+        <p class="mt-4 flex gap-4 text-sm">
+          <a class="underline" href={`mailto:${profile.email}`}>Email</a>
+          <a class="underline" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        </p>
+      </header>
+    )}
+
+    <section aria-labelledby="work">
+      <h2 id="work" class="text-sm uppercase tracking-wide text-muted-foreground">Work {workRange && <span>· {workRange}</span>}</h2>
+      <div class="mt-6 space-y-10">
+        {jobs.map((job) => (
+          <article>
+            <h3 class="text-xl font-medium"><a class="underline" href={job.url} target="_blank" rel="noopener">{job.company}</a></h3>
+            <p>{job.role}</p>
+            <p class="text-sm text-muted-foreground">{[job.location, job.date, job.type].filter(Boolean).join(' · ')}</p>
+            <p class="mt-3">{job.summary}</p>
+            <ul class="mt-3 list-disc space-y-1 pl-6 text-muted-foreground">
+              {job.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="education">
+      <h2 id="education" class="text-sm uppercase tracking-wide text-muted-foreground">Education</h2>
+      <ul class="mt-6 space-y-4">
+        {education.map((e) => (
+          <li><strong>{e.school}</strong><br />{e.degree}<br /><span class="text-muted-foreground">{e.detail}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="awards">
+      <h2 id="awards" class="text-sm uppercase tracking-wide text-muted-foreground">Awards</h2>
+      <ul class="mt-6 space-y-4">
+        {awards.map((a) => (
+          <li>
+            <strong>{a.url ? <a class="underline" href={a.url} target="_blank" rel="noopener">{a.name}</a> : a.name}</strong>
+            <span class="ml-2 text-sm">{a.tier}</span><br />
+            <span class="text-muted-foreground">{a.note}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="publications">
+      <h2 id="publications" class="text-sm uppercase tracking-wide text-muted-foreground">Publications</h2>
+      <ul class="mt-6 space-y-4">
+        {publications.map((p) => (
+          <li><a class="underline" href={p.url} target="_blank" rel="noopener">{p.title}</a><br /><span class="text-muted-foreground">{p.publisher}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="skills">
+      <h2 id="skills" class="text-sm uppercase tracking-wide text-muted-foreground">Skills</h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2">
+        {skills.map((group) => (
+          <div>
+            <h3 class="font-medium">{group.category}</h3>
+            <p class="mt-1 text-muted-foreground">{group.items.join(', ')}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </article>
+</BaseLayout>

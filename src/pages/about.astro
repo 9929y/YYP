@@ -1,0 +1,19 @@
+---
+/** PLACEHOLDER about page. Body is the extracted Webflow + panel copy. */
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const about = await getEntry('pages', 'about');
+if (!about) throw new Error('src/content/pages/about.md is missing');
+const { Content } = await render(about);
+---
+
+<BaseLayout title={`${about.data.title} — Yanice Yang`} description={about.data.description}>
+  <article
+    class="mx-auto max-w-3xl px-6 py-24 space-y-6 leading-relaxed
+      [&_h1]:text-4xl [&_h1]:font-semibold [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-14
+      [&_h3]:text-xl [&_h3]:font-medium [&_h3]:mt-10 [&_img]:rounded-lg [&_a]:underline"
+  >
+    <Content />
+  </article>
+</BaseLayout>

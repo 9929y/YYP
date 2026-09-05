@@ -1,24 +1,19 @@
+// @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import legacyPassthrough from './scripts/legacy-passthrough.mjs';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://www.yaniceyang.com',
   output: 'static',
-  integrations: [react(), legacyPassthrough()],
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'viewport'
-  },
-  build: {
-    format: 'file',
-    assets: '_astro'
-  },
+  /* Old Webflow .html URLs are redirected in vercel.json (real 301s). */
+  integrations: [react()],
+  server: { host: '127.0.0.1', port: 4800 },
   devToolbar: { enabled: false },
   vite: {
+    plugins: [tailwindcss()],
     server: {
-      fs: { allow: ['.'] },
-      /* Cloudflare quick tunnels + local previews when port-forward fails. */
+      /* Cloudflare quick tunnels are the review surface (see AGENTS.md). */
       allowedHosts: ['.trycloudflare.com', 'localhost', '127.0.0.1']
     }
   }

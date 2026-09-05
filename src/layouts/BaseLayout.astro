@@ -1,73 +1,60 @@
 ---
+import '@/styles/global.css';
+import nav from '@/content/site/navigation.json';
+
 interface Props {
   title: string;
   description?: string;
-  htmlClass?: string;
-  reveal?: boolean;
-  lenis?: boolean;
-  chrome?: boolean;
-  /** Kept so callers can pass it; the site is always noindex. */
+  /** The site stays out of search indexes until the relaunch is approved. */
   noindex?: boolean;
 }
 
-const {
-  title,
-  description = 'Product designer. Selected work in research, consumer product, enterprise and health.',
-  htmlClass = '',
-  reveal = false,
-  lenis = true,
-  chrome = true
-} = Astro.props;
-
-const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
-const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).join(' ');
+const { title, description, noindex = true } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 ---
-<!DOCTYPE html>
-<html lang="en" class={documentClass}>
+
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
     {description && <meta name="description" content={description} />}
-    <meta name="robots" content="noindex, nofollow, noarchive" />
-    <link rel="canonical" href={canonicalUrl} />
-    <link href="/assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
-    <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
-    <style is:inline>
-      /* Anti-flash rules, lifted from yy-chrome.js so the chrome script can defer.
-         Must stay byte-equivalent to the boot rules in yy-chrome.js. */
-      html.yy-chrome { scrollbar-gutter: stable }
-      html.yy-chrome .navbar.w-nav { display: none }
-      html.yy-chrome .footer-credit-wrapper { display: none }
-      html.yy-panel-open, html.yy-panel-open body { overflow: hidden !important }
-      html.yy-chrome .footer-section:not(:has(.four-column)) { display: none }
-      html.yy-chrome .grid-wrapper:has(> .footer-credit-wrapper):not(:has(.four-column)) { display: none }
-      html.yy-chrome .footer-section { border-top: none; padding-top: 48px; padding-bottom: 0 }
-      .preloader-lark { display: none !important }
-    </style>
-    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-600.woff2" as="font" type="font/woff2" crossorigin />
-    <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/yy-motion.css" rel="stylesheet" type="text/css" />
-    {chrome && (
-      <>
-        <link href="/assets/css/yy-chrome.css" rel="stylesheet" type="text/css" />
-        <link href="/assets/css/yy-cursor.css" rel="stylesheet" type="text/css" />
-      </>
-    )}
+    {noindex && <meta name="robots" content="noindex, nofollow, noarchive" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/assets/images/ui/logo-site-favicon.webp" type="image/webp" />
+    <link rel="apple-touch-icon" href="/assets/images/ui/logo-site-app-icon.webp" />
     <slot name="head" />
-    {chrome && <script is:inline defer src="/assets/js/yy-chrome.js"></script>}
-    {reveal && <script is:inline defer src="/assets/js/yy-reveal.js"></script>}
-    {lenis && (
-      <>
-        <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
-        <script is:inline defer src="/assets/js/lenis.min.js"></script>
-        <script is:inline defer src="/assets/js/yy-scroll.js"></script>
-      </>
-    )}
   </head>
-  <body>
-    <slot />
-    <slot name="scripts" />
+  <body class="min-h-dvh flex flex-col">
+    <!--
+      PLACEHOLDER CHROME. The real nav/footer come from the Figma UI.
+      Content (labels, links) is data in src/content/site/navigation.json.
+    -->
+    <header class="border-b">
+      <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-sm" aria-label="Main">
+        <a href={nav.brand.href} class="font-medium">{nav.brand.label}</a>
+        <ul class="flex gap-6">
+          {nav.primary.map((item) => (
+            <li><a href={item.href} class="text-muted-foreground hover:text-foreground">{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 text-sm text-muted-foreground">
+        <p>{nav.footer.credit}</p>
+        <ul class="flex gap-4">
+          {nav.social.map((item) => (
+            <li><a href={item.href} rel="noopener" target={item.href.startsWith('http') ? '_blank' : undefined}>{item.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </footer>
   </body>
 </html>

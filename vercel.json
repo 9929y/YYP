@@ -3,16 +3,18 @@
   "outputDirectory": "dist",
   "framework": null,
   "redirects": [
-    {
-      "source": "/landing.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/landing",
-      "destination": "/",
-      "permanent": true
-    }
+    { "source": "/landing.html", "destination": "/", "permanent": true },
+    { "source": "/landing", "destination": "/", "permanent": true },
+    { "source": "/projects.html", "destination": "/work", "permanent": true },
+    { "source": "/aboutme.html", "destination": "/about", "permanent": true },
+    { "source": "/ai-driven-product-design.html", "destination": "/work/ai-driven-product-design", "permanent": true },
+    { "source": "/mckinseyecommerce.html", "destination": "/work/mckinseyecommerce", "permanent": true },
+    { "source": "/larkdesign.html", "destination": "/work/larkdesign", "permanent": true },
+    { "source": "/mifinance.html", "destination": "/work/mifinance", "permanent": true },
+    { "source": "/cummins-digitalization.html", "destination": "/work/cummins-digitalization", "permanent": true },
+    { "source": "/alzheimerdisease.html", "destination": "/work/alzheimerdisease", "permanent": true },
+    { "source": "/tiktok-research.html", "destination": "/work/tiktok-research", "permanent": true },
+    { "source": "/fashion.html", "destination": "/work/fashion", "permanent": true }
   ],
   "headers": [
     {

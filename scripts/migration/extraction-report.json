@@ -1,0 +1,1236 @@
+{
+  "pages": {
+    "ai-driven-product-design.html": {
+      "title": "AI-driven product design",
+      "ogTitle": "AI-driven product design",
+      "webflowPageId": "67e4c0a03fb59d3ea544d076",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/ui/icon-chevron-down.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/opusclip/hero-opusclip-footage-to-video-intro.webp",
+            "alt": "OpusClip title card: 'AI-Powered Video Editing Tool - from a prompt to a complete video'"
+          },
+          {
+            "src": "/assets/images/opusclip/icon-challenge-callout-lightbulb.webp",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/opusclip/competitive-veed-teardown.webp",
+            "alt": "VEED.IO editor with project settings panel and a generative video modal asking what kind of video"
+          },
+          {
+            "src": "/assets/images/opusclip/competitive-captions-teardown-3up.webp",
+            "alt": "Three Captions screens: empty project state"
+          },
+          {
+            "src": "/assets/images/opusclip/competitive-riverside-teardown-3up.webp",
+            "alt": "Three Riverside screens teardown: project dashboard"
+          },
+          {
+            "src": "/assets/images/opusclip/competitive-descript-teardown.webp",
+            "alt": "Descript's text-based editor showing a transcript beside the video preview"
+          },
+          {
+            "src": "/assets/images/opusclip/persona-user-quote-june-vlogger.webp",
+            "alt": "Research quote from June"
+          },
+          {
+            "src": "/assets/images/opusclip/persona-user-quote-nick-content-creator.webp",
+            "alt": "Research quote from Nick"
+          },
+          {
+            "src": "/assets/images/opusclip/persona-user-quote-lexi-digital-marketer.webp",
+            "alt": "Research quote from Lexi"
+          },
+          {
+            "src": "/assets/images/opusclip/flow-footage-to-video-search-to-storyboard-2up.webp",
+            "alt": "Annotated pair of screens: entering a prompt collects relevant clips"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-ai-storyline-generation-annotated.webp",
+            "alt": "Dark video editor with a story prompt and generated script segments"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-manual-clip-reorder-and-edit.webp",
+            "alt": "Two dark editor screens: hovering a script segment reveals drag and edit controls"
+          },
+          {
+            "src": "/assets/images/opusclip/hifi-ab-test-video-creation-entry-2up.webp",
+            "alt": "Two design options for the video-creation entry screen: one showing recent clips"
+          },
+          {
+            "src": "/assets/images/opusclip/hifi-ab-test-clip-selection-2up.webp",
+            "alt": "Two design options for clip search results"
+          },
+          {
+            "src": "/assets/images/opusclip/hifi-ab-test-create-storyboard-2up.webp",
+            "alt": "Two design options for connecting clips into a story"
+          },
+          {
+            "src": "/assets/images/opusclip/hifi-ab-test-refine-storyboard-2up.webp",
+            "alt": "Two design options for refining a generated storyboard"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-ai-prompt-search-entry.webp",
+            "alt": "Prompt search overlay asking what video to create"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-ai-search-clip-results-selection.webp",
+            "alt": "Clip results for a Tesla prompt with six selected clips gathered in a tray"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-prompt-generated-storyboard-scenes.webp",
+            "alt": "Storyboard generated from a prompt about Tesla's 2024 stock"
+          },
+          {
+            "src": "/assets/images/opusclip/screen-storyboard-scene-inline-edit.webp",
+            "alt": "Storyboard panel with one scene's narration text being edited inline"
+          }
+        ],
+        "videos": [
+          {
+            "src": "/assets/videos/AI-Prompt.mov",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/generate-footage.mov",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/add-AI-video.mov",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/edit-footage.mov",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/1.mp4",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/2.mp4",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          },
+          {
+            "src": "/assets/videos/3.mp4",
+            "attrs": [
+              "autoplay",
+              "loop",
+              "muted",
+              "playsinline"
+            ]
+          }
+        ],
+        "iframes": [],
+        "lottie": [
+          {
+            "src": "/assets/lottie/67e4cc9be538c95e85af1a9e_Showreel_-Web-gallery-_remix___2_.json",
+            "loop": "0",
+            "autoplay": "1"
+          }
+        ],
+        "lightboxes": 8
+      },
+      "links": [],
+      "blocks": 94
+    },
+    "mckinseyecommerce.html": {
+      "title": "McKinseyStudy",
+      "ogTitle": "McKinseyStudy",
+      "webflowPageId": "63c9a4c16b7b78989bb1a5fa",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/mckinsey/logo-mckinsey-design-wordmark.webp",
+            "alt": "McKinsey Design wordmark set in two lines of pale grey serif type",
+            "width": "300"
+          },
+          {
+            "src": "/assets/images/ui/icon-chevron-down.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/mckinsey/hifi-liveshop-buyer-app-hifi-8up.webp",
+            "alt": "Eight high-fidelity LiveShop buyer screens: interest picker"
+          },
+          {
+            "src": "/assets/images/mckinsey/illustration-man-picking-color-swatches-spot.webp",
+            "alt": "Flat illustration of a seated man choosing from a row of colour swatches",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/mckinsey/illustration-screen-to-screen-workflow-spot.webp",
+            "alt": "Flat illustration of a woman carrying a phone screen between two arrows linking a starting page",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/mckinsey/illustration-woman-arranging-ui-panels-spot.webp",
+            "alt": "Flat illustration of a woman reaching into a floating interface panel beside profile and message",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/mckinsey/illustration-linked-content-cards-spot.webp",
+            "alt": "Flat illustration of content cards connected by curved lines, suggesting links between pages",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-ia-fullscreen-video-and-calendar.webp",
+            "alt": "Competitive slide annotating a full-screen video landing page and a favorites calendar view for"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-ia-discover-page.webp",
+            "alt": "Competitive slide comparing four discover-page layouts: visual category browse"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-userflow-onboarding-instructions.webp",
+            "alt": "Competitive slide showing instruction touchpoints: onboarding tour"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-userflow-payment-and-scroll-gestures.webp",
+            "alt": "Competitive slide contrasting two payment flow step diagrams and showing vertical-scroll gesture"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-interaction-pattern-gestures.webp",
+            "alt": "Competitive analysis slide on interaction patterns"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-interaction-engagement-modals-loading.webp",
+            "alt": "Competitive slide on engagement tactics: in-stream product modals"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-interaction-animation-treatment.webp",
+            "alt": "Competitive slide on animation treatment: post-live replay feed"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-feature-set-pin-qa-filters.webp",
+            "alt": "Competitive slide on live commerce features: pinning products"
+          },
+          {
+            "src": "/assets/images/mckinsey/competitive-feature-set-pin-qa-filters.webp",
+            "alt": "Competitive slide on live commerce features: pinning products"
+          },
+          {
+            "src": "/assets/images/mckinsey/persona-betty-genz-shopper.webp",
+            "alt": "Persona card for Betty, a 21-year-old New York sophomore, listing her impulse-driven shopping"
+          },
+          {
+            "src": "/assets/images/mckinsey/persona-claire-tiktok-influencer.webp",
+            "alt": "Persona card for Claire, a 27-year-old TikTok influencer in Dallas, describing her content"
+          },
+          {
+            "src": "/assets/images/mckinsey/persona-coco-livestream-manager.webp",
+            "alt": "Persona card for Coco, a 25-year-old livestream manager in Dallas, covering her streaming routine"
+          },
+          {
+            "src": "/assets/images/mckinsey/system-liveshop-brand-direction-board.webp",
+            "alt": "LiveShop brand direction board showing wordmark lockups"
+          },
+          {
+            "src": "/assets/images/mckinsey/system-liveshop-style-tile-founders-grotesk.webp",
+            "alt": "LiveShop style tile pairing Founders Grotesk type with a warm orange primary and pastel gradient"
+          },
+          {
+            "src": "/assets/images/mckinsey/system-liveshop-style-tile-inter.webp",
+            "alt": "LiveShop style tile pairing Inter type with a light blue primary and saturated flat secondaries"
+          },
+          {
+            "src": "/assets/images/mckinsey/system-liveshop-style-tile-gotham.webp",
+            "alt": "LiveShop style tile pairing Gotham type with a white primary and green-to-violet gradient"
+          },
+          {
+            "src": "/assets/images/mckinsey/wireframe-single-hand-key-zone-callouts.webp",
+            "alt": "Greyed-out wireframe screens with orange call-out boxes marking the bottom navigation bar and the"
+          },
+          {
+            "src": "/assets/images/mckinsey/wireframe-single-hand-reach-heatmap-action-menu.webp",
+            "alt": "Two wireframe phone screens with a thumb-reach heatmap"
+          },
+          {
+            "src": "/assets/images/mckinsey/flow-signup-to-one-click-purchase-flow.webp",
+            "alt": "Horizontal user flow from sign-up and preference wizard through onboarding"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-retention-activation-conversion-pyramid.webp",
+            "alt": "Three-tier pyramid framework mapping retention"
+          },
+          {
+            "src": "/assets/images/mckinsey/flow-liveshop-mvp-flow-buyer.webp",
+            "alt": "Buyer MVP flow board mapping sign-up"
+          },
+          {
+            "src": "/assets/images/mckinsey/flow-liveshop-mvp-flow-seller.webp",
+            "alt": "Seller MVP flow board mapping entry"
+          },
+          {
+            "src": "/assets/images/mckinsey/flow-liveshop-mvp-flow-buyer-seller-combined.webp",
+            "alt": "Combined buyer and seller MVP flow board with red connector lines and yellow notes marking the"
+          },
+          {
+            "src": "/assets/images/mckinsey/flow-livestream-shopping-three-flow-feature-map.webp",
+            "alt": "Whiteboard map of three end-to-end flows for a live shopping app: live and one-click buy"
+          },
+          {
+            "src": "/assets/images/mckinsey/wireframe-liveshop-buyer-lowfi-wireframe-map.webp",
+            "alt": "Wall of low-fidelity buyer wireframes grouped by marketing"
+          },
+          {
+            "src": "/assets/images/mckinsey/wireframe-liveshop-seller-manager-lowfi-wireframes.webp",
+            "alt": "Low-fidelity wireframes of the LiveShop seller manager: onboarding"
+          },
+          {
+            "src": "/assets/images/mckinsey/wireframe-liveshop-beta-lowfi-wireframe-map.webp",
+            "alt": "Wall of beta-phase low-fidelity wireframes grouped by marketing"
+          },
+          {
+            "src": "/assets/images/mckinsey/hifi-liveshop-landing-concept-blob-collage.webp",
+            "alt": "LiveShop landing page concept with a centred headline and waitlist form"
+          },
+          {
+            "src": "/assets/images/mckinsey/hifi-liveshop-landing-concept-multicolor-headline.webp",
+            "alt": "LiveShop landing page concept with a multicolour headline"
+          },
+          {
+            "src": "/assets/images/mckinsey/hifi-liveshop-landing-concept-multicolor-headline.webp",
+            "alt": "LiveShop landing page concept with a multicolour headline"
+          },
+          {
+            "src": "/assets/images/mckinsey/hifi-liveshop-landing-concept-green-wave.webp",
+            "alt": "LiveShop landing page concept with a black headline"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-concept-testing-goals-and-scope.webp",
+            "alt": "Research plan slide listing five concept-testing goals beside three figures: 8 rapid user tests",
+            "width": "391"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-discover-flow-findings.webp",
+            "alt": "Three-column findings slide on the discover flow: validated scrolling behaviour"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-purchase-flow-findings.webp",
+            "alt": "Three-column findings slide on the purchase flow: validated learnings"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-save-favorites-flow-findings.webp",
+            "alt": "Three-column findings slide on the save and favorites flow: validated bookmark behaviour"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-events-calendar-flow-findings.webp",
+            "alt": "Three-column findings slide on the events and calendar flow: validated needs"
+          },
+          {
+            "src": "/assets/images/mckinsey/chart-additional-insights-to-validate.webp",
+            "alt": "Slide listing five open questions to validate further"
+          }
+        ],
+        "videos": [],
+        "iframes": [
+          {
+            "src": "https://player.vimeo.com/video/1063037751?autoplay=1&muted=1&loop=1&autopause=0&background=1",
+            "title": "Live shopping horizontal scroll"
+          },
+          {
+            "src": "https://player.vimeo.com/video/1063037743?autoplay=1&muted=1&loop=1&autopause=0&background=1",
+            "title": "Liveshopping browsing menu"
+          },
+          {
+            "src": "https://player.vimeo.com/video/1063037734?autoplay=1&muted=1&loop=1&autopause=0&background=1",
+            "title": "Liveshop-viewing stream"
+          }
+        ],
+        "lottie": [],
+        "lightboxes": 28
+      },
+      "links": [],
+      "blocks": 133
+    },
+    "larkdesign.html": {
+      "title": "LarkDesign",
+      "ogTitle": "LarkDesign",
+      "webflowPageId": "63c9a4c16b7b78a902b1a5f8",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/lark/logo-bytedance-lark-lockup.webp",
+            "alt": "ByteDance and Lark logo lockup separated by a dot"
+          },
+          {
+            "src": "/assets/images/lark/hero-lark-onboarding-three-phone-mockup.webp",
+            "alt": "Three white phone mockups showing the Lark inbox",
+            "width": "907"
+          },
+          {
+            "src": "/assets/images/ui/icon-chevron-down.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/lark/hero-lark-suite-product-collage.webp",
+            "alt": "Collage of Lark's chat"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-signup-email-verification.webp",
+            "alt": "Lark signup verification step with a six-digit code entry card beside a cloud-storage"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-add-team-member-invite-qr.webp",
+            "alt": "Lark add-team-member dialog offering email invites"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-desktop-login-email-step.webp",
+            "alt": "Lark desktop login screen with email field"
+          },
+          {
+            "src": "/assets/images/lark/screen-add-team-member-team-code-panel.webp",
+            "alt": "Lark desktop Add Team Member dialog with the team-code option open"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-login-welcome-email-entry.webp",
+            "alt": "Lark login screen with email entry"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-quick-add-menu.webp",
+            "alt": "Lark desktop quick-add menu listing new group"
+          },
+          {
+            "src": "/assets/images/lark/screen-registration-enter-name-step.webp",
+            "alt": "Final Lark sign-up step asking for the user's name"
+          },
+          {
+            "src": "/assets/images/lark/screen-add-team-member-invite-by-phone-tooltip.webp",
+            "alt": "Lark Add Team Member dialog with email invite"
+          },
+          {
+            "src": "/assets/images/lark/screen-lark-inbox-first-launch-empty.webp",
+            "alt": "Lark desktop inbox on first launch with only bot and self conversations and an empty-state"
+          },
+          {
+            "src": "/assets/images/lark/illustration-team-communication-challenge-spot.webp",
+            "alt": "Flat grey illustration of four people standing in front of chat bubbles and profile cards with a",
+            "width": "839"
+          },
+          {
+            "src": "/assets/images/lark/flow-team-onboarding-scope-and-process.webp",
+            "alt": "Diagram pairing a four-step team onboarding loop with a five-stage design process timeline",
+            "width": "1463"
+          },
+          {
+            "src": "/assets/images/lark/journey-team-onboarding-experience-map.webp",
+            "alt": "Experience map across registration",
+            "width": "1450"
+          },
+          {
+            "src": "/assets/images/lark/hero-hmw-speed-up-login-tablets.webp",
+            "alt": "Section cover reading How might we speed up the login process",
+            "width": "1920"
+          },
+          {
+            "src": "/assets/images/lark/chart-registration-time-benchmark-37s-vs-121s.webp",
+            "alt": "Chart headlined 37.3s versus 121.4s comparing a competitor's average sign-up time with"
+          },
+          {
+            "src": "/assets/images/lark/illustration-slow-registration-waiting-spot.webp",
+            "alt": "Flat illustration of a person waiting beside an oversized phone showing a loading graphic"
+          },
+          {
+            "src": "/assets/images/lark/flow-registration-workflow-before.webp",
+            "alt": "Flowchart of Lark's original sign-up: seven registration input and verification steps"
+          },
+          {
+            "src": "/assets/images/lark/flow-registration-workflow-after.webp",
+            "alt": "Flowchart of the redesigned Lark sign-up reduced to four steps"
+          },
+          {
+            "src": "/assets/images/lark/flow-new-signup-flow-desktop-and-mobile-9up.webp",
+            "alt": "New Lark sign-up flow shown across five desktop screens and four mobile screens"
+          },
+          {
+            "src": "/assets/images/lark/hero-hmw-feature-exploration-iceberg.webp",
+            "alt": "Section cover reading How might user benefit from feature exploration",
+            "width": "1920"
+          },
+          {
+            "src": "/assets/images/lark/illustration-eight-page-feature-tour-skip-frustration.webp",
+            "alt": "Illustration of two annoyed users facing a stack of eight onboarding tour pages with a"
+          },
+          {
+            "src": "/assets/images/lark/chart-feature-tour-skip-behavior-breakdown.webp",
+            "alt": "Pie chart splitting feature-tour behaviour into skipping on page one",
+            "width": "1036"
+          },
+          {
+            "src": "/assets/images/lark/chart-function-count-per-user-share.webp",
+            "alt": "Pie chart showing most users rely on a single Lark function",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/lark/chart-expected-function-share-by-feature.webp",
+            "alt": "Pie chart of most-wanted Lark features",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/lark/chart-solution-assessment-radar-5axis.webp",
+            "alt": "Radar chart scoring a solution on usability"
+          },
+          {
+            "src": "/assets/images/lark/system-engagement-pyramid-guidance-strategy.webp",
+            "alt": "Pyramid mapping retention",
+            "width": "1923"
+          },
+          {
+            "src": "/assets/images/lark/chart-instruction-read-efficiency-before.webp",
+            "alt": "Pie chart where only a small blue wedge represents users who read the onboarding instructions",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/lark/chart-instruction-read-efficiency-after.webp",
+            "alt": "Pie chart where a large blue slice represents users who read the onboarding instructions",
+            "width": "795"
+          },
+          {
+            "src": "/assets/images/lark/flow-onboarding-guidance-touchpoints-map.webp",
+            "alt": "Map of Lark onboarding touchpoints connected by dashed lines",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/hero-hmw-invite-under-competition-desktops.webp",
+            "alt": "Section cover reading How might user get invited under monopolistic competition",
+            "width": "1920"
+          },
+          {
+            "src": "/assets/images/lark/illustration-blocked-link-404-spot.webp",
+            "alt": "Illustration of a hand-drawn 404 over a broken chain link"
+          },
+          {
+            "src": "/assets/images/lark/illustration-bytedance-vs-tencent-user-loss-spot.webp",
+            "alt": "Illustration of a person standing between two phones branded ByteDance and Tencent"
+          },
+          {
+            "src": "/assets/images/lark/illustration-blocked-invite-access-vault-spot.webp",
+            "alt": "Flat illustration of a person holding two large keys in front of a locked safe with a dial and"
+          },
+          {
+            "src": "/assets/images/lark/chart-invitation-channel-penetration-fan.webp",
+            "alt": "Fan chart ranking invitation channels by reach"
+          },
+          {
+            "src": "/assets/images/lark/wireframe-add-team-member-dialog-explorations.webp",
+            "alt": "Wireframe explorations of Lark's Add Team Member dialog",
+            "width": "1454"
+          },
+          {
+            "src": "/assets/images/lark/screen-add-team-member-final-states-6up.webp",
+            "alt": "Six states of Lark's final Add Team Member dialog",
+            "width": "1405"
+          },
+          {
+            "src": "/assets/images/lark/flow-join-or-upgrade-team-8up.webp",
+            "alt": "Eight Lark mobile screens covering joining a team by code or QR and upgrading a personal account",
+            "width": "1405"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-desktop-email-signup-3up.webp",
+            "alt": "Three Lark desktop windows pairing rotating value-proposition illustrations with email entry",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-desktop-add-team-member-3up.webp",
+            "alt": "Three states of Lark desktop's Add Team Member dialog: email invite with link",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-desktop-invite-collaborators-3up.webp",
+            "alt": "Three states of Lark desktop's post-signup collaborator invite dialog: filled email invites",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-mobile-email-signup-5up.webp",
+            "alt": "Five Lark mobile screens covering email sign-in",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-mobile-first-run-feature-tips-5up.webp",
+            "alt": "Five Lark mobile tabs showing first-run guidance: assistant message",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-mobile-invite-teammates-5up.webp",
+            "alt": "Five Lark mobile screens for inviting teammates after creating a team: intro page",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/flow-lark-mobile-add-external-contact-5up.webp",
+            "alt": "Five Lark mobile screens for adding an external contact: inbox",
+            "width": "1500"
+          },
+          {
+            "src": "/assets/images/lark/photo-feishu-ux-team-snow-letter-formation-aerial.webp",
+            "alt": "Aerial view of a snow-covered campus lane where team members lie in the snow to spell out the"
+          },
+          {
+            "src": "/assets/images/lark/photo-feishu-ux-team-group-photo-night.webp",
+            "alt": "Night group photo of about twenty design and product colleagues posed in two rows in front of an"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 17
+      },
+      "links": [],
+      "blocks": 174
+    },
+    "mifinance.html": {
+      "title": "Mifinance",
+      "ogTitle": "Mifinance",
+      "webflowPageId": "63c9a4c16b7b781d99b1a62a",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/mifinance/hero-mi-finance-eaccount-app-showcase.webp",
+            "alt": "Isometric showcase of four Mi Finance phone screens on a deep blue backdrop",
+            "width": "700"
+          },
+          {
+            "src": "/assets/images/mifinance/logo-xiaomi-logo.webp",
+            "alt": "Xiaomi wordmark next to the orange rounded-square MI logo"
+          },
+          {
+            "src": "/assets/images/ui/icon-chevron-down-2.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-open-eaccount-bind-card-screen.webp",
+            "alt": "High-fidelity account opening screen with a three-step progress bar"
+          },
+          {
+            "src": "/assets/images/mifinance/system-account-opening-stepper-states.webp",
+            "alt": "Six states of a three-step account opening progress indicator moving from bind card through ID"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-id-photo-upload-guidance-screen.webp",
+            "alt": "High-fidelity ID upload screen showing a document framed in a phone"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-face-verification-failed-dialog.webp",
+            "alt": "High-fidelity error dialog stating face verification failed"
+          },
+          {
+            "src": "/assets/images/mifinance/journey-account-opening-journey-painpoints.webp",
+            "alt": "Vertical journey map of the legacy account opening process across four stages"
+          },
+          {
+            "src": "/assets/images/mifinance/illustration-lost-user-question-mark-spot.webp",
+            "alt": "Flat illustration of a man holding a map beside stylised trees with a large question mark above him"
+          },
+          {
+            "src": "/assets/images/mifinance/chart-user-type-account-status-matrix.webp",
+            "alt": "Matrix of six user types from new to heavy",
+            "width": "532"
+          },
+          {
+            "src": "/assets/images/mifinance/flow-eaccount-task-matrix-with-screenshots.webp",
+            "alt": "Screenshot matrix of the Mi Finance account-opening flow",
+            "width": "552"
+          },
+          {
+            "src": "/assets/images/mifinance/flow-eaccount-task-matrix-by-user-group.webp",
+            "alt": "Matrix mapping five user groups against four account-opening steps"
+          },
+          {
+            "src": "/assets/images/mifinance/competitive-china-fintech-eaccount-onboarding-comparison.webp",
+            "alt": "Competitive comparison of five Chinese fintech apps'"
+          },
+          {
+            "src": "/assets/images/mifinance/screen-legacy-account-opening-screens-cn.webp",
+            "alt": "Four legacy Chinese-language account opening screens whose primary buttons switch between orange"
+          },
+          {
+            "src": "/assets/images/mifinance/screen-legacy-eaccount-entry-screens-annotated.webp",
+            "alt": "Two legacy Mi Finance e-account entry screens shown in Chinese alongside English translations",
+            "width": "1155"
+          },
+          {
+            "src": "/assets/images/mifinance/system-eaccount-failure-message-audit.webp",
+            "alt": "Audit chart pairing three generic failure dialogs with the five real causes hidden behind each"
+          },
+          {
+            "src": "/assets/images/mifinance/lowfi-eaccount-lowfi-wireflow-plan1.webp",
+            "alt": "Low-fidelity plan one wireflow branching by user group through account creation",
+            "width": "220"
+          },
+          {
+            "src": "/assets/images/mifinance/lowfi-eaccount-lowfi-wireflow-with-error-states.webp",
+            "alt": "Low-fidelity wireflow adding error-state dialogs",
+            "width": "220"
+          },
+          {
+            "src": "/assets/images/mifinance/lowfi-eaccount-lowfi-wireflow-plan1.webp",
+            "alt": "",
+            "lightbox": true
+          },
+          {
+            "src": "/assets/images/mifinance/wireframe-retention-and-verification-failure-wireframes-iteration1.webp",
+            "alt": "First-iteration wireframes covering exit-retention prompts",
+            "width": "220"
+          },
+          {
+            "src": "/assets/images/mifinance/lowfi-eaccount-lowfi-wireflow-full.webp",
+            "alt": "Full low-fidelity wireflow for the e-account journey",
+            "width": "220"
+          },
+          {
+            "src": "/assets/images/mifinance/system-eaccount-step-indicator-states.webp",
+            "alt": "Specification of a three-step progress indicator in six states"
+          },
+          {
+            "src": "/assets/images/mifinance/lowfi-eaccount-guidance-screens-final-lowfi.webp",
+            "alt": "Three guidance screens for ID photo upload"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-failure-and-retention-dialog-designs.webp",
+            "alt": "Seven dialog designs for verification failures"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-eaccount-open-screen-empty-state.webp",
+            "alt": "High-fidelity e-account opening screen in empty state"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-eaccount-open-screen-with-bank-intro-banner.webp",
+            "alt": "E-account opening screen variant with a one-minute introduction tag"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-eaccount-open-screen-filled-state.webp",
+            "alt": "High-fidelity e-account screen in filled state showing a bound bank card with daily limit"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-id-photo-upload-screen.webp",
+            "alt": "ID upload screen with a hand-holding-document illustration"
+          },
+          {
+            "src": "/assets/images/mifinance/hifi-face-id-verification-screen.webp",
+            "alt": "Face ID verification screen with a completed two-step indicator"
+          },
+          {
+            "src": "/assets/images/mifinance/flow-final-eaccount-flow-map.webp",
+            "alt": "Final high-fidelity flow map of the e-account journey"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 14
+      },
+      "links": [],
+      "blocks": 119
+    },
+    "cummins-digitalization.html": {
+      "title": "Cumminsdesign",
+      "ogTitle": "Cumminsdesign",
+      "webflowPageId": "67ce549049caa92b0cad252a",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/cummins/logo-cummins-brand-logo.webp",
+            "alt": "Cummins logo: a white C-shaped mark on a dark red square with the Cummins wordmark curved along"
+          },
+          {
+            "src": "/assets/images/ui/icon-chevron-down.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-color-typography-responsive-specs.webp",
+            "alt": "Three Guidanz foundation pages: colour tokens with hex values"
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-design-system-grid-margin-spacing.webp",
+            "alt": "Three Guidanz design system spec sheets covering responsive grids"
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-button-link-ios-component-specs.webp",
+            "alt": "Three Guidanz design system pages documenting buttons"
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-android-components-and-global-header.webp",
+            "alt": "Three Guidanz pages covering Android components"
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-icon-library-pc-android-ios.webp",
+            "alt": "Three Guidanz icon library pages for PC"
+          },
+          {
+            "src": "/assets/images/cummins/system-ecm-install-message-matrix-part1.webp",
+            "alt": "Message specification table mapping ECM calibration install conditions to title text"
+          },
+          {
+            "src": "/assets/images/cummins/system-ecm-install-message-matrix-part2.webp",
+            "alt": "Second page of the ECM message spec table covering up-to-date"
+          },
+          {
+            "src": "/assets/images/cummins/system-guidanz-status-message-display-spec.webp",
+            "alt": "Spec table mapping conditions"
+          },
+          {
+            "src": "/assets/images/cummins/system-ecm-install-message-matrix-part3.webp",
+            "alt": "Third page of the ECM message spec table covering delete"
+          },
+          {
+            "src": "/assets/images/cummins/system-calibration-recovery-screen-spec-j6j.webp",
+            "alt": "Continuation of the calibration failure screen spec covering parameter save failures and"
+          },
+          {
+            "src": "/assets/images/cummins/system-calibration-recovery-screen-spec-j6f.webp",
+            "alt": "Screen-by-screen spec for calibration failure states"
+          },
+          {
+            "src": "/assets/images/cummins/hifi-diagnostic-session-fault-solutions.webp",
+            "alt": "Guidanz desktop screen listing five ranked troubleshooting steps for fault SPN 436 FMI16"
+          },
+          {
+            "src": "https://vimeo.com/1063938416/5ded22af0a",
+            "alt": "",
+            "lightbox": true
+          },
+          {
+            "src": "/assets/images/cummins/hifi-diagnostic-session-history.webp",
+            "alt": "Diagnostic session history screen with a session summary card above a timestamped log of"
+          },
+          {
+            "src": "https://vimeo.com/1063938455/67a2e978ca",
+            "alt": "",
+            "lightbox": true
+          },
+          {
+            "src": "/assets/images/cummins/hifi-add-symptom-code-modal.webp",
+            "alt": "Modal over the fault list with two symptom-code search fields and a disabled Add Symptom button"
+          },
+          {
+            "src": "https://vimeo.com/1063938439/6c0219d768",
+            "alt": "",
+            "lightbox": true
+          },
+          {
+            "src": "/assets/images/cummins/flow-parameter-data-monitoring-3up.webp",
+            "alt": "Three Android screens for live parameter monitoring: a multi-series line graph"
+          },
+          {
+            "src": "/assets/images/cummins/flow-multi-module-calibration-result-3up.webp",
+            "alt": "Three Android screens showing multi-module ECM calibration results"
+          },
+          {
+            "src": "/assets/images/cummins/flow-ecm-code-install-progress-3up.webp",
+            "alt": "Three Android screens tracking ECM code download"
+          },
+          {
+            "src": "/assets/images/cummins/chart-marketplace-research-methods-summary.webp",
+            "alt": "Slide listing five research methods for Cummins Marketplace beside a mosaic of roadmaps"
+          },
+          {
+            "src": "/assets/images/cummins/journey-marketplace-service-blueprint-overview.webp",
+            "alt": "Slide introducing an end-to-end service blueprint of the subscription experience beside a"
+          },
+          {
+            "src": "/assets/images/cummins/chart-marketplace-interview-participation.webp",
+            "alt": "Research slide listing interview participants by role alongside six affinity-mapping boards of"
+          },
+          {
+            "src": "/assets/images/cummins/chart-marketplace-research-project-timeline.webp",
+            "alt": "Gantt timeline from late October to mid-January covering surveys"
+          },
+          {
+            "src": "/assets/images/cummins/journey-marketplace-service-blueprint-four-stages.webp",
+            "alt": "Four service blueprint boards for license activation"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 22
+      },
+      "links": [],
+      "blocks": 66
+    },
+    "alzheimerdisease.html": {
+      "title": "AlzheimerDisease",
+      "ogTitle": "AlzheimerDisease",
+      "webflowPageId": "63c9a4c16b7b78e834b1a5ef",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/alzheimer/hero-alzheimer-patient-portrait-collage.webp",
+            "alt": "Collage of black-and-white portraits of elderly people with anxious or confused expressions under",
+            "width": "716"
+          },
+          {
+            "src": "/assets/images/ui/icon-chevron-down-2.svg",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/alzheimer/chart-caregiver-interview-quotes-affinity-board.webp",
+            "alt": "Miro affinity board of about 36 colour-coded sticky notes holding verbatim quotes from caregivers"
+          },
+          {
+            "src": "/assets/images/alzheimer/journey-caregiver-shadowing-timeline-notes-early-morning.webp",
+            "alt": "Close-up of handwritten shadowing notes from 6am onward: caregiver waking",
+            "width": "561"
+          },
+          {
+            "src": "/assets/images/alzheimer/journey-caregiver-shadowing-timeline-notes-full-day.webp",
+            "alt": "Wall of handwritten sticky notes timestamping a caregiver's day",
+            "width": "540"
+          },
+          {
+            "src": "/assets/images/alzheimer/journey-caregiver-shadowing-timeline-notes-afternoon.webp",
+            "alt": "Close-up of handwritten shadowing notes covering a caregiver's afternoon: feeding medicine",
+            "width": "559"
+          },
+          {
+            "src": "/assets/images/alzheimer/chart-caregiver-daily-time-schedule.webp",
+            "alt": "Horizontal timeline bar chart breaking a caregiver's 7am-to-10pm day into cleaning"
+          },
+          {
+            "src": "/assets/images/alzheimer/chart-caregiver-tasks-perceived-vs-unperceived.webp",
+            "alt": "Butterfly chart splitting a caregiver's daily tasks either side of a centre line into work"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-visible-vs-invisible-intentions.webp",
+            "alt": "Hand-drawn diagram contrasting a small dashed circle of invisible intentions with a large solid"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-caregiver-family-overlap-coherent-actions.webp",
+            "alt": "Hand-drawn diagram where a caregiver circle overlaps a dashed families circle"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-caregiver-family-attention-curves.webp",
+            "alt": "Hand-drawn pair of solid and dashed curves rising and falling out of phase along a shared baseline"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-narrow-overlap-line-diagram.webp",
+            "alt": "Minimal line drawing of a dashed line and two solid lines crossed by a single narrow vertical"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-unclear-to-clear-words-through-collaboration.webp",
+            "alt": "Diagram of a cloud-shaped blob of unclear words turning"
+          },
+          {
+            "src": "/assets/images/alzheimer/illustration-diverse-trials-to-success-through-collaboration.webp",
+            "alt": "Bubble diagram where a dense cluster of plans narrows through collaboration into a smaller cluster"
+          },
+          {
+            "src": "/assets/images/alzheimer/lowfi-hand-sketch-app-concepts.webp",
+            "alt": "Whiteboard sketches of app concepts: calendar"
+          },
+          {
+            "src": "/assets/images/alzheimer/wireframe-grayscale-ui-component-wireframes.webp",
+            "alt": "Greyscale wireframe sheet with a date picker",
+            "width": "1323"
+          },
+          {
+            "src": "/assets/images/alzheimer/system-lighting-and-data-visualization-components.webp",
+            "alt": "Dark component sheet: lighting signals for working"
+          },
+          {
+            "src": "/assets/images/alzheimer/photo-caregiver-assisting-patient-in-wheelchair.webp",
+            "alt": "A uniformed caregiver steadies the head of an elderly patient seated in a wheelchair beside a"
+          },
+          {
+            "src": "/assets/images/alzheimer/photo-patient-in-bed-with-vital-monitor.webp",
+            "alt": "An elderly patient lies in a hospital bed beside a vital-signs monitor showing live readings"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [],
+      "blocks": 64
+    },
+    "tiktok-research.html": {
+      "title": "TikTok Research",
+      "ogTitle": "TikTok Research",
+      "webflowPageId": "63c9a4c16b7b789933b1a672",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/tiktok/hero-egypt-female-safety-perception-title.webp",
+            "alt": "Title banner with a line-drawn profile of a woman in a headscarf beside the words Egypt Female",
+            "width": "1577"
+          },
+          {
+            "src": "/assets/images/tiktok/chart-reasons-for-not-sharing-videos-female-vs-all.webp",
+            "alt": "Grouped bar chart comparing female and overall respondents on reasons for not sharing videos"
+          },
+          {
+            "src": "/assets/images/tiktok/chart-unsafe-content-types-female-vs-all.webp",
+            "alt": "Grouped bar chart of unsafe content types encountered"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [],
+      "blocks": 17
+    },
+    "fashion.html": {
+      "title": "fashion",
+      "ogTitle": "fashion",
+      "webflowPageId": "63c9a4c16b7b7856b8b1a5f5",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/fashion/photo-beach-editorial-collection-collage-trimmed.webp",
+            "alt": "Trimmed version of the beach fashion collection collage with the same sheer layered looks"
+          },
+          {
+            "src": "/assets/images/fashion/photo-beach-editorial-collection-collage-full.webp",
+            "alt": "Tall collage of a fashion collection shot on a beach: sheer layered garments"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [],
+      "blocks": 3
+    },
+    "aboutme.html": {
+      "title": "Aboutme",
+      "ogTitle": "Aboutme",
+      "webflowPageId": "67cf03e3db07c85e229ec7af",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/about/illustration-ai-generated-self-avatar.webp",
+            "alt": "Stylized cartoon avatar of a smiling young woman with long wavy brown hair",
+            "width": "1120"
+          },
+          {
+            "src": "/assets/images/about/bg-aurora-light-accent.png",
+            "alt": "",
+            "height": ""
+          },
+          {
+            "src": "/assets/images/about/photo-pet-photobooth-strip.webp",
+            "alt": "Photobooth strip of a woman in a costume hat posing with two small dogs"
+          },
+          {
+            "src": "/assets/images/about/photo-feeding-two-dogs-treat.webp",
+            "alt": "Hand offering a piece of baked treat to an excited Shiba Inu and an Australian Shepherd"
+          },
+          {
+            "src": "/assets/images/about/photo-snowboarder-on-slope-portrait.webp",
+            "alt": "Skier in a purple jacket and helmet standing beside a snowboard on a sunny mountain slope"
+          },
+          {
+            "src": "/assets/images/about/photo-ski-resort-gondola-slope.webp",
+            "alt": "Snowy ski resort seen from the slope"
+          },
+          {
+            "src": "/assets/images/about/photo-hotpot-table-with-dog.webp",
+            "alt": "A hotpot dinner spread of sliced meat",
+            "width": "1120"
+          },
+          {
+            "src": "/assets/images/about/photo-hotpot-spread-kitchen.webp",
+            "alt": "A home-cooked hotpot spread with shrimp"
+          },
+          {
+            "src": "/assets/images/about/photo-jeep-summit-above-clouds.webp",
+            "alt": "Woman sitting on the hood of a jeep at a mountain summit above the clouds",
+            "width": "1120"
+          },
+          {
+            "src": "/assets/images/about/photo-sandstone-canyon-group-photo.webp",
+            "alt": "Three people posing on a striped red sandstone slope, seen from above"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [
+        "https://www.linkedin.com/in/yanice-yang",
+        "/work/fashion"
+      ]
+    },
+    "projects.html": {
+      "title": "Projects",
+      "ogTitle": "Projects",
+      "webflowPageId": "63c9a4c16b7b780987b1a64e",
+      "media": {
+        "images": [],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [
+        "/work/ai-driven-product-design",
+        "/work/mckinseyecommerce",
+        "/work/larkdesign",
+        "/work/cummins-digitalization",
+        "/work/mifinance",
+        "/work/alzheimerdisease",
+        "/work/tiktok-research"
+      ]
+    },
+    "index.webflow.html": {
+      "title": "Home",
+      "description": "Yanice Yang Design portfolio",
+      "ogTitle": "Home",
+      "webflowPageId": "63c9a4c16b7b787eabb1a5ed",
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/home/case-opusclip-frame.jpg",
+            "alt": "Project card cover showing the OpusClip editor with transcript captions, a podcast video frame, and AI-suggested clip thumbnails"
+          },
+          {
+            "src": "/assets/images/home/case-mckinsey-frame.jpg",
+            "alt": "Project card cover illustration of a woman shopping on an oversized phone storefront, captioned McKinsey Design"
+          },
+          {
+            "src": "/assets/images/home/case-lark-frame.jpg",
+            "alt": "Project card cover with a user-settings icon ringed by mail, calendar, video, docs, and app-grid icons above the ByteDance wordmark"
+          },
+          {
+            "src": "/assets/images/home/hero-cummins-guidanz-card-cover.webp",
+            "alt": "Project card cover with Cummins-red backdrop and angled Guidanz screens for diagnostic sessions"
+          },
+          {
+            "src": "/assets/images/home/hero-mi-finance-account-card-cover.webp",
+            "alt": "Project card cover with angled Mi Finance mobile screens for ID upload"
+          },
+          {
+            "src": "/assets/images/home/hero-alzheimer-care-wearable-card-cover.webp",
+            "alt": "Project card cover of stacked smartwatches with an orange face in front showing a petal icon and a"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [
+          {
+            "src": "/assets/lottie/67f757f6b131fbe53d1af697_Flow_2.json",
+            "loop": "1",
+            "autoplay": "1"
+          }
+        ],
+        "lightboxes": 0
+      },
+      "links": [
+        "https://302437672248143872.hello.cv",
+        "/work/ai-driven-product-design",
+        "/work/mckinseyecommerce",
+        "/work/larkdesign",
+        "/work/cummins-digitalization",
+        "/work/mifinance",
+        "/work/alzheimerdisease"
+      ]
+    }
+  },
+  "panels": {
+    "yy-about.js": {
+      "media": {
+        "images": [
+          {
+            "src": "/assets/images/about/illustration-ai-generated-self-avatar.webp",
+            "alt": "Stylized cartoon avatar of a smiling young woman with long wavy brown hair, used as the author's profile picture"
+          },
+          {
+            "src": "/assets/images/about/bg-aurora-light-accent.png",
+            "alt": ""
+          },
+          {
+            "src": "/assets/images/about/photo-pet-photobooth-strip.webp",
+            "alt": "Photobooth strip of a woman in a costume hat posing with two small dogs"
+          },
+          {
+            "src": "/assets/images/about/photo-feeding-two-dogs-treat.webp",
+            "alt": "Hand offering a piece of baked treat to an excited Shiba Inu and an Australian Shepherd"
+          },
+          {
+            "src": "/assets/images/about/photo-snowboarder-on-slope-portrait.webp",
+            "alt": "Skier in a purple jacket and helmet standing beside a snowboard on a sunny mountain slope"
+          },
+          {
+            "src": "/assets/images/about/photo-ski-resort-gondola-slope.webp",
+            "alt": "Snowy ski resort seen from the slope, with red gondola cabins overhead and a snow-covered village below"
+          },
+          {
+            "src": "/assets/images/about/photo-hotpot-table-with-dog.webp",
+            "alt": "A hotpot dinner spread of sliced meat, vegetables and mushrooms on a table, with a border collie watching from a chair"
+          },
+          {
+            "src": "/assets/images/about/photo-hotpot-spread-kitchen.webp",
+            "alt": "A home-cooked hotpot spread with shrimp, sliced beef, mushrooms and greens laid out around a split broth pot"
+          },
+          {
+            "src": "/assets/images/about/photo-jeep-summit-above-clouds.webp",
+            "alt": "Woman sitting on the hood of a jeep at a mountain summit above the clouds, next to observatory domes"
+          },
+          {
+            "src": "/assets/images/about/photo-sandstone-canyon-group-photo.webp",
+            "alt": "Three people posing on a striped red sandstone slope, seen from above"
+          }
+        ],
+        "videos": [],
+        "iframes": [],
+        "lottie": [],
+        "lightboxes": 0
+      },
+      "links": [
+        "https://www.linkedin.com/in/yanice-yang",
+        "/work/fashion"
+      ]
+    },
+    "yy-resume.js": {
+      "jobs": 6,
+      "education": 2,
+      "awards": 5,
+      "publications": 4,
+      "skills": 4
+    },
+    "yy-work.js": {
+      "cards": 8
+    }
+  }
+}
