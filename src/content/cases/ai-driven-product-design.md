@@ -68,19 +68,19 @@ Learned from the PRD and internal user portal, Users are looking for a feature t
 
 ## Generate resources within AI prompts
 
-<video src="/assets/videos/AI-Prompt.mov" autoplay loop muted playsinline></video>
+<video src="/assets/videos/AI-Prompt.mp4" autoplay loop muted playsinline></video>
 
 ## AI generating storyboard&voiceover
 
-<video src="/assets/videos/generate-footage.mov" autoplay loop muted playsinline></video>
+<video src="/assets/videos/generate-footage.mp4" autoplay loop muted playsinline></video>
 
 ## Enhancing storyline with AI power
 
-<video src="/assets/videos/add-AI-video.mov" autoplay loop muted playsinline></video>
+<video src="/assets/videos/add-AI-video.mp4" autoplay loop muted playsinline></video>
 
 ## Final touchup through manual control
 
-<video src="/assets/videos/edit-footage.mov" autoplay loop muted playsinline></video>
+<video src="/assets/videos/edit-footage.mp4" autoplay loop muted playsinline></video>
 
 ### Research
 

@@ -206,6 +206,8 @@ function normalizeAsset(src) {
   let s = src.trim().split('?')[0];
   s = s.replace(/^(\.\.\/)+/, '').replace(/^\.?\//, '');
   if (/^https?:\/\//.test(s) || s.startsWith('data:')) return s;
+  // The .mov clips were remuxed (losslessly, same H.264 stream) to .mp4 for browser support.
+  s = s.replace(/\.mov$/i, '.mp4');
   return '/' + s.replace(/\\/g, '/');
 }
 
