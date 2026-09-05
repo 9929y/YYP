@@ -1,0 +1,25 @@
+---
+/**
+ * Layout for pages built with Tailwind / shadcn / 21st.dev components
+ * (case studies, work index, about, resume). Same shell and chrome as the
+ * landing page (BaseLayout), plus the Tailwind stylesheet and tokens.
+ */
+import BaseLayout from './BaseLayout.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  htmlClass?: string;
+  reveal?: boolean;
+  lenis?: boolean;
+}
+
+const { title, description, htmlClass = '', reveal = false, lenis = true } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} htmlClass={htmlClass} reveal={reveal} lenis={lenis} chrome={true}>
+  <slot name="head" slot="head" />
+  <slot />
+  <slot name="scripts" slot="scripts" />
+</BaseLayout>

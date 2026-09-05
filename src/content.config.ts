@@ -78,6 +78,31 @@ const pages = defineCollection({
       .optional(),
     featuredLabel: z.string().optional(),
 
+    /* about (rendered by the About nav panel and /about) */
+    about: z
+      .object({
+        place: z.string(),
+        hello: z.string(),
+        name: z.string(),
+        lead: z.string(),
+        linkedin: z.string(),
+        portrait: z.object({ src: z.string(), alt: z.string() }),
+        aurora: z.string().optional(),
+        bio: z.array(z.string()),
+        funFact: z.object({ title: z.string(), text: z.string() }).optional(),
+        cta: z.object({ label: z.string(), href: z.string() }).optional(),
+        storiesTitle: z.string(),
+        stories: z.array(
+          z.object({
+            title: z.string(),
+            images: z.array(z.object({ src: z.string(), alt: z.string() })),
+            /** Trusted HTML authored in the content file (<strong>, <br>). */
+            html: z.string()
+          })
+        )
+      })
+      .optional(),
+
     /* work */
     cards: z
       .array(

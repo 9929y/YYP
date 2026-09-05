@@ -4,7 +4,7 @@
  * copy can be reviewed at /work/<slug>. The Figma UI replaces this template.
  */
 import { getCollection, render } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
 import nav from '@/content/site/navigation.json';
 
 export async function getStaticPaths() {
@@ -21,8 +21,8 @@ const prev = i > 0 ? order[i - 1] : null;
 const next = i >= 0 && i < order.length - 1 ? order[i + 1] : null;
 ---
 
-<BaseLayout title={`${entry.data.title} — Yanice Yang`} description={entry.data.description ?? entry.data.note}>
-  <article class="mx-auto max-w-3xl px-6 py-24">
+<PageLayout title={`${entry.data.title} — Yanice Yang`} description={entry.data.description ?? entry.data.note}>
+  <main class="mx-auto max-w-3xl px-6 py-24">
     <header class="mb-16">
       <p class="text-sm uppercase tracking-wide text-muted-foreground">{entry.data.scope}</p>
       <h1 class="mt-3 text-4xl font-semibold leading-tight">{entry.data.headline ?? entry.data.title}</h1>
@@ -46,5 +46,5 @@ const next = i >= 0 && i < order.length - 1 ? order[i + 1] : null;
       {prev ? <a href={`/work/${prev}`}>← {nav.footer.prevLabel}</a> : <span />}
       {next ? <a href={`/work/${next}`}>{nav.footer.nextLabel} →</a> : <span />}
     </nav>
-  </article>
-</BaseLayout>
+  </main>
+</PageLayout>

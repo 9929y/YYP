@@ -1,15 +1,15 @@
 ---
 /** PLACEHOLDER work index. Cards come from src/content/pages/work.md frontmatter. */
 import { getEntry } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
 
 const work = await getEntry('pages', 'work');
 if (!work) throw new Error('src/content/pages/work.md is missing');
 const cards = work.data.cards ?? [];
 ---
 
-<BaseLayout title={`${work.data.title} — Yanice Yang`} description={work.data.description}>
-  <section class="mx-auto max-w-6xl px-6 py-24">
+<PageLayout title={`${work.data.title} — Yanice Yang`} description={work.data.description}>
+  <main class="mx-auto max-w-6xl px-6 py-24">
     <h1 class="text-4xl font-semibold">{work.data.title}</h1>
     <ul class="mt-12 grid gap-8 sm:grid-cols-2">
       {cards.map((card) => (
@@ -32,5 +32,5 @@ const cards = work.data.cards ?? [];
         </li>
       ))}
     </ul>
-  </section>
-</BaseLayout>
+  </main>
+</PageLayout>

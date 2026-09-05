@@ -1,0 +1,172 @@
+/* ============================================================================
+   yy-tokens.css — single synchronous source for motion + landing visual tokens.
+
+   Load this file with a real <link> in <head> on every page, BEFORE any effect
+   CSS. Do not rely on yy-chrome.js injecting it: until this sheet is present,
+   rules that reference --duration-* / --ease-* are invalid.
+
+   Motion values are copied from transitions.dev (transitions-polish) and matched
+   by PURPOSE, never by nearest number.
+
+   Visual tokens below are MEASURED (kedavra.me + shipped case pages), not invented.
+
+   Breakpoint map (cannot live in custom properties):
+     1280  desktop frame lock
+     992   desktop-only effects (cursor, ASCII flow) — min-width enable
+     991   same effects — max-width disable
+     900   landing canvas light / skip WebGL
+     877   landing two-column collapse
+     768   case-note static copy on coarse pointers
+     767   type step (hero 40 -> 64)
+     560   chrome capsule / landing edge
+     479   Webflow mobile
+   ============================================================================ */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/plus-jakarta-sans-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/caveat-500.woff2") format("woff2");
+}
+
+:root {
+  /* 时长 */
+  --duration-stagger: 40ms;      /* 每项错开偏移 */
+  --duration-micro: 80ms;        /* tooltip 意图延迟、shake 分段、大项错开 */
+  --duration-quick: 150ms;       /* 模态/下拉关闭、文字互换、tooltip 出现 */
+  --duration-fast: 250ms;        /* 图标切换、下拉/模态打开、滑动 tab、页面滑动 */
+  --duration-medium: 350ms;      /* 面板关闭、toast 关闭 */
+  --duration-slow: 400ms;        /* 面板打开、骨架屏内容揭示、输入清空 */
+  --duration-very-slow: 500ms;   /* 强调时刻、badge 出现、文字揭示、成功勾选 */
+
+  /* 缓动 */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);      /* 开关、滑动、尺寸/位置变化 —— 默认 */
+  --ease-in-out: ease-in-out;                              /* 图标互换、文字互换、骨架揭示 */
+  --ease-out: ease-out;                                    /* tooltip 开关 */
+  --ease-linear: linear;                                   /* shimmer、骨架脉冲、spinner */
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);        /* badge 弹出 */
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1); /* 有弹性的 hover-out（头像归位）*/
+
+  /* 位移 */
+  --distance-micro: 4px;         /* 文字互换 */
+  --distance-small: 6px;         /* error shake 小段 */
+  --distance-base: 8px;          /* badge 斜向出现、页面滑动、shake 大段 */
+  --distance-medium: 12px;       /* 文字揭示 */
+  --distance-large: 30px;        /* 勾选 badge 出现 */
+
+  /* 缩放（入场前值，均落定到 1）*/
+  --scale-large: 0.96;           /* 模态开关 */
+  --scale-medium: 0.97;          /* 下拉打开 */
+  --scale-small: 0.98;           /* tooltip 打开 */
+  --scale-tiny: 0.99;            /* 下拉关闭 */
+
+  /* 模糊（入场前值，均落定到 0）*/
+  --blur-small: 2px;             /* 面板揭示、图标互换、文字互换、骨架揭示、数字弹入 */
+  --blur-medium: 3px;            /* 页面滑动、文字揭示 */
+  --blur-large: 8px;             /* 成功勾选打开 */
+}
+
+/* Landing / new-page visual tokens. Legacy Webflow pages keep their own
+   colour system; nothing here may be applied to those pages as a colour overlay. */
+:root {
+    /* ---- frame ---- */
+    /* MEASURED off kedavra.me, not derived. The container is 830 on a 1440
+       screen — roughly 58% of the viewport is margin, and that width is why it
+       reads as a document rather than a dashboard. Its own teardown records the
+       split as 320 + 17 + 492 = 829 while describing the container as 830.
+       Yanice chose these proportions over the 1280/936 variant on 2026-08-19. */
+    /* --frame 保留作记录：kedavra 实测的 320 + 17 + 492 = 829。
+       它已不再用于布局 —— 见下方"一个外框，一条轴线"。首屏靠 --col-content
+       约束文字宽度来保住那个 measure。 */
+    --frame: 829px;
+    /* The index needs a wider frame than the hero, and this is a deliberate
+       exception rather than drift. The hero keeps kedavra's 492 measure because
+       that is what makes 64px type run 12 characters to the line. The index has
+       a different job: Yanice asked for one project per screen, and a 4:3 image
+       that owns a 900px-tall viewport is ~816px wide, which 492 cannot hold.
+       320 + 17 + 823 = 1160. */
+    --frame-index: 1160px;
+    /* One outer spine for hero + cases so the vertical rule shares one x at every
+       viewport. Figma uses 1160 (hero) / 1260 (case); centering nearly aligns them
+       on a 1920 artboard, but when both frames go fluid the old split (320 vs 372
+       label) put the rules ~52px apart. 1260 fits case media (372+17+823). */
+    --frame-case: 1260px;
+    --frame-spine: var(--frame-case);
+    --col-label: 320px;
+    --col-label-case: 372px;
+    /* Shared rule inset inside the spine (Figma case: 372 + 8).
+       Mid-width overrides shrink --col-label-case; rule stays in the gap. */
+    --rule-x: calc(var(--col-label-case) + 8px);
+    /* Full-frame Figma gutter. Mid widths raise this via landing.css. */
+    --col-gap: 17px;
+    --col-gap-case: 8px;
+    --col-content: 492px;
+    --edge: 24px;
+    --rule: #e9e9e9;
+    --slot-radius: 36px;
+    /* HTML case cards only. Exported images keep their own corners. */
+    --case-radius: var(--slot-radius);
+    --slot-w: 823px;
+    --slot-h: 617px;
+
+    /* ---- type scale: the site's shipped 8 steps, plus one new 60px step ----
+       60 = 48 x 1.25, the next cell on the same ratio. Used ONLY by the hero
+       title and ONLY at >=992px. 64 would be off-grid and nobody can see 6%;
+       104 is a layout problem, not a font-size problem — in a 936 column it
+       yields about 9 characters per line. */
+    --t-11: 11px; --t-13: 13px; --t-16: 16px; --t-20: 20px;
+    --t-25: 25px; --t-32: 32px; --t-40: 40px; --t-48: 48px; --t-64: 64px;
+
+    /* ---- line-height by ROLE, not by size ----
+       Phase 1 established this: a 16px label and 16px prose need different
+       leading, so deriving line-height from font-size alone is wrong. */
+    --lh-display: 1;      /* measured: 64px type on 64px leading, ratio 1.00 */
+    --lh-tight: 1.15;
+    --lh-heading: 1.25;
+    --lh-body: 1.55;
+    --lh-caption: 1.45;
+
+    /* ---- light / neutral ---- */
+    --ink: #242220;
+    --ink-2: #55534e;
+    --ink-3: #6d6a63;   /* 5.18:1 on --ground; #8a877f was 3.44:1 */
+    /* #fff, not the reference's off-white. Measured: the 9 light case pages all
+       render body at rgb(255,255,255), and Yanice's instruction is to unify style
+       WITHOUT touching the subpages — so the landing moves to meet them, which
+       removes the background flash on navigation and changes zero subpage pixels.
+       Checked against everything tuned on this value: the cursor's
+       mix-blend-mode: difference inverts a white dot to pure black here (better,
+       not worse), and --ink-3 gains contrast rather than losing it. */
+    --ground: #fff;
+    --hair: #e4e1dc;
+    --slot: #efece8;
+  }

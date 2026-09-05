@@ -1,60 +1,103 @@
 ---
-import '@/styles/global.css';
-import nav from '@/content/site/navigation.json';
+/**
+ * Site shell: <head>, design tokens, and the shared chrome (capsule nav with
+ * Work / About / Resume panels + footer credit) mounted by yy-chrome.js.
+ *
+ * The panels render their content from the JSON block this layout embeds
+ * (#yy-content), which is built from src/content, so words live in one place.
+ *
+ * This layout deliberately does NOT load Tailwind: the landing page was tuned
+ * against browser defaults. Pages built with Tailwind use PageLayout.astro.
+ */
+import { getEntry } from 'astro:content';
 
 interface Props {
   title: string;
   description?: string;
-  /** The site stays out of search indexes until the relaunch is approved. */
+  htmlClass?: string;
+  reveal?: boolean;
+  lenis?: boolean;
+  chrome?: boolean;
+  /** Kept so callers can pass it; the site is always noindex until relaunch. */
   noindex?: boolean;
 }
 
-const { title, description, noindex = true } = Astro.props;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
----
+const {
+  title,
+  description = 'Product designer. Selected work in research, consumer product, enterprise and health.',
+  htmlClass = '',
+  reveal = false,
+  lenis = true,
+  chrome = true
+} = Astro.props;
 
-<!doctype html>
-<html lang="en">
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
+const documentClass = [htmlClass, chrome ? 'yy-chrome' : ''].filter(Boolean).join(' ');
+
+const [work, about, resume] = await Promise.all([
+  getEntry('pages', 'work'),
+  getEntry('pages', 'about'),
+  getEntry('pages', 'resume')
+]);
+const panelContent = {
+  work: work?.data.cards ?? [],
+  about: about?.data.about ?? null,
+  resume: resume
+    ? {
+        profile: resume.data.profile,
+        workRange: resume.data.workRange,
+        jobs: resume.data.jobs ?? [],
+        education: resume.data.education ?? [],
+        awards: resume.data.awards ?? [],
+        publications: resume.data.publications ?? [],
+        skills: resume.data.skills ?? []
+      }
+    : null
+};
+/* `<` escaped so the JSON can never close the script tag early. */
+const panelJson = JSON.stringify(panelContent).replace(/</g, '\\u003c');
+---
+<!DOCTYPE html>
+<html lang="en" class={documentClass}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     {description && <meta name="description" content={description} />}
-    {noindex && <meta name="robots" content="noindex, nofollow, noarchive" />}
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/assets/images/ui/logo-site-favicon.webp" type="image/webp" />
-    <link rel="apple-touch-icon" href="/assets/images/ui/logo-site-app-icon.webp" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link href="/assets/images/ui/logo-site-favicon.webp" rel="shortcut icon" type="image/x-icon" />
+    <link href="/assets/images/ui/logo-site-app-icon.webp" rel="apple-touch-icon" />
+    <style is:inline>
+      /* Anti-flash rules, lifted from yy-chrome.js so the chrome script can defer.
+         Must stay byte-equivalent to the boot rules in yy-chrome.js. */
+      html.yy-chrome { scrollbar-gutter: stable }
+      html.yy-panel-open, html.yy-panel-open body { overflow: hidden !important }
+    </style>
+    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/plus-jakarta-sans-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link href="/assets/css/yy-tokens.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/yy-motion.css" rel="stylesheet" type="text/css" />
+    {chrome && (
+      <>
+        <link href="/assets/css/yy-chrome.css" rel="stylesheet" type="text/css" />
+        <link href="/assets/css/yy-cursor.css" rel="stylesheet" type="text/css" />
+      </>
+    )}
     <slot name="head" />
+    {chrome && <script type="application/json" id="yy-content" is:inline set:html={panelJson} />}
+    {chrome && <script is:inline defer src="/assets/js/yy-chrome.js"></script>}
+    {reveal && <script is:inline defer src="/assets/js/yy-reveal.js"></script>}
+    {lenis && (
+      <>
+        <link href="/assets/css/lenis.css" rel="stylesheet" type="text/css" />
+        <script is:inline defer src="/assets/js/lenis.min.js"></script>
+        <script is:inline defer src="/assets/js/yy-scroll.js"></script>
+      </>
+    )}
   </head>
-  <body class="min-h-dvh flex flex-col">
-    <!--
-      PLACEHOLDER CHROME. The real nav/footer come from the Figma UI.
-      Content (labels, links) is data in src/content/site/navigation.json.
-    -->
-    <header class="border-b">
-      <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-sm" aria-label="Main">
-        <a href={nav.brand.href} class="font-medium">{nav.brand.label}</a>
-        <ul class="flex gap-6">
-          {nav.primary.map((item) => (
-            <li><a href={item.href} class="text-muted-foreground hover:text-foreground">{item.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-    </header>
-
-    <main class="flex-1">
-      <slot />
-    </main>
-
-    <footer class="border-t">
-      <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 text-sm text-muted-foreground">
-        <p>{nav.footer.credit}</p>
-        <ul class="flex gap-4">
-          {nav.social.map((item) => (
-            <li><a href={item.href} rel="noopener" target={item.href.startsWith('http') ? '_blank' : undefined}>{item.label}</a></li>
-          ))}
-        </ul>
-      </div>
-    </footer>
+  <body>
+    <slot />
+    <slot name="scripts" />
   </body>
 </html>

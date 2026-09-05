@@ -1,0 +1,70 @@
+---
+import type { Project } from '../data/projects';
+import { publicUrl } from '../data/projects';
+
+interface Props {
+  project: Project;
+  play: 'hover' | 'scroll' | 'auto';
+  /** First above-the-fold case: eager poster + metadata preload + source in HTML. */
+  priority?: boolean;
+}
+
+const { project, play, priority = false } = Astro.props;
+const posterUrl = project.video?.poster ? publicUrl(project.video.poster) : undefined;
+const videoUrl = project.video ? publicUrl(project.video.src) : undefined;
+const webmUrl = project.video?.webm ? publicUrl(project.video.webm) : undefined;
+/* First case may fetch metadata early. Others keep no <source> until scroll. */
+const preload = priority ? 'metadata' : play === 'auto' ? 'auto' : 'none';
+---
+
+<span class="slot__media" data-reveal="wipe">
+  {
+    project.video ? (
+      <>
+        {posterUrl && (
+          <img
+            class="slot__poster"
+            src={posterUrl}
+            alt=""
+            width={project.video.width}
+            height={project.video.height}
+            decoding="async"
+            fetchpriority={priority ? 'high' : 'auto'}
+            loading={priority ? 'eager' : 'lazy'}
+          />
+        )}
+        <video
+          class="slot__v"
+          muted
+          loop
+          playsinline
+          autoplay={play === 'auto'}
+          preload={preload}
+          width={project.video.width}
+          height={project.video.height}
+          aria-label={project.video.label}
+          data-play={play}
+          data-src={priority ? undefined : videoUrl}
+          data-webm={priority ? undefined : webmUrl}
+        >
+          {priority && webmUrl ? <source src={webmUrl} type="video/webm" /> : null}
+          {priority && videoUrl ? <source src={videoUrl} type="video/mp4" /> : null}
+        </video>
+      </>
+    ) : (
+      project.cover && (
+        <img
+          src={publicUrl(project.cover.src)}
+          alt={project.cover.alt}
+          loading="lazy"
+          decoding="async"
+          width={project.cover.width}
+          height={project.cover.height}
+        />
+      )
+    )
+  }
+</span>
+<span class="ph">
+  <span class="ph__file">{project.title}</span>
+</span>

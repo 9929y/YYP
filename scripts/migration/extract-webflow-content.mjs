@@ -524,8 +524,9 @@ for (const c of CASES) {
   write(`cases/${c.slug}.md`, md(stripUndefined({ ...meta, source }), body));
 }
 
-/* About: Webflow page (the yy-about.js panel carries the same copy plus a fashion CTA). */
-{
+/* About: pages/about.md is hand-maintained (structured frontmatter read by the
+   About nav panel). Only write it when it does not exist yet. */
+if (!fs.existsSync(path.join(OUT, 'pages/about.md'))) {
   const page = extractPage('aboutme.html');
   inventory.pages['aboutme.html'] = { ...page.meta, media: page.media, links: page.links };
   const panel = renderPanelScript('yy-about.js');

@@ -1,19 +1,53 @@
 ---
-/** PLACEHOLDER about page. Body is the extracted Webflow + panel copy. */
-import { getEntry, render } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+/**
+ * PLACEHOLDER /about route. The same structured copy also renders inside the
+ * About nav panel (yy-about.js). Layout waits on the Figma design.
+ */
+import { getEntry } from 'astro:content';
+import PageLayout from '@/layouts/PageLayout.astro';
 
-const about = await getEntry('pages', 'about');
-if (!about) throw new Error('src/content/pages/about.md is missing');
-const { Content } = await render(about);
+const entry = await getEntry('pages', 'about');
+if (!entry?.data.about) throw new Error('src/content/pages/about.md is missing its `about` frontmatter');
+const a = entry.data.about;
 ---
 
-<BaseLayout title={`${about.data.title} — Yanice Yang`} description={about.data.description}>
-  <article
-    class="mx-auto max-w-3xl px-6 py-24 space-y-6 leading-relaxed
-      [&_h1]:text-4xl [&_h1]:font-semibold [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-14
-      [&_h3]:text-xl [&_h3]:font-medium [&_h3]:mt-10 [&_img]:rounded-lg [&_a]:underline"
-  >
-    <Content />
-  </article>
-</BaseLayout>
+<PageLayout title={`${entry.data.title} — Yanice Yang`} description={entry.data.description}>
+  <main class="mx-auto max-w-3xl px-6 py-24 space-y-16 leading-relaxed">
+    <header class="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <p class="text-sm text-muted-foreground">{a.place}</p>
+        <p class="mt-6 text-lg">{a.hello}</p>
+        <h1 class="text-4xl font-semibold">{a.name}</h1>
+        <p class="mt-4 text-muted-foreground">{a.lead}</p>
+        <a class="mt-6 inline-block underline" href={a.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <img class="w-48 rounded-full" src={a.portrait.src} alt={a.portrait.alt} width="192" height="192" loading="lazy" />
+    </header>
+
+    <section class="space-y-4">
+      {a.bio.map((p) => <p>{p}</p>)}
+      {a.funFact && (
+        <>
+          <h2 class="text-2xl font-semibold pt-4">{a.funFact.title}</h2>
+          <p>{a.funFact.text}</p>
+        </>
+      )}
+      {a.cta && <a class="inline-block underline" href={a.cta.href}>{a.cta.label}</a>}
+    </section>
+
+    <section aria-labelledby="stories">
+      <h2 id="stories" class="text-2xl font-semibold">{a.storiesTitle}</h2>
+      <div class="mt-8 space-y-12">
+        {a.stories.map((s) => (
+          <article>
+            <div class="grid grid-cols-2 gap-4">
+              {s.images.map((im) => <img class="rounded-lg" src={im.src} alt={im.alt} loading="lazy" />)}
+            </div>
+            <h3 class="mt-4 text-xl font-medium">{s.title}</h3>
+            <p class="mt-2" set:html={s.html} />
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</PageLayout>

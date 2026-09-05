@@ -4,13 +4,19 @@ Portfolio site for AI-first product/design work. Live site: [yaniceyang.com](htt
 
 ## Status: rebuild branch
 
-This branch is the **clean rebuild**. The Webflow export and the custom `yy-*`
-layer that sat on top of it are gone; only the words and the media survived.
+This branch is the **rebuild**. The Webflow export (case-study pages and their
+runtime) is gone; only the words and the media survived.
 
+- **Kept as-is**: the Astro landing page, the capsule nav with its Work / About /
+  Resume panels, and the footer (the `yy-*` layer under `public/assets/{css,js}`).
+  Their copy now comes from `src/content/` instead of being hard-coded.
 - **Content** lives in `src/content/` (extracted from Webflow, see below).
-- **UI** is a placeholder. Every visual decision is waiting on the Figma design.
-- **Stack** is Astro + React islands + Tailwind v4 + shadcn/ui conventions + motion,
-  so components from [21st.dev](https://21st.dev) paste in unchanged.
+- **Case-study UI** is a placeholder. Every visual decision is waiting on the
+  Figma design.
+- **Stack for new pages** is Astro + React islands + Tailwind v4 + shadcn/ui
+  conventions + motion, so components from [21st.dev](https://21st.dev) paste in
+  unchanged. `BaseLayout.astro` (landing) loads no Tailwind; `PageLayout.astro`
+  (everything else) does.
 
 `main` still serves the old site. Nothing here is deployed until it is merged.
 
@@ -32,13 +38,17 @@ src/content/
   cases/<slug>.md        one per case study: frontmatter = curated metadata, body = extracted copy
   pages/home.md          hero copy (structured) + archived Webflow homepage copy
   pages/work.md          work-index cards (structured) + old projects.html copy
-  pages/about.md         about copy (two historical sources, pick one)
+  pages/about.md         structured About copy (also feeds the About nav panel)
   pages/resume.md        fully structured resume (jobs, education, awards, publications, skills)
   site/navigation.json   nav labels, social links, footer, case order
 ```
 
 Schemas: `src/content.config.ts`. Media: `public/assets/{images,videos,lottie,fonts}`,
 referenced as `/assets/...`. `npm test` verifies every reference resolves.
+
+The About / Resume / Work nav panels (`public/assets/js/yy-*.js`) read their data
+from a JSON block that `BaseLayout.astro` embeds from these same files, so a copy
+change in `src/content/pages/*.md` updates both the panel and the page.
 
 Markdown bodies contain HTML comments such as `<!-- section: .section-layout1 -->`,
 `<!-- lightbox: ... -->`, `<!-- lottie: ... -->`. They mark where the Webflow page had a
@@ -47,10 +57,10 @@ what to do there. They render as nothing.
 
 ## What still has to be decided
 
-`docs/WEBFLOW_REPLACEMENT_INVENTORY.md` lists, page by page and site-wide, every
-Webflow / `yy-*` behaviour that needs a replacement decision (navigation model,
-fonts, per-case theme colours, lightboxes, videos, Lottie, smooth scroll, cursor,
-page titles, OG images, 404…). Fill in the decision column and the UI work follows.
+`docs/WEBFLOW_REPLACEMENT_INVENTORY.md` lists, for the case-study pages only,
+every Webflow behaviour that needs a replacement decision (lightboxes, Vimeo
+embeds, Lottie, preloader, per-case theme colours, page titles…). Fill in the
+decision column and the UI work follows.
 
 ## Run locally
 

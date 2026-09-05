@@ -1,0 +1,95 @@
+/* ============================================================================
+   yy-cursor.css — 12px difference-dot on every page (desktop + fine pointer).
+
+   Loaded by yy-chrome.js so Webflow cases get the same disc as the homepage.
+   mix-blend-mode: difference stays on #yy-cursor itself (a body child).
+   ============================================================================ */
+
+#yy-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 2137px;
+  background: #fff;
+  color: #fff;
+  mix-blend-mode: difference;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: -.64px;
+  pointer-events: none;
+  z-index: 9800;
+  will-change: transform, width, height;
+  transform: translate3d(var(--cx, -200px), var(--cy, -200px), 0) translate(-50%, -50%);
+  transition-property: transform, width, height, background-color, color;
+  transition-duration: .08s,
+                       var(--duration-quick, 150ms), var(--duration-quick, 150ms),
+                       var(--duration-quick, 150ms), var(--duration-quick, 150ms);
+  transition-timing-function:
+    cubic-bezier(.165, .84, .44, 1),
+    var(--ease-bounce, cubic-bezier(0.34, 1.36, 0.64, 1)),
+    var(--ease-bounce, cubic-bezier(0.34, 1.36, 0.64, 1)),
+    var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    var(--ease-smooth-out, cubic-bezier(0.22, 1, 0.36, 1));
+  opacity: 0;
+}
+
+html.yy-cursor-live #yy-cursor { opacity: 1; }
+
+#yy-cursor.on {
+  transition-duration: .08s,
+                       var(--duration-fast, 250ms), var(--duration-fast, 250ms),
+                       var(--duration-fast, 250ms), var(--duration-fast, 250ms);
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, .48);
+  color: #000;
+  mix-blend-mode: normal;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+#yy-cursor.on.is-chip {
+  width: 124px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: -.02em;
+  font-weight: 500;
+}
+
+.yy-cursor__t {
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity .32s cubic-bezier(.45, 0, .55, 1) var(--duration-micro, 80ms);
+}
+
+#yy-cursor.on .yy-cursor__t { opacity: 1; }
+
+#yy-cursor:not(.on) .yy-cursor__t {
+  transition-duration: .08s;
+  transition-delay: 0s;
+}
+
+@media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+  html.yy-cursor-ready,
+  html.yy-cursor-ready * { cursor: none !important; }
+}
+
+@media (max-width: 991px), (hover: none), (pointer: coarse) {
+  #yy-cursor { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #yy-cursor { display: none !important; }
+  html.yy-cursor-ready,
+  html.yy-cursor-ready * { cursor: auto !important; }
+}

@@ -1,0 +1,175 @@
+/* ============================================================================
+   yy-chrome.css — light-DOM half of the shared chrome layer
+
+   The nav and footer themselves live in Shadow DOM (see yy-chrome.js), where
+   the 19,000-line Webflow stylesheet cannot reach them. This file holds only
+   the handful of rules that must apply to the PAGE, not to the chrome:
+   focus rings, anchor offset, and the reduced-motion guard.
+
+   HARD RULE: nothing in this file may set `color` or `background` on any page
+   content. An earlier attempt (archive/revamp-2026-08-17, ds-retrofit.css)
+   crossed that line, flattened every client brand colour to near-black and
+   dropped the two dark pages to 1.20:1. The capsule carries its own colour and
+   writes none onto the page.
+   ============================================================================ */
+
+/* ============================================================================
+   Motion tokens live in assets/css/yy-tokens.css and MUST be linked from
+   <head> on every page. This sheet only consumes them.
+
+   Property ownership (one writer per animated property):
+     reveal  → opacity, transform, filter, clip-path   (assets/css/yy-motion.css)
+     hover   → transform, opacity                      (page CSS, e.g. a.slot:hover)
+     cursor  → transform, width, height, background, color
+     IX2     → anything on [data-w-id]                 (do not compete)
+     Lenis   → scroll position
+     flow    → canvas pixels only
+   Do not add a second writer for `filter`. A velocity-blur attempt already lost
+   that fight to `.yy-rv.in { filter: none }`.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. Focus ring
+
+   The Webflow sheet has ZERO :focus-visible rules in 19,487 lines — the only
+   :focus rules are widget internals. This is purely additive: it cannot
+   repaint content, only outline it when keyboard focus lands.
+   --------------------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Anchor offset
+
+   Zero `scroll-margin` exists in the sheet today, so index.html's #one…#six
+   fragment targets already land underneath the 80px fixed navbar. The capsule
+   floats at the bottom rather than the top, so this is a straight repair of a
+   pre-existing bug rather than compensation for the new chrome.
+   --------------------------------------------------------------------------- */
+[id] { scroll-margin-top: 96px; }
+
+/* ---------------------------------------------------------------------------
+   3. prefers-reduced-motion — recovered verbatim from the abandoned branch
+      (origin/revamp/design-system:assets/css/ds-retrofit.css:154-171)
+
+   ⚠️ The usual `*, *::before, *::after { animation-duration: 0.01ms }` recipe
+   is actively dangerous in this repo. Webflow's IX2 engine animates elements
+   marked with `data-w-id`, and several pages ship an inline `opacity: 0` guard
+   keeping those elements hidden until IX2 runs. Neutralising IX2's animations
+   would leave that content PERMANENTLY INVISIBLE rather than merely still.
+
+   So: kill our own transitions, and leave anything IX2 owns alone.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *:not([data-w-id]):not([data-w-id] *),
+  *:not([data-w-id]):not([data-w-id] *)::before,
+  *:not([data-w-id]):not([data-w-id] *)::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5–6. Entrance recipes live in assets/css/yy-motion.css (yy-reveal.js).
+
+   ⛔ 这里原本有一层"滚动速度模糊"，已删除。留下记录避免有人再加一次。
+   两个原因，第二个更重要：
+
+   1. 它渲染不出来。--yy-vblur 确实被写到 1.60px、lenis-smooth 类也在，但 <img> 的
+      computed filter 一直是 none —— 因为 reveal 层的 `.yy-rv.in { filter: none }`
+      特异性是 (0,3,1)，压过 `html.lenis-smooth img` 的 (0,1,2)。要救它就得和
+      reveal 层打特异性战争，而"两层各自往同一个属性上写"正是最容易出 bug 的结构。
+
+   2. 它的依据站不住。参考站确实有速度模糊 —— 但实测量是 blur(0.0145px)，在**一个**
+      元素（hero 的斜体词）上。我做的是 1.6px 加在**每一张图**上，是放大了 100 倍的
+      自己的发明，不是量来的东西。删掉比修好。 */
+
+/* ---------------------------------------------------------------------------
+   7. Case copy measure
+
+   Phase 1 capped `.paragraph` / `.textblockp1` at 36em. In wide cells (Opus
+   Validation, 2-column case rows) that left a short text column and empty
+   space. Restore the authored cell width. Do not touch grid columns or
+   horizontal section padding.
+   --------------------------------------------------------------------------- */
+html.yy-chrome .paragraph,
+html.yy-chrome .textblockp1 {
+  max-width: none;
+}
+
+html.yy-chrome .div-block-40.grid {
+  align-items: stretch;
+}
+
+html.yy-chrome .div-block-40.grid > a,
+html.yy-chrome .div-block-40.grid > .w-inline-block {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+}
+
+html.yy-chrome .div-block-40.grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------------------------------------------------------------------------
+   8. ASCII cursor wake (#yy-flow)
+
+   Landing owns its own rules in landing.css. Case pages get the canvas from
+   yy-chrome.js (html.yy-flow-case). Field sits under page content; nav /
+   footer / disc keep their own higher z-index and are excluded from the lift.
+   --------------------------------------------------------------------------- */
+#yy-flow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+}
+
+html.yy-flow-case body > *:not(#yy-flow):not(yy-nav):not(yy-footer):not(#yy-cursor) {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 991px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #yy-flow { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.lenis-smooth img { filter: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   9. Popup glass frost (light DOM)
+
+   `backdrop-filter` inside yy-nav's Shadow DOM does not sample the page, so
+   the panel looked translucent but never frosted. Paint the Canvas Cover /
+   glass blur on a body pseudo behind yy-nav (z-index 8990 < nav 9000).
+   --------------------------------------------------------------------------- */
+html.yy-panel-open body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 8990;
+  pointer-events: none;
+  background: rgba(255, 250, 250, 0.2);
+  -webkit-backdrop-filter: blur(200px) saturate(1.2);
+  backdrop-filter: blur(200px) saturate(1.2);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html.yy-panel-open body::before {
+    background: rgba(255, 250, 250, 0.72);
+  }
+}

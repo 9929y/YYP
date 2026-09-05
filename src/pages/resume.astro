@@ -1,15 +1,15 @@
 ---
 /** PLACEHOLDER resume page. All data is frontmatter in src/content/pages/resume.md. */
 import { getEntry } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageLayout from '@/layouts/PageLayout.astro';
 
 const resume = await getEntry('pages', 'resume');
 if (!resume) throw new Error('src/content/pages/resume.md is missing');
 const { profile, workRange, jobs = [], education = [], awards = [], publications = [], skills = [] } = resume.data;
 ---
 
-<BaseLayout title={`${resume.data.title} — Yanice Yang`} description={resume.data.description}>
-  <article class="mx-auto max-w-3xl px-6 py-24 space-y-16">
+<PageLayout title={`${resume.data.title} — Yanice Yang`} description={resume.data.description}>
+  <main class="mx-auto max-w-3xl px-6 py-24 space-y-16">
     {profile && (
       <header>
         <h1 class="text-4xl font-semibold">{profile.name}</h1>
@@ -81,5 +81,5 @@ const { profile, workRange, jobs = [], education = [], awards = [], publications
         ))}
       </div>
     </section>
-  </article>
-</BaseLayout>
+  </main>
+</PageLayout>
