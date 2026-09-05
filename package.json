@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "check": "astro check && node scripts/check-content.mjs",
     "test": "node scripts/check-content.mjs",
-    "extract:webflow": "node scripts/migration/extract-webflow-content.mjs"
+    "extract:webflow": "node scripts/migration/extract-webflow-content.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",
@@ -38,6 +39,7 @@
     "@types/react-dom": "^19.2.7",
     "@types/three": "^0.185.4",
     "cheerio": "^1.0.0",
+    "playwright-core": "^1.63.0",
     "typescript": "^5.9.2",
     "yaml": "^2.8.0"
   }

@@ -62,6 +62,11 @@ every Webflow behaviour that needs a replacement decision (lightboxes, Vimeo
 embeds, Lottie, preloader, per-case theme colours, page titles…). Fill in the
 decision column and the UI work follows.
 
+## Continuing the work
+
+`docs/HANDOFF.md` is the step-by-step plan for the rest of the rebuild, with the
+working method and the decisions already taken. Read it first.
+
 ## Run locally
 
 ```bash
@@ -70,6 +75,7 @@ npm run dev        # http://127.0.0.1:4800
 npm run build      # writes dist/ (what Vercel publishes)
 npm test           # content integrity: asset references, case frontmatter
 npm run check      # astro check (types) + npm test
+npm run smoke      # DOM-level checks against a running preview (see scripts/smoke.mjs)
 ```
 
 Review happens on a Cloudflare quick tunnel to port 4800, never via screenshots

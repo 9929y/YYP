@@ -30,6 +30,8 @@ Prove behavior with `npm run check`, `curl`, and the **preview link** — not wi
 
 ## Rebuild rules
 
+- **Start every session by reading `docs/HANDOFF.md`.** It holds the working method, the step-by-step plan with acceptance criteria, and the decisions already made.
+
 - Words live in `src/content/`. Do not hard-code copy in components.
 - UI is being redesigned in Figma. Until a design is handed over, pages are placeholders; do not polish them.
 - Stack decisions (Astro + React islands + Tailwind v4 + shadcn conventions + motion) are documented in `README.md`; how to add components in `docs/EXTENDING.md`.
