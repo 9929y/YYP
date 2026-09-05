@@ -30,7 +30,7 @@ Prove behavior with `npm run check`, `curl`, and the **preview link** — not wi
 
 ## Rebuild rules
 
-- **Start every session by reading `docs/HANDOFF.md`.** It holds the working method, the step-by-step plan with acceptance criteria, and the decisions already made.
+- **Start every session by reading `docs/HANDOFF.md` and `docs/METHOD.md`.** HANDOFF holds the step-by-step plan, acceptance criteria, and decisions already made; METHOD holds the reasoning loop and the evaluation checklists that must back every "it works".
 
 - Words live in `src/content/`. Do not hard-code copy in components.
 - UI is being redesigned in Figma. Until a design is handed over, pages are placeholders; do not polish them.

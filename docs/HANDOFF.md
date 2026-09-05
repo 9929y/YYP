@@ -1,9 +1,12 @@
 # Handoff: how to continue the rebuild
 
 Written for the next Claude session (any model) that picks up this branch.
-Read this, `AGENTS.md`, and `README.md` before touching anything. It has three
-parts: how to work with Yanice, how this codebase is meant to be reasoned
-about, and the step-by-step plan with acceptance criteria.
+Read this, `docs/METHOD.md`, `AGENTS.md`, and `README.md` before touching
+anything. This file has three parts: how to work with Yanice, how this codebase
+is meant to be reasoned about, and the step-by-step plan with acceptance
+criteria. `METHOD.md` is the companion: the reasoning loop, worked examples
+from phase 1, and the evaluation checklists to run before claiming anything
+works.
 
 ---
 
@@ -236,7 +239,7 @@ whether the panels stay, become pages, or both. Copy edits go to
 
 ## 6. Starter prompt for the next session
 
-> Read `docs/HANDOFF.md`, `AGENTS.md`, and `README.md` first. We are on branch
+> Read `docs/HANDOFF.md`, `docs/METHOD.md`, `AGENTS.md`, and `README.md` first. We are on branch
 > `claude/website-tech-stack-eval-camxmg`. Step 1 is done. I am giving you the
 > Figma for the case-study template now. Follow Step 2 (map design → content),
 > then Step 3 (build Opus Clip as the reference page). Reply in Chinese, keep
